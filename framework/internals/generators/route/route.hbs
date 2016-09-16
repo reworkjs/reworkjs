@@ -1,0 +1,23 @@
+export default {
+  path: '{{ path }}',
+  name: '{{ camelCase component }}',
+{{#if hasPriority}}
+  priority: {{ priority }},
+{{/if}}
+{{#if hasSagas}}
+
+  getSagas() {
+    return System.import('../{{{directory (properCase component)}}}/sagas');
+  },
+{{/if}}
+{{#if hasReducer}}
+
+  getReducer() {
+    System.import('../{{{directory (properCase component)}}}/reducer');
+  },
+{{/if}}
+
+  getComponent() {
+    return System.import('../{{{directory (properCase component)}}}');
+  },
+};
