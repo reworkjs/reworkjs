@@ -9,13 +9,14 @@ import { syncHistoryWithStore } from 'react-router-redux';
 import { createHistory } from 'history/lib';
 import useScroll from 'react-router-scroll';
 import offlinePlugin from 'offline-plugin/runtime';
-import global from 'global';
 import LanguageProvider from '../app/providers/LanguageProvider';
 import { selectLocationState } from '../app/providers/RouteProvider/route-selectors';
 import configureStore from './store';
 import { translationMessages } from './i18n';
 import createRoutes from './routes';
 import mainComponent from './main-component';
+
+// TODO load polyfills and call pre-init.
 
 const browserHistory = useRouterHistory(createHistory)();
 const initialState = {};
@@ -42,11 +43,10 @@ function render(translatedMessages) {
               // Scroll to top when going to a new page, imitating default browser
               // behaviour
               applyRouterMiddleware(useScroll())
-            }
-        />
+            } />
       </LanguageProvider>
     </Provider>,
-    document.getElementById('app')
+    document.getElementById('app'),
   );
 }
 
@@ -57,14 +57,6 @@ if (module.hot) {
   module.hot.accept('./i18n', () => {
     render(translationMessages);
   });
-}
-
-// Chunked polyfill for browsers without Intl support
-if (!global.Intl) {
-  Promise.all([
-    System.import('intl'),
-    System.import('intl/locale-data/jsonp/en.js'),
-  ]).then(() => render(translationMessages));
 } else {
   render(translationMessages);
 }

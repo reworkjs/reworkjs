@@ -1,33 +1,77 @@
-/**
- * COMMON WEBPACK CONFIGURATION
- */
-
-import path from 'path';
 import webpack from 'webpack';
-import mergeWith from 'lodash/mergeWith';
-import { requireRawRoot } from '../../util/RequireUtil';
+import { requireRawRoot, resolveProject, resolveRoot } from '../../util/RequireUtil';
+import frameworkConfig from '../../server/framework-config';
 
 const frameworkBabelRc = JSON.parse(requireRawRoot('.babelrc'));
+
+export default class WebpackBase {
+
+  isDev: boolean;
+
+  constructor(isDev) {
+    this.isDev = isDev;
+  }
+
+  getEntry(): string[] {
+    // front-end entry point.
+    const entry = [resolveRoot('framework/kernel')];
+
+    if (this.isDev) {
+      entry.unshift(
+        // Necessary for hot reloading with IE
+        require.resolve('eventsource-polyfill'),
+        require.resolve('webpack-hot-middleware/client'),
+        resolveRoot('internals/dev-preamble.js'),
+      );
+    }
+  }
+
+  getOutput() {
+    const output = {
+      path: resolveProject(frameworkConfig.directories.build),
+      publicPath: '/',
+    };
+
+    if (this.isDev) {
+      // Don't use hashes in dev mode for better performance
+      Object.assign(output, {
+        filename: '[name].js',
+        chunkFilename: '[name].chunk.js',
+
+        // https://github.com/mxstbr/react-boilerplate/issues/443
+        // publicPath: 'http://localhost:3000',
+      });
+    } else {
+      // Utilize long-term caching by adding content hashes (not compilation hashes) to compiled assets
+      Object.assign(output, {
+        filename: '[name].[chunkhash].js',
+        chunkFilename: '[name].[chunkhash].chunk.js',
+      });
+    }
+  }
+
+  getBabelConfig() {
+    return frameworkBabelRc;
+  }
+
+  getCssLoaders(): string[] {
+    return [
+      'style-loader',
+      'css-loader?localIdentName=[local]__[path][name]__[hash:base64:5]&modules&importLoaders=1&sourceMap',
+      'postcss-loader',
+    ];
+  }
+}
 
 /**
  * Builds the base configuration for Webpack.
  * @param options - The list of options.
  * @returns The webpack config.
  */
-export default function buildWebpackConfig(options) {
-
-  const babelQuery = mergeWith(options.babelQuery, frameworkBabelRc, (obj, src) => {
-    if (Array.isArray(obj)) {
-      return obj.concat(src);
-    }
-  });
+function buildWebpackConfig(options) {
 
   return {
     entry: options.entry,
-    output: Object.assign({ // Compile into js/build.js
-      path: path.resolve(process.cwd(), '.build'),
-      publicPath: '/',
-    }, options.output), // Merge with env dependent settings
     module: {
       loaders: [{
         test: /\.js$/, // Transform all .js files required somewhere with Babel

@@ -32,7 +32,7 @@ export default {
     ],
     loaders: [
       { test: /\.json$/, loader: 'json-loader' },
-      { test: /\.s?css$/, loader: 'null-loader' },
+      { test: /\.css$/, loader: 'null-loader' },
 
       // sinon.js--aliased for enzyme--expects/requires global vars.
       // imports-loader allows for global vars to be injected into the module.
