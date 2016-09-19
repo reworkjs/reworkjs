@@ -17,17 +17,11 @@ export default buildWebpackConfig({
     path.join(process.cwd(), 'app/app.js'),
   ],
 
-  // Utilize long-term caching by adding content hashes (not compilation hashes) to compiled assets
-  output: {
-    filename: '[name].[chunkhash].js',
-    chunkFilename: '[name].[chunkhash].chunk.js',
-  },
-
   // We use ExtractTextPlugin so we get a seperate CSS file instead
   // of the CSS being in the JS and injected as a style tag
   cssLoaders: ExtractTextPlugin.extract(
     'style-loader',
-    'css-loader?modules&-autoprefixer&importLoaders=1!postcss-loader!sass-loader'
+    'css-loader?modules&-autoprefixer&importLoaders=1!postcss-loader',
   ),
 
   // In production, we minify our CSS with cssnano

@@ -1,6 +1,8 @@
 import merge from 'lodash/merge';
 import { resolveProject, requireRawProject } from '../util/RequireUtil';
-import defaultConfig from '../default-config.json';
+import defaultConfig from '../../lib/default-config.json';
+
+export type Plugin = string | [string, any];
 
 export type frameworkConfigStruct = {
   directories: {
@@ -11,13 +13,12 @@ export type frameworkConfigStruct = {
     translations: string,
   },
 
-  fileNames: {
-    reducer: string,
-  },
-
   'entry-react': string,
   'entry-html': string,
   'pre-init': ?string,
+
+  babel: ?Plugin[],
+  postCss: ?Plugin[],
 };
 
 /**
@@ -47,6 +48,10 @@ for (const key of Object.getOwnPropertyNames(config.directories)) {
 
 if (config['pre-init']) {
   config['pre-init'] = resolveProject(config['pre-init']);
+}
+
+if (config.webpack) {
+  config.webpack = resolveProject(config.webpack);
 }
 
 config['entry-html'] = resolveProject(config['entry-html']);

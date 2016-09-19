@@ -1,3 +1,3 @@
-import { requireProject } from './RequireUtil';
+import { requireRawRoot } from './RequireUtil';
 
-export default requireProject('package.json');
+export default JSON.parse(requireRawRoot('package.json'));

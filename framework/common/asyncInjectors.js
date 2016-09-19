@@ -1,12 +1,16 @@
-import { conformsTo, isEmpty, isFunction, isObject, isString } from 'lodash';
-import invariant from 'invariant';
-import warning from 'warning';
+import assert from 'assert';
+import conformsTo from 'lodash/conformsTo';
+import isEmpty from 'lodash/isEmpty';
+import isFunction from 'lodash/isFunction';
+import isObject from 'lodash/isObject';
+import isString from 'lodash/isString';
 import createReducer from './create-reducer';
 
 /**
  * Validate the shape of redux store
  */
 export function checkStore(store) {
+
   const shape = {
     dispatch: isFunction,
     subscribe: isFunction,
@@ -16,7 +20,7 @@ export function checkStore(store) {
     asyncReducers: isObject,
   };
 
-  invariant(
+  assert(
     conformsTo(store, shape),
     '(app/utils...) asyncInjectors: Expected a valid redux store',
   );
@@ -27,9 +31,11 @@ export function checkStore(store) {
  */
 export function injectAsyncReducer(store, isValid) {
   return function injectReducer(name, asyncReducer) {
-    if (!isValid) checkStore(store);
+    if (!isValid) {
+      checkStore(store);
+    }
 
-    invariant(
+    assert(
       isString(name) && !isEmpty(name) && isFunction(asyncReducer),
       '(app/utils...) injectAsyncReducer: Expected `asyncReducer` to be a reducer function',
     );
@@ -44,17 +50,18 @@ export function injectAsyncReducer(store, isValid) {
  */
 export function injectAsyncSagas(store, isValid) {
   return function injectSagas(sagas) {
-    if (!isValid) checkStore(store);
+    if (!isValid) {
+      checkStore(store);
+    }
 
-    invariant(
+    assert(
       Array.isArray(sagas),
       '(app/utils...) injectAsyncSagas: Expected `sagas` to be an array of generator functions',
     );
 
-    warning(
-      !isEmpty(sagas),
-      '(app/utils...) injectAsyncSagas: Received an empty `sagas` array',
-    );
+    if (isEmpty(sagas)) {
+      console.warn('(app/utils...) injectAsyncSagas: Received an empty `sagas` array');
+    }
 
     sagas.map(store.runSaga);
   };

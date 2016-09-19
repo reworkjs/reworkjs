@@ -1,5 +1,5 @@
 import minimist from 'minimist';
-import '../../common/regenerator-runtime';
+import '../../common/load-polyfills';
 import commands from './commands';
 
 const argv = minimist(process.argv.slice(2));
@@ -22,42 +22,43 @@ export function getCommand(name: string): Function {
   process.exit(1);
 }
 
-const result = getCommand(commandName)(params, otherArgs);
-if (result && result.catch) {
-  result.catch(e => {
+(async function () {
+  try {
+    await getCommand(commandName)(params, otherArgs);
+  } catch (e) {
     console.error(e);
     process.exit(1);
-  });
-}
+  }
+}());
 
 /*
-## `build`
+ ## `build`
 
-Build DLLs
+ Build DLLs
 
-`cross-env NODE_ENV=production webpack --config framework/internals/webpack/webpack.prod.babel.js --color -p`
+ `cross-env NODE_ENV=production webpack --config framework/internals/webpack/webpack.prod.babel.js --color -p`
 
-## `build dll`
+ ## `build dll`
 
-`babel-node -- ./framework/internals/scripts/dependencies.js`
+ `babel-node -- ./framework/internals/scripts/dependencies.js`
 
-## `build server`
+ ## `build server`
 
-`babel server -d .build/server && babel internals -d .build/internals`
+ `babel server -d .build/server && babel internals -d .build/internals`
 
-## `extract-intl`
+ ## `extract-intl`
 
-`babel-node -- ./framework/internals/scripts/extract-intl.js`
+ `babel-node -- ./framework/internals/scripts/extract-intl.js`
 
-## `generate`
+ ## `generate`
 
-`plop --plopfile internals/generators/index.js`
+ `plop --plopfile internals/generators/index.js`
 
-## `pagespeed`
+ ## `pagespeed`
 
-`node ./internals/scripts/pagespeed.js`
+ `node ./internals/scripts/pagespeed.js`
 
-## `test`
+ ## `test`
 
-## `test --coverage`
+ ## `test --coverage`
  */

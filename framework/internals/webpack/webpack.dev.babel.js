@@ -12,9 +12,9 @@ import postcssFocus from 'postcss-focus';
 import postcssReporter from 'postcss-reporter';
 import logger from '../../server/logger';
 import frameworkConfig from '../../server/framework-config';
-import { resolveProject } from '../../util/RequireUtil';
 import pkg from '../../util/package-metadata';
 import buildWebpackConfig from './webpack.base.babel';
+import { resolveProject } from '../../util/RequireUtil';
 
 const dllPlugin = pkg.dllPlugin;
 

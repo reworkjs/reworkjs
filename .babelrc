@@ -10,7 +10,12 @@
   "env": {
     "production": {
       "presets": ["es2015"],
-      "plugins": ["transform-class-properties"]
+      "plugins": [
+        "transform-react-remove-prop-types",
+        "transform-react-constant-elements",
+        "transform-react-inline-elements",
+        "transform-class-properties"
+      ]
     },
 
     "development": {

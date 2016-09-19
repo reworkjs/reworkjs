@@ -1,11 +1,12 @@
 import getPort from 'get-port';
 import { resolveRoot } from '../../util/RequireUtil';
-import { runBabelNodeSync } from './run-babel-node';
+import { runBabelNodeSync } from './run-command';
+import install from './commands/install';
 import { getCommand } from './index';
 
 const commands = {
   install() {
-
+    return install();
   },
 
   lint([mode]) {
