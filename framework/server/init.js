@@ -1,10 +1,11 @@
 import minimist from 'minimist';
 import express from 'express';
 import ngrok from 'ngrok';
+import chalk from 'chalk';
 import { isDev } from '../util/EnvUtil';
 import { resolveProject } from '../util/RequireUtil';
+import logger from '../common/logger';
 import frameworkConfig from './framework-config';
-import logger from './logger';
 import serveReactMiddleware from './middlewares/serve-react-middleare';
 
 const argv = minimist(process.argv.slice(2));
@@ -29,7 +30,7 @@ function onListen(err) {
 
   const enableNgrok = (isDev && process.env.ENABLE_TUNNEL) || argv.tunnel;
   if (!enableNgrok) {
-    logger.appStarted(port);
+    printAppStarted();
     return;
   }
 
@@ -39,6 +40,25 @@ function onListen(err) {
       return;
     }
 
-    logger.appStarted(port, url);
+    printAppStarted(url);
   });
+}
+
+const divider = chalk.gray('\n-----------------------------------');
+
+function printAppStarted(tunnelStarted = false) {
+  logger.info(`Server started ${chalk.green('✓')}`);
+
+  // If the tunnel started, log that and the URL it's available at
+  if (tunnelStarted) {
+    logger.info(`Tunnel initialised ${chalk.green('✓')}`);
+  }
+
+  logger.info(`
+${chalk.bold('Access URLs:')}${divider}
+Localhost: ${chalk.magenta(`http://localhost:${port}`)}
+      LAN: ${chalk.magenta(`http://${ip.address()}:${port}`) +
+  (tunnelStarted ? `\n    Proxy: ${chalk.magenta(tunnelStarted)}` : '')}${divider}
+${chalk.blue(`Press ${chalk.italic('CTRL-C')} to stop`)}
+    `);
 }

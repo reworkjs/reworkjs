@@ -29,7 +29,7 @@ export function checkStore(store) {
 /**
  * Inject an asynchronously loaded reducer
  */
-export function injectAsyncReducer(store, isValid) {
+export function createAsyncReducerInjector(store, isValid) {
   return function injectReducer(name, asyncReducer) {
     if (!isValid) {
       checkStore(store);
@@ -48,7 +48,7 @@ export function injectAsyncReducer(store, isValid) {
 /**
  * Inject an asynchronously loaded saga
  */
-export function injectAsyncSagas(store, isValid) {
+export function createAsyncSagaInjector(store, isValid) {
   return function injectSagas(sagas) {
     if (!isValid) {
       checkStore(store);
@@ -70,11 +70,11 @@ export function injectAsyncSagas(store, isValid) {
 /**
  * Helper for creating injectors
  */
-export function getAsyncInjectors(store) {
+export default function createAsyncInjectors(store) {
   checkStore(store);
 
   return {
-    injectReducer: injectAsyncReducer(store, true),
-    injectSagas: injectAsyncSagas(store, true),
+    injectReducer: createAsyncReducerInjector(store, true),
+    injectSagas: createAsyncSagaInjector(store, true),
   };
 }

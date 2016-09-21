@@ -21,7 +21,7 @@ const commands = {
 
       process.env.NODE_ENV = 'development';
 
-      const args = process.argv;
+      const args = process.argv.splice(4);
       if (!otherArgs.port) {
         args.push('--port', await getPort());
       }

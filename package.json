@@ -27,7 +27,7 @@
     "test:firefox": "npm run test -- --browsers Firefox",
     "test:safari": "npm run test -- --browsers Safari",
     "test:ie": "npm run test -- --browsers IE",
-    "build:internals": "babel framework --out-dir .build",
+    "build:internals": "babel framework --out-dir=.build --copy-files",
     "build:internals:watch": "npm run build:internals -- --watch",
     "coveralls": "cat ./coverage/lcov/lcov.info | coveralls",
     "build:watch": "npm run build:internals:watch"
@@ -42,6 +42,7 @@
     "babel-preset-stage-0": "6.5.0",
     "babel-preset-react-hmre": "^1.1.1",
     "babel-preset-react": "^6.11.1",
+    "babel-plugin-syntax-async-functions": "^6.13.0",
     "babel-plugin-transform-async-to-generator": "^6.8.0",
     "babel-plugin-transform-flow-strip-types": "^6.8.0",
     "babel-plugin-transform-react-constant-elements": "^6.9.1",

@@ -1,8 +1,7 @@
 import merge from 'lodash/merge';
-import { resolveProject, requireRawProject } from '../util/RequireUtil';
+import { resolveProject, requireRawProject, resolveRoot } from '../util/RequireUtil';
 import defaultConfig from '../../lib/default-config.json';
-
-export type Plugin = string | [string, any];
+import logger from '../common/logger';
 
 export type frameworkConfigStruct = {
   directories: {
@@ -14,11 +13,10 @@ export type frameworkConfigStruct = {
   },
 
   'entry-react': string,
-  'entry-html': string,
+  'entry-html': ?string,
   'pre-init': ?string,
 
-  babel: ?Plugin[],
-  postCss: ?Plugin[],
+  webpack: ?string,
 };
 
 /**
@@ -28,14 +26,14 @@ function mergeConfig() {
   try {
     const appConfig = JSON.parse(requireRawProject('.framework-config'));
 
-    console.info('".framework-config" found in app directory, overriding defaults...');
+    logger.info('".framework-config" found in app directory, overriding defaults...');
     return merge(defaultConfig, appConfig);
   } catch (e) {
     if (e.code !== 'ENOENT') {
       throw e;
     }
 
-    console.info('No ".framework-config" found in app directory, using defaults...');
+    logger.info('No ".framework-config" found in app directory, using defaults...');
     return defaultConfig;
   }
 }
@@ -54,6 +52,12 @@ if (config.webpack) {
   config.webpack = resolveProject(config.webpack);
 }
 
-config['entry-html'] = resolveProject(config['entry-html']);
+if (config['entry-html']) {
+  config['entry-html'] = resolveProject(config['entry-html']);
+} else {
+  config['entry-html'] = resolveRoot('framework/app/index.html');
+}
+
+config['entry-react'] = resolveProject(config['entry-react']);
 
 export default config;
