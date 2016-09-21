@@ -7,6 +7,5 @@
     "translations": "/app/translations"
   },
 
-  "entry-react": "/app/containers/App",
-  "entry-html": "/app/index.html"
+  "entry-react": "/app/containers/App"
 }

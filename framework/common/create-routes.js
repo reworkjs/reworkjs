@@ -1,16 +1,14 @@
 import flatten from 'lodash/flatten';
 import { getDefault } from '../util/ModuleUtil';
-import { getAsyncInjectors } from './asyncInjectors';
+import { createAsyncInjectors } from './create-async-injectors';
+import routeModules from './routes';
 
 export default function createRoutes(store) {
 
-  const injectors = getAsyncInjectors(store);
+  const injectors = createAsyncInjectors(store);
 
-  // Dynamically load all route files.
-  const reqAll = require.context('./routes/', true, /\.js$/);
-
-  return reqAll.keys()
-    .map(fileName => getDefault(reqAll(fileName)))
+  return routeModules
+    .map(routeModule => getDefault(routeModule))
     .sort((a, b) => (a.priority || 0) - (b.priority || 0))
     .map(route => sanitizeRoute(route, injectors, store));
 }

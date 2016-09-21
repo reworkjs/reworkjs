@@ -1,19 +1,17 @@
 // import React from 'react';
 // import { renderToString } from 'react-dom/server';
 import { match, RouterContext } from 'react-router';
-import routes from '../../../common/routes';
 import { isProd } from '../../../util/EnvUtil';
+import { rootRoute } from '../../../common/kernel';
 import prod from './prod';
 import dev from './dev';
 
 export default function frontEndMiddleware(app, options) {
 
-  process.env.BABEL_ENV = `${process.env.NODE_ENV}-webpack`;
-
   const serveRoute = isProd ? prod(app, options) : dev(app, options);
 
   function serveReact(req, res) {
-    match({ routes, location: req.url }, (err, redirect, props) => {
+    match({ routes: [rootRoute], location: req.url }, (err, redirect, props) => {
 
       if (err) {
         return res.status(500).send(err.message);

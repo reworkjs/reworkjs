@@ -20,7 +20,7 @@ export function requireProject(fileName: string): any {
  * @returns The path of the file.
  */
 export function resolveProject(fileName: string): string {
-  return resolve(process.cwd(), removeRoot(fileName));
+  return resolve(process.cwd(), removeStartSlash(fileName));
 }
 
 /**
@@ -40,7 +40,7 @@ export function requireRawProject(fileName: string): string {
  * @returns The path of the file.
  */
 export function resolveRoot(fileName: string): string {
-  return resolve(rootDirectory, removeRoot(fileName));
+  return resolve(rootDirectory, removeStartSlash(fileName));
 }
 
 /**
@@ -63,7 +63,17 @@ export function requireRawRoot(fileName: string): string {
   return fs.readFileSync(resolveRoot(fileName));
 }
 
-function removeRoot(fileName) {
+/**
+ * Resolves a file in the root directory of source of the framework (.build or framework).
+ *
+ * @param fileName - The name of the file to resolve.
+ * @returns The path of the file.
+ */
+export function resolveFramework(fileName: string): string {
+  return resolve(rootDirectory, '.build', removeStartSlash(fileName));
+}
+
+function removeStartSlash(fileName) {
   if (fileName[0] === '/') {
     return fileName.substr(1);
   }

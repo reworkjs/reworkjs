@@ -1,12 +1,14 @@
 import readLine from 'readline';
-import chalk from 'chalk';
+import { ColoredLogger } from '../../common/logger/server';
+
+const logger = new ColoredLogger('cli');
 
 export function info(str) {
-  console.info(chalk.blue(`[info] ${str}`));
+  logger.info(str);
 }
 
 export function warn(str) {
-  console.warn(chalk.yellow(`[warn] ${str}`));
+  logger.warn(str);
 }
 
 export function question(str) {

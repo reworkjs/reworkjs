@@ -1,5 +1,5 @@
 {
-  "name": "providers",
+  "name": "logger",
   "private": true,
   "main": "./server.js",
   "browser": "./client.js"
