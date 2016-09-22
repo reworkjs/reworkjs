@@ -2,7 +2,7 @@
 
 /* eslint-disable */
 
-require('../.build/internals/cli/index');
+require('../lib/internals/cli/index');
 
 // const childProcess = require('child_process');
 // const path = require('path');
