@@ -1,0 +1,6 @@
+{
+  "name": "logger",
+  "private": true,
+  "main": "./node",
+  "browser": "./browser"
+}
