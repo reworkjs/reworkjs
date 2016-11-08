@@ -258,6 +258,7 @@ export default class WebpackBase {
         'process.env': {
           NODE_ENV: JSON.stringify(process.env.NODE_ENV),
           PROCESS_NAME: JSON.stringify(`${projectMetadata.name} (${this.isServer() ? 'server' : 'client'})`),
+          SIDE: JSON.stringify(this.isServer() ? 'server' : 'client'),
         },
         frameworkConfig: JSON.stringify(frameworkConfig),
       }),

@@ -1,4 +1,4 @@
-import { createBrowserHistory } from 'history';
+import { createBrowserHistory, createMemoryHistory } from 'history';
 import { syncHistoryWithStore } from 'react-router-redux';
 import { useRouterHistory } from 'react-router';
 import { selectLocationState } from '../app/providers/RouteProvider/route-selectors';
@@ -7,13 +7,14 @@ import createRoutes from './create-routes';
 import createStore from './create-store';
 
 // TODO load polyfills and call pre-init.
+const isServer = process.env.SIDE === 'server';
 
 // useRouterHistory creates a composable higher-order function
-const browserHistory = useRouterHistory(createBrowserHistory)();
+const navigationHistory = useRouterHistory(isServer ? createMemoryHistory : createBrowserHistory)();
 const initialState = {};
-const store = createStore(initialState, browserHistory);
+const store = createStore(initialState, navigationHistory);
 
-const history = syncHistoryWithStore(browserHistory, store, {
+const history = syncHistoryWithStore(navigationHistory, store, {
   selectLocationState: selectLocationState(),
 });
 
