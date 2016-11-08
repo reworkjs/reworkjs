@@ -62,7 +62,14 @@ function writeDebug(stats) {
 }
 
 function deleteDebug() {
-  fs.unlinkSync(DEBUG_LOCATION);
+  try {
+    fs.unlinkSync(DEBUG_LOCATION);
+  } catch (e) {
+    // ignore file not found.
+    if (e.code !== 'ENOENT') {
+      throw e;
+    }
+  }
 }
 
 // Bare minimum, there is more than that (see webpack docs).

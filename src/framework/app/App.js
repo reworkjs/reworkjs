@@ -33,7 +33,8 @@ export default class App {
               // Scroll to top when going to a new page, imitating default browser
               // behaviour
               applyRouterMiddleware(useScroll())
-            } />
+            }
+          />
         </LanguageProvider>
       </Provider>
     );
