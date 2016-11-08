@@ -3,16 +3,14 @@ import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import OfflinePlugin from 'offline-plugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
-import postCssNext from 'postcss-cssnext';
-import postCssFocus from 'postcss-focus';
-import postCssReporter from 'postcss-reporter';
 import cheerio from 'cheerio';
-import { requireRawRoot, resolveFramework, resolveRoot } from '../util/RequireUtil';
+import { requireRawRoot, resolveFramework, resolveRoot, requireRawProject } from '../util/RequireUtil';
 import frameworkConfig from '../config/framework-config';
 import { isDev, isTest } from '../../shared/EnvUtil';
 import logger from '../../shared/logger';
 
 const rawFrameworkBabelRc = requireRawRoot('.babelrc');
+const projectMetadata = JSON.parse(requireRawProject('package.json'));
 
 function fixBabelConfig(babelConfig) {
   for (const key of Object.keys(babelConfig)) {
@@ -71,16 +69,15 @@ export default class WebpackBase {
         loaders: this.buildLoaders(),
       },
       plugins: this.getPlugins(),
-      postCss: () => this.postCss(),
+      // postCss: () => this.postCss(),
       devtool: this.getDevTools(),
       target: this.getTarget(),
-      stats: false,
-      progress: true,
-      debug: true,
+      // stats: false,
+      // progress: true,
+      // debug: true,
       resolve: {
         modules: ['node_modules'],
         extensions: [
-          '',
           '.js',
           '.jsx',
           '.react.js',
@@ -179,7 +176,8 @@ export default class WebpackBase {
         : resolveFramework('client/index'),
     ];
 
-    if (this.isDev) {
+    // front-end dev libs.
+    if (this.isDev && !this.isServer()) {
       entry.unshift(
         // Necessary for hot reloading with IE
         require.resolve('eventsource-polyfill'),
@@ -259,8 +257,9 @@ export default class WebpackBase {
       new webpack.DefinePlugin({
         'process.env': {
           NODE_ENV: JSON.stringify(process.env.NODE_ENV),
+          PROCESS_NAME: JSON.stringify(`${projectMetadata.name} (${this.isServer() ? 'server' : 'client'})`),
         },
-        frameworkConfig,
+        frameworkConfig: JSON.stringify(frameworkConfig),
       }),
     ];
 
@@ -357,23 +356,6 @@ export default class WebpackBase {
     }
 
     return config;
-  }
-
-  getPostCssPlugins() {
-    return [
-      // Add a :focus to every :hover
-      postCssFocus(),
-
-      // Allow future CSS features to be used, also auto-prefixes the CSS...
-      postCssNext({
-        browsers: ['last 2 versions', 'IE > 10'],
-      }),
-
-      // Posts messages from plugins to the terminal
-      postCssReporter({
-        clearMessages: true,
-      }),
-    ];
   }
 
   isServer() {
