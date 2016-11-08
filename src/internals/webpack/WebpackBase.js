@@ -7,11 +7,10 @@ import postCssNext from 'postcss-cssnext';
 import postCssFocus from 'postcss-focus';
 import postCssReporter from 'postcss-reporter';
 import cheerio from 'cheerio';
-import { requireRawRoot, resolveFramework } from '../util/RequireUtil';
+import { requireRawRoot, resolveFramework, resolveRoot } from '../util/RequireUtil';
 import frameworkConfig from '../config/framework-config';
 import { isDev, isTest } from '../../shared/EnvUtil';
 import logger from '../../shared/logger';
-import { resolveRoot } from '../util/RequireUtil';
 
 const rawFrameworkBabelRc = requireRawRoot('.babelrc');
 
