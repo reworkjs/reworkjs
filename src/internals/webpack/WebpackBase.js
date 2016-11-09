@@ -234,9 +234,10 @@ export default class WebpackBase {
   getAliases() {
 
     return {
-      '@@directories.routes': frameworkConfig.directories.routes,
-      '@@main-component': frameworkConfig['entry-react'],
       '@@pre-init': frameworkConfig['pre-init'],
+      '@@main-component': frameworkConfig['entry-react'],
+      '@@directories.routes': frameworkConfig.directories.routes,
+      '@@directories.translations': frameworkConfig.directories.translations,
       '@@directories.providers': frameworkConfig.directories.providers,
       [frameworkMetadata.name]: resolveRoot(''),
     };
