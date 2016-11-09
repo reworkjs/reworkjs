@@ -4,8 +4,7 @@
  * The reducer merges route location changes into our immutable state.
  */
 import { combineReducers } from 'redux-immutable';
-import providers from './providers';
-import { Provider } from './providers';
+import providers, { Provider } from './providers';
 
 export default function createReducer(asyncReducers) {
   const reducers = Object.assign({}, asyncReducers);

@@ -8,7 +8,7 @@ export function selectDomain() {
 export function selectLocale() {
   return createSelector(
     selectDomain(),
-    languageState => languageState.get('locale')
+    languageState => languageState.get('locale'),
   );
 }
 

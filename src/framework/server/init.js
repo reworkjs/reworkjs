@@ -44,7 +44,7 @@ function onListen(err) {
   });
 }
 
-const divider = chalk.gray('\n-----------------------------------');
+const divider = chalk.gray('\n\t-----------------------------------');
 
 function printAppStarted(tunnelStarted = false) {
   logger.info(`Server started ${chalk.green('✓')}`);
@@ -54,11 +54,10 @@ function printAppStarted(tunnelStarted = false) {
     logger.info(`Tunnel initialised ${chalk.green('✓')}`);
   }
 
-  logger.info(`
-${chalk.bold('Access URLs:')}${divider}
-Localhost: ${chalk.magenta(`http://localhost:${port}`)}
-      LAN: ${chalk.magenta(`http://${ip.address()}:${port}`) +
-  (tunnelStarted ? `\n    Proxy: ${chalk.magenta(tunnelStarted)}` : '')}${divider}
-${chalk.blue(`Press ${chalk.italic('CTRL-C')} to stop`)}
+  console.info(`
+\t${chalk.bold('Access URLs:')}${divider}
+\tLocalhost: ${chalk.magenta(`http://localhost:${port}`)}
+\t      LAN: ${chalk.magenta(`http://${ip.address()}:${port}`) + (tunnelStarted ? `\n\t    Proxy: ${chalk.magenta(tunnelStarted)}` : '')}${divider}
+\t${chalk.blue(`Press ${chalk.italic('CTRL-C')} to stop`)}
     `);
 }

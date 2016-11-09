@@ -37,7 +37,7 @@ export default function configureStore(initialState = {}, history) {
   // Make reducers hot reloadable, see http://mxs.is/googmo
   /* istanbul ignore next */
   if (module.hot) {
-    System.import('create-reducer').then(reducerModule => {
+    System.import('./create-reducer').then(reducerModule => {
       const createReducers = getDefault(reducerModule);
       const nextReducers = createReducers(store.asyncReducers);
 
