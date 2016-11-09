@@ -1,3 +1,4 @@
+import globals from '../globals';
 import Logger from './Logger';
 
-export default new Logger(process.env.PROCESS_NAME || 'framework-client');
+export default new Logger(globals.PROCESS_NAME);

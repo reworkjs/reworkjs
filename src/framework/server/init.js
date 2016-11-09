@@ -5,7 +5,7 @@ import chalk from 'chalk';
 import ip from 'ip';
 import { isDev } from '../../shared/EnvUtil';
 import logger from '../../shared/logger';
-import frameworkConfig from '../common/framework-config';
+import frameworkConfig from '../../shared/framework-config';
 import serveReactMiddleware from './middlewares/serve-react-middleare';
 
 const argv = minimist(process.argv.slice(2));

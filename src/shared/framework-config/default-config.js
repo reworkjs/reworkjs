@@ -1,4 +1,4 @@
-import { resolveProject, resolveFramework } from '../util/RequireUtil';
+import { resolveProject, resolveFramework } from '../../shared/resolve';
 
 const defaultConfig = {
   directories: {

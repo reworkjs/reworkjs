@@ -1,4 +1,4 @@
-import frameworkConfig from '../../config/framework-config';
+import frameworkConfig from '../../../shared/framework-config';
 import { info } from '../stdio';
 
 export default function printConfig() {
