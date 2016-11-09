@@ -1,18 +1,19 @@
-// Load the manifest.json file and the .htaccess file
+// TODO Load the manifest.json file and the .htaccess file
 // import '!file?name=[name].[ext]!./manifest.json';
 // import 'file?name=[name].[ext]!./.htaccess';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { applyRouterMiddleware, Router } from 'react-router';
-import useScroll from 'react-router-scroll';
+import { useScroll } from 'react-router-scroll';
 import offlinePlugin from 'offline-plugin/runtime';
 import LanguageProvider from '../app/providers/LanguageProvider';
 import translationMessages from '../common/i18n';
 import { store, rootRoute } from '../common/kernel';
 
-export default class App {
+export default class App extends React.Component {
 
   constructor() {
+    super();
 
     // Hot reloadable translation json files
     if (module.hot) {

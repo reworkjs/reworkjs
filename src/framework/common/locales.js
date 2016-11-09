@@ -2,7 +2,8 @@ import { getDefault } from '../../shared/util/ModuleUtil';
 // import logger from '../../shared/logger';
 const logger = console;
 
-// const localeLoader = require.context('react-intl/locale-data', true, /\.js$/);
+// TODO support for .json locales.
+// TODO use actual logger.
 
 // WEBPACK
 const translationLoaders = require.context('bundle-loader!@@directories.translations', true, /\.js$/);
