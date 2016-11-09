@@ -8,38 +8,24 @@ import { useScroll } from 'react-router-scroll';
 import offlinePlugin from 'offline-plugin/runtime';
 import LanguageProvider from '../app/providers/LanguageProvider';
 import translationMessages from '../common/i18n';
-import { store, rootRoute } from '../common/kernel';
+import { store, rootRoute, history } from '../common/kernel';
 
-export default class App extends React.Component {
+export default function App() {
 
-  constructor() {
-    super();
-
-    // Hot reloadable translation json files
-    if (module.hot) {
-      // modules.hot.accept does not accept dynamic dependencies,
-      // have to be constants at compile-time
-      module.hot.accept('../common/i18n', () => this.forceUpdate());
-    }
-  }
-
-  render() {
-    return (
-      <Provider store={store}>
-        <LanguageProvider messages={translationMessages}>
-          <Router
-            history={history}
-            routes={rootRoute}
-            render={
-              // Scroll to top when going to a new page, imitating default browser
-              // behaviour
-              applyRouterMiddleware(useScroll())
-            }
-          />
-        </LanguageProvider>
-      </Provider>
-    );
-  }
+  return (
+    <Provider store={store}>
+      <LanguageProvider messages={translationMessages}>
+        <Router
+          history={history}
+          routes={rootRoute}
+          render={
+            // Scroll to top when going to a new page, imitating default browser behaviour
+            applyRouterMiddleware(useScroll())
+          }
+        />
+      </LanguageProvider>
+    </Provider>
+  );
 }
 
 // Install ServiceWorker and AppCache in the end since

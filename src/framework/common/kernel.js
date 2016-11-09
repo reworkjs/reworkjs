@@ -1,5 +1,3 @@
-// import { createMemoryHistory } from 'history';
-// import createBrowserHistory from 'history/lib/createBrowserHistory';
 import { syncHistoryWithStore } from 'react-router-redux';
 import { browserHistory, createMemoryHistory } from 'react-router';
 import '../common/load-polyfills';
