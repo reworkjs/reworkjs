@@ -3,7 +3,7 @@ import mkdirp from 'mkdirp';
 import webpack from 'webpack';
 import chalk from 'chalk';
 import logger from '../../shared/logger';
-import frameworkConfig from '../config/framework-config';
+import frameworkConfig from '../../shared/framework-config';
 
 export default function compileWebpack(config, watch: boolean, callback: ?(entryPoint: StatDetails) => void) {
   const compiler = webpack(config);

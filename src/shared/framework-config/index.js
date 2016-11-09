@@ -1,8 +1,9 @@
 import fs from 'fs';
 import merge from 'lodash/merge';
+import { resolveProject, resolveFramework } from '../../shared/resolve';
 import logger from '../../shared/logger';
 import { FrameworkConfigStruct } from '../../shared/FrameworkConfigStruct';
-import { resolveProject, requireRawProject, resolveFramework } from '../util/RequireUtil';
+import { requireRawProject } from '../../internals/util/RequireUtil';
 import defaultConfig from './default-config';
 
 /**
@@ -10,10 +11,9 @@ import defaultConfig from './default-config';
  */
 function getUserConfig() {
   try {
-    const appConfig = JSON.parse(requireRawProject('.framework-config'));
+    return JSON.parse(requireRawProject('.framework-config'));
 
-    logger.info('".framework-config" found in app directory, overriding defaults.');
-    return appConfig;
+    // logger.info('".framework-config" found in app directory, overriding defaults.');
   } catch (e) {
     if (e.code !== 'ENOENT') {
       throw e;
@@ -42,7 +42,7 @@ function resolveEntries(obj) {
         break;
 
       default:
-        console.warn(`Invalid property for config key ${JSON.stringify(key)}`);
+        logger.warn(`Invalid property for config key ${JSON.stringify(key)}`);
     }
   }
 
@@ -53,19 +53,22 @@ function checkDirectories(config: FrameworkConfigStruct) {
   for (const directoryName of Object.getOwnPropertyNames(config.directories)) {
     const directory = config.directories[directoryName];
 
-    try {
-      const stat = fs.statSync(directory);
-      if (!stat.isDirectory()) {
-        console.error(`directories.${directoryName} value ${JSON.stringify(directory)} is not a valid directory`);
-        config.directories[directoryName] = resolveFramework('dummy/empty-directory');
-      }
-    } catch (e) {
-      console.warn(`directories.${directoryName} value ${JSON.stringify(directory)} does not exist.`);
+    if (!isDirectory(directory)) {
+      logger.warn(`framework configuration: directories.${directoryName} value ${JSON.stringify(directory)} is not a directory.`);
       config.directories[directoryName] = resolveFramework('dummy/empty-directory');
     }
   }
 
   return config;
+}
+
+function isDirectory(dir) {
+  try {
+    const stat = fs.statSync(dir);
+    return stat.isDirectory();
+  } catch (e) {
+    return false;
+  }
 }
 
 const config: FrameworkConfigStruct = merge(defaultConfig, resolveEntries(getUserConfig()));

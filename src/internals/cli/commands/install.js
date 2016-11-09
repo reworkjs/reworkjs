@@ -1,8 +1,8 @@
 import fs from 'fs';
-import { resolveProject } from '../../util/RequireUtil';
 import { runCommandSync } from '../run-command';
 import { checkDependencies, installMissingDependency } from '../npm';
 import { info, warn } from '../stdio';
+import { resolveProject } from '../../../shared/resolve';
 
 const packageJsonLoc = resolveProject('package.json');
 

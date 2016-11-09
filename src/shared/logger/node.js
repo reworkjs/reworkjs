@@ -1,4 +1,5 @@
 import winston from 'winston';
+import globals from '../globals';
 
 const logger = new (winston.Logger)({
   levels: {
@@ -33,7 +34,7 @@ logger.add(winston.transports.Console, {
   colorize: true,
   silent: false,
   timestamp: false,
-  label: process.env.PROCESS_NAME || 'FrameworkCli',
+  label: globals.PROCESS_NAME,
 });
 
 logger.add(winston.transports.File, {

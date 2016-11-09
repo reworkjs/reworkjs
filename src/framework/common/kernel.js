@@ -7,10 +7,10 @@ import createRoutes from './create-routes';
 import createStore from './create-store';
 
 // TODO load polyfills and call pre-init.
-const isServer = process.env.SIDE === 'server';
+const isClient = process.env.SIDE === 'client';
 
 // useRouterHistory creates a composable higher-order function
-const navigationHistory = useRouterHistory(isServer ? createMemoryHistory : createBrowserHistory)();
+const navigationHistory = useRouterHistory(isClient ? createBrowserHistory : createMemoryHistory)();
 const initialState = {};
 const store = createStore(initialState, navigationHistory);
 

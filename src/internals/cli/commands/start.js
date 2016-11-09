@@ -1,5 +1,5 @@
 import getPort from 'get-port';
-import frameworkConfig from '../../config/framework-config';
+import frameworkConfig from '../../../shared/framework-config';
 import { getDefault } from '../../../shared/util/ModuleUtil';
 import { requireRoot } from '../../util/RequireUtil';
 import compileWebpack, { StatDetails, EntryPoint } from '../compile-webpack';
