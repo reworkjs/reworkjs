@@ -5,7 +5,7 @@
  */
 
 // This directory will be replaced by the one set by the configuration, by webpack
-const externalProviders = require.context('@@directories.routes', true, /\.js$/);
-const routes = externalProviders.keys().map(file => externalProviders(file));
+const routeLoader = require.context('@@directories.routes', true, /\.js$/);
+const routes = routeLoader.keys().map(file => routeLoader(file));
 
 export default routes;
