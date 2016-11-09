@@ -33,6 +33,7 @@ function unpromisifyGetComponent(route, injectors, store) {
 
   return async function callbackGetComponent(nextState, callback) {
 
+    let __component; // eslint-disable-line
     try {
       const [component, sagas, reducers] = await Promise.all([
         route.getComponent.call(route, nextState, store),
@@ -50,10 +51,19 @@ function unpromisifyGetComponent(route, injectors, store) {
         }
       }
 
-      callback(null, getDefault(component));
+      __component = getDefault(component);
     } catch (e) {
-      onError(e);
+      __component = null;
+      console.error('Error while loading route', e);
       callback(e);
+    }
+
+    if (__component) {
+      try {
+        callback(null, __component);
+      } catch (e) {
+        console.error('Error while rendering route', e);
+      }
     }
   };
 }
@@ -98,9 +108,4 @@ async function callLoader(loader, route, nextState, store) {
   }
 
   return [output];
-}
-
-function onError(err) {
-  // TODO proper error handling.
-  console.error('Dynamic page loading failed', err); // eslint-disable-line no-console
 }
