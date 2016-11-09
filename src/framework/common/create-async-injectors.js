@@ -1,4 +1,4 @@
-import assert from 'assert';
+// import assert from 'assert';
 import conformsTo from 'lodash/conformsTo';
 import isEmpty from 'lodash/isEmpty';
 import isFunction from 'lodash/isFunction';
@@ -20,10 +20,9 @@ export function checkStore(store) {
     asyncReducers: isObject,
   };
 
-  assert(
-    conformsTo(store, shape),
-    '(app/utils...) asyncInjectors: Expected a valid redux store',
-  );
+  if (!conformsTo(store, shape)) {
+    throw new TypeError('asyncInjectors: Expected a valid redux store');
+  }
 }
 
 /**
@@ -35,10 +34,9 @@ export function createAsyncReducerInjector(store, isValid) {
       checkStore(store);
     }
 
-    assert(
-      isString(name) && !isEmpty(name) && isFunction(asyncReducer),
-      '(app/utils...) injectAsyncReducer: Expected `asyncReducer` to be a reducer function',
-    );
+    if (!isString(name) || isEmpty(name) || !isFunction(asyncReducer)) {
+      throw new TypeError('injectAsyncReducer: Expected `asyncReducer` to be a reducer function');
+    }
 
     store.asyncReducers[name] = asyncReducer; // eslint-disable-line no-param-reassign
     store.replaceReducer(createReducer(store.asyncReducers));
@@ -54,10 +52,9 @@ export function createAsyncSagaInjector(store, isValid) {
       checkStore(store);
     }
 
-    assert(
-      Array.isArray(sagas),
-      '(app/utils...) injectAsyncSagas: Expected `sagas` to be an array of generator functions',
-    );
+    if (!Array.isArray(sagas)) {
+      throw new TypeError('(app/utils...) injectAsyncSagas: Expected `sagas` to be an array of generator functions');
+    }
 
     if (isEmpty(sagas)) {
       console.warn('(app/utils...) injectAsyncSagas: Received an empty `sagas` array');

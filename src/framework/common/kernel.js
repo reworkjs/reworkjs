@@ -1,16 +1,18 @@
-import { createBrowserHistory, createMemoryHistory } from 'history';
+// import { createMemoryHistory } from 'history';
+// import createBrowserHistory from 'history/lib/createBrowserHistory';
 import { syncHistoryWithStore } from 'react-router-redux';
-import { useRouterHistory } from 'react-router';
+import { browserHistory, createMemoryHistory } from 'react-router';
+import '../common/load-polyfills';
 import { selectLocationState } from '../app/providers/RouteProvider/route-selectors';
 import mainComponent from '../common/main-component';
+import globals from '../../shared/globals';
 import createRoutes from './create-routes';
 import createStore from './create-store';
 
-// TODO load polyfills and call pre-init.
-const isClient = process.env.SIDE === 'client';
+const isClient = globals.SIDE === 'client';
 
 // useRouterHistory creates a composable higher-order function
-const navigationHistory = useRouterHistory(isClient ? createBrowserHistory : createMemoryHistory)();
+const navigationHistory = isClient ? browserHistory : createMemoryHistory();
 const initialState = {};
 const store = createStore(initialState, navigationHistory);
 
