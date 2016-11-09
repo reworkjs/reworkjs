@@ -9,6 +9,7 @@ import frameworkConfig from '../../shared/framework-config';
 import { isDev, isTest } from '../../shared/EnvUtil';
 import logger from '../../shared/logger';
 import projectMetadata from '../../shared/project-metadata';
+import frameworkMetadata from '../../shared/framework-metadata';
 import frameworkBabelRc from '../../shared/framework-babelrc';
 import { resolveRoot, resolveFramework } from '../../shared/resolve';
 import selectWebpackModulePlugin from './selectWebpackModulePlugin';
@@ -88,8 +89,13 @@ export default class WebpackBase {
     };
 
     if (this.isServer()) {
+      // exclude any absolute module (npm/node) from the build, except this module.
+      // this module must be included otherwise the server build will have two
+      // separate versions of the framework loaded.
+      const anyAbsoluteExceptFramework = new RegExp(`^(?!${frameworkMetadata.name}(\\/.+)?$)[a-z\\-0-9]+(\\/.+)?$`);
+
       config.externals = [
-        /^[a-z\-0-9]+$/,
+        anyAbsoluteExceptFramework,
         /\.json$/,
       ];
     }
@@ -226,11 +232,13 @@ export default class WebpackBase {
   }
 
   getAliases() {
+
     return {
       '@@directories.routes': frameworkConfig.directories.routes,
       '@@main-component': frameworkConfig['entry-react'],
       '@@pre-init': frameworkConfig['pre-init'],
       '@@directories.providers': frameworkConfig.directories.providers,
+      [frameworkMetadata.name]: resolveRoot(''),
     };
   }
 
@@ -264,6 +272,7 @@ export default class WebpackBase {
         frameworkConfig: JSON.stringify(frameworkConfig),
         frameworkBabelrc: JSON.stringify(frameworkBabelRc),
         projectMetadata: JSON.stringify(projectMetadata),
+        frameworkMetadata: JSON.stringify(frameworkMetadata),
       }),
 
       selectWebpackModulePlugin(),
