@@ -1,15 +1,18 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { createSelector } from 'reselect';
 import { IntlProvider } from 'react-intl';
-import { selectLocale } from './selectors';
-import reducer from './reducer';
+import container from '../common/decorators/container';
+import LanguageProvider from './providers/LanguageProvider';
 
 /*
  * this component connects the redux state language locale to the
  * IntlProvider component and i18n messages (loaded from `app/translations`)
  */
-class LanguageProvider extends React.Component {
+@container({
+  state: {
+    locale: LanguageProvider.locale,
+  },
+})
+export default class LanguageComponent extends React.Component {
   static propTypes = {
     locale: React.PropTypes.string,
     messages: React.PropTypes.object,
@@ -23,7 +26,7 @@ class LanguageProvider extends React.Component {
     if (module.hot) {
       // modules.hot.accept does not accept dynamic dependencies,
       // have to be constants at compile-time
-      module.hot.accept('../../../common/i18n', () => this.forceUpdate());
+      module.hot.accept('../common/i18n', () => this.forceUpdate());
     }
   }
 
@@ -35,17 +38,3 @@ class LanguageProvider extends React.Component {
     );
   }
 }
-
-const mapStateToProps = createSelector(
-  selectLocale(),
-  locale => ({ locale }),
-);
-
-function mapDispatchToProps(dispatch) {
-  return {
-    dispatch,
-  };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(LanguageProvider);
-export { reducer };

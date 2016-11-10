@@ -25,20 +25,23 @@ export const locales = translationLoaders.keys().map(filePath => {
 });
 
 export function loadLocale(locale) {
-  const file = localeToFileMapping.get(locale);
-  if (!file) {
-    return Promise.reject(new Error(`Unknown locale ${JSON.stringify(locale)}. Did you forget to add the translation file ?`));
-  }
 
-  const translationPromise = new Promise(resolve => {
+  const translationPromise = new Promise((resolve, reject) => {
+    const translationLocale = bestGuessTranslationLocale(locale);
+
+    if (translationLocale === null) {
+      return reject(new Error(`Unknown locale ${JSON.stringify(locale)}. Did you forget to add the translation file ?`));
+    }
+
+    const file = localeToFileMapping.get(translationLocale);
     const loader = translationLoaders(file);
 
     loader(module => resolve(getDefault(module)));
   });
 
   const intlPromise = new Promise(resolve => {
-    const localeToUse = bestGuessIntl(locale);
-    const loader = localeDataLoaders(`./${localeToUse}.js`);
+    const intlLocale = bestGuessIntlLocale(locale);
+    const loader = localeDataLoaders(`./${intlLocale}.js`);
 
     loader(module => resolve(getDefault(module)));
   });
@@ -52,7 +55,24 @@ export function loadLocale(locale) {
   });
 }
 
-function bestGuessIntl(locale) {
+export function bestGuessTranslationLocale(locale) {
+  if (localeToFileMapping.has(locale)) {
+    return locale;
+  }
+
+  if (locale.indexOf('-') === -1) {
+    return null;
+  }
+
+  const countryPart = locale.split('-')[0];
+  if (localeToFileMapping.has(countryPart)) {
+    return countryPart;
+  }
+
+  return null;
+}
+
+function bestGuessIntlLocale(locale) {
   if (availableIntls.includes(locale)) {
     return locale;
   }
@@ -60,7 +80,7 @@ function bestGuessIntl(locale) {
   const nextLocale = locale.indexOf('-') !== -1 ? locale.split('-')[0] : 'en';
 
   logger.warn(`Unknown locale "${locale}". Fallbacking to "${nextLocale}"`);
-  return bestGuessIntl(nextLocale);
+  return bestGuessIntlLocale(nextLocale);
 }
 
 function getFileName(file) {

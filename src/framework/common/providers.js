@@ -4,16 +4,33 @@
  * Using webpack.
  */
 
+import requireAll from '../util/require-all';
+import { isProvider } from './decorators/provider';
+
 export type Provider = {
   reducer: ?Function,
   sagas: ?Function[],
 };
 
-// This directory will be replaced by the one set by the configuration, by webpack
-const externalProviders = require.context('@@directories.providers', true, /\.js$/);
-const providers = externalProviders.keys().map(file => externalProviders(file));
+const providers: Provider[] = requireAll(
+  require.context('@@directories.providers', true, /\.js$/),
+  require.context('../app/providers', true, /\.js$/),
+).filter(selectProvider);
 
-const localProviders = require.context('../app/providers');
-const finalProviders: Provider[] = providers.concat(localProviders.keys().map(file => localProviders(file)));
+function selectProvider(item) {
+  if (item == null) {
+    return false;
+  }
 
-export default finalProviders;
+  if (isProvider(item)) {
+    return true;
+  }
+
+  if (typeof item === 'object') {
+    return Object.prototype.hasOwnProperty.call(item, 'reducer') || Object.prototype.hasOwnProperty.call(item, 'sagas');
+  }
+
+  return false;
+}
+
+export default providers;

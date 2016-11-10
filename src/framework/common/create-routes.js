@@ -1,5 +1,6 @@
 import flatten from 'lodash/flatten';
 import { getDefault } from '../../shared/util/ModuleUtil';
+import { Symbols } from './decorators/provider';
 import createAsyncInjectors from './create-async-injectors';
 import routeModules from './routes';
 
@@ -19,9 +20,22 @@ function sanitizeRoute(routeData, injectors, store) {
   const route = Object.assign({}, routeData);
 
   route.getComponent = unpromisifyGetComponent(routeData, injectors, store);
+
+  delete route.getSaga;
   delete route.getSagas;
   delete route.getReducer;
+  delete route.getReducers;
+  delete route.getProvider;
+  delete route.getProviders;
   delete route.priority;
+
+  if (route.children) {
+    if (Array.isArray(route.children)) {
+      route.children = route.children.map(subRoute => sanitizeRoute(subRoute.children, injectors, store));
+    } else {
+      route.children = [sanitizeRoute(route.children, injectors, store)];
+    }
+  }
 
   return route;
 }
@@ -35,19 +49,20 @@ function unpromisifyGetComponent(route, injectors, store) {
 
     let __component; // eslint-disable-line
     try {
-      const [component, sagas, reducers] = await Promise.all([
+      const [component, sagas, reducers, providers] = await Promise.all([
         route.getComponent.call(route, nextState, store),
         callSagaLoader(route, nextState, store),
         callReducerLoader(route, nextState, store),
+        callProviderLoader(route, nextState, store),
       ]);
 
-      if (sagas) {
-        injectors.injectSagas(sagas);
-      }
+      injectSagas(injectors, sagas);
+      injectReducers(injectors, reducers);
 
-      if (reducers) {
-        for (const reducer of reducers) {
-          injectors.injectReducer(reducer.name, reducer);
+      if (providers) {
+        for (const provider of providers) {
+          injectSagas(injectors, provider[Symbols.sagas]);
+          injectReducers(injectors, provider[Symbols.reducer]);
         }
       }
 
@@ -68,7 +83,28 @@ function unpromisifyGetComponent(route, injectors, store) {
   };
 }
 
-/**
+function injectSagas(injectors, sagas) {
+  if (sagas && sagas.length > 0) {
+    injectors.injectSagas(sagas);
+  }
+}
+
+function injectReducers(injectors, reducers) {
+  if (!reducers) {
+    return;
+  }
+
+  if (!Array.isArray(reducers)) {
+    injectors.injectReducer(reducers.name, reducers);
+    return;
+  }
+
+  for (const reducer of reducers) {
+    injectors.injectReducer(reducer.name, reducer);
+  }
+}
+
+/*
  * Unifies the possible outputs of route.getSaga-s
  */
 async function callSagaLoader(route, nextState, store) {
@@ -78,7 +114,14 @@ async function callSagaLoader(route, nextState, store) {
   return sagas ? flatten(sagas) : sagas;
 }
 
-/**
+async function callProviderLoader(route, nextState, store) {
+  const method = route.getProvider || route.getProviders;
+  const providers = await callLoader(method, route, nextState, store);
+
+  return providers ? flatten(providers) : providers;
+}
+
+/*
  * Unifies the possible outputs of route.getReducer-s
  */
 function callReducerLoader(route, nextState, store) {

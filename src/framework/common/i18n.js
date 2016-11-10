@@ -4,7 +4,7 @@
  * This will setup the i18n language files and locale data for your app.
  */
 import { addLocaleData } from 'react-intl';
-import { locales, loadLocale as importLocale } from './locales';
+import { locales, loadLocale as importLocale, bestGuessTranslationLocale as bestGuessLocale } from './locales';
 
 function formatTranslationMessages(messages) {
   const formattedMessages = {};
@@ -26,4 +26,17 @@ export function installLocale(localeName) {
 
 export default translations;
 
-installLocale('en');
+export function isLocaleValid(locale) {
+  return bestGuessLocale(locale) !== null;
+}
+
+export function tryInstall(locale) {
+  locale = bestGuessLocale(locale);
+
+  if (locale) {
+    installLocale(locale);
+    return true;
+  }
+
+  return false;
+}
