@@ -5,7 +5,6 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { applyRouterMiddleware, Router } from 'react-router';
 import { useScroll } from 'react-router-scroll';
-import offlinePlugin from 'offline-plugin/runtime';
 import translationMessages from '../common/i18n';
 import { store, rootRoute, history } from '../common/kernel';
 import LanguageComponent from './LanguageComponent';
@@ -31,4 +30,6 @@ export default function App() {
 // Install ServiceWorker and AppCache in the end since
 // it's not most important operation and if main code fails,
 // we do not want it installed
-offlinePlugin.install();
+if (process.env.NODE_ENV === 'production') {
+  require('offline-plugin/runtime').install(); // eslint-disable-line global-require
+}

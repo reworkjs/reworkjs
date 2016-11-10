@@ -27,7 +27,7 @@ export default class LanguageComponent extends React.Component {
   constructor(props) {
     super(props);
 
-    props.changeLocale(getStartLocale());
+    props.changeLocale(guessPreferredLocale());
 
     if (module.hot) {
       onHotReload(() => this.forceUpdate());
@@ -43,7 +43,7 @@ export default class LanguageComponent extends React.Component {
   }
 }
 
-function getStartLocale() {
+function guessPreferredLocale() {
   if (typeof navigator === 'undefined') {
     return 'en';
   }
