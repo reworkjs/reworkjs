@@ -5,6 +5,8 @@ import createSagaMiddleware from 'redux-saga';
 import global from 'global';
 import { getDefault } from '../../shared/util/ModuleUtil';
 import createReducer from './create-reducer';
+import providers from './providers';
+import { Symbols } from './decorators/provider';
 
 const sagaMiddleware = createSagaMiddleware();
 const devtools = global.devToolsExtension || (() => noop => noop);
@@ -32,7 +34,7 @@ export default function configureStore(initialState = {}, history) {
   // Create hook for async sagas
   store.runSaga = sagaMiddleware.run;
 
-  // TODO load saga providers.
+  loadProviderSagas(store);
 
   // Make reducers hot reloadable, see http://mxs.is/googmo
   /* istanbul ignore next */
@@ -48,4 +50,17 @@ export default function configureStore(initialState = {}, history) {
   // Initialize it with no other reducers
   store.asyncReducers = {};
   return store;
+}
+
+function loadProviderSagas(store) {
+  for (const provider of providers) {
+    const sagas = provider[Symbols.sagas] || provider.sagas;
+    if (!sagas) {
+      continue;
+    }
+
+    for (const saga of sagas) {
+      store.runSaga(saga);
+    }
+  }
 }

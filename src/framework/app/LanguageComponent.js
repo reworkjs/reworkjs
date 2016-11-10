@@ -1,5 +1,6 @@
 import React from 'react';
 import { IntlProvider } from 'react-intl';
+import { isLocaleValid } from '../common/i18n';
 import container from '../common/decorators/container';
 import LanguageProvider from './providers/LanguageProvider';
 
@@ -11,16 +12,22 @@ import LanguageProvider from './providers/LanguageProvider';
   state: {
     locale: LanguageProvider.locale,
   },
+  actions: {
+    changeLocale: LanguageProvider.changeLocale,
+  },
 })
 export default class LanguageComponent extends React.Component {
   static propTypes = {
-    locale: React.PropTypes.string,
     messages: React.PropTypes.object,
+    locale: React.PropTypes.string.isRequired,
+    changeLocale: React.PropTypes.func.isRequired,
     children: React.PropTypes.element.isRequired,
   };
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+
+    props.changeLocale(getStartLocale());
 
     // Hot reloadable translation json files
     if (module.hot) {
@@ -37,4 +44,24 @@ export default class LanguageComponent extends React.Component {
       </IntlProvider>
     );
   }
+}
+
+function getStartLocale() {
+  if (typeof navigator === 'undefined') {
+    return 'en';
+  }
+
+  if (navigator.languages) {
+    for (const language of navigator.languages) {
+      if (isLocaleValid(language)) {
+        return language;
+      }
+    }
+  }
+
+  if (isLocaleValid(navigator.language)) {
+    return navigator.language;
+  }
+
+  return 'en';
 }
