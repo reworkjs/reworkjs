@@ -1,36 +1,24 @@
-import { provider } from '../../common/decorators/provider';
+import { call, put } from 'redux-saga/effects';
+import { provider, saga, reducer } from '../../common/decorators/provider';
+import { installLocale } from '../../common/i18n';
 
 @provider
 export default class LanguageProvider {
   static locale: string = 'en';
 
+  @saga
   static *changeLocale(newLocale) {
-    console.log(newLocale);
+    const result = yield call(installLocale, newLocale);
+    console.log(result);
+    yield put(this._setLocale(newLocale)); // eslint-disable-line
   }
 
+  /**
+   * @private
+   */
+  @reducer
   static _setLocale(locale) {
+    console.log('Oh oh oh');
     this.locale = locale;
   }
 }
-
-/*
- function getStartLocale() {
- if (typeof navigator === 'undefined') {
- return 'en';
- }
-
- if (navigator.languages) {
- for (const language of navigator.languages) {
- if (isLocaleValid(language)) {
- return language;
- }
- }
- }
-
- if (isLocaleValid(navigator.language)) {
- return navigator.language;
- }
-
- return 'en';
- }
- */
