@@ -8,8 +8,7 @@ export default class LanguageProvider {
 
   @saga
   static *changeLocale(newLocale) {
-    const result = yield call(installLocale, newLocale);
-    console.log(result);
+    yield call(installLocale, newLocale);
     yield put(this._setLocale(newLocale)); // eslint-disable-line
   }
 
@@ -18,7 +17,6 @@ export default class LanguageProvider {
    */
   @reducer
   static _setLocale(locale) {
-    console.log('Oh oh oh');
     this.locale = locale;
   }
 }

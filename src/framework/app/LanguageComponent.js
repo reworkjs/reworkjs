@@ -1,6 +1,6 @@
 import React from 'react';
 import { IntlProvider } from 'react-intl';
-import { isLocaleValid } from '../common/i18n';
+import { isLocaleValid, onHotReload } from '../common/i18n';
 import container from '../common/decorators/container';
 import LanguageProvider from './providers/LanguageProvider';
 
@@ -29,11 +29,8 @@ export default class LanguageComponent extends React.Component {
 
     props.changeLocale(getStartLocale());
 
-    // Hot reloadable translation json files
     if (module.hot) {
-      // modules.hot.accept does not accept dynamic dependencies,
-      // have to be constants at compile-time
-      module.hot.accept('../common/i18n', () => this.forceUpdate());
+      onHotReload(() => this.forceUpdate());
     }
   }
 
