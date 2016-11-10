@@ -6,15 +6,15 @@ import { Provider } from 'react-redux';
 import { applyRouterMiddleware, Router } from 'react-router';
 import { useScroll } from 'react-router-scroll';
 import offlinePlugin from 'offline-plugin/runtime';
-import LanguageProvider from '../app/providers/LanguageProvider';
 import translationMessages from '../common/i18n';
 import { store, rootRoute, history } from '../common/kernel';
+import LanguageComponent from './LanguageComponent';
 
 export default function App() {
 
   return (
     <Provider store={store}>
-      <LanguageProvider messages={translationMessages}>
+      <LanguageComponent messages={translationMessages}>
         <Router
           history={history}
           routes={rootRoute}
@@ -23,7 +23,7 @@ export default function App() {
             applyRouterMiddleware(useScroll())
           }
         />
-      </LanguageProvider>
+      </LanguageComponent>
     </Provider>
   );
 }
