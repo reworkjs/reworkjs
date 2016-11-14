@@ -1,2 +1,5 @@
-- use eslint-loader in webpack (disableable)
-- use decorators
+- add to dependencies:
+-- html-webpack-plugin
+-- offline-plugin
+-- extract-text-webpack-plugin
+-- cheerio
