@@ -4,38 +4,17 @@
     "stage-0"
   ],
   "plugins": [
+    "transform-decorators-legacy",
+    "syntax-async-functions",
     "transform-async-to-generator",
     "transform-flow-strip-types"
   ],
   "env": {
     "production": {
-      "presets": ["es2015"],
       "plugins": [
         "transform-react-remove-prop-types",
         "transform-react-constant-elements",
-        "transform-react-inline-elements",
-        "transform-class-properties"
-      ]
-    },
-
-    "development": {
-      "presets": ["es2015"],
-      "plugins": ["transform-class-properties"]
-    },
-
-    "development-webpack": {
-      "presets": [["es2015", { "modules": false }]],
-      "plugins": ["transform-class-properties"]
-    },
-
-    "production-webpack": {
-      "presets": [["es2015", { "modules": false }]],
-      "only": ["app"],
-      "plugins": [
-        "transform-react-remove-prop-types",
-        "transform-react-constant-elements",
-        "transform-react-inline-elements",
-        "transform-class-properties"
+        "transform-react-inline-elements"
       ]
     }
   }
