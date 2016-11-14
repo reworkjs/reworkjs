@@ -8,6 +8,7 @@ import { isActionGenerator } from './ActionDecorator';
 
 const stateHolderSymbol = Symbol('state-holder');
 const mutatedProperties = Symbol('mutatedProperties');
+const mutableVersion = Symbol('mutable-version');
 const PROPERTY_BLACKLIST = ['length', 'name', 'prototype', 'arguments', 'caller', 'callee'];
 
 function denyAccess() {
@@ -180,12 +181,12 @@ function extractSaga(providerClass: Function, propertyName: string, sagaList: Ar
     ? Symbol(namespacedActionName)
     : `@provider/${providerClass.name}/action/${propertyName}`;
 
-  function *convertAction(action) {
+  function *callActionHandler(action) {
     yield* property.apply(providerClass, action.payload);
   }
 
   function *awaitAction() {
-    yield* takeLatest(actionType, convertAction);
+    yield* takeLatest(actionType, callActionHandler);
   }
 
   awaitAction.actionType = actionType;
@@ -253,6 +254,52 @@ function extractState(providerClass, propertyName, initialState, selectDomain) {
   });
 }
 
+function definePropertyTrap(target, property) {
+  throw new TypeError(`Cannot define property ${JSON.stringify(property)} on this object, it is immutable.`);
+}
+
+function setTrap(target, property, value) {
+  if (typeof property === 'symbol') {
+    target[property] = value;
+    return true;
+  }
+
+  throw new TypeError(`Cannot set property ${JSON.stringify(property)} on this object, it is immutable.`);
+}
+
+const proxied = Symbol('proxied');
+
+/* eslint-disable no-invalid-this */
+function useArrayMethodOnImmutableList(methodName) {
+
+  function methodProxy(...args) {
+    if (this == null) {
+      throw new TypeError('`this` cannot be null / undefined.');
+    }
+
+    const target = this[proxied] ? this[proxied] : this;
+
+    let self;
+    if (target[mutableVersion]) {
+      self = target[mutableVersion];
+    } else if (target instanceof Collection.Indexed) {
+      self = Object.freeze(target.toJS());
+      target[mutableVersion] = self;
+    } else if (Array.isArray(target)) {
+      self = target;
+    } else {
+      throw new TypeError('Expected `this` to be a list or array.');
+    }
+
+    return Array.prototype[methodName].apply(self, args);
+  }
+
+  // attemptChangeName(methodProxy, methodName);
+
+  return methodProxy;
+}
+/* eslint-enable */
+
 function proxyGet(store, propertyName) {
   const value = store.get(propertyName);
 
@@ -261,31 +308,38 @@ function proxyGet(store, propertyName) {
     return value;
   }
 
+  if (typeof Proxy === 'undefined') {
+    return value.toJS();
+  }
+
   const isIndexed = value instanceof Collection.Indexed;
 
-  // proxy the collection to deny mutating in proxies.
-  return new Proxy(value, {
+  const traps = {
     get(target, property) {
+      if (typeof property === 'symbol') {
+        return target[property];
+      }
+
       if (!target.has(property) && isIndexed) {
         // return immutableJS List methods.
         if (property === 'length') {
           return target.size;
         }
 
-        return target[property];
+        return useArrayMethodOnImmutableList(property);
       }
 
       return proxyGet(target, property);
     },
 
-    set(target, property) {
-      throw new TypeError(`Cannot set property ${JSON.stringify(property)} on this object, it is immutable.`);
-    },
+    set: setTrap,
+    defineProperty: definePropertyTrap,
+  };
 
-    defineProperty(target, property) {
-      throw new TypeError(`Cannot define property ${JSON.stringify(property)} on this object, it is immutable.`);
-    },
-  });
+  const proxy = new Proxy(value, traps);
+  proxy[proxied] = value;
+
+  return proxy;
 }
 
 function pushToArrayMap(map: Map, key, value) {
