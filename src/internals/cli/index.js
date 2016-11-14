@@ -1,8 +1,8 @@
-import minimist from 'minimist';
 import '../../shared/regenerator';
+import argv from '../../shared/argv';
+import logger from '../../shared/logger';
 import commandList from './command-list';
 
-const argv = minimist(process.argv.slice(2));
 const { _: mainArgs, ...otherArgs } = argv;
 const commandName = mainArgs[0] || commandList.help.name;
 const params = mainArgs.splice(1);
@@ -17,8 +17,8 @@ export function getCommand(name: string): Function {
     return commandList[name];
   }
 
-  console.error(`Unknown command ${JSON.stringify(name)}`);
-  console.info('Use `help` for a list of commands');
+  logger.error(`Unknown command ${JSON.stringify(name)}`);
+  logger.info('Use `help` for a list of commands');
   process.exit(1);
 }
 
@@ -26,7 +26,7 @@ export function getCommand(name: string): Function {
   try {
     await getCommand(commandName)(params, otherArgs);
   } catch (e) {
-    console.error(e);
+    logger.error(e);
     process.exit(1);
   }
 }());

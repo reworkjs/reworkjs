@@ -18,12 +18,15 @@ export default function addDevMiddlewares(app) {
   });
 
   app.use(middleware);
-  app.use(webpackHotMiddleware(compiler));
+  app.use(webpackHotMiddleware(compiler, {
+    log: logger.info.bind(logger),
+  }));
 
   // Since webpackDevMiddleware uses memory-fs internally to store build
   // artifacts, we use it instead
   const fs = middleware.fileSystem;
 
+  // TODO dllPlugin
   // if (dllPlugin) {
   //   app.get(/\.dll\.js$/, (req, res) => {
   //     const filename = req.path.replace(/^\//, '');
@@ -31,6 +34,7 @@ export default function addDevMiddlewares(app) {
   //   });
   // }
 
+  // TODO mechanism for 404, 500, ... routes.
   return function serveRoute(req, res, html = '') {
     fs.readFile(path.join(compiler.outputPath, 'index.html'), (err, file) => {
 

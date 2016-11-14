@@ -11,7 +11,7 @@ import logger from '../../shared/logger';
 import projectMetadata from '../../shared/project-metadata';
 import frameworkMetadata from '../../shared/framework-metadata';
 import frameworkBabelRc from '../../shared/framework-babelrc';
-import { resolveRoot, resolveFramework } from '../../shared/resolve';
+import { resolveRoot, resolveFramework, resolveProject } from '../../shared/resolve';
 import selectWebpackModulePlugin from './selectWebpackModulePlugin';
 
 function fixBabelConfig(babelConfig) {
@@ -105,12 +105,12 @@ export default class WebpackBase {
 
   buildLoaders() {
 
-    return [{
+    const loaders = [{
       test: /\.json$/,
       loader: 'json',
     }, {
-      test: /\.js$/,
-      loader: 'babel',
+      test: /\.jsx?$/,
+      loader: 'babel-loader',
       exclude: /node_modules/,
       query: fixBabelConfig(this.getBabelConfig()),
     }, {
@@ -146,6 +146,17 @@ export default class WebpackBase {
       test: /\.(mp4|webm)$/,
       loader: 'url-loader?limit=10000',
     }].concat(this.buildCssLoaders());
+
+    if (!this.isServer()) {
+      loaders.push({
+        test: /\.jsx?$/,
+        exclude: /node_modules/,
+        loader: 'eslint-loader',
+        enforce: 'pre',
+      });
+    }
+
+    return loaders;
   }
 
   buildCssLoaders() {
