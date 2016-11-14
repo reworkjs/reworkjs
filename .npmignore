@@ -2,7 +2,6 @@
 .gitattributes
 .eslintrc
 .editorconfig
-.babelrc
 .stylelintrc
 .travis.yml
 appveyor.yml
