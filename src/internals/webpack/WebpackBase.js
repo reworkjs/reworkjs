@@ -396,7 +396,9 @@ function templateContent() {
   const appDiv = doc.find('#app');
   if (appDiv.length === 0) {
     logger.info('Could not find #app in html entry point, inserting it.');
-    body.append('<div id="#app"></div>');
+    body.append('<div id="#app">%COMPONENT%</div>');
+  } else {
+    appDiv.append('%COMPONENT%');
   }
 
   // const body = doc.find('body');

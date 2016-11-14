@@ -31,13 +31,16 @@ export default function addDevMiddlewares(app) {
   //   });
   // }
 
-  return function serveRoute(req, res, html) {
+  return function serveRoute(req, res, html = '') {
     fs.readFile(path.join(compiler.outputPath, 'index.html'), (err, file) => {
+
       if (err) {
         res.sendStatus(404);
       } else {
-        console.info(html);
-        res.send(file.toString());
+        const pageHtml = file.toString();
+        const appHtml = pageHtml.replace('%COMPONENT%', `<div>${html}</div>`);
+
+        res.send(appHtml);
       }
     });
   };
