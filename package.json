@@ -1,10 +1,10 @@
 {
-  "name": "react-framework",
+  "name": "reworkjs",
   "version": "1.0.0",
   "description": "A framework based on react-boilerplate 3.1.0",
   "repository": {
     "type": "git",
-    "url": "git://github.com/mxstbr/react-boilerplate.git"
+    "url": "git@github.com:foobarhq/reworkjs.git"
   },
   "engines": {
     "npm": ">=3"
@@ -15,8 +15,8 @@
     "preanalyze": "npm run analyze:clean",
     "analyze": "node ./internals/scripts/analyze.js",
     "analyze:clean": "rimraf stats.json",
-    "lint": "npm run lint:eslint && npm run lint:css",
-    "lint:eslint": "eslint --ignore-path .gitignore --ignore-pattern internals/scripts --ignore-pattern public/",
+    "lint": "npm run lint:eslint",
+    "lint:eslint": "eslint src",
     "lint:staged": "lint-staged",
     "pretest": "npm run test:clean && npm run lint",
     "test:clean": "rimraf ./coverage",
