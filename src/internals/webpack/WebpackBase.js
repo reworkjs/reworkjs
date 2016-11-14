@@ -11,7 +11,7 @@ import logger from '../../shared/logger';
 import projectMetadata from '../../shared/project-metadata';
 import frameworkMetadata from '../../shared/framework-metadata';
 import frameworkBabelRc from '../../shared/framework-babelrc';
-import { resolveRoot, resolveFramework, resolveProject } from '../../shared/resolve';
+import { resolveRoot, resolveFramework } from '../../shared/resolve';
 import selectWebpackModulePlugin from './selectWebpackModulePlugin';
 
 function fixBabelConfig(babelConfig) {
