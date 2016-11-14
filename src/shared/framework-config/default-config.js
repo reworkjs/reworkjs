@@ -11,6 +11,7 @@ const defaultConfig = {
 
   'entry-react': resolveProject('app/containers/App'),
   'entry-html': resolveFramework('app/index.html'),
+  'pre-init': resolveFramework('app/dummy/empty-function'),
 };
 
 export default defaultConfig;
