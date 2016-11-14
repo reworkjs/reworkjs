@@ -1,0 +1,2 @@
+- use eslint-loader in webpack (disableable)
+- use decorators
