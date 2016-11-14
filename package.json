@@ -25,10 +25,9 @@
     "test:firefox": "npm run test -- --browsers Firefox",
     "test:safari": "npm run test -- --browsers Safari",
     "test:ie": "npm run test -- --browsers IE",
-    "build:internals": "NODE_ENV=node babel src --out-dir=lib/ --copy-files",
-    "build:internals:watch": "npm run build:internals -- --watch",
-    "coveralls": "cat ./coverage/lcov/lcov.info | coveralls",
-    "build:watch": "npm run build:internals:watch"
+    "build": "NODE_ENV=node babel src --out-dir=lib/ --copy-files",
+    "build:watch": "npm run build -- --watch",
+    "coveralls": "cat ./coverage/lcov/lcov.info | coveralls"
   },
   "bin": {
     "framework": "bin/framework.bin.js"
