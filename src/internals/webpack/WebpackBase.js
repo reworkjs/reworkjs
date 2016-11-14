@@ -239,7 +239,7 @@ export default class WebpackBase {
   }
 
   getDevTools() {
-    return this.isDev ? 'cheap-module-eval-source-map' : null;
+    return this.isDev ? 'cheap-module-eval-source-map' : 'cheap-source-map';
   }
 
   getAliases() {
