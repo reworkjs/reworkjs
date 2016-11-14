@@ -1,17 +1,25 @@
 import React from 'react';
-import { renderToString } from 'react-dom/server';
-import { match, RouterContext } from 'react-router';
 import { isProd } from '../../../../shared/EnvUtil';
-import { rootRoute } from '../../../common/kernel';
-import App from '../../../app/App';
 import prod from './prod';
 import dev from './dev';
 
 export default function frontEndMiddleware(app, options) {
-
   const serveRoute = isProd ? prod(app, options) : dev(app, options);
 
-  function serveReact(req, res) {
+  const serveApp = options.prerendering ? renderApp(serveRoute) : serveRoute;
+
+  app.use(serveApp);
+}
+
+function renderApp(serveRoute) {
+  /* eslint-disable global-require */
+  const { match, RouterContext } = require('react-router');
+  const { renderToString } = require('react-dom/server');
+  const { rootRoute } = require('../../../common/kernel');
+  const App = require('../../../app/App');
+  /* eslint-enable global-require */
+
+  return function serveApp(req, res) {
     match({ routes: [rootRoute], location: req.url }, (err, redirect, props) => {
 
       if (err) {
@@ -31,12 +39,10 @@ export default function frontEndMiddleware(app, options) {
           </App>,
         );
 
-        return serveRoute(req, res, appHtml.replace('&#x27;', '\''));
+        return serveRoute(req, res, `<div>${appHtml}</div>`);
       }
 
       res.status(404).send('No route defined for path');
     });
-  }
-
-  app.use(serveReact);
+  };
 }

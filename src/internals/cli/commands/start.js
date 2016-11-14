@@ -1,36 +1,35 @@
-import getPort from 'get-port';
+import chalk from 'chalk';
 import frameworkConfig from '../../../shared/framework-config';
 import { getDefault } from '../../../shared/util/ModuleUtil';
 import { requireRoot } from '../../util/RequireUtil';
 import compileWebpack, { StatDetails, EntryPoint } from '../compile-webpack';
 import { runCommandSync } from '../run-command';
-import { info, error } from '../stdio';
+import { info } from '../stdio';
 
-export default function start([mode], otherArgs) {
-  if (mode === 'dev' || mode === 'development') {
-    return startDev(otherArgs);
+export default async function start([mode = 'production'], otherArgs) {
+  if (mode === 'dev') {
+    process.env.NODE_ENV = 'development';
+  } else if (mode === 'prod') {
+    process.env.NODE_ENV = 'production';
+  } else {
+    process.env.NODE_ENV = mode;
   }
 
-  error(`Unknown mode ${mode}`);
-  process.exit(1);
-
-  // TODO
-  // prod || production
-  // tunnel
+  info(`Launching app in ${process.env.NODE_ENV} mode...`);
+  if (otherArgs.prerendering === false) {
+    await runServerWithoutPrerendering();
+  } else {
+    await runServerWithPrerendering();
+  }
 }
 
-// TODO rewrite
-async function startDev(otherArgs) {
-  info('Launching app in development mode...');
+function runServerWithoutPrerendering() {
+  return require('../../../framework/server/init'); // eslint-disable-line
+}
 
-  process.env.NODE_ENV = 'development';
-
-  const args = process.argv.splice(4);
-  if (!otherArgs.port) {
-    args.push('--port', await getPort());
-  }
-
+function runServerWithPrerendering() {
   info('Building your server-side app, this might take a minute.');
+  info(`You can disable server-side rendering using ${chalk.blue('--no-prerendering')}.`);
   const webpackConfig = getDefault(requireRoot('lib/internals/webpack/webpack.server.js'));
 
   compileWebpack(webpackConfig, true, (stats: StatDetails) => {
@@ -48,5 +47,7 @@ async function startDev(otherArgs) {
   });
 }
 
-export const usage = `Accepted options: --port
-Possible modes: dev, prod, tunnel`;
+export const usage = `framework start <mode> <options...>
+
+Possible modes: dev, prod
+Accepted options: --port <number>, --no-prerendering, --tunnel`;
