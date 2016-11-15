@@ -7,6 +7,7 @@ import argv from '../../shared/argv';
 import { isDev } from '../../shared/EnvUtil';
 import logger from '../../shared/logger';
 import frameworkConfig from '../../shared/framework-config';
+import webpackConfig from '../../shared/webpack/webpack.client';
 import serveReactMiddleware from './middlewares/serve-react-middleare';
 
 export default (async function() {
@@ -23,7 +24,7 @@ export default (async function() {
   serveReactMiddleware(app, {
     ...argv,
     outputPath: frameworkConfig.directories.build,
-    publicPath: '/',
+    publicPath: webpackConfig.output.publicPath,
   });
 
   const port = argv.port || process.env.PORT || 3000;

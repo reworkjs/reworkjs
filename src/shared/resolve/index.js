@@ -29,6 +29,6 @@ export function resolveRoot(fileName: string = ''): string {
  * @param fileName - The name of the file to resolve.
  * @returns The path of the file.
  */
-export function resolveFramework(fileName: string): string {
-  return resolve(rootDirectory, 'lib/framework', removeStartSlash(fileName));
+export function resolveFrameworkSource(fileName: string): string {
+  return resolve(rootDirectory, 'src/framework', removeStartSlash(fileName));
 }
