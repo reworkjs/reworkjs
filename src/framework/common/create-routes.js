@@ -6,25 +6,25 @@ import createAsyncInjectors from './create-async-injectors';
 export default function createRoutes(store) {
 
   const routeLoader = require.context('@@directories.routes', true, /\.js$/);
-  const routeModules = routeLoader.keys().map(file => getDefault(routeLoader(file)));
+  const fileNames = routeLoader.keys();
 
-  if (routeModules.length === 0) {
+  if (fileNames.length === 0) {
     console.warn('Your framework does not contain any route. Add your route descriptions in the directory specified by the "directories.routes" entry of your framework configuration file.');
   }
 
   const injectors = createAsyncInjectors(store);
 
-  return routeModules
+  return fileNames.map(file => getDefault(routeLoader(file)))
     .sort((a, b) => (a.priority || 0) - (b.priority || 0))
-    .map(route => sanitizeRoute(route, injectors, store));
+    .map((route, i) => sanitizeRoute(route, injectors, store, fileNames[i]));
 }
 
-function sanitizeRoute(routeData, injectors, store) {
+function sanitizeRoute(routeData, injectors, store, fileName) {
 
   // Add other possible sanitizations here.
   const route = Object.assign({}, routeData);
 
-  route.getComponent = unpromisifyGetComponent(routeData, injectors, store);
+  route.getComponent = unpromisifyGetComponent(routeData, injectors, store, fileName);
 
   delete route.getSaga;
   delete route.getSagas;
@@ -36,18 +36,18 @@ function sanitizeRoute(routeData, injectors, store) {
 
   if (route.children) {
     if (Array.isArray(route.children)) {
-      route.children = route.children.map(subRoute => sanitizeRoute(subRoute.children, injectors, store));
+      route.children = route.children.map(subRoute => sanitizeRoute(subRoute.children, injectors, store, fileName));
     } else {
-      route.children = [sanitizeRoute(route.children, injectors, store)];
+      route.children = [sanitizeRoute(route.children, injectors, store, fileName)];
     }
   }
 
   return route;
 }
 
-function unpromisifyGetComponent(route, injectors, store) {
+function unpromisifyGetComponent(route, injectors, store, fileName) {
   if (!route.getComponent) {
-    throw new Error(`Missing getComponent on route ${JSON.stringify(route, null, 2)}`);
+    throw new TypeError(`Missing getComponent on route ${JSON.stringify(fileName)}`);
   }
 
   return async function callbackGetComponent(nextState, callback) {
@@ -71,10 +71,14 @@ function unpromisifyGetComponent(route, injectors, store) {
         }
       }
 
+      if (!component) {
+        throw new TypeError(`${JSON.stringify(fileName)}: getComponent returned an invalid module.`);
+      }
+
       __component = getDefault(component);
     } catch (e) {
       __component = null;
-      console.error('Error while loading route', e);
+      console.error(`Error while loading route ${JSON.stringify(fileName)}`, e);
       callback(e);
     }
 
@@ -82,7 +86,7 @@ function unpromisifyGetComponent(route, injectors, store) {
       try {
         callback(null, __component);
       } catch (e) {
-        console.error('Error while rendering route', e);
+        console.error(`Error while rendering route ${JSON.stringify(fileName)}`, e);
       }
     }
   };
