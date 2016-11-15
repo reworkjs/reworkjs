@@ -1,4 +1,4 @@
-import { resolveProject, resolveFramework } from '../../shared/resolve';
+import { resolveProject, resolveFrameworkSource } from '../../shared/resolve';
 
 const defaultConfig = {
   directories: {
@@ -10,8 +10,8 @@ const defaultConfig = {
   },
 
   'entry-react': resolveProject('app/containers/App'),
-  'entry-html': resolveFramework('app/index.html'),
-  'pre-init': resolveFramework('app/dummy/empty-function'),
+  'entry-html': resolveFrameworkSource('app/index.html'),
+  'pre-init': resolveFrameworkSource('dummy/empty-function'),
 };
 
 export default defaultConfig;

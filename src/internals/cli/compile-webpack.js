@@ -1,3 +1,4 @@
+// @flow
 import fs from 'fs';
 import mkdirp from 'mkdirp';
 import webpack from 'webpack';
@@ -5,7 +6,7 @@ import chalk from 'chalk';
 import logger from '../../shared/logger';
 import frameworkConfig from '../../shared/framework-config';
 
-export default function compileWebpack(config, watch: boolean, callback: ?(entryPoint: StatDetails) => void) {
+export default function compileWebpack(config: Object, watch: boolean, callback: ?(entryPoint: StatDetails) => void) {
   const compiler = webpack(config);
 
   const compile = watch
@@ -13,6 +14,7 @@ export default function compileWebpack(config, watch: boolean, callback: ?(entry
     : cb => compiler.compile(cb);
 
   compile((err: Error, stats: Stats) => {
+
     if (err) {
       logger.error('Fatal error when building.');
       logger.error(err);
@@ -28,13 +30,18 @@ export default function compileWebpack(config, watch: boolean, callback: ?(entry
 
     if (!stats.hasErrors()) {
       logger.info('Build complete.');
-      callback(stats.toJson());
+
+      if (callback) {
+        callback(stats.toJson());
+      }
     }
   });
 }
 
 function printErrors(stats: Stats) {
   const jsonStats = stats.toJson();
+
+  // parseWebpackStats(stats);
 
   if (stats.hasWarnings()) {
     logger.warn(`${jsonStats.warnings.length} warnings occurred when building.`);
@@ -44,13 +51,12 @@ function printErrors(stats: Stats) {
     logger.error(`${jsonStats.errors.length} errors occurred when building.`);
   }
 
-  let i = 0;
-  for (; i < 15 && i < jsonStats.errors.length; i++) {
-    logger.error(`${jsonStats.errors[i]}\n`);
+  for (const error of jsonStats.errors) {
+    logger.error(`${error}\n`);
   }
 
-  for (let j = 0; i < 15 && j < jsonStats.warnings.length; i++, j++) {
-    logger.warn(`${jsonStats.warnings[j]}\n`);
+  for (const warning of jsonStats.warnings) {
+    logger.warn(`${warning}\n`);
   }
 }
 

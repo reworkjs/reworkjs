@@ -2,14 +2,19 @@ import flatten from 'lodash/flatten';
 import { getDefault } from '../../shared/util/ModuleUtil';
 import { Symbols } from './decorators/provider';
 import createAsyncInjectors from './create-async-injectors';
-import routeModules from './routes';
 
 export default function createRoutes(store) {
+
+  const routeLoader = require.context('@@directories.routes', true, /\.js$/);
+  const routeModules = routeLoader.keys().map(file => getDefault(routeLoader(file)));
+
+  if (routeModules.length === 0) {
+    console.warn('Your framework does not contain any route. Add your route descriptions in the directory specified by the "directories.routes" entry of your framework configuration file.');
+  }
 
   const injectors = createAsyncInjectors(store);
 
   return routeModules
-    .map(routeModule => getDefault(routeModule))
     .sort((a, b) => (a.priority || 0) - (b.priority || 0))
     .map(route => sanitizeRoute(route, injectors, store));
 }

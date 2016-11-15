@@ -2,17 +2,17 @@ import path from 'path';
 import webpack from 'webpack';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
-import webpackConfig from '../../../../internals/webpack/webpack.client';
+import webpackConfig from '../../../../shared/webpack/webpack.client';
 import logger from '../../../../shared/logger';
 
-export default function addDevMiddlewares(app) {
+export default function addDevMiddlewares(app, config) {
 
   logger.info('Building your client-side app, this might take a minute.');
 
   const compiler = webpack(webpackConfig);
   const middleware = webpackDevMiddleware(compiler, {
     noInfo: true,
-    publicPath: webpackConfig.output.publicPath,
+    publicPath: config.publicPath,
     silent: true,
     stats: 'errors-only',
   });
@@ -35,17 +35,20 @@ export default function addDevMiddlewares(app) {
   // }
 
   // TODO mechanism for 404, 500, ... routes.
-  return function serveRoute(req, res, html = '') {
+  return function serveRoute(req, res, html) {
     fs.readFile(path.join(compiler.outputPath, 'index.html'), (err, file) => {
-
       if (err) {
-        res.sendStatus(404);
-      } else {
-        const pageHtml = file.toString();
-        const appHtml = pageHtml.replace('%COMPONENT%', `<div>${html}</div>`);
-
-        res.send(appHtml);
+        return res.sendStatus(404);
       }
+
+      if (typeof html !== 'string') {
+        html = '';
+      }
+
+      const pageHtml = file.toString();
+      const appHtml = pageHtml.replace('%COMPONENT%', `<div>${html}</div>`);
+
+      res.send(appHtml);
     });
   };
 }

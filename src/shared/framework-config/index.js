@@ -1,6 +1,6 @@
 import fs from 'fs';
 import merge from 'lodash/merge';
-import { resolveProject, resolveFramework } from '../../shared/resolve';
+import { resolveProject, resolveFrameworkSource } from '../../shared/resolve';
 import logger from '../../shared/logger';
 import { FrameworkConfigStruct } from '../../shared/FrameworkConfigStruct';
 import { requireRawProject } from '../../internals/util/RequireUtil';
@@ -55,7 +55,7 @@ function checkDirectories(config: FrameworkConfigStruct) {
 
     if (!isDirectory(directory)) {
       logger.warn(`framework configuration: directories.${directoryName} value ${JSON.stringify(directory)} is not a directory.`);
-      config.directories[directoryName] = resolveFramework('dummy/empty-directory');
+      config.directories[directoryName] = resolveFrameworkSource('dummy/empty-directory');
     }
   }
 

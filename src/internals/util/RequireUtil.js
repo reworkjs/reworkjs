@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { resolveProject, resolveRoot, resolveFramework } from '../../shared/resolve';
+import { resolveProject, resolveRoot, resolveFrameworkSource } from '../../shared/resolve';
 
 /**
  * Require a file in the root directory of the project using the framework.
@@ -48,5 +48,5 @@ export function requireRawRoot(fileName: string): string {
  * @returns The path of the file.
  */
 export function requireFramework(fileName: string): any {
-  return require(resolveFramework(fileName)); // eslint-disable-line global-require
+  return require(resolveFrameworkSource(fileName)); // eslint-disable-line global-require
 }

@@ -1,7 +1,6 @@
 import chalk from 'chalk';
 import frameworkConfig from '../../../shared/framework-config';
 import { getDefault } from '../../../shared/util/ModuleUtil';
-import { requireRoot } from '../../util/RequireUtil';
 import compileWebpack, { StatDetails, EntryPoint } from '../compile-webpack';
 import { runCommandSync } from '../run-command';
 import { info } from '../stdio';
@@ -30,7 +29,7 @@ function runServerWithoutPrerendering() {
 function runServerWithPrerendering() {
   info('Building your server-side app, this might take a minute.');
   info(`You can disable server-side rendering using ${chalk.blue('--no-prerendering')}.`);
-  const webpackConfig = getDefault(requireRoot('lib/internals/webpack/webpack.server.js'));
+  const webpackConfig = getDefault(require('../../../shared/webpack/webpack.server.js')); // eslint-disable-line
 
   compileWebpack(webpackConfig, true, (stats: StatDetails) => {
     const entryPoints: EntryPoint = stats.entrypoints.main;

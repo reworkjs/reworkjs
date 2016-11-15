@@ -6,12 +6,12 @@ import OfflinePlugin from 'offline-plugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import cheerio from 'cheerio';
 import frameworkConfig from '../../shared/framework-config';
-import { isDev, isTest } from '../../shared/EnvUtil';
 import logger from '../../shared/logger';
 import projectMetadata from '../../shared/project-metadata';
 import frameworkMetadata from '../../shared/framework-metadata';
 import frameworkBabelRc from '../../shared/framework-babelrc';
-import { resolveRoot, resolveFramework } from '../../shared/resolve';
+import { resolveRoot, resolveFrameworkSource } from '../../shared/resolve';
+import { isDev, isTest } from '../EnvUtil';
 import selectWebpackModulePlugin from './selectWebpackModulePlugin';
 
 function fixBabelConfig(babelConfig) {
@@ -105,13 +105,17 @@ export default class WebpackBase {
 
   buildLoaders() {
 
+    // node_modules\/(?!reworkjs)
+
+    const anyNodeModuleExceptFramework = new RegExp(`node_modules\\/(?!${frameworkMetadata.name})`);
+
     const loaders = [{
       test: /\.json$/,
       loader: 'json',
     }, {
       test: /\.jsx?$/,
       loader: 'babel-loader',
-      exclude: /node_modules/,
+      exclude: anyNodeModuleExceptFramework,
       query: fixBabelConfig(this.getBabelConfig()),
     }, {
       // Do not transform vendor's CSS with CSS-modules
@@ -186,8 +190,8 @@ export default class WebpackBase {
     // front-end entry point.
     const entry = [
       this.isServer()
-        ? resolveFramework('server/index')
-        : resolveFramework('client/index'),
+        ? resolveFrameworkSource('server/index')
+        : resolveFrameworkSource('client/index'),
     ];
 
     // front-end dev libs.
@@ -207,7 +211,7 @@ export default class WebpackBase {
     // Output to build directory.
     const output = {
       path: `${frameworkConfig.directories.build}/webpack-${this.isServer() ? 'server' : 'client'}`,
-      publicPath: '/',
+      publicPath: '/generated_assets',
     };
 
     if (this.isServer()) {
