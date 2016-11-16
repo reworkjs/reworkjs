@@ -1,5 +1,7 @@
+import promiseAllProperties from 'promise-all-properties';
 import flatten from 'lodash/flatten';
 import { getDefault } from '../../shared/util/ModuleUtil';
+import isPojo from '../util/is-pojo';
 import { Symbols } from './decorators/provider';
 import createAsyncInjectors from './create-async-injectors';
 
@@ -19,12 +21,31 @@ export default function createRoutes(store) {
     .map((route, i) => sanitizeRoute(route, injectors, store, fileNames[i]));
 }
 
+function assertUnique(singularMethodName, routeData, fileName) {
+  const pluralMethodName = `${singularMethodName}s`;
+
+  if (routeData[singularMethodName] && routeData[pluralMethodName]) {
+    throw new TypeError(`Route ${JSON.stringify(fileName)}: cannot have both methods ${singularMethodName} and ${pluralMethodName} in the same route description.`);
+  }
+}
+
 function sanitizeRoute(routeData, injectors, store, fileName) {
+
+  assertUnique('getComponent', routeData, fileName);
+  assertUnique('getSaga', routeData, fileName);
+  assertUnique('getProvider', routeData, fileName);
+  assertUnique('getReducer', routeData, fileName);
 
   // Add other possible sanitizations here.
   const route = Object.assign({}, routeData);
 
-  route.getComponent = unpromisifyGetComponent(routeData, injectors, store, fileName);
+  if (route.getComponent) {
+    route.getComponent = unpromisifyGetComponent(routeData, injectors, store, fileName);
+  } else if (route.getComponents) {
+    route.getComponents = unpromisifyGetComponent(routeData, injectors, store, fileName);
+  } else {
+    throw new TypeError(`Missing method getComponent(s) on route ${JSON.stringify(fileName)}`);
+  }
 
   delete route.getSaga;
   delete route.getSagas;
@@ -46,16 +67,11 @@ function sanitizeRoute(routeData, injectors, store, fileName) {
 }
 
 function unpromisifyGetComponent(route, injectors, store, fileName) {
-  if (!route.getComponent) {
-    throw new TypeError(`Missing getComponent on route ${JSON.stringify(fileName)}`);
-  }
-
   return async function callbackGetComponent(nextState, callback) {
 
-    let __component; // eslint-disable-line
     try {
       const [component, sagas, reducers, providers] = await Promise.all([
-        route.getComponent.call(route, nextState, store),
+        callComponentLoader(route, nextState, store, fileName),
         callSagaLoader(route, nextState, store),
         callReducerLoader(route, nextState, store),
         callProviderLoader(route, nextState, store),
@@ -71,23 +87,14 @@ function unpromisifyGetComponent(route, injectors, store, fileName) {
         }
       }
 
-      if (!component) {
-        throw new TypeError(`${JSON.stringify(fileName)}: getComponent returned an invalid module.`);
-      }
-
-      __component = getDefault(component);
-    } catch (e) {
-      __component = null;
-      console.error(`Error while loading route ${JSON.stringify(fileName)}`, e);
-      callback(e);
-    }
-
-    if (__component) {
       try {
-        callback(null, __component);
+        callback(null, component);
       } catch (e) {
         console.error(`Error while rendering route ${JSON.stringify(fileName)}`, e);
       }
+    } catch (e) {
+      console.error(`Error while loading route ${JSON.stringify(fileName)}`, e);
+      callback(e);
     }
   };
 }
@@ -113,19 +120,31 @@ function injectReducers(injectors, reducers) {
   }
 }
 
-/*
- * Unifies the possible outputs of route.getSaga-s
- */
+async function callComponentLoader(route, nextState, store, fileName) {
+  const method = route.getComponent || route.getComponents;
+
+  const components = await callLoader(method, route, nextState, store);
+  if (!components) {
+    throw new TypeError(`${JSON.stringify(fileName)}: getComponent(s) returned an invalid module.`);
+  }
+
+  if (!isPojo(components)) {
+    return components;
+  }
+
+  return promiseAllProperties(components);
+}
+
 async function callSagaLoader(route, nextState, store) {
-  const method = route.getSagas || route.getSaga;
-  const sagas = await callLoader(method, route, nextState, store);
+  const method = route.getSaga || route.getSagas;
+  const sagas = toArray(await callLoader(method, route, nextState, store));
 
   return sagas ? flatten(sagas) : sagas;
 }
 
 async function callProviderLoader(route, nextState, store) {
   const method = route.getProvider || route.getProviders;
-  const providers = await callLoader(method, route, nextState, store);
+  const providers = toArray(await callLoader(method, route, nextState, store));
 
   return providers ? flatten(providers) : providers;
 }
@@ -134,8 +153,8 @@ async function callProviderLoader(route, nextState, store) {
  * Unifies the possible outputs of route.getReducer-s
  */
 function callReducerLoader(route, nextState, store) {
-  const method = route.getReducers || route.getReducer;
-  return callLoader(method, route, nextState, store);
+  const method = route.getReducer || route.getReducers;
+  return toArray(callLoader(method, route, nextState, store));
 }
 
 async function callLoader(loader, route, nextState, store) {
@@ -151,13 +170,20 @@ async function callLoader(loader, route, nextState, store) {
     }
 
     const arrayOutput = await Promise.all(rawOutput);
-    return arrayOutput.map(output => getDefault(output));
+    for (let i = 0; i < arrayOutput.length; i++) {
+      arrayOutput[i] = getDefault(arrayOutput[i]);
+    }
+
+    return arrayOutput;
   }
 
-  const output = getDefault(rawOutput);
-  if (Array.isArray(output)) {
-    return output;
+  return getDefault(rawOutput);
+}
+
+function toArray(obj) {
+  if (Array.isArray(obj)) {
+    return obj;
   }
 
-  return [output];
+  return [obj];
 }

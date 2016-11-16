@@ -64,6 +64,7 @@
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
     "postcss-loader": "^1.1.0",
+    "promise-all-properties": "^0.2.0",
     "react": "^15.3.2",
     "react-dom": "^15.3.2",
     "react-intl": "^2.1.5",
