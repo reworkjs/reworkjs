@@ -164,14 +164,22 @@ async function callLoader(loader, route, nextState, store) {
 
   const rawOutput = await loader.call(route, nextState, store);
 
+  if (rawOutput == null) {
+    return null;
+  }
+
   if (Array.isArray(rawOutput)) {
     if (rawOutput.length === 0) {
       return null;
     }
 
     const arrayOutput = await Promise.all(rawOutput);
+    const arrayResult = [];
     for (let i = 0; i < arrayOutput.length; i++) {
-      arrayOutput[i] = getDefault(arrayOutput[i]);
+      const item = arrayOutput[i];
+      if (item != null) {
+        arrayResult.push(getDefault(item));
+      }
     }
 
     return arrayOutput;
