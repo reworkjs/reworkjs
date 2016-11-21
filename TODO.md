@@ -5,6 +5,7 @@
 -- cheerio
 -- ngrok
 -- babel-loader
+-- json-loader
 
 - add to peer dep:
 -- eslint
