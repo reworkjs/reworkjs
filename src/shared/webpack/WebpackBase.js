@@ -46,7 +46,7 @@ export default class WebpackBase {
     this.isTest = isTest;
     this.side = side;
 
-    this.addCssLoader('css', [
+    this.addCssLoader('s?css', [
       this.cssLoaderModule,
       'postcss-loader',
     ]);
@@ -118,17 +118,11 @@ export default class WebpackBase {
       exclude: anyNodeModuleExceptFramework,
       query: fixBabelConfig(this.getBabelConfig()),
     }, {
-      // Do not transform vendor's CSS with CSS-modules
-      // The point is that they remain in global scope.
-      // Since we require these CSS files in our JS or CSS files,
-      // they will be a part of our compilation either way.
-      // So, no need for ExtractTextPlugin here.
-      test: /\.css$/,
-      include: /node_modules/,
-      loaders: ['style-loader', 'css-loader'],
-    }, {
       test: /\.(eot|svg|ttf|woff|woff2)$/,
       loader: 'file-loader',
+    }, {
+      test: /\.s(c|a)ss$/,
+      loader: 'sass-loader',
     }, {
       test: /\.(jpg|png|gif)$/,
       loaders: [

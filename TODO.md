@@ -1,18 +1,5 @@
-- add to dependencies:
--- html-webpack-plugin
--- offline-plugin
--- extract-text-webpack-plugin
--- cheerio
--- ngrok
--- babel-loader
--- json-loader
-
-- add to peer dep:
--- eslint
-
-- remove from peer dep:
--- webpack
--- webpack loaders
+- make babelrc optional
+- install sanitize.css
 
 Better debug messages when file not found by webpack
 
