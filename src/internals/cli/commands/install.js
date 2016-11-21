@@ -36,7 +36,7 @@ async function installPeerDeps() {
 
   const missingDependencyNames = Object.keys(dependencies.missing);
   if (missingDependencyNames.length > 0) {
-    console.warn(`You have ${missingDependencyNames.length} missing dependencies.`);
+    warn(`You have ${missingDependencyNames.length} missing dependencies.`);
 
     for (const dependencyName of missingDependencyNames) {
       const dependency = dependencies.missing[dependencyName];
