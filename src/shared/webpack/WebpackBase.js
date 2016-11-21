@@ -111,7 +111,7 @@ export default class WebpackBase {
 
     const loaders = [{
       test: /\.json$/,
-      loader: 'json',
+      loader: 'json-loader',
     }, {
       test: /\.jsx?$/,
       loader: 'babel-loader',
@@ -134,11 +134,11 @@ export default class WebpackBase {
       loaders: [
         'file-loader',
         `image-webpack?{
-            progressive:true, 
-            optimizationLevel: 7, 
-            interlaced: false, 
+            progressive:true,
+            optimizationLevel: 7,
+            interlaced: false,
             pngquant: {
-              quality: "65-90", 
+              quality: "65-90",
               speed: 4
             }
           }`,
