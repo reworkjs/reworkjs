@@ -14,9 +14,11 @@ export function error(str) {
 }
 
 export function question(str) {
-  const stdin: readLine.Interface = readLine.createInterface({ input: process.stdin, output: process.stdout });
   return new Promise(resolve => {
-    stdin.question(str, resolve);
-    stdin.close();
+    const stdin: readLine.Interface = readLine.createInterface({ input: process.stdin, output: process.stdout });
+    stdin.question(str, response => {
+      stdin.close();
+      resolve(response);
+    });
   });
 }

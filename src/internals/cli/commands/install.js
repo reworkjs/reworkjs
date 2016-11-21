@@ -34,11 +34,13 @@ async function installPeerDeps() {
     warn(`You have ${dependencies.extraneous.length} extraneous dependencies, you might want to consider running \`npm prune\``);
   }
 
-  if (dependencies.missing.length > 0) {
-    console.warn(`You have ${dependencies.missing.length} missing dependencies.`);
+  const missingDependencyNames = Object.keys(dependencies.missing);
+  if (missingDependencyNames.length > 0) {
+    console.warn(`You have ${missingDependencyNames.length} missing dependencies.`);
 
-    for (const dependency of dependencies.missing) {
-      await installMissingDependency(dependency);
+    for (const dependencyName of missingDependencyNames) {
+      const dependency = dependencies.missing[dependencyName];
+      await installMissingDependency(dependencyName, dependency);
     }
   }
 }
