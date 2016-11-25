@@ -124,6 +124,7 @@ async function callComponentLoader(route, nextState, store, fileName) {
   const method = route.getComponent || route.getComponents;
 
   const components = await callLoader(method, route, nextState, store);
+
   if (!components) {
     throw new TypeError(`${JSON.stringify(fileName)}: getComponent(s) returned an invalid module.`);
   }
@@ -152,9 +153,9 @@ async function callProviderLoader(route, nextState, store) {
 /*
  * Unifies the possible outputs of route.getReducer-s
  */
-function callReducerLoader(route, nextState, store) {
+async function callReducerLoader(route, nextState, store) {
   const method = route.getReducer || route.getReducers;
-  return toArray(callLoader(method, route, nextState, store));
+  return toArray(await callLoader(method, route, nextState, store));
 }
 
 async function callLoader(loader, route, nextState, store) {
@@ -189,6 +190,10 @@ async function callLoader(loader, route, nextState, store) {
 }
 
 function toArray(obj) {
+  if (obj == null) {
+    return [];
+  }
+
   if (Array.isArray(obj)) {
     return obj;
   }

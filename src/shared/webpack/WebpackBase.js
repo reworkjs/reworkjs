@@ -5,6 +5,9 @@ import HtmlWebpackPlugin from 'html-webpack-plugin';
 import OfflinePlugin from 'offline-plugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import cheerio from 'cheerio';
+import findCacheDir from 'find-cache-dir';
+import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin';
+// import WatchMissingNodeModulesPlugin from 'react-dev-utils/WatchMissingNodeModulesPlugin';
 import frameworkConfig from '../../shared/framework-config';
 import logger from '../../shared/logger';
 import projectMetadata from '../../shared/project-metadata';
@@ -15,6 +18,15 @@ import { isDev, isTest } from '../EnvUtil';
 import selectWebpackModulePlugin from './selectWebpackModulePlugin';
 
 function fixBabelConfig(babelConfig) {
+
+  // This is a feature of `babel-loader` for webpack (not Babel itself).
+  // It enables caching results in ./node_modules/.cache/react-scripts/
+  // directory for faster rebuilds. We use findCacheDir() because of:
+  // https://github.com/facebookincubator/create-react-app/issues/483
+  babelConfig.cacheDirectory = findCacheDir({
+    name: frameworkMetadata.name,
+  });
+
   for (const key of Object.keys(babelConfig)) {
     const val = babelConfig[key];
 
@@ -46,9 +58,10 @@ export default class WebpackBase {
     this.isTest = isTest;
     this.side = side;
 
-    this.addCssLoader('s?css', [
+    this.addCssLoader('(sc|sa|c)ss', [
       this.cssLoaderModule,
       'postcss-loader',
+      'sass-loader',
     ]);
   }
 
@@ -98,6 +111,8 @@ export default class WebpackBase {
         anyAbsoluteExceptFramework,
         /\.json$/,
       ];
+    } else {
+      config.resolve.extensions.push('.json');
     }
 
     return config;
@@ -110,9 +125,6 @@ export default class WebpackBase {
     const anyNodeModuleExceptFramework = new RegExp(`node_modules\\/(?!${frameworkMetadata.name})`);
 
     const loaders = [{
-      test: /\.json$/,
-      loader: 'json-loader',
-    }, {
       test: /\.jsx?$/,
       loader: 'babel-loader',
       exclude: anyNodeModuleExceptFramework,
@@ -121,22 +133,22 @@ export default class WebpackBase {
       test: /\.(eot|svg|ttf|woff|woff2)$/,
       loader: 'file-loader',
     }, {
-      test: /\.s(c|a)ss$/,
-      loader: 'sass-loader',
-    }, {
       test: /\.(jpg|png|gif)$/,
       loaders: [
         'file-loader',
         `image-webpack?{
-            progressive:true,
-            optimizationLevel: 7,
-            interlaced: false,
-            pngquant: {
-              quality: "65-90",
-              speed: 4
-            }
-          }`,
+          progressive: true,
+          optimizationLevel: 7,
+          interlaced: false,
+          pngquant: {
+            quality: "65-90",
+            speed: 4
+          }
+        }`,
       ],
+    }, {
+      test: /\.json$/,
+      loader: 'json-loader',
     }, {
       test: /\.html$/,
       loader: 'html-loader',
@@ -243,12 +255,17 @@ export default class WebpackBase {
   getAliases() {
 
     return {
+      // Framework configuration directories
       '@@pre-init': frameworkConfig['pre-init'],
       '@@main-component': frameworkConfig['entry-react'],
       '@@directories.routes': frameworkConfig.directories.routes,
       '@@directories.translations': frameworkConfig.directories.translations,
       '@@directories.providers': frameworkConfig.directories.providers,
       [frameworkMetadata.name]: resolveRoot(''),
+
+      // Support React Native Web
+      // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
+      'react-native': 'react-native-web',
     };
   }
 
@@ -293,6 +310,17 @@ export default class WebpackBase {
         // enable hot reloading.
         new webpack.HotModuleReplacementPlugin(),
         new webpack.NoErrorsPlugin(),
+
+        // Watcher doesn't work well if you mistype casing in a path so we use
+        // a plugin that prints an error when you attempt to do this.
+        // See https://github.com/facebookincubator/create-react-app/issues/240
+        new CaseSensitivePathsPlugin(),
+
+        // If you require a missing module and then `npm install` it, you still have
+        // to restart the development server for Webpack to discover it. This plugin
+        // makes the discovery automatic so you don't have to restart.
+        // See https://github.com/facebookincubator/create-react-app/issues/186
+        // new WatchMissingNodeModulesPlugin(paths.appNodeModules), // TODO
 
         // Inject webpack bundle into HTML.
         new HtmlWebpackPlugin({
