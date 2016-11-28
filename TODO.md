@@ -1,5 +1,13 @@
+- install postcss.config.js on client
 - make babelrc optional
 - install sanitize.css
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="manifest" href="manifest.json">
+  <meta name="mobile-web-app-capable" content="yes">
+  
+- server-side rendering with react-helmet
 
 Better debug messages when file not found by webpack
 
