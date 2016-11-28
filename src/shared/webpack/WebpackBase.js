@@ -66,7 +66,7 @@ export default class WebpackBase {
   }
 
   get cssLoaderModule() {
-    const cssOptions = 'css-loader?modules&importLoaders=1';
+    const cssOptions = 'css-loader?modules&importLoaders=1&camelCase';
     if (this.isDev) {
       return `${cssOptions}&localIdentName=[local]__[path][name]__[hash:base64:5]&sourceMap`;
     }
@@ -130,7 +130,7 @@ export default class WebpackBase {
       exclude: anyNodeModuleExceptFramework,
       query: fixBabelConfig(this.getBabelConfig()),
     }, {
-      test: /\.(eot|svg|ttf|woff|woff2)$/,
+      test: /\.(eot|svg|ttf|woff|woff2)(\?.*$|$)/,
       loader: 'file-loader',
     }, {
       test: /\.(jpg|png|gif)$/,
@@ -175,7 +175,7 @@ export default class WebpackBase {
     for (const cssLoader of this.cssLoaders) {
       const loader = {};
       loader.test = cssLoader.test;
-      loader.exclude = /node_modules/;
+      // loader.exclude = /node_modules/;
 
       if (this.isDev) {
         loader.loaders = ['style-loader', ...cssLoader.loaders];
