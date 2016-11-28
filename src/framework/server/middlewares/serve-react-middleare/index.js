@@ -13,15 +13,13 @@ export default function frontEndMiddleware(app, options) {
 
 function renderApp(serveRoute) {
   /* eslint-disable global-require */
-  const Helmet = require('react-helmet');
-  const renderHtmlLayout = require('helmet-webpack-plugin');
   const { match, RouterContext } = require('react-router');
+  const { renderToString } = require('react-dom/server');
   const { rootRoute } = require('../../../common/kernel');
   const App = require('../../../app/App');
   /* eslint-enable global-require */
 
   return function serveApp(req, res) {
-
     match({ routes: [rootRoute], location: req.url }, (err, redirect, props) => {
 
       if (err) {
@@ -33,16 +31,15 @@ function renderApp(serveRoute) {
       }
 
       if (props) {
-        const head = Helmet.rewind();
-
-        const appHtml = renderHtmlLayout(
-          head,
+        // TODO use react helmet here.
+        // https://github.com/nfl/react-helmet#as-react-components
+        const appHtml = renderToString(
           <App>
             <RouterContext {...props} />
           </App>,
         );
 
-        return serveRoute(req, res, appHtml);
+        return serveRoute(req, res, `<div>${appHtml}</div>`);
       }
 
       res.status(404).send('No route defined for path');

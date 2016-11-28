@@ -10,6 +10,7 @@ const defaultConfig = {
   },
 
   'entry-react': resolveProject('app/containers/App'),
+  'entry-html': resolveFrameworkSource('app/index.html'),
   'pre-init': resolveFrameworkSource('dummy/empty-function'),
 };
 
