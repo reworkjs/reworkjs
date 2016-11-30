@@ -95,6 +95,7 @@ export default class WebpackBase {
         ],
         mainFields: [
           'jsnext:main',
+          'module',
           'main',
         ],
         alias: this.getAliases(),
@@ -113,6 +114,8 @@ export default class WebpackBase {
       ];
     } else {
       config.resolve.extensions.push('.json');
+      config.resolve.mainFields.push('browser');
+      config.resolve.mainFields.push('web');
     }
 
     return config;
@@ -283,7 +286,7 @@ export default class WebpackBase {
   getPlugins() {
     const plugins = [
       new webpack.ProvidePlugin({
-        fetch: 'exports?self.fetch!whatwg-fetch',
+        fetch: 'exports-loader?self.fetch!whatwg-fetch',
       }),
 
       new webpack.DefinePlugin({
@@ -305,6 +308,7 @@ export default class WebpackBase {
       selectWebpackModulePlugin(),
     ];
 
+    // TODO inject DLLs <script data-dll='true' src='/${dllName}.dll.js'></script>`
     if (this.isDev) {
       plugins.push(
         // enable hot reloading.
@@ -338,7 +342,8 @@ export default class WebpackBase {
         }),
 
         new HtmlWebpackPlugin({
-          template: frameworkConfig['entry-html'],
+          inject: true,
+          templateContent: templateContent(),
           minify: {
             removeComments: true,
             collapseWhitespace: true,
@@ -351,7 +356,6 @@ export default class WebpackBase {
             minifyCSS: true,
             minifyURLs: true,
           },
-          inject: true,
         }),
 
         new webpack.optimize.UglifyJsPlugin({
@@ -433,9 +437,7 @@ function templateContent() {
   const appDiv = doc.find('#app');
   if (appDiv.length === 0) {
     logger.info('Could not find #app in html entry point, inserting it.');
-    body.append('<div id="#app">%COMPONENT%</div>');
-  } else {
-    appDiv.append('%COMPONENT%');
+    body.append('<div id="#app"></div>');
   }
 
   // const body = doc.find('body');
