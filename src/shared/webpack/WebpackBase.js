@@ -8,6 +8,7 @@ import cheerio from 'cheerio';
 import findCacheDir from 'find-cache-dir';
 import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin';
 // import WatchMissingNodeModulesPlugin from 'react-dev-utils/WatchMissingNodeModulesPlugin';
+import CopyWebpackPlugin from 'copy-webpack-plugin';
 import frameworkConfig from '../../shared/framework-config';
 import logger from '../../shared/logger';
 import projectMetadata from '../../shared/project-metadata';
@@ -289,6 +290,10 @@ export default class WebpackBase {
 
   getPlugins() {
     const plugins = [
+      new CopyWebpackPlugin([
+        { from: frameworkConfig.directories.resources, to: 'public' },
+      ]),
+
       new webpack.ProvidePlugin({
         fetch: 'exports-loader?self.fetch!whatwg-fetch',
       }),
