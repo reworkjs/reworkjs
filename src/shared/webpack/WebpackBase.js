@@ -94,8 +94,9 @@ export default class WebpackBase {
           '.react.js',
         ],
         mainFields: [
-          'jsnext:main',
+          'jsnext:module',
           'module',
+          'jsnext:main',
           'main',
         ],
         alias: this.getAliases(),
@@ -114,8 +115,11 @@ export default class WebpackBase {
       ];
     } else {
       config.resolve.extensions.push('.json');
-      config.resolve.mainFields.push('browser');
-      config.resolve.mainFields.push('web');
+
+      config.resolve.mainFields.unshift('web');
+      config.resolve.mainFields.unshift('jsnext:web');
+      config.resolve.mainFields.unshift('browser');
+      config.resolve.mainFields.unshift('jsnext:browser');
     }
 
     return config;
