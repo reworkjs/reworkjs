@@ -2,6 +2,8 @@ import path from 'path';
 import webpack from 'webpack';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
+import cheerio from 'cheerio';
+// import Helmet from 'react-helmet';
 import webpackConfig from '../../../../shared/webpack/webpack.client';
 import logger from '../../../../shared/logger';
 
@@ -45,10 +47,11 @@ export default function addDevMiddlewares(app, config) {
         html = '';
       }
 
-      const pageHtml = file.toString();
-      const appHtml = pageHtml.replace('%COMPONENT%', `<div>${html}</div>`);
+      // TODO inject helmet
+      const doc = cheerio(file.toString());
+      doc.find('#app').append(`<div>${html}</div>`);
 
-      res.send(appHtml);
+      res.send(doc.toString());
     });
   };
 }
