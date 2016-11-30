@@ -225,7 +225,7 @@ export default class WebpackBase {
     // Output to build directory.
     const output = {
       path: `${frameworkConfig.directories.build}/webpack-${this.isServer() ? 'server' : 'client'}`,
-      publicPath: '/generated_assets',
+      publicPath: '/',
     };
 
     if (this.isServer()) {
