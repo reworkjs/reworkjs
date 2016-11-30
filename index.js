@@ -1,5 +1,2 @@
-/* eslint-disable */
-
-var getDefault = require('./lib/shared/util/ModuleUtil').getDefault;
-
-exports.logger = getDefault(require('./lib/shared/logger'));
+export { default as logger } from './src/shared/logger';
+export { default as LanguageProvider } from './src/framework/app/providers/LanguageProvider';
