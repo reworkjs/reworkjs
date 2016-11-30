@@ -7,7 +7,7 @@ import translationMessages from '../common/i18n';
 import { store } from '../common/kernel';
 import LanguageComponent from './LanguageComponent';
 
-export default function App(props) {
+export default function ReworkJsWrapper(props) {
 
   return (
     <Provider store={store}>
@@ -18,7 +18,7 @@ export default function App(props) {
   );
 }
 
-App.propTypes = {
+ReworkJsWrapper.propTypes = {
   children: React.PropTypes.node,
 };
 
