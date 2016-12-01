@@ -290,9 +290,11 @@ export default class WebpackBase {
 
   getPlugins() {
     const plugins = [
-      new CopyWebpackPlugin([
-        { from: frameworkConfig.directories.resources, to: 'public' },
-      ]),
+      new CopyWebpackPlugin([{
+        from: { glob: `${frameworkConfig.directories.resources}/**/**/*` },
+        to: './',
+        toType: 'dir',
+      }]),
 
       new webpack.ProvidePlugin({
         fetch: 'exports-loader?self.fetch!whatwg-fetch',
