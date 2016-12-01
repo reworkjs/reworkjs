@@ -3,6 +3,9 @@
 
 Better debug messages when file not found by webpack
 
+Manifest support ?
+url/favicon.ico support ?
+
 ERROR in ./~/reworkjs/lib/framework/common/i18n.js
 Module not found: Error: Can't resolve '@@directories.translations' in '/Users/ephys/Documents/dev/secretsanta/client2/node_modules/reworkjs/lib/framework/common'
  @ ./~/reworkjs/lib/framework/common/i18n.js 33:25-99
