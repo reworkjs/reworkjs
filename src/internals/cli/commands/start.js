@@ -1,11 +1,11 @@
 import chalk from 'chalk';
 import frameworkConfig from '../../../shared/framework-config';
 import { getDefault } from '../../../shared/util/ModuleUtil';
-import compileWebpack, { StatDetails, EntryPoint } from '../compile-webpack';
+import compileWebpack, { StatDetails, EntryPoint } from '../../../shared/compile-webpack';
 import { runCommandSync } from '../run-command';
 import { info } from '../stdio';
 
-export default async function start([mode = 'production'], otherArgs) {
+export default async function start([mode = process.env.NODE_ENV || 'production'], otherArgs) {
   if (mode === 'dev') {
     process.env.NODE_ENV = 'development';
   } else if (mode === 'prod') {
@@ -42,7 +42,7 @@ function runServerWithPrerendering() {
 
     const entryPoint = entryPoints[0];
     // TODO replace webpack-server with variable.
-    runCommandSync(`node ${frameworkConfig.directories.build}/webpack-server/${entryPoint}`);
+    runCommandSync(`node ${frameworkConfig.directories.build}/webpack-server/${entryPoint} ${process.argv.slice(1).join(' ')}`);
   });
 }
 

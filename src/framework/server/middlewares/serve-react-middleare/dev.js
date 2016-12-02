@@ -3,13 +3,10 @@ import webpack from 'webpack';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 import cheerio from 'cheerio';
-// import Helmet from 'react-helmet';
 import webpackConfig from '../../../../shared/webpack/webpack.client';
 import logger from '../../../../shared/logger';
 
 export default function addDevMiddlewares(app, config) {
-
-  logger.info('Building your client-side app, this might take a minute.');
 
   const compiler = webpack(webpackConfig);
   const middleware = webpackDevMiddleware(compiler, {

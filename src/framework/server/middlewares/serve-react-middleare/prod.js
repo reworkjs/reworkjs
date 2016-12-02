@@ -1,15 +1,30 @@
 import compression from 'compression';
 import express from 'express';
-// import frameworkConfig from '../../../common/framework-config';
+import webpackConfig from '../../../../shared/webpack/webpack.client';
+import compileWebpack, { StatDetails, EntryPoint } from '../../../../shared/compile-webpack';
 
-export default function addProdMiddlewares(app, { publicPath, outputPath }) {
+export default function addProdMiddlewares(app, config) {
+
+  let ready = false;
+  compileWebpack(webpackConfig, false, (stats: StatDetails) => {
+    const entryPoints: EntryPoint = stats.entrypoints.main.assets.filter(fileName => fileName.endsWith('.js'));
+
+    ready = true;
+  });
 
   // compression middleware compresses your server responses which makes them
-  // smaller (applies also to assets). You can read more about that technique
-  // and other good practices on official Express.js docs http://mxs.is/googmy
+  // smaller (applies also to assets).
   app.use(compression());
-  app.use(publicPath, express.static(outputPath));
+  app.use(config.publicPath, express.static(config.outputPath));
 
-  throw new Error('NYI');
-  // return (req, res) => res.sendFile(resolveProject(frameworkConfig['entry-html']));
+  // TODO mechanism for 404, 500, ... routes.
+  return function serveRoute(req, res, html) {
+    if (!ready) {
+      res.send('Application building...');
+      return;
+    }
+
+    // return (req, res) => res.sendFile(resolveProject(frameworkConfig['entry-html']));
+    throw new Error('NYI');
+  };
 }

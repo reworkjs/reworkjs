@@ -5,12 +5,13 @@ import ip from 'ip';
 import getPort from 'get-port';
 import argv from '../../shared/argv';
 import { isDev } from '../../shared/EnvUtil';
+import env from '../../shared/env';
 import logger from '../../shared/logger';
 import frameworkConfig from '../../shared/framework-config';
 import webpackConfig from '../../shared/webpack/webpack.client';
 import serveReactMiddleware from './middlewares/serve-react-middleare';
 
-export default (async function() {
+export default (async function initServer() {
   const app = express();
 
   // public resources directory
@@ -27,11 +28,11 @@ export default (async function() {
     publicPath: webpackConfig.output.publicPath,
   });
 
-  const port = argv.port || process.env.PORT || 3000;
+  const port = argv.port || env.PORT || 3000;
 
   await promisify(app.listen).call(app, port);
 
-  const enableNgrok = (isDev && process.env.ENABLE_TUNNEL) || argv.tunnel;
+  const enableNgrok = (isDev && env.ENABLE_TUNNEL) || argv.tunnel;
 
   let tunnelUrl = null;
   if (enableNgrok) {
