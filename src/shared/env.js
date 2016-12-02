@@ -10,7 +10,7 @@ env.NODE_ENV = env.NODE_ENV || 'production';
 if (typeof process !== 'undefined') {
   // BUILD_ENV is the environment for which this build was created (if its production, we're in a minified build).
   if (env.NODE_ENV !== process.env.BUILD_ENV) {
-    logger.warn(`Running ${env.BUILD_ENV} build in a ${process.env.NODE_ENV} environement`);
+    logger.warn(`You're running a ${env.BUILD_ENV} build in a ${process.env.NODE_ENV} environment.`);
   }
 }
 
