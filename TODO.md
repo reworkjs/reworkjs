@@ -1,5 +1,15 @@
+- Prod mode
+- Default project
 - make babelrc optional
 - install sanitize.css
+- don't default to dummy dir, create the dirs instead.
+- name bundles
+
+possible babel plugins:
+- "transform-export-default-name"
+- "babel-plugin-annotate-console-log" (dev-only)
+
+Disable console.* warnings in webpack-eslint (make them warnings)
 
 Better debug messages when file not found by webpack
 
