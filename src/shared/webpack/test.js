@@ -1,6 +1,6 @@
-/**
- * TEST WEBPACK CONFIGURATION
- */
+/* eslint-disable */
+
+// TODO
 
 import path from 'path';
 import webpack from 'webpack';

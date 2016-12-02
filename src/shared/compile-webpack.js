@@ -3,8 +3,8 @@ import fs from 'fs';
 import mkdirp from 'mkdirp';
 import webpack from 'webpack';
 import chalk from 'chalk';
-import logger from '../../shared/logger';
-import frameworkConfig from '../../shared/framework-config';
+import logger from './logger';
+import frameworkConfig from './framework-config';
 
 export default function compileWebpack(config: Object, watch: boolean, callback: ?(entryPoint: StatDetails) => void) {
   const compiler = webpack(config);
@@ -21,33 +21,65 @@ export default function compileWebpack(config: Object, watch: boolean, callback:
       throw err;
     }
 
-    if (stats.hasErrors() || stats.hasWarnings()) {
+    if (hasErrors(stats) || hasWarnings(stats)) {
       printErrors(stats);
       writeDebug(stats);
     } else {
       deleteDebug();
     }
 
-    if (!stats.hasErrors()) {
+    if (!hasErrors(stats)) {
       logger.info('Build complete.');
 
       if (callback) {
-        callback(stats.toJson());
+        callback(toJson(stats));
       }
     }
   });
 }
 
+function toJson(stats) {
+  if (stats.toJson) {
+    return stats.toJson();
+  }
+
+  return stats;
+}
+
+function hasErrors(stats: Stats) {
+  if (stats.hasErrors) {
+    return stats.hasErrors();
+  }
+
+  if (stats.errors) {
+    return stats.errors.length > 0;
+  }
+
+  throw new TypeError('can\'t define if webpack compilation ouput has errors');
+}
+
+function hasWarnings(stats: Stats) {
+  if (stats.hasWarnings) {
+    return stats.hasWarnings();
+  }
+
+  if (stats.warnings) {
+    return stats.warnings.length > 0;
+  }
+
+  throw new TypeError('can\'t define if webpack compilation ouput has warnings');
+}
+
 function printErrors(stats: Stats) {
-  const jsonStats = stats.toJson();
+  const jsonStats = toJson(stats);
 
   // parseWebpackStats(stats);
 
-  if (stats.hasWarnings()) {
+  if (hasWarnings(stats)) {
     logger.warn(`${jsonStats.warnings.length} warnings occurred when building.`);
   }
 
-  if (stats.hasErrors()) {
+  if (hasErrors(stats)) {
     logger.error(`${jsonStats.errors.length} errors occurred when building.`);
   }
 
@@ -80,9 +112,9 @@ function deleteDebug() {
 
 // Bare minimum, there is more than that (see webpack docs).
 export type Stats = {
-  hasErrors: () => boolean,
-  hasWarnings: () => boolean,
-  toJson: () => StatDetails,
+  hasErrors: ?() => boolean,
+  hasWarnings: ?() => boolean,
+  toJson: ?() => StatDetails,
   toString: () => string,
 };
 

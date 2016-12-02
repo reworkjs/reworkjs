@@ -156,7 +156,7 @@ export default class WebpackBase {
       loader: 'url-loader?limit=10000',
     }].concat(this.buildCssLoaders());
 
-    if (!this.isServer()) {
+    if (this.isDev) {
       loaders.push({
         test: /\.jsx?$/,
         exclude: /node_modules/,
@@ -174,7 +174,6 @@ export default class WebpackBase {
     for (const cssLoader of this.cssLoaders) {
       const loader = {};
       loader.test = cssLoader.test;
-      // loader.exclude = /node_modules/;
 
       if (this.isDev) {
         loader.loaders = ['style-loader', ...cssLoader.loaders];
@@ -280,6 +279,26 @@ export default class WebpackBase {
   }
 
   getPlugins() {
+    const definePluginArg = {
+      'process.env.BUILD_ENV': JSON.stringify(process.env.NODE_ENV), // eslint-disable-line no-process-env
+      webpack_globals: {
+        PROCESS_NAME: JSON.stringify(`${projectMetadata.name} (${this.isServer() ? 'server' : 'client'})`),
+        SIDE: JSON.stringify(this.isServer() ? 'server' : 'client'),
+        PROJECT_DIR: JSON.stringify(process.cwd()),
+        ROOT_DIR: JSON.stringify(resolve(__dirname, '../../..')),
+      },
+      frameworkConfig: JSON.stringify(frameworkConfig),
+      frameworkBabelrc: JSON.stringify(frameworkBabelRc),
+      projectMetadata: JSON.stringify(projectMetadata),
+      frameworkMetadata: JSON.stringify(frameworkMetadata),
+    };
+
+    if (!this.isServer()) {
+      definePluginArg['process.env'] = {
+        NODE_ENV: JSON.stringify(process.env.NODE_ENV), // eslint-disable-line no-process-env
+      };
+    }
+
     const plugins = [
       new CopyWebpackPlugin([{
         from: { glob: `${frameworkConfig.directories.resources}/**/**/*` },
@@ -291,21 +310,7 @@ export default class WebpackBase {
         fetch: 'exports-loader?self.fetch!whatwg-fetch',
       }),
 
-      new webpack.DefinePlugin({
-        'process.env': {
-          NODE_ENV: JSON.stringify(process.env.NODE_ENV),
-        },
-        webpack_globals: {
-          PROCESS_NAME: JSON.stringify(`${projectMetadata.name} (${this.isServer() ? 'server' : 'client'})`),
-          SIDE: JSON.stringify(this.isServer() ? 'server' : 'client'),
-          PROJECT_DIR: JSON.stringify(process.cwd()),
-          ROOT_DIR: JSON.stringify(resolve(__dirname, '../../..')),
-        },
-        frameworkConfig: JSON.stringify(frameworkConfig),
-        frameworkBabelrc: JSON.stringify(frameworkBabelRc),
-        projectMetadata: JSON.stringify(projectMetadata),
-        frameworkMetadata: JSON.stringify(frameworkMetadata),
-      }),
+      new webpack.DefinePlugin(definePluginArg),
 
       selectWebpackModulePlugin(),
     ];

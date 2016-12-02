@@ -22,7 +22,7 @@ export function getCommand(name: string): Function {
   process.exit(1);
 }
 
-(async function () {
+(async function main() {
   try {
     await getCommand(commandName)(params, otherArgs);
   } catch (e) {

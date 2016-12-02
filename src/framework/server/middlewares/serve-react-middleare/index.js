@@ -1,9 +1,12 @@
 import React from 'react';
 import { isProd } from '../../../../shared/EnvUtil';
+import logger from '../../../../shared/logger';
 import prod from './prod';
 import dev from './dev';
 
 export default function frontEndMiddleware(app, options) {
+  logger.info('Building your client-side app, this might take a minute.');
+
   const serveRoute = isProd ? prod(app, options) : dev(app, options);
 
   const serveApp = options.prerendering ? renderApp(serveRoute) : serveRoute;
@@ -16,7 +19,7 @@ function renderApp(serveRoute) {
   const { match, RouterContext } = require('react-router');
   const { renderToString } = require('react-dom/server');
   const { rootRoute } = require('../../../common/kernel');
-  const App = require('../../../app/App');
+  const App = require('../../../app/ReworkJsWrapper');
   /* eslint-enable global-require */
 
   return function serveApp(req, res) {

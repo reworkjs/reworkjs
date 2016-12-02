@@ -3,11 +3,11 @@ import { getDefault } from '../../shared/util/ModuleUtil';
 import { getCommand } from './index';
 
 const commands = {
-  lint([mode]) {
+  // lint([mode]) {
     // staged
     // script
     // style
-  },
+  // },
 
   clean() {
 
@@ -30,9 +30,9 @@ const commands = {
 
   },
 
-  test(ignored, options) {
+  // test(ignored, options) {
 
-  },
+  // },
 
   help([commandName]) {
     if (!commandName) {
