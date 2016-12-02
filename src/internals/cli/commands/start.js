@@ -32,15 +32,15 @@ function runServerWithPrerendering() {
   const webpackConfig = getDefault(require('../../../shared/webpack/webpack.server.js')); // eslint-disable-line
 
   compileWebpack(webpackConfig, true, (stats: StatDetails) => {
-    const entryPoints: EntryPoint = stats.entrypoints.main;
+    const entryPoints: EntryPoint = stats.entrypoints.main.assets.filter(fileName => fileName.endsWith('.js'));
 
-    if (entryPoints.assets.length !== 1) {
+    if (entryPoints.length !== 1) {
       throw new Error('Webpack built but the output does not have exactly one entry point. This is a bug.');
     }
 
     info('Starting server...');
 
-    const entryPoint = entryPoints.assets[0];
+    const entryPoint = entryPoints[0];
     // TODO replace webpack-server with variable.
     runCommandSync(`node ${frameworkConfig.directories.build}/webpack-server/${entryPoint}`);
   });

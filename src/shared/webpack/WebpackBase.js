@@ -7,7 +7,6 @@ import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import cheerio from 'cheerio';
 import findCacheDir from 'find-cache-dir';
 import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin';
-// import WatchMissingNodeModulesPlugin from 'react-dev-utils/WatchMissingNodeModulesPlugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import frameworkConfig from '../../shared/framework-config';
 import logger from '../../shared/logger';
@@ -18,15 +17,7 @@ import { resolveRoot, resolveFrameworkSource } from '../../shared/resolve';
 import { isDev, isTest } from '../EnvUtil';
 import selectWebpackModulePlugin from './selectWebpackModulePlugin';
 
-function fixBabelConfig(babelConfig) {
-
-  // This is a feature of `babel-loader` for webpack (not Babel itself).
-  // It enables caching results in ./node_modules/.cache/react-scripts/
-  // directory for faster rebuilds. We use findCacheDir() because of:
-  // https://github.com/facebookincubator/create-react-app/issues/483
-  babelConfig.cacheDirectory = findCacheDir({
-    name: frameworkMetadata.name,
-  });
+function replaceBabelPreset(babelConfig) {
 
   for (const key of Object.keys(babelConfig)) {
     const val = babelConfig[key];
@@ -38,7 +29,7 @@ function fixBabelConfig(babelConfig) {
         }
       }
     } else if (val && typeof val === 'object') {
-      fixBabelConfig(val);
+      replaceBabelPreset(val);
     }
   }
 
@@ -136,7 +127,7 @@ export default class WebpackBase {
       test: /\.jsx?$/,
       loader: 'babel-loader',
       exclude: anyNodeModuleExceptFramework,
-      query: fixBabelConfig(this.getBabelConfig()),
+      query: replaceBabelPreset(this.getBabelConfig()),
     }, {
       test: /\.(eot|svg|ttf|woff|woff2)(\?.*$|$)/,
       loader: 'file-loader',
@@ -320,6 +311,8 @@ export default class WebpackBase {
     ];
 
     // TODO inject DLLs <script data-dll='true' src='/${dllName}.dll.js'></script>`
+    // TODO https://github.com/diurnalist/chunk-manifest-webpack-plugin
+
     if (this.isDev) {
       plugins.push(
         // enable hot reloading.
@@ -344,14 +337,29 @@ export default class WebpackBase {
         }),
       );
     } else {
-      plugins.push(
-        new webpack.optimize.CommonsChunkPlugin({
-          name: 'vendor',
-          children: true,
-          minChunks: 2,
-          async: true,
-        }),
+      if (!this.isServer()) {
+        // there is no need to optimise bundle sizes on the server
+        plugins.push(
+          new webpack.optimize.CommonsChunkPlugin({
+            name: 'common',
+            children: true,
+            minChunks: 2,
+            async: true,
+          }),
 
+          new webpack.optimize.UglifyJsPlugin({
+            compress: {
+              warnings: false, // ...but do not show warnings in the console (there is a lot of them)
+            },
+          }),
+
+          // OccurrenceOrderPlugin is needed for long-term caching to work properly.
+          // See http://mxs.is/googmv
+          new webpack.optimize.OccurrenceOrderPlugin(true),
+        );
+      }
+
+      plugins.push(
         new HtmlWebpackPlugin({
           inject: true,
           templateContent: templateContent(),
@@ -368,18 +376,6 @@ export default class WebpackBase {
             minifyURLs: true,
           },
         }),
-
-        new webpack.optimize.UglifyJsPlugin({
-          compress: {
-            warnings: false, // ...but do not show warnings in the console (there is a lot of them)
-          },
-        }),
-
-        new webpack.optimize.DedupePlugin(),
-
-        // OccurrenceOrderPlugin is needed for long-term caching to work properly.
-        // See http://mxs.is/googmv
-        new webpack.optimize.OccurrenceOrderPlugin(true),
 
         // Extract the CSS into a seperate file
         new ExtractTextPlugin('[name].[contenthash].css'),
@@ -415,13 +411,20 @@ export default class WebpackBase {
   }
 
   getBabelConfig() {
-    // TODO load app .babelrc AND  disable autoloading
     const config = frameworkBabelRc;
     config.plugins = config.plugins || [];
 
     if (this.isDev) {
       config.presets.push('react-hmre');
     }
+
+    // This is a feature of `babel-loader` for webpack (not Babel itself).
+    // It enables caching results in ./node_modules/.cache/react-scripts/
+    // directory for faster rebuilds. We use findCacheDir() because of:
+    // https://github.com/facebookincubator/create-react-app/issues/483
+    config.cacheDirectory = findCacheDir({
+      name: frameworkMetadata.name,
+    });
 
     return config;
   }

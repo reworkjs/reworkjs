@@ -25,6 +25,7 @@ export default class LanguageComponent extends React.Component {
   };
 
   constructor(props) {
+
     super(props);
 
     props.changeLocale(guessPreferredLocale());
