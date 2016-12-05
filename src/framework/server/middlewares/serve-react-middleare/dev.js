@@ -33,7 +33,6 @@ export default function addDevMiddlewares(app, config) {
   //   });
   // }
 
-  // TODO mechanism for 404, 500, ... routes.
   return function serveRoute(req, res, html) {
     fs.readFile(path.join(compiler.outputPath, 'index.html'), (err, file) => {
       if (err) {
