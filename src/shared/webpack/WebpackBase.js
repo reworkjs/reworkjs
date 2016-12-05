@@ -157,7 +157,7 @@ export default class WebpackBase {
       loaders.push({
         test: /\.jsx?$/,
         exclude: /node_modules/,
-        loader: 'eslint-loader',
+        loader: 'eslint-loader?{rules:{"no-console":1}}',
         enforce: 'pre',
       });
     }
