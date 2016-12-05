@@ -22,6 +22,10 @@ export default (async function initServer() {
     logger.info(`Using available port ${chalk.magenta(argv.port)}, use ${chalk.blue('--port <number>')} to set the port to use.`);
   }
 
+  if (argv.prerendering == null) {
+    argv.prerendering = true;
+  }
+
   serveReactMiddleware(app, {
     ...argv,
     outputPath: frameworkConfig.directories.build,
