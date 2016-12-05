@@ -32,3 +32,7 @@ In dev, build the server in memory-fs ?
 Or separate from the prod build
 
 Delete files when rebuilding
+
+eslint plugin that detects @provider and warns if anything in the annotated class isn't static
+
+Migrate to YARN

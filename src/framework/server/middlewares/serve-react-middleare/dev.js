@@ -14,6 +14,7 @@ export default function addDevMiddlewares(app, config) {
     publicPath: config.publicPath,
     silent: true,
     stats: 'errors-only',
+    serverSideRender: true,
   });
 
   app.use(middleware);
