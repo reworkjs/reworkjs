@@ -1,5 +1,6 @@
 import global from 'global';
 import '../../shared/regenerator';
+import { isProd } from '../../shared/EnvUtil';
 
 // const System = global.System ? { import: global.System.import } : {};
 
@@ -17,6 +18,10 @@ export default function loadPolyfills() {
       System.import('intl'),
       System.import('intl/locale-data/jsonp/en.js'),
     );
+  }
+
+  if (!isProd) {
+    promises.push(System.import('source-map-support/register'));
   }
 
   return Promise.all(promises);
