@@ -100,7 +100,6 @@
     "webpack": "^2.1.0-beta.22",
     "webpack-dev-middleware": "^1.8.4",
     "webpack-hot-middleware": "^2.13.2",
-    "whatwg-fetch": "1.0.0",
     "winston": "^2.3.0"
   },
   "devDependencies": {
