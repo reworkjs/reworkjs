@@ -8,6 +8,7 @@
   },
   "rules": {
     "no-process-env": 2,
-    "valid-jsdoc": 0
+    "valid-jsdoc": 0,
+    "no-console": 2
   }
 }
