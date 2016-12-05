@@ -7,10 +7,10 @@ import logger from './logger';
 const env = process.env;
 env.NODE_ENV = env.NODE_ENV || 'production';
 
-if (typeof process !== 'undefined') {
+if (typeof process.env.BUILD_ENV !== 'undefined') {
   // BUILD_ENV is the environment for which this build was created (if its production, we're in a minified build).
   if (env.NODE_ENV !== process.env.BUILD_ENV) {
-    logger.warn(`You're running a ${env.BUILD_ENV} build in a ${process.env.NODE_ENV} environment.`);
+    logger.warn(`You're running a ${process.env.BUILD_ENV} build in a ${env.NODE_ENV} environment.`);
   }
 }
 
