@@ -103,11 +103,8 @@ export default class WebpackBase {
 
       config.externals = [
         anyAbsoluteExceptFramework,
-        /\.json$/,
       ];
     } else {
-      config.resolve.extensions.push('.json');
-
       config.resolve.mainFields.unshift('web');
       config.resolve.mainFields.unshift('jsnext:web');
       config.resolve.mainFields.unshift('browser');
