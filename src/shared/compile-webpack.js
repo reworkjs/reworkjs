@@ -11,7 +11,7 @@ export default function compileWebpack(config: Object, watch: boolean, callback:
 
   const compile = watch
     ? cb => compiler.watch({}, cb)
-    : cb => compiler.compile(cb);
+    : cb => compiler.run(cb);
 
   compile((err: Error, stats: Stats) => {
 
@@ -38,7 +38,7 @@ export default function compileWebpack(config: Object, watch: boolean, callback:
   });
 }
 
-function toJson(stats) {
+function toJson(stats: Stats): StatDetails {
   if (stats.toJson) {
     return stats.toJson();
   }
