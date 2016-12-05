@@ -27,3 +27,8 @@ Module not found: Error: Can't resolve '@@directories.translations' in '/Users/e
  @ multi main
 
 Replace `selectWebpackModulePlugin` with `resolve.mainField`
+
+In dev, build the server in memory-fs ?
+Or separate from the prod build
+
+Delete files when rebuilding

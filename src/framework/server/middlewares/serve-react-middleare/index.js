@@ -23,6 +23,7 @@ function renderApp(serveRoute) {
   /* eslint-enable global-require */
 
   return function serveApp(req, res) {
+    // TODO mechanism for 404, 500, ... routes rendering (as in render the error page).
     match({ routes: [rootRoute], location: req.url }, (err, redirect, props) => {
 
       if (err) {
