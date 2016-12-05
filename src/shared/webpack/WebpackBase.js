@@ -208,11 +208,15 @@ export default class WebpackBase {
     return entry;
   }
 
+  getPublicPath() {
+    return '/static';
+  }
+
   getOutput() {
     // Output to build directory.
     const output = {
       path: `${frameworkConfig.directories.build}/webpack-${this.isServer() ? 'server' : 'client'}`,
-      publicPath: '/',
+      publicPath: this.getPublicPath(),
     };
 
     if (this.isServer()) {
@@ -382,7 +386,7 @@ export default class WebpackBase {
         // assets manipulations and do leak its manipulations to HtmlWebpackPlugin
         new OfflinePlugin({
           relativePaths: false,
-          publicPath: '/',
+          publicPath: this.getPublicPath(),
 
           // No need to cache .htaccess. See http://mxs.is/googmp,
           // this is applied before any match in `caches` section
