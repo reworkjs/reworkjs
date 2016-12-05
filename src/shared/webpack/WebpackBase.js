@@ -306,10 +306,6 @@ export default class WebpackBase {
         toType: 'dir',
       }]),
 
-      new webpack.ProvidePlugin({
-        fetch: 'exports-loader?self.fetch!whatwg-fetch',
-      }),
-
       new webpack.DefinePlugin(definePluginArg),
 
       selectWebpackModulePlugin(),
