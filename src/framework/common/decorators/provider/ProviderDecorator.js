@@ -9,7 +9,12 @@ import { isActionGenerator } from './ActionDecorator';
 const stateHolderSymbol = Symbol('state-holder');
 const mutatedProperties = Symbol('mutatedProperties');
 const mutableVersion = Symbol('mutable-version');
-const PROPERTY_BLACKLIST = ['length', 'name', 'prototype', 'arguments', 'caller', 'callee'];
+
+// Blacklist universal properties, Function static properties and @provider symbols.
+const PROPERTY_BLACKLIST = Object.getOwnPropertyNames(Object.prototype)
+  .concat(Object.getOwnPropertyNames(Function));
+
+PROPERTY_BLACKLIST.push(stateHolderSymbol);
 
 function denyAccess() {
   throw new Error('Cannot access @provider state outside of @reducer annotated methods. If you are trying to r/w the state from a @saga, you will need to use => yield put(this.<reducerMethodName>()) <=');
@@ -40,7 +45,7 @@ export default function provider(providerClass) {
   }
 
   if (Object.getOwnPropertyNames(providerClass.prototype).length > 1) {
-    console.error(`@provider ${providerClass.name} has instance properties. This is likely a bug as providers are fully static.`);
+    console.warn(`@provider ${providerClass.name} has instance properties. This is likely a bug as providers are fully static.`);
   }
 
   const domainIdentifier = providerClass.name;
@@ -104,7 +109,12 @@ function extractFromProvider(providerClass, selectDomain) {
   const actionListeners = new Map();
   const sagaList = [];
   const initialState = {};
+
   const keys = Object.getOwnPropertyNames(providerClass);
+  if (Object.getOwnPropertySymbols) {
+    keys.push(...Object.getOwnPropertySymbols(providerClass));
+  }
+
   for (const propertyName of keys) {
     if (PROPERTY_BLACKLIST.includes(propertyName)) {
       continue;
