@@ -1,6 +1,5 @@
 import global from 'global';
 import '../../shared/regenerator';
-import { isProd } from '../../shared/EnvUtil';
 
 // const System = global.System ? { import: global.System.import } : {};
 
@@ -20,7 +19,7 @@ export default function loadPolyfills() {
     );
   }
 
-  if (!isProd) {
+  if (webpack_globals.SIDE === 'server') { // eslint-disable-line
     promises.push(System.import('source-map-support/register'));
   }
 
