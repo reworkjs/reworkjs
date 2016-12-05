@@ -1,6 +1,7 @@
 import promiseAllProperties from 'promise-all-properties';
 import flatten from 'lodash/flatten';
 import { getDefault } from '../../shared/util/ModuleUtil';
+import logger from '../../shared/logger';
 import isPojo from '../util/is-pojo';
 import { Symbols } from './decorators/provider';
 import createAsyncInjectors from './create-async-injectors';
@@ -11,7 +12,7 @@ export default function createRoutes(store) {
   const fileNames = routeLoader.keys();
 
   if (fileNames.length === 0) {
-    console.warn('Your framework does not contain any route. Add your route descriptions in the directory specified by the "directories.routes" entry of your framework configuration file.');
+    logger.warn('Your framework does not contain any route. Add your route descriptions in the directory specified by the "directories.routes" entry of your framework configuration file.');
   }
 
   const injectors = createAsyncInjectors(store);
@@ -90,10 +91,10 @@ function unpromisifyGetComponent(route, injectors, store, fileName) {
       try {
         callback(null, component);
       } catch (e) {
-        console.error(`Error while rendering route ${JSON.stringify(fileName)}`, e);
+        logger.error(`Error while rendering route ${JSON.stringify(fileName)}`, e);
       }
     } catch (e) {
-      console.error(`Error while loading route ${JSON.stringify(fileName)}`, e);
+      logger.error(`Error while loading route ${JSON.stringify(fileName)}`, e);
       callback(e);
     }
   };
