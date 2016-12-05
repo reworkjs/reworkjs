@@ -4,6 +4,15 @@ import loadPolyfills from '../common/load-polyfills';
 import { getDefault } from '../../shared/util/ModuleUtil';
 
 (async function setupServer() {
+  process.on('unhandledRejection', (reason, p) => {
+    console.error('Unhandled Rejections:');
+    console.error(reason);
+    console.error('Caused by:');
+    console.error(p);
+
+    process.exit(1);
+  });
+
   await loadPolyfills();
 
   // webpack
