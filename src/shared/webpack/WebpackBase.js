@@ -173,10 +173,10 @@ export default class WebpackBase {
       loader.test = cssLoader.test;
 
       if (this.isDev) {
-        loader.loaders = ['style-loader', ...cssLoader.loaders];
+        loader.loaders = ['isomorphic-style-loader', ...cssLoader.loaders];
       } else {
         loader.loader = ExtractTextPlugin.extract({
-          fallbackLoader: 'style-loader',
+          fallbackLoader: 'isomorphic-style-loader',
           loader: cssLoader.loaders,
         });
       }
