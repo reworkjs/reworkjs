@@ -1,14 +1,6 @@
 import global from 'global';
 import '../../shared/regenerator';
 
-// const System = global.System ? { import: global.System.import } : {};
-
-// if (!System.import) {
-//   System.import = function sysImport(arg) {
-//     return require(arg); // eslint-disable-line global-require
-//   };
-// }
-
 export default function loadPolyfills() {
   const promises = [];
 
