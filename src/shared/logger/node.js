@@ -43,7 +43,7 @@ const logger = new (winston.Logger)({
 });
 
 logger.add(winston.transports.Console, {
-  level: 'info',
+  level: actualLevel,
   prettyPrint: true,
   colorize: true,
   silent: false,
