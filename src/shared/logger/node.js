@@ -1,19 +1,33 @@
 import winston from 'winston';
 import globals from '../globals';
+import argv from '../argv';
+
+const levels = {
+  trace: 9,
+  input: 8,
+  verbose: 7,
+  prompt: 6,
+  debug: 5,
+  info: 4,
+  data: 3,
+  help: 2,
+  warn: 1,
+  error: 0,
+};
+
+let requestedLevel;
+if (typeof argv.verbose === 'string') {
+  requestedLevel = argv.verbose.toLocaleLowerCase();
+} else if (argv.verbose === true) {
+  requestedLevel = 'debug';
+} else {
+  requestedLevel = 'info';
+}
+
+const actualLevel = Object.keys(levels).includes(requestedLevel) ? requestedLevel : 'info';
 
 const logger = new (winston.Logger)({
-  levels: {
-    trace: 9,
-    input: 8,
-    verbose: 7,
-    prompt: 6,
-    debug: 5,
-    info: 4,
-    data: 3,
-    help: 2,
-    warn: 1,
-    error: 0,
-  },
+  levels,
   colors: {
     trace: 'magenta',
     input: 'grey',
@@ -29,7 +43,7 @@ const logger = new (winston.Logger)({
 });
 
 logger.add(winston.transports.Console, {
-  level: 'trace',
+  level: 'info',
   prettyPrint: true,
   colorize: true,
   silent: false,
@@ -39,7 +53,7 @@ logger.add(winston.transports.Console, {
 
 logger.add(winston.transports.File, {
   prettyPrint: false,
-  level: 'info',
+  level: actualLevel,
   silent: false,
   colorize: true,
   timestamp: true,
@@ -48,5 +62,9 @@ logger.add(winston.transports.File, {
   maxFiles: 10,
   json: false,
 });
+
+if (actualLevel !== requestedLevel) {
+  logger.warn(`Invalid verbosity value ${JSON.stringify(requestedLevel)}, must be one of "${Object.keys(levels).join('", "')}". Using "${actualLevel}" instead.`);
+}
 
 export default logger;
