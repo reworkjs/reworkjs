@@ -224,8 +224,9 @@ export default class WebpackBase {
       output.libraryTarget = 'commonjs2';
     }
 
-    if (this.isDev) {
-      // Don't use hashes in dev mode for better performance
+    if (this.isDev || this.isServer()) {
+      // Don't use hashes in dev mode for better building performance.
+      // Don't use them on the server because they're not needed and not user friendly.
       Object.assign(output, {
         filename: '[name].js',
         chunkFilename: '[name].chunk.js',
@@ -234,7 +235,7 @@ export default class WebpackBase {
         // publicPath: 'http://localhost:3000',
       });
     } else {
-      // Utilize long-term caching by adding content hashes (not compilation hashes) to compiled assets
+      // Utilize long-term caching by adding content hashes (not compilation hashes) to compiled assets.
       Object.assign(output, {
         filename: '[name].[chunkhash].js',
         chunkFilename: '[name].[chunkhash].chunk.js',
