@@ -1,5 +1,6 @@
 import React from 'react';
 import { isProd } from '../../../../shared/EnvUtil';
+import { getDefault } from '../../../../shared/util/ModuleUtil';
 import logger from '../../../../shared/logger';
 import ProdMiddleware from './ProdMiddleware';
 import DevMiddleware from './DevMiddleware';
@@ -24,7 +25,7 @@ function renderApp(serveRoute) {
   const { match, RouterContext } = require('react-router');
   const { renderToString } = require('react-dom/server');
   const { rootRoute } = require('../../../common/kernel');
-  const App = require('../../../app/ReworkJsWrapper');
+  const App = getDefault(require('../../../app/ReworkJsWrapper'));
   /* eslint-enable global-require */
 
   return function serveApp(req, res) {
