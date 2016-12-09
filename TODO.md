@@ -9,8 +9,6 @@ possible babel plugins:
 - "transform-export-default-name"
 - "babel-plugin-annotate-console-log" (dev-only)
 
-Disable console.* warnings in webpack-eslint (make them warnings)
-
 Better debug messages when file not found by webpack
 
 Manifest support ?
