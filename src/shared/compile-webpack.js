@@ -15,6 +15,8 @@ export default function compileWebpack(config: Object, watch: boolean, callback:
 
   compile((err: Error, stats: Stats) => {
 
+    logger.debug(stats.toString());
+
     if (err) {
       logger.error('Fatal error when building.');
       logger.error(err);
@@ -32,18 +34,10 @@ export default function compileWebpack(config: Object, watch: boolean, callback:
       logger.info('Build complete.');
 
       if (callback) {
-        callback(toJson(stats));
+        callback(stats.toJson());
       }
     }
   });
-}
-
-function toJson(stats: Stats): StatDetails {
-  if (stats.toJson) {
-    return stats.toJson();
-  }
-
-  return stats;
 }
 
 function hasErrors(stats: Stats) {
@@ -71,7 +65,7 @@ function hasWarnings(stats: Stats) {
 }
 
 function printErrors(stats: Stats) {
-  const jsonStats = toJson(stats);
+  const jsonStats = stats.toJson();
 
   // parseWebpackStats(stats);
 
