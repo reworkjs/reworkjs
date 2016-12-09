@@ -1,4 +1,3 @@
-- Prod mode
 - Default project
 - make babelrc optional
 - install sanitize.css
@@ -10,12 +9,6 @@ possible babel plugins:
 - "babel-plugin-annotate-console-log" (dev-only)
 
 Better debug messages when file not found by webpack
-
-Manifest support ?
-url/favicon.ico support ?
-
-Disallow the direct use of process.env in webpack builds
-http://eslint.org/docs/rules/no-process-env
 
 ERROR in ./~/reworkjs/lib/framework/common/i18n.js
 Module not found: Error: Can't resolve '@@directories.translations' in '/Users/ephys/Documents/dev/secretsanta/client2/node_modules/reworkjs/lib/framework/common'
@@ -29,8 +22,8 @@ Replace `selectWebpackModulePlugin` with `resolve.mainField`
 In dev, build the server in memory-fs ?
 Or separate from the prod build
 
-Delete files when rebuilding
-
 eslint plugin that detects @provider and warns if anything in the annotated class isn't static
 
 Migrate to YARN
+
+- Optimise Bundle-loader ?
