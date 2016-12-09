@@ -41,8 +41,6 @@ function renderApp(serveRoute) {
       }
 
       if (props) {
-        // TODO use react helmet here.
-        // https://github.com/nfl/react-helmet#as-react-components
         const appHtml = renderToString(
           <App>
             <RouterContext {...props} />

@@ -1,9 +1,11 @@
 import path from 'path';
 import webpack from 'webpack';
+import Helmet from 'react-helmet';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import getFilenameFromUrl from 'webpack-dev-middleware/lib/GetFilenameFromUrl';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 import cheerio from 'cheerio';
+
 import webpackConfig from '../../../../shared/webpack/webpack.client';
 import logger from '../../../../shared/logger';
 
@@ -69,15 +71,44 @@ export default class DevMiddleware {
         return res.sendStatus(404);
       }
 
+      // no server-side rendering
       if (typeof html !== 'string') {
-        html = '';
+        return res.send(file.toString());
       }
 
-      // TODO inject helmet
-      const doc = cheerio(file.toString());
-      doc.find('#app').append(`<div>${html}</div>`);
+      // server-side rendering:
+      const $doc = cheerio(file.toString());
+      const { htmlAttributes, ...headChildren } = Helmet.rewind();
 
-      res.send(doc.toString());
+      const $html = $doc.find('html');
+      for (const attributeName of Object.keys(htmlAttributes)) {
+        $html.attr(attributeName, htmlAttributes[attributeName]);
+      }
+
+      const $head = $doc.find('head');
+      const { title, base, ...appendableTags } = headChildren;
+      replace($head, 'title', title.toString());
+      replace($head, 'base', base.toString());
+
+      // TODO replace meta tags ?
+
+      for (const tagName of Object.keys(appendableTags)) {
+        const tag = appendableTags[tagName];
+        $head.append(tag.toString());
+      }
+
+      $doc.find('#app').append(`<div>${html}</div>`);
+
+      res.send($doc.toString());
     });
+  }
+}
+
+function replace($head, tagName, newTag) {
+  const tag = $head.find(tagName);
+  if (tag.length > 0) {
+    tag.replaceWith(newTag);
+  } else {
+    $head.append(newTag);
   }
 }
