@@ -209,7 +209,7 @@ export default class WebpackBase {
   }
 
   getPublicPath() {
-    return '/static';
+    return '/';
   }
 
   getOutput() {

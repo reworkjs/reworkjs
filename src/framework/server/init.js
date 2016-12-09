@@ -12,11 +12,6 @@ import webpackConfig from '../../shared/webpack/webpack.client';
 import serveReactMiddleware from './middlewares/serve-react-middleare';
 
 export default (async function initServer() {
-  const app = express();
-
-  // public resources directory
-  app.use(express.static(frameworkConfig.directories.resources));
-
   if (!argv.port) {
     argv.port = await getPort();
     logger.info(`Using available port ${chalk.magenta(argv.port)}, use ${chalk.blue('--port <number>')} to set the port to use.`);
@@ -26,6 +21,7 @@ export default (async function initServer() {
     argv.prerendering = true;
   }
 
+  const app = express();
   serveReactMiddleware(app, {
     ...argv,
     outputPath: frameworkConfig.directories.build,

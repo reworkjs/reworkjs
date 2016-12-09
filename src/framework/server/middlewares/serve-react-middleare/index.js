@@ -1,17 +1,22 @@
 import React from 'react';
 import { isProd } from '../../../../shared/EnvUtil';
 import logger from '../../../../shared/logger';
-import prod from './prod';
-import dev from './dev';
+import ProdMiddleware from './ProdMiddleware';
+import DevMiddleware from './DevMiddleware';
 
-export default function frontEndMiddleware(app, options) {
+export default function frontEndMiddleware(app, config) {
   logger.info('Building your client-side app, this might take a minute.');
 
-  const serveRoute = isProd ? prod(app, options) : dev(app, options);
+  const Middleware = isProd ? ProdMiddleware : DevMiddleware;
+  const middleware = new Middleware(app, config);
 
-  const serveApp = options.prerendering ? renderApp(serveRoute) : serveRoute;
+  let serveRoute = middleware.serveRoute.bind(middleware);
+  if (config.prerendering) {
+    serveRoute = renderApp(serveRoute);
+  }
 
-  app.use(serveApp);
+  middleware.registerMiddlewares(serveRoute);
+  app.use(serveRoute);
 }
 
 function renderApp(serveRoute) {
