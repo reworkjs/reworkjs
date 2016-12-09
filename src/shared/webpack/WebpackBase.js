@@ -4,6 +4,7 @@ import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import OfflinePlugin from 'offline-plugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
+import WebpackCleanupPlugin from 'webpack-cleanup-plugin';
 import cheerio from 'cheerio';
 import findCacheDir from 'find-cache-dir';
 import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin';
@@ -363,6 +364,8 @@ export default class WebpackBase {
       }
 
       plugins.push(
+        new WebpackCleanupPlugin(),
+
         new HtmlWebpackPlugin({
           inject: true,
           templateContent: templateContent(),
