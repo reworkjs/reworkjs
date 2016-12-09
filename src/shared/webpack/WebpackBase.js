@@ -350,6 +350,7 @@ export default class WebpackBase {
           }),
 
           new webpack.optimize.UglifyJsPlugin({
+            comments: false,
             compress: {
               warnings: false, // ...but do not show warnings in the console (there is a lot of them)
             },
