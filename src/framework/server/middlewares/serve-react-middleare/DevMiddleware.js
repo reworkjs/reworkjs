@@ -67,7 +67,8 @@ export default class DevMiddleware {
 
     fs.readFile(path.join(this.compiler.outputPath, 'index.html'), (err, file) => {
       if (err) {
-        return res.sendStatus(404);
+        // TODO detech that the app is still building
+        return res.status(500).send('Missing file "index.html". Either the app is still building or something went wrong.');
       }
 
       // no server-side rendering
