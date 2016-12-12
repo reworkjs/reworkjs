@@ -1,5 +1,6 @@
 import fs from 'fs';
 import { resolve } from 'path';
+import querystring from 'querystring';
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import OfflinePlugin from 'offline-plugin';
@@ -59,13 +60,28 @@ export default class WebpackBase {
   }
 
   get cssLoaderModule() {
-    const cssOptions = 'css-loader?modules&importLoaders=1&camelCase';
+
+    const options = {
+      modules: '',
+      camelCase: '',
+
+      // disable cssnano removing deprecated prefixes.
+      '-autoprefixer': '',
+      importLoaders: '1',
+    };
+
     if (this.isDev) {
-      return `${cssOptions}&localIdentName=[local]__[path][name]__[hash:base64:5]&sourceMap`;
+      Object.assign(options, {
+        localIdentName: '[local]__[path][name]__[hash:base64:5]',
+        sourceMap: '',
+      });
+    } else {
+      Object.assign(options, {
+        minimize: '',
+      });
     }
 
-    // disable cssnano removing deprecated prefixes.
-    return `${cssOptions}&-autoprefixer`;
+    return `css-loader?${querystring.stringify(options)}`;
   }
 
   buildConfig() {
