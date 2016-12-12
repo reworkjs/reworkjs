@@ -25,6 +25,8 @@ const IMMUTABLE_STATE = {
   get: denyAccess,
 };
 
+let providerCount = 0;
+
 /**
  * Decorator that transforms a static class into a provider
  *
@@ -48,7 +50,7 @@ export default function provider(providerClass) {
     console.warn(`@provider ${providerClass.name} has instance properties. This is likely a bug as providers are fully static.`);
   }
 
-  const domainIdentifier = providerClass.name;
+  const domainIdentifier = `${providerClass.name}_rjs_provider_${providerCount++}`;
 
   function selectDomain() {
     return state => {
