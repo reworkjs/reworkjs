@@ -22,13 +22,13 @@ export default function createRoutes(store) {
       const route = getDefault(routeLoader(file));
 
       if (route.status === 404) {
-        route.priority = Number.MIN_SAFE_INTEGER - 1;
-        route.path = '*';
+        route.priority = route.priority || Number.MIN_SAFE_INTEGER + 1;
+        route.path = route.path || '*';
       }
 
       if (route.status && Math.floor(route.status / 100) !== 2) {
-        route.priority = Number.MIN_SAFE_INTEGER;
-        route.path = '*';
+        route.priority = route.priority || Number.MIN_SAFE_INTEGER;
+        route.path = route.path || '*';
       }
 
       return route;
@@ -70,6 +70,15 @@ function sanitizeRoute(routeData, injectors, store, fileName) {
   delete route.getProvider;
   delete route.getProviders;
   delete route.priority;
+
+  if (route.children && route.childRoutes) {
+    throw new TypeError(`Route ${JSON.stringify(fileName)} declares children twice (.children & .childRoutes), please use either methods.`);
+  }
+
+  if (route.childRoutes) {
+    route.children = route.childRoutes;
+    delete route.childRoutes;
+  }
 
   if (route.children) {
     if (Array.isArray(route.children)) {
