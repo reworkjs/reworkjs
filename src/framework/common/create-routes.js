@@ -26,7 +26,7 @@ export default function createRoutes(store) {
         route.path = '*';
       }
 
-      if (route.status === 500) {
+      if (route.status && Math.floor(route.status / 100) !== 2) {
         route.priority = Number.MIN_SAFE_INTEGER;
         route.path = '*';
       }
