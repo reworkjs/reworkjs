@@ -158,7 +158,7 @@ export default class WebpackBase {
       loaders.push({
         test: /\.jsx?$/,
         exclude: /node_modules/,
-        loader: 'eslint-loader?{rules:{"no-console":1}}',
+        loader: 'eslint-loader?{rules:{"no-console":1, "no-debugger":1}}',
         enforce: 'pre',
       });
     }
@@ -365,7 +365,7 @@ export default class WebpackBase {
       }
 
       plugins.push(
-        new WebpackCleanupPlugin(),
+        new WebpackCleanupPlugin({ quiet: true }),
 
         new HtmlWebpackPlugin({
           inject: true,
