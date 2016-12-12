@@ -17,8 +17,23 @@ export default function createRoutes(store) {
 
   const injectors = createAsyncInjectors(store);
 
-  return fileNames.map(file => getDefault(routeLoader(file)))
-    .sort((a, b) => (a.priority || 0) - (b.priority || 0))
+  return fileNames
+    .map(file => {
+      const route = getDefault(routeLoader(file));
+
+      if (route.status === 404) {
+        route.priority = Number.MIN_SAFE_INTEGER - 1;
+        route.path = '*';
+      }
+
+      if (route.status === 500) {
+        route.priority = Number.MIN_SAFE_INTEGER;
+        route.path = '*';
+      }
+
+      return route;
+    })
+    .sort((a, b) => (b.priority || 0) - (a.priority || 0))
     .map((route, i) => sanitizeRoute(route, injectors, store, fileNames[i]));
 }
 

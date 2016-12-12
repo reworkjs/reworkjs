@@ -29,10 +29,10 @@ function renderApp(serveRoute) {
   /* eslint-enable global-require */
 
   return function serveApp(req, res) {
-    // TODO mechanism for 404, 500, ... routes rendering (as in render the error page).
     match({ routes: [rootRoute], location: req.url }, (err, redirect, props) => {
 
       if (err) {
+        // TODO 500
         return res.status(500).send(err.message);
       }
 
@@ -40,7 +40,17 @@ function renderApp(serveRoute) {
         return res.redirect(redirect.pathname + redirect.search);
       }
 
+      if (!props) {
+        res.status(404).send('This is a 404 page. To define the page to actually render when a 404 occurs, please create a new route object and set its "status" property to 404 (int)');
+      }
+
+      const matchedRoute = props.routes[props.routes.length - 1];
+      if (matchedRoute.status) {
+        res.status(matchedRoute.status);
+      }
+
       if (props) {
+        // TODO catch 500
         const appHtml = renderToString(
           <App>
             <RouterContext {...props} />
@@ -49,8 +59,7 @@ function renderApp(serveRoute) {
 
         return serveRoute(req, res, `<div>${appHtml}</div>`);
       }
-
-      res.status(404).send('No route defined for path');
     });
   };
 }
+
