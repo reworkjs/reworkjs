@@ -15,13 +15,13 @@ export default function compileWebpack(config: Object, watch: boolean, callback:
 
   compile((err: Error, stats: Stats) => {
 
-    logger.debug(stats.toString());
-
     if (err) {
       logger.error('Fatal error when building.');
       logger.error(err);
       throw err;
     }
+
+    logger.debug(stats.toString());
 
     if (hasErrors(stats) || hasWarnings(stats)) {
       printErrors(stats);
