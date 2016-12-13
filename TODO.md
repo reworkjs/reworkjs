@@ -1,12 +1,19 @@
 - Default project
 - make babelrc optional
+- default postcss config
 - install sanitize.css
-- don't default to dummy dir, create the dirs instead.
 - name bundles
+- Optimise Bundle-loader ?
+- In dev, build the server in memory-fs ?
+- Build everything from CLI, not in the server build
+- eslint plugin that detects @provider and warns if anything in the annotated class isn't static
+- Migrate to YARN
 
 possible babel plugins:
 - "transform-export-default-name"
 - "babel-plugin-annotate-console-log" (dev-only)
+
+====================================================
 
 Better debug messages when file not found by webpack
 
@@ -16,14 +23,3 @@ Module not found: Error: Can't resolve '@@directories.translations' in '/Users/e
  @ ./~/reworkjs/lib/framework/app/App.js
  @ ./~/reworkjs/lib/framework/client/index.js
  @ multi main
-
-Replace `selectWebpackModulePlugin` with `resolve.mainField`
-
-In dev, build the server in memory-fs ?
-Or separate from the prod build
-
-eslint plugin that detects @provider and warns if anything in the annotated class isn't static
-
-Migrate to YARN
-
-- Optimise Bundle-loader ?
