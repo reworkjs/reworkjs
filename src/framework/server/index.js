@@ -1,10 +1,8 @@
 import preInit from '../common/pre-init';
 
-process.on('unhandledRejection', (reason, p) => {
+process.on('unhandledRejection', reason => {
   console.error('Unhandled Rejections:');
   console.error(reason);
-  console.error('Caused by:');
-  console.error(p);
 
   process.exit(1);
 });
