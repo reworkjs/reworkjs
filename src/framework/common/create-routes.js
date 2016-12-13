@@ -75,16 +75,16 @@ function sanitizeRoute(routeData, injectors, store, fileName) {
     throw new TypeError(`Route ${JSON.stringify(fileName)} declares children twice (.children & .childRoutes), please use either methods.`);
   }
 
-  if (route.childRoutes) {
-    route.children = route.childRoutes;
-    delete route.childRoutes;
+  if (route.children) {
+    route.childRoutes = route.children;
+    delete route.children;
   }
 
-  if (route.children) {
-    if (Array.isArray(route.children)) {
-      route.children = route.children.map(subRoute => sanitizeRoute(subRoute.children, injectors, store, fileName));
+  if (route.childRoutes) {
+    if (Array.isArray(route.childRoutes)) {
+      route.childRoutes = route.childRoutes.map(subRoute => sanitizeRoute(subRoute, injectors, store, fileName));
     } else {
-      route.children = [sanitizeRoute(route.children, injectors, store, fileName)];
+      route.childRoutes = [sanitizeRoute(route.childRoutes, injectors, store, fileName)];
     }
   }
 
