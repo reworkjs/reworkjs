@@ -106,9 +106,9 @@ function deleteDebug() {
 
 // Bare minimum, there is more than that (see webpack docs).
 export type Stats = {
-  hasErrors: ?() => boolean,
-  hasWarnings: ?() => boolean,
-  toJson: ?() => StatDetails,
+  hasErrors: () => boolean,
+  hasWarnings: () => boolean,
+  toJson: () => StatDetails,
   toString: () => string,
 };
 

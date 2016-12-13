@@ -6,7 +6,6 @@ export function selectLocationState() {
   let prevRoutingStateJS;
 
   return state => {
-    // TODO double check
     const routingState = state.get(routeReducer.name);
 
     if (!routingState.equals(prevRoutingState)) {

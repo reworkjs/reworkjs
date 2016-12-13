@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { resolve } from 'path';
+import path from 'path';
 import querystring from 'querystring';
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
@@ -86,6 +86,7 @@ export default class WebpackBase {
 
   buildConfig() {
     const config = {
+      cache: true,
       name: this.isServer() ? 'Server' : 'Client',
       entry: this.getEntry(),
       output: this.getOutput(),
@@ -229,7 +230,7 @@ export default class WebpackBase {
     return '/';
   }
 
-  getOutput() {
+  getOutput(): Object {
     // Output to build directory.
     const output = {
       path: `${frameworkConfig.directories.build}/webpack-${this.isServer() ? 'server' : 'client'}`,
@@ -304,7 +305,7 @@ export default class WebpackBase {
         PROCESS_NAME: JSON.stringify(`${projectMetadata.name} (${this.isServer() ? 'server' : 'client'})`),
         SIDE: JSON.stringify(this.isServer() ? 'server' : 'client'),
         PROJECT_DIR: JSON.stringify(process.cwd()),
-        ROOT_DIR: JSON.stringify(resolve(__dirname, '../../..')),
+        ROOT_DIR: JSON.stringify(path.resolve(__dirname, '../../..')),
       },
       frameworkConfig: JSON.stringify(frameworkConfig),
       frameworkBabelrc: JSON.stringify(frameworkBabelRc),
