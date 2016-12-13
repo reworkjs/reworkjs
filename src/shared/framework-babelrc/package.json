@@ -1,0 +1,6 @@
+{
+  "name": "framework-babelrc",
+  "private": true,
+  "main": "./index.js",
+  "webpack:main": "./webpack.js"
+}

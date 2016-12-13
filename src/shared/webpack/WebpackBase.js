@@ -17,7 +17,6 @@ import frameworkMetadata from '../../shared/framework-metadata';
 import frameworkBabelRc from '../../shared/framework-babelrc';
 import { resolveRoot, resolveFrameworkSource } from '../../shared/resolve';
 import { isDev, isTest } from '../EnvUtil';
-import selectWebpackModulePlugin from './selectWebpackModulePlugin';
 
 function replaceBabelPreset(babelConfig) {
 
@@ -104,6 +103,7 @@ export default class WebpackBase {
           '.react.js',
         ],
         mainFields: [
+          'webpack:main',
           'jsnext:module',
           'module',
           'jsnext:main',
@@ -325,8 +325,6 @@ export default class WebpackBase {
       }]),
 
       new webpack.DefinePlugin(definePluginArg),
-
-      selectWebpackModulePlugin(),
     ];
 
     // TODO inject DLLs <script data-dll='true' src='/${dllName}.dll.js'></script>`

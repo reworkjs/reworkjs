@@ -1,0 +1,6 @@
+{
+  "name": "resolve",
+  "private": true,
+  "main": "./index.js",
+  "webpack:main": "./webpack.js"
+}
