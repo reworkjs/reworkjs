@@ -30,7 +30,7 @@
     "coveralls": "cat ./coverage/lcov/lcov.info | coveralls"
   },
   "bin": {
-    "framework": "bin/framework.bin.js"
+    "rjs": "bin/framework.bin.js"
   },
   "peerDependencies": {
     "babel-loader": "^6.2.7",
