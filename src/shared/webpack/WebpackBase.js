@@ -91,7 +91,7 @@ export default class WebpackBase {
       entry: this.getEntry(),
       output: this.getOutput(),
       module: {
-        loaders: this.buildLoaders(),
+        rules: this.buildLoaders(),
       },
       plugins: this.getPlugins(),
       devtool: this.getDevTools(),
@@ -134,15 +134,13 @@ export default class WebpackBase {
 
   buildLoaders() {
 
-    // node_modules\/(?!reworkjs)
-
     const anyNodeModuleExceptFramework = new RegExp(`node_modules\\/(?!${frameworkMetadata.name})`);
 
     const loaders = [{
       test: /\.jsx?$/,
       loader: 'babel-loader',
       exclude: anyNodeModuleExceptFramework,
-      query: replaceBabelPreset(this.getBabelConfig()),
+      options: replaceBabelPreset(this.getBabelConfig()),
     }, {
       test: /\.(eot|svg|ttf|woff|woff2)(\?.*$|$)/,
       loader: 'file-loader',
