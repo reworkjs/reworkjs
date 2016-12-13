@@ -5,15 +5,13 @@
  */
 import { addLocaleData } from 'react-intl';
 import { getDefault } from '../../shared/util/ModuleUtil';
-// import logger from '../../shared/logger';
-const logger = console;
+import logger from '../../shared/logger';
 
 // TODO support for .json locales.
-// TODO use actual logger.
 
 // WEBPACK
-let translationLoaders = require.context('bundle-loader!@@directories.translations', true, /\.js$/);
-const localeDataLoaders = require.context('bundle-loader!react-intl/locale-data', true, /\.js$/);
+let translationLoaders = require.context('bundle-loader?name=Translation-[name]!@@directories.translations', true, /\.js$/);
+const localeDataLoaders = require.context('bundle-loader?name=IntlLocale-[name]!react-intl/locale-data', true, /\.js$/);
 
 const availableIntls = localeDataLoaders.keys().map(getFileName);
 
