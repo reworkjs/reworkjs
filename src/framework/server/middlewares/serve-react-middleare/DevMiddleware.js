@@ -4,17 +4,9 @@ import webpackDevMiddleware from 'webpack-dev-middleware';
 import getFilenameFromUrl from 'webpack-dev-middleware/lib/GetFilenameFromUrl';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 import cheerio from 'cheerio';
-import webpackConfig from '../../../../shared/webpack/webpack.client';
+import webpackClientConfig from '../../../../shared/webpack/webpack.client';
 import logger from '../../../../shared/logger';
 import buildPage from './buildPage';
-
-// TODO dllPlugin
-// if (dllPlugin) {
-//   app.get(/\.dll\.js$/, (req, res) => {
-//     const filename = req.path.replace(/^\//, '');
-//     res.sendFile(path.join(process.cwd(), dllPlugin.path, filename));
-//   });
-// }
 
 export default class DevMiddleware {
 
@@ -22,7 +14,7 @@ export default class DevMiddleware {
     this.app = app;
     this.config = config;
 
-    this.compiler = webpack(webpackConfig);
+    this.compiler = webpack(webpackClientConfig);
     this.middleware = webpackDevMiddleware(this.compiler, {
       noInfo: true,
       publicPath: config.publicPath,

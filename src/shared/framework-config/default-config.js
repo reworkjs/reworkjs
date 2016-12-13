@@ -12,6 +12,16 @@ const defaultConfig = {
   'entry-react': resolveProject('app/containers/App'),
   'entry-html': resolveFrameworkSource('app/index.html'),
   'pre-init': resolveFrameworkSource('dummy/empty-function'),
+  dlls: [
+    'react',
+    'react-intl',
+    'react-dom',
+    'react-router',
+    'react-router-redux',
+    'redux-saga',
+    'redux',
+    'reworkjs',
+  ],
 };
 
 export default defaultConfig;

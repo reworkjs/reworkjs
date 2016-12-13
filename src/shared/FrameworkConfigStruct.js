@@ -12,4 +12,5 @@ export type FrameworkConfigStruct = {
   'pre-init': ?string,
 
   webpack: ?string,
+  dlls: string[],
 };

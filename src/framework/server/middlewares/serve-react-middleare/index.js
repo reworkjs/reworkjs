@@ -1,4 +1,6 @@
 import React from 'react';
+import compileWebpack from '../../../../shared/compile-webpack';
+import webpackDllConfig from '../../../../shared/webpack/webpack.client-dll';
 import { isProd } from '../../../../shared/EnvUtil';
 import { getDefault } from '../../../../shared/util/ModuleUtil';
 import logger from '../../../../shared/logger';
@@ -6,8 +8,6 @@ import ProdMiddleware from './ProdMiddleware';
 import DevMiddleware from './DevMiddleware';
 
 export default function frontEndMiddleware(app, config) {
-  logger.info('Building your client-side app, this might take a minute.');
-
   const Middleware = isProd ? ProdMiddleware : DevMiddleware;
   const middleware = new Middleware(app, config);
 
@@ -16,8 +16,12 @@ export default function frontEndMiddleware(app, config) {
     serveRoute = renderApp(serveRoute);
   }
 
-  middleware.registerMiddlewares(serveRoute);
-  app.use(serveRoute);
+  logger.info('Building your DLL file.');
+  compileWebpack(webpackDllConfig, false, () => {
+    logger.info('Building your client-side app.');
+    middleware.registerMiddlewares(serveRoute);
+    app.use(serveRoute);
+  });
 }
 
 function renderApp(serveRoute) {
