@@ -76,4 +76,7 @@ const config: FrameworkConfigStruct = merge(defaultConfig, resolveEntries(getUse
 
 checkDirectories(config);
 
+logger.trace('Loaded App Configuration:');
+logger.trace(JSON.stringify(config));
+
 export default config;
