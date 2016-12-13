@@ -80,7 +80,8 @@ export default class WebpackBase {
       });
     }
 
-    return `css-loader?${querystring.stringify(options)}`;
+    // replace(/(?:=)(&|$)/g, '$1'): remove the = from empty query parameters.
+    return `css-loader?${querystring.stringify(options)}`.replace(/(?:=)(&|$)/g, '$1');
   }
 
   buildConfig() {
@@ -148,7 +149,7 @@ export default class WebpackBase {
       test: /\.(jpg|png|gif)$/,
       loaders: [
         'file-loader',
-        `image-webpack?{
+        `image-webpack-loader?{
           progressive: true,
           optimizationLevel: 7,
           interlaced: false,
