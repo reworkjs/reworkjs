@@ -1,4 +1,14 @@
-import globals from '../globals';
-import Logger from './Logger';
+import levels from './levels';
 
-export default new Logger(globals.PROCESS_NAME);
+class Logger {}
+
+for (const levelName: string of Object.keys(levels)) {
+  // const levelImportance = levels[levelName];
+  const loggingMethod = console[levelName.toLocaleLowerCase()] || console.log; // eslint-disable-line no-console
+
+  Logger.prototype[levelName] = function logMessage(...args) {
+    loggingMethod.call(console, `[${levelName}]`, ...args);
+  };
+}
+
+export default new Logger();
