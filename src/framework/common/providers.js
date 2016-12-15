@@ -13,8 +13,8 @@ export type Provider = {
 };
 
 const providers: Provider[] = requireAll(
-  require.context('@@directories.providers', true, /\.js$/),
-  require.context('../app/providers', true, /\.js$/),
+  require.context('@@directories.providers', true, /\.jsx?$/),
+  require.context('../app/providers', true, /\.jsx?$/),
 ).filter(selectProvider);
 
 function selectProvider(item) {
