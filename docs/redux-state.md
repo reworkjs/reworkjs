@@ -1,4 +1,4 @@
-- Providers
-- Non providers
+- Providers (@provider)
+- Non providers (exports.sagas, exports.reducer)
 - Global
 - ROute specific
