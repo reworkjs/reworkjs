@@ -1,3 +1,7 @@
+# TODO
+
+## Small Tasks
+
 - Default project
 - make babelrc optional
 - default postcss config
@@ -23,3 +27,20 @@ Module not found: Error: Can't resolve '@@directories.translations' in '/Users/e
  @ ./~/reworkjs/lib/framework/app/App.js
  @ ./~/reworkjs/lib/framework/client/index.js
  @ multi main
+
+====================================================
+
+## Locale Detection
+
+When the app locale gets set on the client-side:
+- Set a cookie containing the locale
+
+On the client-side:
+- Use the locale defined by the cookie if available
+- Otherwise use navigator.languages
+- Otherwise use the default locale
+
+On the server-side:
+- Use the locale defined by the cookie if available
+- Otherwise use the Accept-Language header if available
+- Otherwise use the default locale
