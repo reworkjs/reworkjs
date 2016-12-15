@@ -112,6 +112,9 @@ export default class WebpackBase {
         ],
         alias: this.getAliases(),
       },
+      performance: {
+        hints: this.isDev,
+      },
     };
 
     if (this.isServer()) {
