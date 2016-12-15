@@ -10,23 +10,28 @@ import logger from '../../shared/logger';
 // TODO support for .json locales.
 
 // WEBPACK
-let translationLoaders = require.context('bundle-loader?name=Translation-[name]!@@directories.translations', true, /\.js$/);
+let translationLoaders = require.context('bundle-loader?name=Translation-[name]!@@directories.translations', true, /\.js(?:on)?$/);
 const localeDataLoaders = require.context('bundle-loader?name=IntlLocale-[name]!react-intl/locale-data', true, /\.js$/);
 
 const availableIntls = localeDataLoaders.keys().map(getFileName);
 
+export const locales = buildLocaleList();
+
 const localeToFileMapping = new Map();
-export const locales = translationLoaders.keys().map(filePath => {
-  const locale = getFileName(filePath);
+function buildLocaleList() {
+  localeToFileMapping.clear();
+  translationLoaders.keys().map(filePath => {
+    const locale = getFileName(filePath);
 
-  if (localeToFileMapping.has(locale)) {
-    throw new Error(`Duplicate translation file for locale ${JSON.stringify(locale)}`);
-  }
+    if (localeToFileMapping.has(locale)) {
+      throw new Error(`Duplicate translation file for locale ${JSON.stringify(locale)}`);
+    }
 
-  localeToFileMapping.set(locale, filePath);
+    localeToFileMapping.set(locale, filePath);
 
-  return locale;
-});
+    return locale;
+  });
+}
 
 const loadedTranslationFiles = {};
 const aliases = {};
@@ -155,6 +160,7 @@ if (module.hot) {
   module.hot.accept(translationLoaders.id, () => {
     const reloadedTranslationLoaders = require.context('bundle-loader!@@directories.translations', true, /\.js$/);
     translationLoaders = reloadedTranslationLoaders;
+    buildLocaleList();
 
     const reloadingFiles = reloadedTranslationLoaders.keys()
       .filter(file => loadedTranslationFiles[file] === true)
