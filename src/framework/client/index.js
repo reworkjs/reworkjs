@@ -1,20 +1,5 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { applyRouterMiddleware, Router } from 'react-router';
-import { useScroll } from 'react-router-scroll';
-import ReworkJsWrapper from '../app/ReworkJsWrapper';
-import { rootRoute, history } from '../common/kernel';
+import preInit from '../common/pre-init';
 
-ReactDOM.render(
-  <ReworkJsWrapper>
-    <Router
-      history={history}
-      routes={rootRoute}
-      render={
-        // Scroll to top when going to a new page, imitating default browser behaviour
-        applyRouterMiddleware(useScroll())
-      }
-    />
-  </ReworkJsWrapper>,
-  document.getElementById('app'),
-);
+preInit().then(() => {
+  require('./init-render'); // eslint-disable-line global-require
+});
