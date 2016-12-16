@@ -15,9 +15,8 @@ const localeDataLoaders = require.context('bundle-loader?name=IntlLocale-[name]!
 
 const availableIntls = localeDataLoaders.keys().map(getFileName);
 
-export const locales = buildLocaleList();
-
 const localeToFileMapping = new Map();
+export const locales = buildLocaleList();
 function buildLocaleList() {
   localeToFileMapping.clear();
   translationLoaders.keys().map(filePath => {
