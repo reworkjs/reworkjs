@@ -186,17 +186,18 @@ export default class WebpackBase {
   }
 
   buildCssLoaders() {
-    const loaders = [];
+    const styleLoader = this.isServer() ? 'node-style-loader' : 'style-loader';
 
+    const loaders = [];
     for (const cssLoader of this.cssLoaders) {
       const loader = {};
       loader.test = cssLoader.test;
 
       if (this.isDev) {
-        loader.loaders = ['isomorphic-style-loader', ...cssLoader.loaders];
+        loader.loaders = [styleLoader, ...cssLoader.loaders];
       } else {
         loader.loader = ExtractTextPlugin.extract({
-          fallbackLoader: 'isomorphic-style-loader',
+          fallbackLoader: styleLoader,
           loader: cssLoader.loaders,
         });
       }
