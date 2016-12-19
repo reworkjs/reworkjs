@@ -12,7 +12,7 @@ const mutableVersion = Symbol('mutable-version');
 
 // Blacklist universal properties, Function static properties and @provider symbols.
 const PROPERTY_BLACKLIST = Object.getOwnPropertyNames(Object.prototype)
-  .concat(Object.getOwnPropertyNames(Function));
+  .concat(Object.getOwnPropertyNames(function () {}));
 
 PROPERTY_BLACKLIST.push(stateHolderSymbol);
 
