@@ -18,6 +18,8 @@ import frameworkBabelRc from '../../shared/framework-babelrc';
 import { resolveRoot, resolveFrameworkSource } from '../../shared/resolve';
 import { isDev, isTest } from '../EnvUtil';
 
+const ANY_MODULE_EXCEPT_FRAMEWORK = new RegExp(`node_modules\\/(?!${frameworkMetadata.name})`);
+
 function replaceBabelPreset(babelConfig) {
 
   for (const key of Object.keys(babelConfig)) {
@@ -37,6 +39,10 @@ function replaceBabelPreset(babelConfig) {
   return babelConfig;
 }
 
+function stringifyLoaderOptions(options) {
+  return querystring.stringify(options).replace(/(?:=)(&|$)/g, '$1');
+}
+
 export default class WebpackBase {
 
   static SIDE_SERVER = 0;
@@ -44,26 +50,15 @@ export default class WebpackBase {
 
   isDev: boolean;
   isTest: boolean;
-  cssLoaders: { test: string, loaders: string[] }[] = [];
 
   constructor(side: number) {
     this.isDev = isDev;
     this.isTest = isTest;
     this.side = side;
-
-    this.addCssLoader('(sc|sa|c)ss', [
-      this.cssLoaderModule,
-      'postcss-loader',
-      'sass-loader',
-    ]);
   }
 
-  get cssLoaderModule() {
-
-    const options = {
-      modules: '',
-      camelCase: '',
-
+  buildCssLoader(options = {}) {
+    const loaderOptions = {
       // disable cssnano removing deprecated prefixes.
       '-autoprefixer': '',
       importLoaders: '1',
@@ -80,8 +75,14 @@ export default class WebpackBase {
       });
     }
 
-    // replace(/(?:=)(&|$)/g, '$1'): remove the = from empty query parameters.
-    return `css-loader?${querystring.stringify(options)}`.replace(/(?:=)(&|$)/g, '$1');
+    if (options.modules) {
+      Object.assign(loaderOptions, {
+        modules: '',
+        camelCase: '',
+      });
+    }
+
+    return `css-loader?${stringifyLoaderOptions(loaderOptions)}`;
   }
 
   buildConfig() {
@@ -138,12 +139,10 @@ export default class WebpackBase {
 
   buildLoaders() {
 
-    const anyNodeModuleExceptFramework = new RegExp(`node_modules\\/(?!${frameworkMetadata.name})`);
-
     const loaders = [{
       test: /\.jsx?$/,
       loader: 'babel-loader',
-      exclude: anyNodeModuleExceptFramework,
+      exclude: ANY_MODULE_EXCEPT_FRAMEWORK,
       options: replaceBabelPreset(this.getBabelConfig()),
     }, {
       test: /\.(eot|svg|ttf|woff|woff2)(\?.*$|$)/,
@@ -186,27 +185,34 @@ export default class WebpackBase {
   }
 
   buildCssLoaders() {
-    const styleLoader = this.isServer() ? 'node-style-loader' : 'style-loader';
+    const cssLoaders = [{
+      test:  /\.(sc|sa|c)ss$/,
+      exclude: ANY_MODULE_EXCEPT_FRAMEWORK,
+      loaders: [this.buildCssLoader({ modules: true }), 'postcss-loader', 'sass-loader']
+    }, {
+      test: /\.css$/,
+      include: ANY_MODULE_EXCEPT_FRAMEWORK,
+      loaders: [this.buildCssLoader({ modules: false })],
+    }];
 
-    const loaders = [];
-    for (const cssLoader of this.cssLoaders) {
-      const loader = {};
-      loader.test = cssLoader.test;
+    const styleLoader = this.isServer() ? 'node-style-loader' : 'style-loader';
+    for (const cssLoader of cssLoaders) {
 
       if (this.isDev) {
-        loader.loaders = [styleLoader, ...cssLoader.loaders];
+        cssLoader.loaders = [styleLoader, ...cssLoader.loaders];
       } else {
-        loader.loader = ExtractTextPlugin.extract({
+        cssLoader.loader = ExtractTextPlugin.extract({
           fallbackLoader: styleLoader,
           loader: cssLoader.loaders,
         });
-      }
 
-      loaders.push(loader);
+        delete cssLoader.loaders;
+      }
     }
 
-    return loaders;
+    return cssLoaders;
   }
+
 
   getEntry(): string[] {
     // front-end entry point.
@@ -288,17 +294,6 @@ export default class WebpackBase {
       // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
       'react-native': 'react-native-web',
     };
-  }
-
-  addCssLoader(fileExt: string | RegExp, loaders: string[]) {
-    if (typeof fileExt === 'string') {
-      fileExt = new RegExp(`\\.${fileExt}$`);
-    }
-
-    this.cssLoaders.push({
-      test: fileExt,
-      loaders,
-    });
   }
 
   getPlugins() {
