@@ -1,5 +1,10 @@
+/* eslint-disable */
+
 import preInit from '../common/pre-init';
 
 preInit().then(() => {
-  require('./init-render'); // eslint-disable-line global-require
+  require('./init-render');
+}).catch(e => {
+  console.error('Error while rendering client');
+  console.error(e);
 });
