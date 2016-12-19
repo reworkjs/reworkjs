@@ -136,12 +136,12 @@ function injectReducers(injectors, reducers) {
   }
 
   if (!Array.isArray(reducers)) {
-    injectors.injectReducer(reducers.name, reducers);
+    injectors.injectReducer(reducers[Symbols.name] || reducers.name, reducers);
     return;
   }
 
   for (const reducer of reducers) {
-    injectors.injectReducer(reducer.name, reducer);
+    injectors.injectReducer(reducers[Symbols.name] || reducers.name, reducer);
   }
 }
 
