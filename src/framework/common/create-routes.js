@@ -208,7 +208,7 @@ async function callLoader(loader, route, nextState, store) {
       }
     }
 
-    return arrayOutput;
+    return arrayResult;
   }
 
   return getDefault(rawOutput);
