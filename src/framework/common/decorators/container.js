@@ -9,6 +9,16 @@ export type ContainerDecoratorConfig = {
   intl: boolean,
 };
 
+function checkInvalidKeys(conf) {
+  const authorizedKeys = ['state', 'dispatchers', 'actions', 'intl'];
+
+  const invalidKeys = Object.keys(conf).filter(key => !authorizedKeys.includes(key));
+
+  if (invalidKeys.length > 0) {
+    throw new TypeError(`@container(): configuration contains invalid entries "${invalidKeys.join('", "')}". Only keys allowed are "${authorizedKeys.join('", "')}"`)
+  }
+}
+
 function objNoop() {
   return {};
 }
@@ -58,6 +68,8 @@ function objNoop() {
  * class SomeContainer {}
  */
 export default function container(config: ContainerDecoratorConfig = {}) {
+
+  checkInvalidKeys(config);
 
   let mapStateToProps;
   if (!config.state) {
