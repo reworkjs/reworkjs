@@ -141,7 +141,7 @@ function injectReducers(injectors, reducers) {
   }
 
   for (const reducer of reducers) {
-    injectors.injectReducer(reducers[Symbols.name] || reducers.name, reducer);
+    injectors.injectReducer(reducer[Symbols.name] || reducer.name, reducer);
   }
 }
 
