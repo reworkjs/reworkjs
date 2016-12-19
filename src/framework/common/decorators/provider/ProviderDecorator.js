@@ -12,6 +12,8 @@ const mutableVersion = Symbol('mutable-version');
 
 // Blacklist universal properties, Function static properties and @provider symbols.
 const PROPERTY_BLACKLIST = Object.getOwnPropertyNames(Object.prototype)
+  // use function() {} instead of Function because Function does not have the "caller" nor "arguments" properties on
+  // Safari < 11
   .concat(Object.getOwnPropertyNames(function () {}));
 
 PROPERTY_BLACKLIST.push(stateHolderSymbol);
