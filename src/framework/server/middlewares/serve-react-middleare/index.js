@@ -24,7 +24,7 @@ function renderApp(serveRoute) {
   /* eslint-disable global-require */
   const { match, RouterContext } = require('react-router');
   const { renderToString } = require('react-dom/server');
-  const { rootRoute } = require('../../../common/kernel');
+  const { rootRoute, store } = require('../../../common/kernel');
   const App = getDefault(require('../../../app/ReworkJsWrapper'));
   /* eslint-enable global-require */
 
@@ -72,7 +72,8 @@ function renderApp(serveRoute) {
         </App>,
       );
 
-      return await serveRoute(req, res, `<div>${appHtml}</div>`);
+      // TODO do we need to wrap appHtml in <div> here as well ?
+      return await serveRoute(req, res, `<div>${appHtml}</div>`, store.getState());
     } catch (preRenderingError) {
       logger.error(`renderApp: Serving "${req.url}" crashed, trying without server-side rendering.`);
       logger.error(preRenderingError);

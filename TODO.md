@@ -12,6 +12,7 @@
 - Build everything from CLI, not in the server build
 - eslint plugin that detects @provider and warns if anything in the annotated class isn't static
 - Migrate to YARN
+- Generate a port from 3000 going up rather than generating a completely random port.
 
 possible babel plugins:
 - "transform-export-default-name"
@@ -44,3 +45,10 @@ On the server-side:
 - Use the locale defined by the cookie if available
 - Otherwise use the Accept-Language header if available
 - Otherwise use the default locale
+
+====================================================
+
+## Redux State Pre-rendering
+
+- http://redux.js.org/docs/recipes/ServerRendering.html
+- Reducer names cannot be dynamically created nor be Symbols because they need to stay the same on both the server and the client.

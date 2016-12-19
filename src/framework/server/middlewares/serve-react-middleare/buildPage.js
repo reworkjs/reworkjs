@@ -1,6 +1,6 @@
 import Helmet from 'react-helmet';
 
-export default function buildPage($doc, html) {
+export default function buildPage($doc, html, appState) {
   const { htmlAttributes, ...headChildren } = Helmet.rewind();
 
   const $html = $doc.find('html');
@@ -20,7 +20,11 @@ export default function buildPage($doc, html) {
     $head.append(tag.toString());
   }
 
+  // Insert App HTML
   $doc.find('#app').append(`<div>${html}</div>`);
+
+  // Insert Redux State
+  $doc.find('script').last().before(`<script>window.__PRELOADED_STATE__ = ${JSON.stringify(preloadedState)}</script>`);
 }
 
 function replace($head, tagName, newTag) {

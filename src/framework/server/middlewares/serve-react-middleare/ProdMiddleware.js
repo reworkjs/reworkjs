@@ -38,7 +38,7 @@ export default class ProdMiddleware {
     app.use(config.publicPath, express.static(webpackConfig.output.path, staticOptions));
   }
 
-  serveRoute(req, res, html) {
+  serveRoute(req, res, html, appState) {
     if (!this.ready) {
       res.send('Application building...');
       return;
@@ -51,7 +51,7 @@ export default class ProdMiddleware {
 
     // server-side rendering
     const $doc = this.index.clone();
-    buildPage($doc, html);
+    buildPage($doc, html, appState);
     res.send($doc.toString());
   }
 }
