@@ -46,7 +46,7 @@ function runServerWithPrerendering() {
   });
 }
 
-export const usage = `framework start <mode> <options...>
+export const usage = `rjs start <mode> <options...>
 
 Possible modes: dev, prod
 Accepted options: --port <number>, --no-prerendering, --tunnel`;
