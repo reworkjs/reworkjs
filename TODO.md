@@ -33,7 +33,7 @@ Module not found: Error: Can't resolve '@@directories.translations' in '/Users/e
 
 ## Locale Detection
 
-When the app locale gets set on the client-side:
+When the app locale manually changed on the client-side:
 - Set a cookie containing the locale
 
 On the client-side:
@@ -51,4 +51,13 @@ On the server-side:
 ## Redux State Pre-rendering
 
 - http://redux.js.org/docs/recipes/ServerRendering.html
-- Reducer names cannot be dynamically created nor be Symbols because they need to stay the same on both the server and the client.
+
+====================================================
+
+OfflinePlugin:
+- favicon.ico
+
+## @provider
+
+Getting non-defined state outside of reducers should throw
+Setting non-defined state outside of reducers should throw
