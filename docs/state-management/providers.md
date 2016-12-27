@@ -49,7 +49,7 @@ Now let's fill it with useful data.
 
 ### State
 
-Now adding state to a provider isn't very complicated. Simply add a static property to it and voilà:
+Adding state to a provider isn't very complicated. Simply add a static property to it and voilà:
 As soon as the provider loads, the property will be added to the fragment of the store this provider handles.
 
 ```javascript
@@ -65,11 +65,11 @@ export default class PreferenceProvider {
 **IMPORTANT**: The property still resides inside the store of the application. Therefore, it is impossible to read nor
 write it unless you already have access to the store.
 
-In order to achieve this, the `@provider` decorator transforms the class to make getting properties return a selector, and
+In order to achieve this, the `@provider` decorator transforms the class to make getting a property return a selector, and
 setting them fail.
 
 ```javascript
-// Getting a property.
+// Getting a property returns a selector. You will need to call the selector with the store instance to access it.
 const selector = PreferenceProvider.maySendNotifications;
 // selector: [function select_maySendNotifications(store)]
 
@@ -78,7 +78,8 @@ PreferenceProvider.maySendNotifications = true;
 // Error: Cannot access @provider state outside of @reducer annotated methods. If you are trying to r/w the state from a @saga, you will need to use "yield put(this.<reducerMethodName>())"
 ```
 
-An important note about providers is that everything inside then must be `static`.
+An important note about providers is that everything inside then must be `static`.  
+Any static property that is not decorated with neither `@reducer` nor `@saga` will be considered part of the state.
 
 *Getting/Setting non-declared state has an undefined behavior on older browsers and will fail on evergreen browsers.*
 
@@ -263,3 +264,30 @@ export default class UserProvider {
 }
 ```
 
+## Corner Cases
+
+Be careful when naming your static properties, avoid any name already in use by a static property of `Function` or any
+property of `Object.prototype` as those are inherited and will be ignored when building the provider.
+
+Such names include (could differ depending on the browser and the current JavaScript version): 
+
+Inherited from Object:
+- __defineGetter__
+- __defineSetter__
+- hasOwnProperty
+- __lookupGetter__
+- __lookupSetter__
+- propertyIsEnumerable
+- constructor
+- toString
+- toLocaleString
+- valueOf
+- isPrototypeOf
+- __proto__
+
+Inherited from Function:
+- length
+- name
+- arguments
+- caller
+- prototype
