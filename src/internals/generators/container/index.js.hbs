@@ -1,17 +1,8 @@
-/*
- *
- * {{properCase name }}
- *
- */
-
 import React from 'react';
-import { connect } from 'react-redux';
 {{#if wantHeaders}}
 import Helmet from 'react-helmet';
 {{/if}}
-{{#if wantActionsAndReducer}}
-import select{{properCase name}} from './selectors';
-{{/if}}
+import { container } from 'reworkjs/decorators';
 {{#if wantMessages}}
 import { FormattedMessage } from 'react-intl';
 import messages from './messages';
@@ -20,6 +11,12 @@ import messages from './messages';
 import styles from './styles.css';
 {{/if}}
 
+@container({
+  state: {
+  },
+  actions: {
+  },
+})
 export class {{ properCase name }} extends React.Component {
   render() {
     return (
@@ -43,19 +40,3 @@ export class {{ properCase name }} extends React.Component {
     );
   }
 }
-
-{{#if wantActionsAndReducer}}
-const mapStateToProps = select{{properCase name}}();
-{{/if}}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    dispatch,
-  };
-}
-
-{{#if wantActionsAndReducer}}
-export default connect(mapStateToProps, mapDispatchToProps)({{ properCase name }});
-{{else}}
-export default connect(mapDispatchToProps)({{ properCase name }});
-{{/if}}

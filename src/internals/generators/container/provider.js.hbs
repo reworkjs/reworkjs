@@ -1,0 +1,22 @@
+import { provider } from 'reworkjs/decorators';
+import { put } from 'redux-saga/effects';
+
+@provider
+export class {{ properCase name }}Provider {
+
+  // state
+  static exampleState = 7;
+
+  @reducer
+  static _setExample(newVal) {
+    this.exampleState = newVal;
+  }
+
+  @saga
+  static *fetchExample() {
+    // do redux-saga things
+
+    // call reducer
+    yield put(this._setExample(1234));
+  }
+}

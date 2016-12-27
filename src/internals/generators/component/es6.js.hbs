@@ -1,9 +1,3 @@
-/**
-*
-* {{ properCase name }}
-*
-*/
-
 import React from 'react';
 
 {{#if wantMessages}}
@@ -11,7 +5,7 @@ import { FormattedMessage } from 'react-intl';
 import messages from './messages';
 {{/if}}
 {{#if wantCSS}}
-import styles from './styles.css';
+import styles from './styles.scss';
 {{/if}}
 
 class {{ properCase name }} extends React.Component {
