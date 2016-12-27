@@ -272,18 +272,18 @@ property of `Object.prototype` as those are inherited and will be ignored when b
 Such names include (could differ depending on the browser and the current JavaScript version): 
 
 Inherited from Object:
-- __defineGetter__
-- __defineSetter__
+- \_\_defineGetter__
+- \_\_defineSetter__
 - hasOwnProperty
-- __lookupGetter__
-- __lookupSetter__
+- \_\_lookupGetter__
+- \_\_lookupSetter__
 - propertyIsEnumerable
 - constructor
 - toString
 - toLocaleString
 - valueOf
 - isPrototypeOf
-- __proto__
+- \_\_proto__
 
 Inherited from Function:
 - length
