@@ -1,11 +1,16 @@
 # Providers
 
-Providers are an abstraction specific to this framework with the goal to reduce the boilerplate needed to 
+Providers are an abstraction specific to this framework with the goal of reducing the boilerplate needed to 
 manage the global store.
 
-If using this abstraction doesn't work for you, you can however still access the store without it.
-See [vanilla-redux](./vanilla-redux.md).
+They are built around *static classes*, in which properties are parts of the store and methods are either reducers or sagas.  
+They are built this way because matching the redux concepts to already existing OOP concepts make them easier to reason about.  
 
+However, using Providers is in no way a requirement.
+If this abstraction doesn't suit you, you can still manage the store without it.  
+See [vanilla-redux](./vanilla-redux.md) for more information.
+
+These classes require heavy transformations to be fully usable by redux. The details of which are explored further in this article.  
 `@providers` are best used with `@containers`, although they are fully compatible with other property mapping systems.
 
 ## Concepts
@@ -73,14 +78,141 @@ PreferenceProvider.maySendNotifications = true;
 // Error: Cannot access @provider state outside of @reducer annotated methods. If you are trying to r/w the state from a @saga, you will need to use "yield put(this.<reducerMethodName>())"
 ```
 
-An important note about providers is that everything inside then must be `static`. We don't need instances, 
-we're merely using classes for the syntactic sugar and for decorators.
+An important note about providers is that everything inside then must be `static`.
 
 *Getting/Setting non-declared state has an undefined behavior on older browsers and will fail on evergreen browsers.*
 
 ### Updating the state (reducers)
 
+Reducers are the only way to alter the store. When writing a provider, adding a reducer requires little more than writing 
+a static method and decorating it with `@reducer`.
 
+```javascript
+import { provider, reducer } from 'reworkjs/decorators';
+
+@provider
+export default class PreferenceProvider {
+  
+  static maySendNotifications = false;
+  
+  @reducer
+  static setMaySendNotifications(val) {
+    this.maySendNotifications = val;
+  }
+}
+```
+
+Reducers have a read/write access to the state of their Provider. Getting a property will return its actual value and 
+setting it will update it.
+
+A noteworthy feature is that you do not need to think about ensuring the immutability of the state. It is all handled 
+by the provider.
+
+These reducers will then be transformed into action builders and the actual reducer will be handed off to redux.
+
+```javascript
+// Calling the method will return an action that you will need to dispatch.
+// These actions can be listened to by any reducer.
+PreferenceProvider.setMaySendNotifications(true);
+// returns: { type: '@@PreferenceProvider/setMaySendNotifications', payload: [true] };
+```
+
+Reducers are *fully synchronous* methods. If you need to execute any asynchronous operation, use Sagas 
+(read further for the article about sagas).
+
+### Listening to foreign actions
+
+`@reducer` accepts a single argument which makes the the reducer listen to a specific action type rather than its own.
+
+For instance, you could do the following to be notified of a route change from react-redux-router
+
+```javascript
+import { provider, reducer } from 'reworkjs/decorators';
+import { MATCH as ROUTE_MATCH } from 'redux-router/constants';
+
+@provider
+export default class AnotherProvider {
+
+  @reducer(ROUTE_MATCH)
+  static _onRouteMatch({ url }) {
+    // do something with the url
+  }
+}
+```
+
+You can also pass other reducers (as long as they are provider ones) to copy their action type:
+
+```javascript
+import { provider, reducer } from 'reworkjs/decorators';
+
+@provider
+export default class AnotherProvider {
+  
+  @reducer(PreferenceProvider.setMaySendNotifications)
+  static _onNotificationChange(val) {
+    // do something with val
+  }
+}
+```
+
+Note that calling `AnotherProvider._onNotificationChange()` or `AnotherProvider._onRouteMatch()` will throw an error 
+because these reducers do not define a new action.
+
+### Action Format
+
+Providers automatically handle the action format in the standard format `{ type, payload }`
+where type is the type of action and payload is an array containing the arguments passed to the action builder.
+
+```javascript
+PreferenceProvider.setMaySendNotifications(true);
+// returns: { type: '@@PreferenceProvider/setMaySendNotifications', payload: [true] };
+```
+
+Once the reducer receives an action, it expects it to have a primitive `type` property and will compare it to its own
+to determine whether is should execute. The action will be discarded if it doesn't.
+
+As for the unpacking the payload, there is a little more leeway:
+
+1. If the action contains a property other than `type` and `payload`, it is passed as-is to the reducer function.
+2. Else, If the `payload` is not an Array, the `payload` is passed as-is to the reducer function.
+3. Else, the `payload` is unpacked and the resulting items are used as function parameters.
+
+### Sagas
+
+Sagas are methods specialized in handling asynchronous operations inside the store. Provider Sagas are nothing more than
+a wrapper around [redux-saga](https://github.com/redux-saga/redux-saga).
+
+Like reducers, sagas will be transformed into action builders and can listen to other action types by passing them as the decorator argument.  
+Unlike reducers, sagas do *not* have any access to the provider state. You will need to dispatch a new action for that.
+
+```javascript
+import { provider, reducer, saga } from 'reworkjs/decorators';
+import { put, call } from 'redux-saga/effects';
+import api from '~api';
+
+@provider
+export default class PreferenceProvider {
+
+  static maySendNotifications = false;
+
+  @reducer
+  static setMaySendNotifications(val) {
+    this.maySendNotifications = val;
+  }
+
+  @saga
+  static *loadPreferences() {
+    // Load the user preferences from the server.
+    // see the redux-saga documentation for `call`.
+    const { maySendNotifications } = yield call(api.loadPreferences());
+
+    // `put` dispatches a new action, which `this.setMaySendNotifications()` builds.
+    // The action will be received by the above reducer which will update the store.
+    // See the redux-saga documentation for more details
+    yield put(this.setMaySendNotifications(maySendNotifications));
+  }
+}
+```
 
 ## Working Example
 
@@ -131,7 +263,3 @@ export default class UserProvider {
 }
 ```
 
-## Using selectors and actions
-
-- mapToProps
-- @container.
