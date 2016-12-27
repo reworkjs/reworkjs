@@ -8,7 +8,8 @@
     "transform-decorators-legacy",
     "syntax-async-functions",
     "transform-async-to-generator",
-    "transform-flow-strip-types"
+    "transform-flow-strip-types",
+    "reworkjs/lib/internals/babel-plugin-preserve-name"
   ],
   "env": {
     "production": {

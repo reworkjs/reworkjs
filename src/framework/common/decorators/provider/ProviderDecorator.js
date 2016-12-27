@@ -1,6 +1,8 @@
 import { fromJS, Collection } from 'immutable';
 import { takeLatest } from 'redux-saga';
 import { createSelector } from 'reselect';
+import { attemptChangeName } from '../../../util/util';
+import logger from '../../../../shared/logger';
 import { Symbols } from '../provider';
 import { reducerMetadata } from './ReducerDecorator';
 import { isSaga } from './SagaDecorator';
@@ -19,7 +21,7 @@ const PROPERTY_BLACKLIST = Object.getOwnPropertyNames(Object.prototype)
 PROPERTY_BLACKLIST.push(stateHolderSymbol);
 
 function denyAccess() {
-  throw new Error('Cannot access @provider state outside of @reducer annotated methods. If you are trying to r/w the state from a @saga, you will need to use => yield put(this.<reducerMethodName>()) <=');
+  throw new Error('Cannot access @provider state outside of @reducer annotated methods. If you are trying to r/w the state from a @saga, you will need to use "yield put(this.<reducerMethodName>())"');
 }
 
 const IMMUTABLE_STATE = {
@@ -27,7 +29,7 @@ const IMMUTABLE_STATE = {
   get: denyAccess,
 };
 
-let providerCount = 0;
+const registeredProviders = [];
 
 /**
  * Decorator that transforms a static class into a provider
@@ -44,15 +46,20 @@ let providerCount = 0;
 export default function provider(providerClass) {
 
   if (typeof providerClass !== 'function') {
-    // optional ()
-    return provider;
+    throw new TypeError('@provider may not have parenthesis.');
   }
+
+  if (registeredProviders.includes(providerClass.name)) {
+    throw new Error(`A provider has already been registered under the name ${providerClass.name}. Please make sure all provider classes have unique names.`);
+  }
+
+  registeredProviders.push(providerClass.name);
 
   if (Object.getOwnPropertyNames(providerClass.prototype).length > 1) {
-    console.warn(`@provider ${providerClass.name} has instance properties. This is likely a bug as providers are fully static.`);
+    logger.warn(`@provider ${providerClass.name} has instance properties. This is likely a bug as providers are fully static.`);
   }
 
-  const domainIdentifier = `${providerClass.name}_rjs_provider_${providerCount++}`;
+  const domainIdentifier = `${providerClass.name}_rjs_provider`;
 
   function selectDomain() {
     return state => {
@@ -106,8 +113,6 @@ export default function provider(providerClass) {
 
   return providerClass;
 }
-
-provider.useSymbols = true;
 
 function extractFromProvider(providerClass, selectDomain) {
   const actionListeners = new Map();
@@ -191,9 +196,7 @@ function extractSaga(providerClass: Function, propertyName: string, sagaList: Ar
   const property = providerClass[propertyName];
 
   const namespacedActionName = `${providerClass.name}::${property.name}`;
-  const actionType = provider.useSymbols
-    ? Symbol(namespacedActionName)
-    : `@provider/${providerClass.name}/action/${propertyName}`;
+  const actionType = `@@provider/${providerClass.name}/action/${propertyName}`;
 
   function *callActionHandler(action) {
     yield* property.apply(providerClass, action.payload);
@@ -238,6 +241,8 @@ function extractState(providerClass, propertyName, initialState, selectDomain) {
       subState => proxyGet(subState, propertyName),
     );
   }
+
+  attemptChangeName(selectProperty, `select_${propertyName}`);
 
   if (!Object.getOwnPropertyDescriptor(providerClass, propertyName).configurable) {
     throw new TypeError(`@provider could not redefine property ${JSON.stringify(propertyName)} because it is non-configurable.`);
@@ -371,19 +376,4 @@ function pushToArrayMap(map: Map, key, value) {
   const listenerArray = [previousListener];
   listenerArray.push(value);
   map.set(key, listenerArray);
-}
-
-function attemptChangeName(obj, name) {
-  if (!canRedefineValue(obj, 'name')) {
-    return;
-  }
-
-  Object.defineProperty(obj, 'name', {
-    value: name,
-  });
-}
-
-function canRedefineValue(obj, property) {
-  const descriptor = Object.getOwnPropertyDescriptor(obj, property);
-  return descriptor.configurable || descriptor.writable;
 }
