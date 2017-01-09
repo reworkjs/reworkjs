@@ -31,23 +31,6 @@ Module not found: Error: Can't resolve '@@directories.translations' in '/Users/e
 
 ====================================================
 
-## Locale Detection
-
-When the app locale manually changed on the client-side:
-- Set a cookie containing the locale
-
-On the client-side:
-- Use the locale defined by the cookie if available
-- Otherwise use navigator.languages
-- Otherwise use the default locale
-
-On the server-side:
-- Use the locale defined by the cookie if available
-- Otherwise use the Accept-Language header if available
-- Otherwise use the default locale
-
-====================================================
-
 ## Redux State Pre-rendering
 
 - http://redux.js.org/docs/recipes/ServerRendering.html

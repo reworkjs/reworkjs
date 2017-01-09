@@ -1,9 +1,12 @@
 import React from 'react';
+import { plugToRequest } from 'react-cookie';
+import { parse } from 'accept-language-parser';
 import { isProd } from '../../../../shared/EnvUtil';
 import { getDefault } from '../../../../shared/util/ModuleUtil';
 import logger from '../../../../shared/logger';
 import ProdMiddleware from './ProdMiddleware';
 import DevMiddleware from './DevMiddleware';
+import { setRequestLocales } from './request-locale';
 
 export default function frontEndMiddleware(app, config) {
   logger.info('Building your client-side app, this might take a minute.');
@@ -21,12 +24,12 @@ export default function frontEndMiddleware(app, config) {
 }
 
 function renderApp(serveRoute) {
-  /* eslint-disable global-require */
+  /* eslint-disable */
   const { match, RouterContext } = require('react-router');
   const { renderToString } = require('react-dom/server');
   const { rootRoute, store } = require('../../../common/kernel');
   const App = getDefault(require('../../../app/ReworkJsWrapper'));
-  /* eslint-enable global-require */
+  /* eslint-enable */
 
   function matchAsync(routes, url) {
     return new Promise((resolve, reject) => {
@@ -66,11 +69,28 @@ function renderApp(serveRoute) {
         res.status(matchedRoute.status);
       }
 
+      setRequestLocales(
+        parse(req.header('Accept-Language'))
+          .map(parsedLocale => {
+            let localeStr = parsedLocale.code;
+
+            if (parsedLocale.region) {
+              localeStr += `-${parsedLocale.region}`;
+            }
+
+            return localeStr;
+          }),
+      );
+
+      const unplugReactCookie = plugToRequest(req, res);
+
       const appHtml = renderToString(
         <App>
           <RouterContext {...props} />
         </App>,
       );
+
+      unplugReactCookie();
 
       // TODO do we need to wrap appHtml in <div> here as well ?
       return await serveRoute(req, res, `<div>${appHtml}</div>`, store.getState());

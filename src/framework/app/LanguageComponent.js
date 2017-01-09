@@ -1,8 +1,10 @@
 import React from 'react';
 import { IntlProvider } from 'react-intl';
+import { load as getCookie } from 'react-cookie';
 import { isLocaleValid, onHotReload } from '../common/i18n';
 import container from '../common/decorators/container';
-import LanguageProvider from './providers/LanguageProvider';
+import serverLocales from '../server/middlewares/serve-react-middleare/request-locale';
+import LanguageProvider, { LOCALE_COOKIE_NAME } from './providers/LanguageProvider';
 
 /*
  * this component connects the redux state language locale to the
@@ -25,10 +27,9 @@ export default class LanguageComponent extends React.Component {
   };
 
   constructor(props) {
-
     super(props);
 
-    props.changeLocale(guessPreferredLocale());
+    props.changeLocale(guessPreferredLocale(), false);
 
     if (module.hot) {
       onHotReload(() => this.forceUpdate());
@@ -45,20 +46,35 @@ export default class LanguageComponent extends React.Component {
 }
 
 function guessPreferredLocale() {
-  if (typeof navigator === 'undefined') {
-    return 'en';
+  // TODO add hook ?
+
+  const cookieLocale = getCookie(LOCALE_COOKIE_NAME);
+  if (cookieLocale && isLocaleValid(cookieLocale)) {
+    return cookieLocale;
   }
 
-  if (navigator.languages) {
-    for (const language of navigator.languages) {
-      if (isLocaleValid(language)) {
-        return language;
+  // client-side
+  if (typeof navigator !== 'undefined') {
+    if (navigator.languages) {
+      for (const language of navigator.languages) {
+        if (isLocaleValid(language)) {
+          return language;
+        }
       }
+    }
+
+    if (isLocaleValid(navigator.language)) {
+      return navigator.language;
     }
   }
 
-  if (isLocaleValid(navigator.language)) {
-    return navigator.language;
+  // server-side
+  if (serverLocales) {
+    for (const serverLocale of serverLocales) {
+      if (isLocaleValid(serverLocale)) {
+        return serverLocale;
+      }
+    }
   }
 
   return 'en';
