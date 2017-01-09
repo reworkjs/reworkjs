@@ -1,7 +1,7 @@
 import { fromJS, Collection } from 'immutable';
 import { takeLatest } from 'redux-saga';
 import { createSelector } from 'reselect';
-import { attemptChangeName } from '../../../util/util';
+import { attemptChangeName, canRedefineValue } from '../../../util/util';
 import logger from '../../../../shared/logger';
 import { Symbols } from '../provider';
 import { reducerMetadata } from './ReducerDecorator';
