@@ -14,10 +14,9 @@ export default function frontEndMiddleware(app, config) {
   const Middleware = isProd ? ProdMiddleware : DevMiddleware;
   const middleware = new Middleware(app, config);
 
-  let serveRoute = middleware.serveRoute.bind(middleware);
-  if (config.prerendering) {
-    serveRoute = renderApp(serveRoute);
-  }
+  const serveRoute = config.prerendering
+    ? renderApp(middleware.serveRoute.bind(middleware))
+    : (req, res) => middleware.serveRoute(req, res);
 
   middleware.registerMiddlewares(serveRoute);
   app.use(serveRoute);
