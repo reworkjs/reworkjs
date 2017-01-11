@@ -11,7 +11,7 @@ import { Symbols } from './decorators/provider';
 const sagaMiddleware = createSagaMiddleware();
 const devtools = global.devToolsExtension || (() => noop => noop);
 
-export default function configureStore(initialState = {}, history) {
+export default function configureStore(history) {
   // Create the store with two middlewares
   // 1. sagaMiddleware: Makes redux-sagas work
   // 2. routerMiddleware: Syncs the location/URL path to the state
@@ -24,6 +24,8 @@ export default function configureStore(initialState = {}, history) {
     applyMiddleware(...middlewares),
     devtools(),
   ];
+
+  const initialState = global.__PRELOADED_STATE__ || {};
 
   const store = createStore(
     createReducer(),

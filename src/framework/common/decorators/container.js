@@ -15,7 +15,7 @@ function checkInvalidKeys(conf) {
   const invalidKeys = Object.keys(conf).filter(key => !authorizedKeys.includes(key));
 
   if (invalidKeys.length > 0) {
-    throw new TypeError(`@container(): configuration contains invalid entries "${invalidKeys.join('", "')}". Only keys allowed are "${authorizedKeys.join('", "')}"`)
+    throw new TypeError(`@container(): configuration contains invalid entries "${invalidKeys.join('", "')}". Only keys allowed are "${authorizedKeys.join('", "')}"`);
   }
 }
 

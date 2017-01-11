@@ -11,8 +11,7 @@ const isClient = globals.SIDE === 'client';
 
 // useRouterHistory creates a composable higher-order function
 const navigationHistory = isClient ? browserHistory : createMemoryHistory();
-const initialState = window.__PRELOADED_STATE__ || {};
-const store = createStore(initialState, navigationHistory);
+const store = createStore(navigationHistory);
 
 const history = syncHistoryWithStore(navigationHistory, store, {
   selectLocationState: selectLocationState(),
