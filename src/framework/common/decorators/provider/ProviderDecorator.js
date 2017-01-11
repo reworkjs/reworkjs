@@ -1,24 +1,29 @@
+// @flow
+
 import { fromJS, Collection } from 'immutable';
 import { takeLatest } from 'redux-saga';
 import { createSelector } from 'reselect';
-import { attemptChangeName, canRedefineValue } from '../../../util/util';
+import { attemptChangeName, killMethod, replaceMethod } from '../../../util/util';
 import logger from '../../../../shared/logger';
 import { Symbols } from '../provider';
-import { reducerMetadata } from './ReducerDecorator';
-import { isSaga } from './SagaDecorator';
-import { isActionGenerator } from './ActionDecorator';
+import { classDecorator, ClassDecoratorArgument } from '../decorator';
+import { TYPE_REDUCER } from './ReducerDecorator';
+import { TYPE_SAGA } from './SagaDecorator';
+import { TYPE_ACTION_GENERATOR } from './ActionDecorator';
+import { propertyType, TYPE_STATE, getPropertyMetadata } from './_util';
 
-const stateHolderSymbol = Symbol('state-holder');
+export type ActionListenerMap = Map<string, Array<Function>>;
+
+const PROVIDER_STATE_ACCESSOR = Symbol('state-holder');
 const mutatedProperties = Symbol('mutatedProperties');
 const mutableVersion = Symbol('mutable-version');
 
 // Blacklist universal properties, Function static properties and @provider symbols.
 const PROPERTY_BLACKLIST = Object.getOwnPropertyNames(Object.prototype)
-  // use function() {} instead of Function because Function does not have the "caller" nor "arguments" properties on
-  // Safari < 11
-  .concat(Object.getOwnPropertyNames(function () {}));
-
-PROPERTY_BLACKLIST.push(stateHolderSymbol);
+// use function() {} instead of Function because Function does not have the "caller" nor "arguments" properties on
+// Safari < 11
+  .concat(Object.getOwnPropertyNames(() => {
+  }));
 
 function denyAccess() {
   throw new Error('Cannot access @provider state outside of @reducer annotated methods. If you are trying to r/w the state from a @saga, you will need to use "yield put(this.<reducerMethodName>())"');
@@ -43,23 +48,23 @@ const registeredProviders = [];
  * - Setting fields throw an error if called from outside
  *   a @reducer annotated method and call state.set(fieldName, fieldValue) otherwise
  */
-export default function provider(providerClass) {
-
-  if (typeof providerClass !== 'function') {
-    throw new TypeError('@provider may not have parenthesis.');
+export default classDecorator((arg: ClassDecoratorArgument) => {
+  if (arg.options.length > 0) {
+    throw new TypeError('@provider does not accept options.');
   }
+
+  const providerClass = arg.target;
 
   if (registeredProviders.includes(providerClass.name)) {
     throw new Error(`A provider has already been registered under the name ${providerClass.name}. Please make sure all provider classes have unique names.`);
   }
 
   registeredProviders.push(providerClass.name);
-
   if (Object.getOwnPropertyNames(providerClass.prototype).length > 1) {
     logger.warn(`@provider ${providerClass.name} has instance properties. This is likely a bug as providers are fully static.`);
   }
 
-  const domainIdentifier = `${providerClass.name}_rjs_provider`;
+  const domainIdentifier = `RJS-${providerClass.name}`;
 
   function selectDomain() {
     return state => {
@@ -73,7 +78,8 @@ export default function provider(providerClass) {
     };
   }
 
-  providerClass[stateHolderSymbol] = IMMUTABLE_STATE;
+  providerClass[PROVIDER_STATE_ACCESSOR] = IMMUTABLE_STATE;
+
   const { initialState, sagaList, actionListeners } = extractFromProvider(providerClass, selectDomain);
 
   function genericReducer(state = initialState, actionData) {
@@ -85,7 +91,7 @@ export default function provider(providerClass) {
     }
 
     return state.withMutations(map => {
-      providerClass[stateHolderSymbol] = map;
+      providerClass[PROVIDER_STATE_ACCESSOR] = map;
       const mutatedObjectMap = new Map();
       providerClass[mutatedProperties] = mutatedObjectMap;
 
@@ -101,7 +107,7 @@ export default function provider(providerClass) {
         map = map.set(value, fromJS(key));
       });
 
-      providerClass[stateHolderSymbol] = IMMUTABLE_STATE;
+      providerClass[PROVIDER_STATE_ACCESSOR] = IMMUTABLE_STATE;
     });
   }
 
@@ -112,17 +118,14 @@ export default function provider(providerClass) {
   providerClass[Symbols.sagas] = sagaList;
 
   return providerClass;
-}
+});
 
 function extractFromProvider(providerClass, selectDomain) {
-  const actionListeners = new Map();
+  const actionListeners: ActionListenerMap = new Map();
   const sagaList = [];
   const initialState = {};
 
   const keys = Object.getOwnPropertyNames(providerClass);
-  if (Object.getOwnPropertySymbols) {
-    keys.push(...Object.getOwnPropertySymbols(providerClass));
-  }
 
   for (const propertyName of keys) {
     if (PROPERTY_BLACKLIST.includes(propertyName)) {
@@ -130,39 +133,25 @@ function extractFromProvider(providerClass, selectDomain) {
     }
 
     const property = providerClass[propertyName];
-    const propIsAction = property != null && property[isActionGenerator];
-    if (propIsAction) {
-      continue;
-    }
+    const type = property == null ? null : property[propertyType];
 
-    const propIsReducer = property != null && property[reducerMetadata];
-    if (propIsReducer) {
-      extractReducer(providerClass, propertyName, actionListeners);
-      continue;
-    }
+    switch (type) {
+      case TYPE_ACTION_GENERATOR:
+        continue;
 
-    const propIsSaga = property != null && property[isSaga];
-    if (propIsSaga) {
-      extractSaga(providerClass, propertyName, sagaList);
-      continue;
-    }
+      case TYPE_REDUCER:
+        extractReducer(providerClass, propertyName, actionListeners);
+        continue;
 
-    // IS STATE
-    extractState(providerClass, propertyName, initialState, selectDomain);
+      case TYPE_SAGA:
+        extractSaga(providerClass, propertyName, sagaList);
+        continue;
+
+      case TYPE_STATE:
+      default:
+        extractState(providerClass, propertyName, initialState, selectDomain);
+    }
   }
-
-  actionListeners.forEach((value, key) => {
-    if (typeof key !== 'function') {
-      return;
-    }
-
-    if (!key.actionType) {
-      throw new TypeError(`@reducer(${key.name}): function does not have an actionType.`);
-    }
-
-    actionListeners.set(key.actionType, value);
-    actionListeners.delete(key);
-  });
 
   return {
     initialState: fromJS(initialState),
@@ -171,64 +160,57 @@ function extractFromProvider(providerClass, selectDomain) {
   };
 }
 
-function extractReducer(providerClass: Function, propertyName: string, actionListeners: Map) {
-  const property = providerClass[propertyName];
-  const metadata = property[reducerMetadata];
+function installActionBuilder(providerClass, propertyName) {
+  const method = providerClass[propertyName];
+  const metadata = getPropertyMetadata(method);
 
-  // replace self with action builder.
-  if (metadata.self) {
-    const actionType = property.actionType;
-
-    replaceWithActionBuilder(providerClass, propertyName, actionType);
-    pushToArrayMap(actionListeners, actionType, property);
+  if (!metadata.actionType) {
+    return killMethod(providerClass, propertyName);
   }
 
-  if (metadata.others) {
-    for (const otherActionName of metadata.others) {
-      pushToArrayMap(actionListeners, otherActionName, property);
+  function createAction(...args) {
+    return { type: metadata.actionType, payload: args };
+  }
+
+  createAction.actionType = metadata.actionType;
+
+  replaceMethod(providerClass, propertyName, createAction);
+}
+
+function extractReducer(providerClass: Function, propertyName: string, actionListeners: ActionListenerMap) {
+  const actionListener = providerClass[propertyName];
+  const metadata = getPropertyMetadata(actionListener);
+
+  for (const actionType of metadata.listenedActionTypes) {
+    if (!actionListeners.has(actionType)) {
+      actionListeners.set(actionType, []);
     }
+
+    actionListeners.get(actionType).push(actionListener);
   }
+
+  installActionBuilder(providerClass, propertyName);
 
   return actionListeners;
 }
 
 function extractSaga(providerClass: Function, propertyName: string, sagaList: Array) {
   const property = providerClass[propertyName];
-
-  const namespacedActionName = `${providerClass.name}::${property.name}`;
-  const actionType = `@@provider/${providerClass.name}/action/${propertyName}`;
+  const metadata = getPropertyMetadata(property);
 
   function *callActionHandler(action) {
     yield* property.apply(providerClass, action.payload);
   }
 
   function *awaitAction() {
-    yield* takeLatest(actionType, callActionHandler);
+    yield* takeLatest(metadata.actionType, callActionHandler);
   }
 
-  awaitAction.actionType = actionType;
-  // awaitAction[Symbols.name] = provider.useSymbols ? Symbol(namespacedActionName) : namespacedActionName;
-  attemptChangeName(awaitAction, namespacedActionName);
+  attemptChangeName(awaitAction, `await${providerClass.name}.${property.name}`);
 
   sagaList.push(awaitAction);
 
-  replaceWithActionBuilder(providerClass, propertyName, actionType);
-}
-
-function replaceWithActionBuilder(providerClass, propertyName, actionType) {
-  function createAction(...args) {
-    return { type: actionType, payload: args };
-  }
-
-  createAction.actionType = actionType;
-
-  if (!canRedefineValue(providerClass, propertyName)) {
-    throw new TypeError(`@provider could not redefine property ${JSON.stringify(propertyName)} because it is both non-writable and non-configurable.`);
-  }
-
-  Object.defineProperty(providerClass, propertyName, {
-    value: createAction,
-  });
+  installActionBuilder(providerClass, propertyName);
 }
 
 function extractState(providerClass, propertyName, initialState, selectDomain) {
@@ -251,7 +233,7 @@ function extractState(providerClass, propertyName, initialState, selectDomain) {
   // create selector
   Object.defineProperty(providerClass, propertyName, {
     get() {
-      const providerState = providerClass[stateHolderSymbol];
+      const providerState = providerClass[PROVIDER_STATE_ACCESSOR];
       if (providerState === IMMUTABLE_STATE) {
         return selectProperty;
       }
@@ -268,7 +250,7 @@ function extractState(providerClass, propertyName, initialState, selectDomain) {
 
     set(value) { // eslint-disable-line
       const immutableValue = fromJS(value);
-      providerClass[stateHolderSymbol] = providerClass[stateHolderSymbol].set(propertyName, immutableValue);
+      providerClass[PROVIDER_STATE_ACCESSOR] = providerClass[PROVIDER_STATE_ACCESSOR].set(propertyName, immutableValue);
     },
   });
 }
@@ -359,21 +341,4 @@ function proxyGet(store, propertyName) {
   proxy[proxied] = value;
 
   return proxy;
-}
-
-function pushToArrayMap(map: Map, key, value) {
-  if (!map.has(key)) {
-    map.set(key, value);
-    return;
-  }
-
-  const previousListener = map.get(key);
-  if (Array.isArray(previousListener)) {
-    previousListener.push(value);
-    return;
-  }
-
-  const listenerArray = [previousListener];
-  listenerArray.push(value);
-  map.set(key, listenerArray);
 }
