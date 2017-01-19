@@ -27,6 +27,6 @@ export function replaceMethod(clazz, propertyName, replacement) {
     throw new TypeError(`Could not redefine property ${clazz.name}.${propertyName} because it is both non-writable and non-configurable.`);
   }
 
-  Object.defineProperty(clazz, propertyName, { value: clazz });
+  Object.defineProperty(clazz, propertyName, { value: replacement });
   attemptChangeName(replacement, propertyName);
 }

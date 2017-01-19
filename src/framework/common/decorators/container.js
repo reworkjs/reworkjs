@@ -120,14 +120,22 @@ export default function container(config: ContainerDecoratorConfig = {}) {
 
     if (config.actions) {
       for (const key of Object.keys(config.actions)) {
-        const action = config.actions[key];
+        const actionBuilder = config.actions[key];
 
-        if (typeof action !== 'function') {
+        if (typeof actionBuilder !== 'function') {
           throw new TypeError(`@container({ actions[${JSON.stringify(key)}] }) is not a function.`);
         }
 
         result[key] = function callDispatcher(...args) {
-          dispatch(action(...args));
+          const action = actionBuilder(...args);
+
+          if (Array.isArray(action)) {
+            for (const oneOfTheActions of action) {
+              dispatch(oneOfTheActions);
+            }
+          } else {
+            dispatch(action);
+          }
         };
       }
     }
