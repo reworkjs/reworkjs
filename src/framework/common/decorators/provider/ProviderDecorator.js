@@ -169,7 +169,7 @@ function installActionBuilder(providerClass, propertyName) {
   }
 
   function createAction(...args) {
-    return { type: met8data.actionType, payload: args };
+    return { type: metadata.actionType, payload: args };
   }
 
   createAction.actionType = metadata.actionType;
