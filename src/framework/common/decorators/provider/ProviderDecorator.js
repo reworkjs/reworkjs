@@ -284,7 +284,7 @@ function useArrayMethodOnImmutableList(methodName) {
     if (target[mutableVersion]) {
       self = target[mutableVersion];
     } else if (target instanceof Collection.Indexed) {
-      self = Object.freeze(target.toJS());
+      self = target.toJS();
       target[mutableVersion] = self;
     } else if (Array.isArray(target)) {
       self = target;
@@ -295,7 +295,7 @@ function useArrayMethodOnImmutableList(methodName) {
     return Array.prototype[methodName].apply(self, args);
   }
 
-  // attemptChangeName(methodProxy, methodName);
+  attemptChangeName(methodProxy, methodName);
 
   return methodProxy;
 }
