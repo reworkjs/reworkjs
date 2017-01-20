@@ -33,8 +33,17 @@ export default function configureStore(history) {
     compose(...enhancers),
   );
 
+  const activeSagas = [];
+
   // Create hook for async sagas
-  store.runSaga = sagaMiddleware.run;
+  store.runSaga = function runSaga(saga) {
+    if (activeSagas.includes(saga)) {
+      return;
+    }
+
+    sagaMiddleware.run(saga);
+    activeSagas.push(saga);
+  };
 
   loadProviderSagas(store);
 
