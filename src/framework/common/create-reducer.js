@@ -1,8 +1,3 @@
-/*
- * routeReducer
- *
- * The reducer merges route location changes into our immutable state.
- */
 import { combineReducers } from 'redux-immutable';
 import { Symbols } from './decorators/provider';
 import providers, { Provider } from './providers';

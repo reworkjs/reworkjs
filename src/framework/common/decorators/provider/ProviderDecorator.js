@@ -217,12 +217,10 @@ function extractState(providerClass, propertyName, initialState, selectDomain) {
 
   initialState[propertyName] = providerClass[propertyName];
 
-  function selectProperty() {
-    return createSelector(
-      selectDomain(),
-      subState => proxyGet(subState, propertyName),
-    );
-  }
+  const selectProperty = createSelector(
+    selectDomain(),
+    subState => proxyGet(subState, propertyName),
+  );
 
   attemptChangeName(selectProperty, `select_${propertyName}`);
 

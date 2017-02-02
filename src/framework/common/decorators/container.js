@@ -83,7 +83,7 @@ export default function container(config: ContainerDecoratorConfig = {}) {
         throw new TypeError(`@container({ state[${JSON.stringify(key)}] }) is not a function.`);
       }
 
-      return val();
+      return val;
     });
 
     mapStateToProps = createSelector(
