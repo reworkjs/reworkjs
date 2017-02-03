@@ -148,19 +148,28 @@ export default class WebpackBase {
       test: /\.(eot|svg|ttf|woff|woff2)(\?.*$|$)/,
       loader: 'file-loader',
     }, {
-      test: /\.(jpg|png|gif)$/,
-      loaders: [
-        'file-loader',
-        `image-webpack-loader?{
-          progressive: true,
-          optimizationLevel: 7,
-          interlaced: false,
+      test: /\.(jpeg|png|gif|svg)$/,
+      loaders: ['file-loader', {
+        loader: 'image-webpack-loader',
+        // TODO: Review image-webpack-loader configuration
+        query: {
+          bypassOnDebug: true,
+          mozjpeg: {
+            progressive: true,
+          },
+          gifsicle: {
+            interlaced: false,
+          },
+          optipng: {
+            optimizationLevel: 7,
+          },
           pngquant: {
-            quality: "65-90",
-            speed: 4
-          }
-        }`,
-      ],
+            quality: '65-90',
+            speed: 4,
+          },
+          svgo: {},
+        },
+      }],
     }, {
       test: /\.json$/,
       loader: 'json-loader',
@@ -186,9 +195,9 @@ export default class WebpackBase {
 
   buildCssLoaders() {
     const cssLoaders = [{
-      test:  /\.(sc|sa|c)ss$/,
+      test: /\.(sc|sa|c)ss$/,
       exclude: ANY_MODULE_EXCEPT_FRAMEWORK,
-      loaders: [this.buildCssLoader({ modules: true }), 'postcss-loader', 'sass-loader']
+      loaders: [this.buildCssLoader({ modules: true }), 'postcss-loader', 'sass-loader'],
     }, {
       test: /\.css$/,
       include: ANY_MODULE_EXCEPT_FRAMEWORK,
@@ -212,7 +221,6 @@ export default class WebpackBase {
 
     return cssLoaders;
   }
-
 
   getEntry(): string[] {
     // front-end entry point.
