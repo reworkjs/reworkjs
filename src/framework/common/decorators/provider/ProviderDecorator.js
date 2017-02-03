@@ -104,10 +104,11 @@ export default classDecorator((arg: ClassDecoratorArgument) => {
       }
 
       mutatedObjectMap.forEach((value, key) => {
-        map = map.set(value, fromJS(key));
+        map.set(key, fromJS(value));
       });
 
       providerClass[PROVIDER_STATE_ACCESSOR] = IMMUTABLE_STATE;
+      providerClass[mutatedProperties] = IMMUTABLE_STATE;
     });
   }
 
@@ -232,23 +233,30 @@ function extractState(providerClass, propertyName, initialState, selectDomain) {
   Object.defineProperty(providerClass, propertyName, {
     get() {
       const providerState = providerClass[PROVIDER_STATE_ACCESSOR];
+
+      // no reducer active, return a selector.
       if (providerState === IMMUTABLE_STATE) {
         return selectProperty;
       }
 
-      const value = providerState.get(propertyName);
-      if (value != null && value.toJS) {
-        const mutableValue = value.toJS();
-        providerClass[mutatedProperties].set(propertyName, mutableValue);
-        return mutableValue;
+      const cachedMutableValue = providerClass[mutatedProperties].get(propertyName);
+      if (cachedMutableValue != null) {
+        return cachedMutableValue;
       }
 
-      return value;
+      const value = providerState.get(propertyName);
+      if (value == null || !value.toJS) {
+        return value;
+      }
+
+      const mutableValue = value.toJS();
+      providerClass[mutatedProperties].set(propertyName, mutableValue);
+
+      return mutableValue;
     },
 
-    set(value) { // eslint-disable-line
-      const immutableValue = fromJS(value);
-      providerClass[PROVIDER_STATE_ACCESSOR] = providerClass[PROVIDER_STATE_ACCESSOR].set(propertyName, immutableValue);
+    set(value) {
+      providerClass[mutatedProperties].set(propertyName, value);
     },
   });
 }
