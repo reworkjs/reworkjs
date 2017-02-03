@@ -33,6 +33,8 @@ export default function configureStore(history) {
     compose(...enhancers),
   );
 
+  replaceDispatch(store);
+
   const activeSagas = [];
 
   // Create hook for async sagas
@@ -74,4 +76,18 @@ function loadProviderSagas(store) {
       store.runSaga(saga);
     }
   }
+}
+
+function replaceDispatch(store) {
+  const originalDispatch = store.dispatch;
+
+  store.dispatch = function dispatch(arg) {
+    if (Array.isArray(arg)) {
+      for (const action of arg) {
+        originalDispatch.call(this, action);
+      }
+    } else {
+      originalDispatch.call(this, arg);
+    }
+  };
 }
