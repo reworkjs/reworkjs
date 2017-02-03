@@ -21,6 +21,7 @@ export default function configureStore(history) {
   ];
 
   const enhancers = [
+    replaceActionDispatcher,
     applyMiddleware(...middlewares),
     devtools(),
   ];
@@ -32,8 +33,6 @@ export default function configureStore(history) {
     fromJS(initialState),
     compose(...enhancers),
   );
-
-  replaceDispatch(store);
 
   const activeSagas = [];
 
@@ -78,16 +77,23 @@ function loadProviderSagas(store) {
   }
 }
 
-function replaceDispatch(store) {
-  const originalDispatch = store.dispatch;
+function replaceActionDispatcher(actualCreateStore) {
+  return function fakeCreateStore(a, b, c) {
+    const store = actualCreateStore(a, b, c);
+    const nativeDispatch = store.dispatch;
 
-  store.dispatch = function dispatch(arg) {
-    if (Array.isArray(arg)) {
-      for (const action of arg) {
-        originalDispatch.call(this, action);
-      }
-    } else {
-      originalDispatch.call(this, arg);
-    }
+    Object.assign(store, {
+      dispatch(arg) {
+        if (Array.isArray(arg)) {
+          for (const action of arg) {
+            nativeDispatch.call(this, action);
+          }
+        } else {
+          nativeDispatch.call(this, arg);
+        }
+      },
+    });
+
+    return store;
   };
 }

@@ -126,16 +126,8 @@ export default function container(config: ContainerDecoratorConfig = {}) {
           throw new TypeError(`@container({ actions[${JSON.stringify(key)}] }) is not a function.`);
         }
 
-        result[key] = function callDispatcher(...args) {
-          const action = actionBuilder(...args);
-
-          if (Array.isArray(action)) {
-            for (const oneOfTheActions of action) {
-              dispatch(oneOfTheActions);
-            }
-          } else {
-            dispatch(action);
-          }
+        result[key] = function dispatchAction(...args) {
+          dispatch(actionBuilder(...args));
         };
       }
     }
