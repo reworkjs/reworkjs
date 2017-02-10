@@ -351,7 +351,7 @@ function proxyGet(store, propertyName) {
   const proxy = new Proxy(value, traps);
   proxy[proxied] = value;
 
-  proxyCache.set(value, proxyCache);
+  proxyCache.set(value, proxy);
 
   return proxy;
 }
