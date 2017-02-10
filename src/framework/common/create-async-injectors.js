@@ -1,4 +1,3 @@
-// import assert from 'assert';
 import conformsTo from 'lodash/conformsTo';
 import isEmpty from 'lodash/isEmpty';
 import isFunction from 'lodash/isFunction';
@@ -9,7 +8,7 @@ import createReducer from './create-reducer';
 /**
  * Validate the shape of redux store
  */
-export function checkStore(store) {
+function checkStore(store) {
 
   const shape = {
     dispatch: isFunction,
@@ -28,12 +27,8 @@ export function checkStore(store) {
 /**
  * Inject an asynchronously loaded reducer
  */
-export function createAsyncReducerInjector(store, isValid) {
+function createAsyncReducerInjector(store) {
   return function injectReducer(name, asyncReducer) {
-    if (!isValid) {
-      checkStore(store);
-    }
-
     if (!isString(name) || isEmpty(name) || !isFunction(asyncReducer)) {
       throw new TypeError('injectAsyncReducer: Expected `asyncReducer` to be a reducer function');
     }
@@ -46,12 +41,8 @@ export function createAsyncReducerInjector(store, isValid) {
 /**
  * Inject an asynchronously loaded saga
  */
-export function createAsyncSagaInjector(store, isValid) {
+function createAsyncSagaInjector(store) {
   return function injectSagas(sagas) {
-    if (!isValid) {
-      checkStore(store);
-    }
-
     if (!Array.isArray(sagas)) {
       throw new TypeError('(app/utils...) injectAsyncSagas: Expected `sagas` to be an array of generator functions');
     }
@@ -60,7 +51,7 @@ export function createAsyncSagaInjector(store, isValid) {
       console.warn('(app/utils...) injectAsyncSagas: Received an empty `sagas` array');
     }
 
-    sagas.map(store.runSaga);
+    sagas.forEach(store.runSaga);
   };
 }
 
@@ -71,7 +62,7 @@ export default function createAsyncInjectors(store) {
   checkStore(store);
 
   return {
-    injectReducer: createAsyncReducerInjector(store, true),
-    injectSagas: createAsyncSagaInjector(store, true),
+    injectReducer: createAsyncReducerInjector(store),
+    injectSagas: createAsyncSagaInjector(store),
   };
 }
