@@ -7,6 +7,7 @@ import { getDefault } from '../../shared/util/ModuleUtil';
 import createReducer from './create-reducer';
 import providers from './providers';
 import { Symbols } from './decorators/provider';
+import debug from './debug';
 
 const sagaMiddleware = createSagaMiddleware();
 const devtools = global.devToolsExtension || (() => noop => noop);
@@ -35,6 +36,7 @@ export default function configureStore(history) {
   );
 
   const activeSagas = [];
+  debug.activeSagas = activeSagas;
 
   // Create hook for async sagas
   store.runSaga = function runSaga(saga) {
@@ -45,6 +47,8 @@ export default function configureStore(history) {
     sagaMiddleware.run(saga);
     activeSagas.push(saga);
   };
+
+  debug.store = store;
 
   loadProviderSagas(store);
 

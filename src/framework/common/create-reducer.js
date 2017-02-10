@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux-immutable';
 import { Symbols } from './decorators/provider';
 import providers, { Provider } from './providers';
+import debug from './debug';
 
 export default function createReducer(asyncReducers) {
   const reducers = Object.assign({}, asyncReducers);
@@ -23,6 +24,9 @@ export default function createReducer(asyncReducers) {
 
     reducers[name] = reducer;
   }
+
+  Object.freeze(reducers);
+  debug.activeReducers = reducers;
 
   return combineReducers(reducers);
 }
