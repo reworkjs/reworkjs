@@ -239,9 +239,8 @@ function extractState(providerClass, propertyName, initialState, selectDomain) {
         return selectProperty;
       }
 
-      const cachedMutableValue = providerClass[mutatedProperties].get(propertyName);
-      if (cachedMutableValue != null) {
-        return cachedMutableValue;
+      if (providerClass[mutatedProperties].has(propertyName)) {
+        return providerClass[mutatedProperties].get(propertyName);
       }
 
       const value = providerState.get(propertyName);
@@ -306,6 +305,7 @@ function useArrayMethodOnImmutableList(methodName) {
   return methodProxy;
 }
 /* eslint-enable */
+const proxyCache = new WeakMap();
 
 function proxyGet(store, propertyName) {
   const value = store.get(propertyName);
@@ -317,6 +317,11 @@ function proxyGet(store, propertyName) {
 
   if (typeof Proxy === 'undefined') {
     return value.toJS();
+  }
+
+  const cachedProxy = proxyCache.get(value);
+  if (cachedProxy) {
+    return cachedProxy;
   }
 
   const isIndexed = value instanceof Collection.Indexed;
@@ -345,6 +350,8 @@ function proxyGet(store, propertyName) {
 
   const proxy = new Proxy(value, traps);
   proxy[proxied] = value;
+
+  proxyCache.set(value, proxyCache);
 
   return proxy;
 }
