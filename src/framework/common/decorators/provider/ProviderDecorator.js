@@ -207,7 +207,7 @@ function extractSaga(providerClass: Function, propertyName: string, sagaList: Ar
     yield* takeLatest(metadata.actionType, callActionHandler);
   }
 
-  attemptChangeName(awaitAction, `await${providerClass.name}.${property.name}`);
+  attemptChangeName(awaitAction, `${providerClass.name}.${property.name}`);
 
   sagaList.push(awaitAction);
 

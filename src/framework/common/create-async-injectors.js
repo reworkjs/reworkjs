@@ -4,6 +4,7 @@ import isFunction from 'lodash/isFunction';
 import isObject from 'lodash/isObject';
 import isString from 'lodash/isString';
 import createReducer from './create-reducer';
+import { Symbols } from './decorators/provider';
 
 /**
  * Validate the shape of redux store
@@ -28,12 +29,19 @@ function checkStore(store) {
  * Inject an asynchronously loaded reducer
  */
 function createAsyncReducerInjector(store) {
-  return function injectReducer(name, asyncReducer) {
-    if (!isString(name) || isEmpty(name) || !isFunction(asyncReducer)) {
-      throw new TypeError('injectAsyncReducer: Expected `asyncReducer` to be a reducer function');
+  return function injectReducer(asyncReducer) {
+    const name = asyncReducer[Symbols.name] || asyncReducer.name;
+
+    if (!isString(name) || isEmpty(name)) {
+      throw new TypeError('injectAsyncReducer: reducer is missing a name.');
     }
 
-    store.asyncReducers[name] = asyncReducer; // eslint-disable-line no-param-reassign
+    if (!isFunction(asyncReducer)) {
+      throw new TypeError('injectAsyncReducer: reducer is not a function.');
+    }
+
+    // replace reducer
+    store.asyncReducers[name] = asyncReducer;
     store.replaceReducer(createReducer(store.asyncReducers));
   };
 }
