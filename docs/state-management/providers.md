@@ -205,13 +205,46 @@ export default class PreferenceProvider {
   static *loadPreferences() {
     // Load the user preferences from the server.
     // see the redux-saga documentation for `call`.
-    const { maySendNotifications } = yield call(api.loadPreferences());
+    const { maySendNotifications } = yield call(api.loadPreferences);
 
     // `put` dispatches a new action, which `this.setMaySendNotifications()` builds.
     // The action will be received by the above reducer which will update the store.
     // See the redux-saga documentation for more details
     yield put(this.setMaySendNotifications(maySendNotifications));
   }
+```
+
+As tracking if a saga is running is a recurrent need (to check if the api are still running, to lock submit buttons 
+while the form is being processed), Providers come with a built-in system to determine it.
+
+To enable it, pass `trackStatus: true` as an argument to the saga decorator.
+
+```javascript
+  @saga({ trackStatus: true })
+  static *savePreferences(data) {
+    yield call(() => api.savePreferences(data));
+  }
+}
+```
+
+The saga exposes a selector that will let you retrieve whether the saga is currently running or not.
+
+```javascript
+@container({
+  state: {
+    formSaving: PreferenceProvider.savePreferences.running, // <- the selector.
+  },
+  actions: {
+    saveForm: PreferenceProvider.savePreferences,
+  }
+})
+class PreferenceMenu extends React.Component {
+  static propTypes = {
+    formSaving: React.PropTypes.bool,
+    saveForm: React.PropTypes.func,
+  };
+  
+  // ...
 }
 ```
 
