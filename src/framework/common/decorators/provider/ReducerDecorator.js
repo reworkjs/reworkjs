@@ -3,6 +3,8 @@ import { methodDecorator, MethodDecoratorArgument } from '../decorator';
 import { getPropertyMetadata, setPropertyType } from './_util';
 
 export const TYPE_REDUCER = Symbol('TYPE_REDUCER');
+const EMPTY_OBJ = {};
+Object.freeze(EMPTY_OBJ);
 
 const USAGE = '@reducer([actionType])';
 
@@ -25,7 +27,7 @@ export function parseOptions(arg: MethodDecoratorArgument) {
   }
 
   if (options[0] == null) {
-    return;
+    return EMPTY_OBJ;
   }
 
   const objArg = typeof options[0] === 'object' ? options[0] : { actionType: options[0] };

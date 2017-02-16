@@ -246,21 +246,20 @@ function extractSaga(propertyName: string, dataBag: DataBag) {
   const actionBuilder = installActionBuilder(ProviderClass, propertyName);
 
   if (metadata.trackStatus) {
-    const { initialState, selectDomain, addActionListener } = dataBag;
+    const { initialState, addActionListener } = dataBag;
 
-    const trackActionType = `@@provider/${constantCase(ProviderClass.name)}/setRunning`;
+    const trackActionType = `@@provider/${constantCase(ProviderClass.name)}/setRunning/${constantCase(propertyName)}`;
     callActionHandler = function *callActionHandlerWithTracking(action) {
       yield put({ type: trackActionType, payload: true });
       yield* property.apply(ProviderClass, action.payload);
       yield put({ type: trackActionType, payload: false });
     };
 
-    const runningPropertyName = `${propertyName}#running`;
-    initialState[propertyName] = false;
-    actionBuilder.running = createSelector(
-      selectDomain(),
-      subState => subState.get(runningPropertyName),
-    );
+    const runningPropertyName = `${propertyName}.running`;
+    installSelector(runningPropertyName, dataBag);
+    initialState[runningPropertyName] = false;
+
+    Object.defineProperty(actionBuilder, 'running', Object.getOwnPropertyDescriptor(ProviderClass, runningPropertyName));
 
     addActionListener(trackActionType, function changeRunningStatus(runningStatus) {
       this[runningPropertyName] = runningStatus; // eslint-disable-line
@@ -280,9 +279,19 @@ function extractSaga(propertyName: string, dataBag: DataBag) {
 }
 
 function extractState(propertyName: string, dataBag: DataBag) {
-  const { ProviderClass, initialState, selectDomain } = dataBag;
+  const { ProviderClass, initialState } = dataBag;
 
   initialState[propertyName] = ProviderClass[propertyName];
+
+  if (!Object.getOwnPropertyDescriptor(ProviderClass, propertyName).configurable) {
+    throw new TypeError(`@provider could not redefine property ${JSON.stringify(propertyName)} because it is non-configurable.`);
+  }
+
+  installSelector(propertyName, dataBag);
+}
+
+function installSelector(propertyName: string, dataBag: DataBag) {
+  const { ProviderClass, selectDomain } = dataBag;
 
   const selectProperty = createSelector(
     selectDomain(),
@@ -290,10 +299,6 @@ function extractState(propertyName: string, dataBag: DataBag) {
   );
 
   attemptChangeName(selectProperty, `select_${propertyName}`);
-
-  if (!Object.getOwnPropertyDescriptor(ProviderClass, propertyName).configurable) {
-    throw new TypeError(`@provider could not redefine property ${JSON.stringify(propertyName)} because it is non-configurable.`);
-  }
 
   // create selector
   Object.defineProperty(ProviderClass, propertyName, {
