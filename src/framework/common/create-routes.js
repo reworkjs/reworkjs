@@ -63,6 +63,30 @@ function sanitizeRoute(routeData, injectors, store, fileName) {
     throw new TypeError(`Missing method getComponent(s) on route ${JSON.stringify(fileName)}`);
   }
 
+  // onEnter(nextState, replace, callback?)
+  // onChange(prevState, nextState, replace, callback?)
+  // onLeave(prevState)
+  if (route.onEnter) {
+    const oldOnEnter = route.onEnter;
+    route.onEnter = function onEnter(nextState, replace) {
+      return oldOnEnter.call(this, nextState, replace, store);
+    };
+  }
+
+  if (route.onChange) {
+    const oldOnChange = route.onChange;
+    route.onChange = function onChange(prevState, nextState, replace) {
+      return oldOnChange.call(this, prevState, nextState, replace, store);
+    };
+  }
+
+  if (route.onLeave) {
+    const oldOnLeave = route.onLeave;
+    route.onLeave = function onLeave(prevState) {
+      return oldOnLeave.call(this, prevState, store);
+    };
+  }
+
   delete route.getSaga;
   delete route.getSagas;
   delete route.getReducer;
