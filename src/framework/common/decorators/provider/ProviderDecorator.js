@@ -1,6 +1,8 @@
 // @flow
 
-import { fromJS, Collection } from 'immutable';
+// TODO check selectors are optimised correctly https://github.com/reactjs/reselect#createselectorinputselectors--inputselectors-resultfunc
+
+import { fromJS, Collection, is as immutableIs } from 'immutable';
 import { takeLatest } from 'redux-saga';
 import { createSelector } from 'reselect';
 import { attemptChangeName, killMethod, replaceMethod } from '../../../util/util';
@@ -48,7 +50,7 @@ const registeredProviders = [];
  * - Setting fields throw an error if called from outside
  *   a @reducer annotated method and call state.set(fieldName, fieldValue) otherwise
  */
-export default classDecorator((arg: ClassDecoratorArgument) => {
+const ProviderDecorator = classDecorator((arg: ClassDecoratorArgument) => {
   if (arg.options.length > 0) {
     throw new TypeError('@provider does not accept options.');
   }
@@ -104,7 +106,12 @@ export default classDecorator((arg: ClassDecoratorArgument) => {
       }
 
       mutatedObjectMap.forEach((value, key) => {
-        map.set(key, fromJS(value));
+        const newVal = fromJS(value);
+        const oldVal = map.get(key);
+
+        if (!immutableIs(newVal, oldVal)) {
+          map.set(key, newVal);
+        }
       });
 
       providerClass[PROVIDER_STATE_ACCESSOR] = IMMUTABLE_STATE;
@@ -120,6 +127,16 @@ export default classDecorator((arg: ClassDecoratorArgument) => {
 
   return providerClass;
 });
+
+ProviderDecorator.select = function select(property, store) {
+  if (typeof property !== 'function' || !property.recomputations) {
+    throw new TypeError('The property you passed to Provider.select is not selectable.');
+  }
+
+  return property(store);
+};
+
+export default ProviderDecorator;
 
 function extractFromProvider(providerClass, selectDomain) {
   const actionListeners: ActionListenerMap = new Map();
