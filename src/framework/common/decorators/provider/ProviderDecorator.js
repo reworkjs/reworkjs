@@ -26,6 +26,7 @@ type DataBag = {
   selectDomain: Function,
 };
 
+const PROVIDER_APP_STATE_ACCESSOR = Symbol('app-state-holder');
 const PROVIDER_STATE_ACCESSOR = Symbol('state-holder');
 const mutatedProperties = Symbol('mutatedProperties');
 const mutableVersion = Symbol('mutable-version');
@@ -281,13 +282,54 @@ function extractSaga(propertyName: string, dataBag: DataBag) {
 function extractState(propertyName: string, dataBag: DataBag) {
   const { ProviderClass, initialState } = dataBag;
 
-  initialState[propertyName] = ProviderClass[propertyName];
+  const descriptor = Object.getOwnPropertyDescriptor(ProviderClass, propertyName);
+  if (!descriptor) {
+    throw new TypeError('Tried getting the descriptor of something that does not exist.');
+  }
 
-  if (!Object.getOwnPropertyDescriptor(ProviderClass, propertyName).configurable) {
+  if (!descriptor.configurable) {
     throw new TypeError(`@provider could not redefine property ${JSON.stringify(propertyName)} because it is non-configurable.`);
   }
 
-  installSelector(propertyName, dataBag);
+  if (descriptor.set) {
+    throw new TypeError('setters are currently incompatible with @provider.');
+  }
+
+  if (descriptor.get) {
+    installGetterSelector(propertyName, dataBag);
+  } else {
+    initialState[propertyName] = ProviderClass[propertyName];
+    installSelector(propertyName, dataBag);
+  }
+}
+
+function installGetterSelector(propertyName: string, dataBag: DataBag) {
+  const { ProviderClass } = dataBag;
+
+  const originalGetter = Object.getOwnPropertyDescriptor(ProviderClass, propertyName).get;
+
+  function getterSelector(applicationState) {
+    const originalStateAccessor = ProviderClass[PROVIDER_APP_STATE_ACCESSOR];
+    ProviderClass[PROVIDER_APP_STATE_ACCESSOR] = applicationState;
+
+    const result = originalGetter.call(ProviderClass); // eslint-disable-line
+
+    // restore original one in case we're being called by another getter. We don't want to give null back to them.
+    ProviderClass[PROVIDER_APP_STATE_ACCESSOR] = originalStateAccessor;
+
+    return result;
+  }
+
+  Object.defineProperty(dataBag.ProviderClass, propertyName, {
+    get() {
+      // inside a getter.
+      if (ProviderClass[PROVIDER_APP_STATE_ACCESSOR]) {
+        return getterSelector(ProviderClass[PROVIDER_APP_STATE_ACCESSOR]);
+      }
+
+      return getterSelector;
+    },
+  });
 }
 
 function installSelector(propertyName: string, dataBag: DataBag) {
@@ -307,6 +349,12 @@ function installSelector(propertyName: string, dataBag: DataBag) {
 
       // no reducer active, return a selector.
       if (providerState === IMMUTABLE_STATE) {
+
+        // we're being called by a getter
+        if (ProviderClass[PROVIDER_APP_STATE_ACCESSOR]) {
+          return selectProperty(ProviderClass[PROVIDER_APP_STATE_ACCESSOR]);
+        }
+
         return selectProperty;
       }
 
