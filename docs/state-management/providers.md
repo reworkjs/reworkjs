@@ -106,6 +106,8 @@ UserProvider.loggedIn; // selector
 UserProvider.loggedIn(store.getState()); // false
 ```
 
+Getters have a read access to the state of their Provider. Getting a property will return its actual value.
+
 ### Setters
 
 Setters are currently unsupported by Providers due to technical limitations. Trying to define one will result in an error. 
