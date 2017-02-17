@@ -322,11 +322,17 @@ function installGetterSelector(propertyName: string, dataBag: DataBag) {
 
   Object.defineProperty(dataBag.ProviderClass, propertyName, {
     get() {
-      // inside a getter.
+      // Called by a reducer, state properties already return the actual value.
+      if (ProviderClass[PROVIDER_STATE_ACCESSOR] !== IMMUTABLE_STATE) {
+        return originalGetter.call(ProviderClass);
+      }
+
+      // Called by a state getter. Call the selector with the app state to return the actual value.
       if (ProviderClass[PROVIDER_APP_STATE_ACCESSOR]) {
         return getterSelector(ProviderClass[PROVIDER_APP_STATE_ACCESSOR]);
       }
 
+      // Called from outside. Return a selector.
       return getterSelector;
     },
   });
@@ -345,19 +351,18 @@ function installSelector(propertyName: string, dataBag: DataBag) {
   // create selector
   Object.defineProperty(ProviderClass, propertyName, {
     get() {
+      // Called by a state getter. Call the selector with the app state to return the actual value.
+      if (ProviderClass[PROVIDER_APP_STATE_ACCESSOR]) {
+        return selectProperty(ProviderClass[PROVIDER_APP_STATE_ACCESSOR]);
+      }
+
+      // called from outside. Return selector.
       const providerState = ProviderClass[PROVIDER_STATE_ACCESSOR];
-
-      // no reducer active, return a selector.
       if (providerState === IMMUTABLE_STATE) {
-
-        // we're being called by a getter
-        if (ProviderClass[PROVIDER_APP_STATE_ACCESSOR]) {
-          return selectProperty(ProviderClass[PROVIDER_APP_STATE_ACCESSOR]);
-        }
-
         return selectProperty;
       }
 
+      // Called from reducer, return actual value.
       if (ProviderClass[mutatedProperties].has(propertyName)) {
         return ProviderClass[mutatedProperties].get(propertyName);
       }
