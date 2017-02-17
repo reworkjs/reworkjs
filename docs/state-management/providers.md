@@ -39,7 +39,7 @@ import { provider } from 'reworkjs/decorators';
 
 @provider
 export default class PreferenceProvider {
-  
+
 }
 ```
 
@@ -49,43 +49,44 @@ Now let's fill it with useful data.
 
 ### State
 
-Adding state to a provider isn't very complicated. Simply add a static property to it and voilà:
-As soon as the provider loads, the property will be added to the fragment of the store this provider handles.
+To add state to a provider, simply add a static property to it and voilà:
+As soon as the provider loads, the property's value will be added to the fragment of the store this provider handles.
+
+Keep in mind that providers are **not dynamic**, you need to statically declare everything you wish to add to the state.  
+Getting/Setting non-declared state has an undefined behavior on older browsers and will fail on evergreen browsers.
 
 ```javascript
 import { provider } from 'reworkjs/decorators';
 
 @provider
 export default class PreferenceProvider {
-  
+
   static maySendNotifications = false;
 }
 ```
 
-**IMPORTANT**: The property still resides inside the store of the application. Therefore, it is impossible to read nor
-write it unless you already have access to the store.
+The property still resides inside the store of the application. Therefore, it is impossible to read nor write it 
+unless you already have access to the store.
 
-In order to achieve this, the `@provider` decorator transforms the class to make getting a property return a selector, and
-setting them fail.
+In order to achieve this, the `@provider` decorator transforms the class to make getting properties return a selector, 
+and setting them fail.
 
 ```javascript
 // Getting a property returns a selector. You will need to call the selector with the store instance to access it.
 const selector = PreferenceProvider.maySendNotifications;
-// selector: [function select_maySendNotifications(store)]
+// selector: [function select_maySendNotifications(state)]
 
 // Setting a property.
 PreferenceProvider.maySendNotifications = true;
 // Error: Cannot access @provider state outside of @reducer annotated methods. If you are trying to r/w the state from a @saga, you will need to use "yield put(this.<reducerMethodName>())"
 ```
 
-An important note about providers is that everything inside then must be `static`.  
+An important note about providers is that *everything inside then must be `static`*.  
 Any static property that is not decorated with neither `@reducer` nor `@saga` will be considered part of the state.
-
-*Getting/Setting non-declared state has an undefined behavior on older browsers and will fail on evergreen browsers.*
 
 ### Getters
 
-State getters are supported by Providers and will work like regular state with the difference that you cannot set them.   
+State getters are supported by Providers and will work like regular state, with the difference that you cannot set them.   
 Their value are computed based on other state properties.
 
 ```javascript
@@ -119,9 +120,9 @@ import { provider, reducer } from 'reworkjs/decorators';
 
 @provider
 export default class PreferenceProvider {
-  
+
   static maySendNotifications = false;
-  
+
   @reducer
   static setMaySendNotifications(val) {
     this.maySendNotifications = val;
@@ -144,8 +145,7 @@ PreferenceProvider.setMaySendNotifications(true);
 // returns: { type: '@@PreferenceProvider/setMaySendNotifications', payload: [true] };
 ```
 
-Reducers are *fully synchronous* methods. If you need to execute any asynchronous operation, use Sagas 
-(read further for the article about sagas).
+Reducers are *fully synchronous* methods. If you need to execute any asynchronous operation, use Sagas.
 
 ### Listening to foreign actions
 
@@ -253,7 +253,7 @@ To enable it, pass `trackStatus: true` as an argument to the saga decorator.
 }
 ```
 
-The saga exposes a selector that will let you retrieve whether the saga is currently running or not.
+The saga function exposes a selector that will let you retrieve whether the saga is currently running or not.
 
 ```javascript
 @container({
@@ -290,7 +290,10 @@ export default class UserProvider {
   // state declaration and initial state
   static user = null;
   static authError = null;
-  static authenticating = false;
+  
+  static get loggedIn() {
+    return this.user != null;
+  }
 
   // reducer declaration
   @reducer
@@ -306,18 +309,15 @@ export default class UserProvider {
   }
 
   // saga declaration
-  @saga
+  @saga({ trackStatus: true })
   static *logIn(username, password) {
-    // call reducers
-    yield put(this.authenticating(true));
-    
     try {
-      yield call(api.logIn(username, password));
+      yield call(() => api.logIn(username, password));
+
+      // call reducer
       yield put(this._setLoggedUser(user));
     } catch (e) {
       yield put(this._setError(e));
-    } finally {
-      yield put(this.authenticating(false));
     }
   }
 }
