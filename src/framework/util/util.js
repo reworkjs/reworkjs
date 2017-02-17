@@ -1,4 +1,3 @@
-
 export function attemptChangeName(obj, name) {
   if (!canRedefineValue(obj, 'name')) {
     return;
@@ -15,11 +14,13 @@ export function canRedefineValue(obj, property) {
 }
 
 function suicide() {
-  throw new TypeError('This method does not generate any actions. It cannot be called.');
+  throw new TypeError('This method cannot be called.');
 }
 
-export function killMethod(providerClass, propertyName) {
-  replaceMethod(providerClass, propertyName, suicide);
+Object.freeze(suicide);
+
+export function killMethod(Class, propertyName) {
+  replaceMethod(Class, propertyName, suicide);
 }
 
 export function replaceMethod(clazz, propertyName, replacement) {
