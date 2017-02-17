@@ -83,6 +83,32 @@ Any static property that is not decorated with neither `@reducer` nor `@saga` wi
 
 *Getting/Setting non-declared state has an undefined behavior on older browsers and will fail on evergreen browsers.*
 
+### Getters
+
+State getters are supported by Providers and will work like regular state with the difference that you cannot set them.   
+Their value are computed based on other state properties.
+
+```javascript
+import { provider } from 'reworkjs/decorators';
+
+@provider
+export default class UserProvider {
+
+  static user = null;
+  static get loggedIn() {
+    return this.user != null;
+  }
+}
+
+UserProvider.user;     // selector
+UserProvider.loggedIn; // selector
+UserProvider.loggedIn(store.getState()); // false
+```
+
+### Setters
+
+Setters are currently unsupported by Providers due to technical limitations. Trying to define one will result in an error. 
+
 ### Updating the state (reducers)
 
 Reducers are the only way to alter the store. When writing a provider, adding a reducer requires little more than writing 
