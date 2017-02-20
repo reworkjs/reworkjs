@@ -18,6 +18,9 @@ import frameworkBabelRc from '../../shared/framework-babelrc';
 import { resolveRoot, resolveFrameworkSource } from '../../shared/resolve';
 import { isDev, isTest } from '../EnvUtil';
 
+// TODO:
+// - Check out https://github.com/gaearon/react-hot-loader/tree/next/docs when ready
+
 const ANY_MODULE_EXCEPT_FRAMEWORK = new RegExp(`node_modules\\/(?!${frameworkMetadata.name})`);
 
 function replaceBabelPreset(babelConfig) {
