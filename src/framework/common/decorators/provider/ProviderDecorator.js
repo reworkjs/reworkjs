@@ -251,9 +251,12 @@ function extractSaga(propertyName: string, dataBag: DataBag) {
 
     const trackActionType = `@@provider/${constantCase(ProviderClass.name)}/setRunning/${constantCase(propertyName)}`;
     callActionHandler = function *callActionHandlerWithTracking(action) {
-      yield put({ type: trackActionType, payload: true });
-      yield* property.apply(ProviderClass, action.payload);
-      yield put({ type: trackActionType, payload: false });
+      try {
+        yield put({ type: trackActionType, payload: true });
+        yield* property.apply(ProviderClass, action.payload);
+      } finally {
+        yield put({ type: trackActionType, payload: false });
+      }
     };
 
     const runningPropertyName = `${propertyName}.running`;
