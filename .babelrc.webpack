@@ -9,7 +9,8 @@
     "syntax-async-functions",
     "transform-async-to-generator",
     "transform-flow-strip-types",
-    "reworkjs/lib/internals/babel-plugin-preserve-name"
+    "reworkjs/lib/internals/babel-plugin-preserve-name",
+    "lodash"
   ],
   "env": {
     "production": {

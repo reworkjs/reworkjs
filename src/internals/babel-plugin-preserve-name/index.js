@@ -1,20 +1,20 @@
 // @flow
 import pathLib from 'path';
-import _ from 'lodash';
+import { at } from 'lodash';
 import frameworkMetadata from '../../shared/framework-metadata';
 
 export default function preserveName({ types }: { types: Object }) {
 
   return {
     visitor: {
-      CallExpression (path: Object) {
+      CallExpression(path: Object) {
         const callee = path.node.callee;
 
         if (callee.name !== 'provider') {
           return;
         }
 
-        const relativeProviderImportPath = _.at(path, 'scope.bindings.provider.path.parent.source.value')[0];
+        const relativeProviderImportPath = at(path, 'scope.bindings.provider.path.parent.source.value')[0];
         if (!relativeProviderImportPath) {
           return;
         }
@@ -31,10 +31,10 @@ export default function preserveName({ types }: { types: Object }) {
         }
 
         path.node.arguments.push(types.stringLiteral(name));
-      }
-    }
+      },
+    },
   };
-};
+}
 
 function getClassName(arg) {
   if (!arg) {

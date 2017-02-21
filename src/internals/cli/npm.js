@@ -1,6 +1,6 @@
 import childProcess from 'child_process';
 import chalk from 'chalk';
-import groupBy from 'lodash/groupBy';
+import { groupBy } from 'lodash';
 import { runCommandSync } from './run-command';
 import { info, warn, question } from './stdio';
 

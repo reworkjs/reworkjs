@@ -1,8 +1,4 @@
-import conformsTo from 'lodash/conformsTo';
-import isEmpty from 'lodash/isEmpty';
-import isFunction from 'lodash/isFunction';
-import isObject from 'lodash/isObject';
-import isString from 'lodash/isString';
+import { conformsTo, isEmpty, isObject, isString, isFunction } from 'lodash';
 import createReducer from './create-reducer';
 import { Symbols } from './decorators/provider';
 

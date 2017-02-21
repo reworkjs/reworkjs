@@ -1,6 +1,6 @@
 import fs from 'fs';
 import mkdirp from 'mkdirp';
-import merge from 'lodash/merge';
+import { merge } from 'lodash';
 import { resolveProject } from '../../shared/resolve';
 import logger from '../../shared/logger';
 import { FrameworkConfigStruct } from '../../shared/FrameworkConfigStruct';

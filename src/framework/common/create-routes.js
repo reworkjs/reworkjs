@@ -1,5 +1,5 @@
 import promiseAllProperties from 'promise-all-properties';
-import flatten from 'lodash/flatten';
+import { flatten } from 'lodash';
 import { getDefault } from '../../shared/util/ModuleUtil';
 import logger from '../../shared/logger';
 import isPojo from '../util/is-pojo';
