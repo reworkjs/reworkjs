@@ -57,6 +57,12 @@ export function transform(arg: MethodDecoratorArgument) {
     if (!takeFunction) {
       throw new TypeError(`Invalid value for take (@saga({ take: ${JSON.stringify(take)} }))`);
     }
+
+    if (!metadata.takeFunctions) {
+      metadata.takeFunctions = {};
+    }
+
+    metadata.takeFunctions[metadata.listenedActionTypes.size] = takeFunction;
   }
 
   return descriptor;

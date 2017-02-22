@@ -29,7 +29,7 @@ type DataBag = {
 const PROVIDER_APP_STATE_ACCESSOR = Symbol('app-state-holder');
 const PROVIDER_STATE_ACCESSOR = Symbol('state-holder');
 const mutatedProperties = Symbol('mutatedProperties');
-const mutableVersion = Symbol('mutable-version');
+// const mutableVersion = Symbol('mutable-version');
 
 // Blacklist universal properties, Function static properties and @provider symbols.
 const PROPERTY_BLACKLIST = Object.getOwnPropertyNames(Object.prototype)
@@ -274,14 +274,38 @@ function extractSaga(propertyName: string, dataBag: DataBag) {
     };
   }
 
-  const takeFunction = metadata.takeFunction || takeLatest;
+  if (metadata.listenedActionTypes && metadata.listenedActionTypes.size > 0) {
+    const actionWatchers = [];
 
-  function *awaitAction() {
-    yield takeFunction(metadata.actionType, callActionHandler);
+    const takeFunctions = metadata.takeFunctions;
+    const tfKeys = takeFunctions ? Object.keys(takeFunctions).map(Number).sort((a, b) => a - b) : null;
+
+    let i = 0;
+    for (const listenedActionType of metadata.listenedActionTypes) {
+      // select the takeFunction that was used in that @saga decorator.
+      const takeFunction = tfKeys ? takeFunctions[orderedClampUp(tfKeys, i)] : takeLatest;
+      actionWatchers.push(takeFunction(listenedActionType, callActionHandler));
+
+      i++;
+    }
+
+    function *awaitAction() { // eslint-disable-line
+      yield actionWatchers;
+    }
+
+    attemptChangeName(awaitAction, `${ProviderClass.name}.${property.name}`);
+    sagaList.push(awaitAction);
+  }
+}
+
+function orderedClampUp(numbers: number[], i: number) {
+  for (const number of numbers) {
+    if (number > i) {
+      return number;
+    }
   }
 
-  attemptChangeName(awaitAction, `${ProviderClass.name}.${property.name}`);
-  sagaList.push(awaitAction);
+  return numbers[numbers.length - 1];
 }
 
 function extractState(propertyName: string, dataBag: DataBag) {
@@ -389,20 +413,20 @@ function installSelector(propertyName: string, dataBag: DataBag) {
   });
 }
 
-function definePropertyTrap(target, property) {
-  throw new TypeError(`Cannot define property ${JSON.stringify(property)} on this object, it is immutable.`);
-}
+// function definePropertyTrap(target, property) {
+//   throw new TypeError(`Cannot define property ${JSON.stringify(property)} on this object, it is immutable.`);
+// }
+//
+// function setTrap(target, property, value) {
+//   if (typeof property === 'symbol') {
+//     target[property] = value;
+//     return true;
+//   }
+//
+//   throw new TypeError(`Cannot set property ${JSON.stringify(property)} on this object, it is immutable.`);
+// }
 
-function setTrap(target, property, value) {
-  if (typeof property === 'symbol') {
-    target[property] = value;
-    return true;
-  }
-
-  throw new TypeError(`Cannot set property ${JSON.stringify(property)} on this object, it is immutable.`);
-}
-
-const proxied = Symbol('proxied');
+// const proxied = Symbol('proxied');
 
 // /* eslint-disable no-invalid-this */
 // function useArrayMethodOnImmutableList(methodName) {

@@ -48,21 +48,29 @@ export function transform(arg: MethodDecoratorArgument) {
   const metadata = getPropertyMetadata(property);
   metadata.listenedActionTypes = metadata.listenedActionTypes || new Set();
 
-  if (options.actionType) {
-    if (typeof options.actionType === 'function') {
-      const actionHandler = options.actionType;
-      if (!actionHandler.actionType) {
-        throw new TypeError(`Method ${actionHandler.name} does not have an action type. Is it correctly decorated ?`);
-      }
-
-      metadata.listenedActionTypes.add(actionHandler.actionType);
-    } else {
-      metadata.listenedActionTypes.add(options.actionType);
-    }
-  } else {
+  if (!options.actionType) {
     metadata.actionType = `@@provider/${constantCase(ProviderClass.name)}/action/${constantCase(property.name)}`;
     metadata.listenedActionTypes.add(metadata.actionType);
+  } else if (Array.isArray(options.actionType)) {
+    for (const actionType of options.actionType) {
+      metadata.listenedActionTypes.add(parseActionType(actionType));
+    }
+  } else {
+    metadata.listenedActionTypes.add(parseActionType(options.actionType));
   }
 
   return descriptor;
+}
+
+function parseActionType(actionType) {
+  if (typeof actionType === 'function') {
+    const actionHandler = actionType;
+    if (!actionHandler.actionType) {
+      throw new TypeError(`Method ${actionHandler.name} does not have an action type. Is it correctly decorated ?`);
+    }
+
+    return actionHandler.actionType;
+  }
+
+  return actionType;
 }
