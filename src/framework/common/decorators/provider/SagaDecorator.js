@@ -1,3 +1,4 @@
+import { takeLatest, takeEvery } from 'redux-saga/effects';
 import { methodDecorator, MethodDecoratorArgument } from '../decorator';
 import { setPropertyType, getPropertyMetadata } from './_util';
 import { transform as reducerTransform, parseOptions as reducerParseOpts } from './ReducerDecorator';
@@ -27,17 +28,18 @@ function parseOptions(arg: MethodDecoratorArgument) {
 
 export function transform(arg: MethodDecoratorArgument) {
   const descriptor = reducerTransform(arg);
+  const metadata = getPropertyMetadata(arg.descriptor.value);
 
   if (arg.options.trackStatus) {
-    const metadata = getPropertyMetadata(arg.descriptor.value);
     metadata.trackStatus = true;
   }
 
   if (arg.options.take) {
-    if (!metadata.takeFunction) {
-      takeFunction = takeLatest;
-    } else if (typeof metadata.takeFunction === 'string') {
-      switch (metadata.takeFunction) {
+    const take = arg.options.take;
+
+    let takeFunction = null;
+    if (typeof take === 'string') {
+      switch (take) {
         case 'latest':
           takeFunction = takeLatest;
           break;
@@ -47,8 +49,13 @@ export function transform(arg: MethodDecoratorArgument) {
           break;
 
         default:
-          throw new TypeError('Invalid value ')
       }
+    } else if (typeof take === 'function') {
+      takeFunction = take;
+    }
+
+    if (!takeFunction) {
+      throw new TypeError(`Invalid value for take (@saga({ take: ${JSON.stringify(take)} }))`);
     }
   }
 

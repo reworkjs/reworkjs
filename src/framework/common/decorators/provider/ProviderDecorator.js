@@ -3,7 +3,7 @@
 // TODO check selectors are optimised correctly https://github.com/reactjs/reselect#createselectorinputselectors--inputselectors-resultfunc
 
 import { fromJS, Collection, is as immutableIs } from 'immutable';
-import { put, takeLatest, takeEvery } from 'redux-saga/effects';
+import { put, takeLatest } from 'redux-saga/effects';
 import { createSelector } from 'reselect';
 import constantCase from 'constant-case';
 import { attemptChangeName, killMethod, replaceMethod } from '../../../util/util';
