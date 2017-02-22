@@ -56,9 +56,9 @@ function sanitizeRoute(routeData, injectors, store, fileName) {
   const route = Object.assign({}, routeData);
 
   if (route.getComponent) {
-    route.getComponent = unpromisifyGetComponent(routeData, injectors, store, fileName);
+    route.getComponent = hookGetComponent(routeData, injectors, store, fileName);
   } else if (route.getComponents) {
-    route.getComponents = unpromisifyGetComponent(routeData, injectors, store, fileName);
+    route.getComponents = hookGetComponent(routeData, injectors, store, fileName);
   } else {
     throw new TypeError(`Missing method getComponent(s) on route ${JSON.stringify(fileName)}`);
   }
@@ -115,8 +115,8 @@ function sanitizeRoute(routeData, injectors, store, fileName) {
   return route;
 }
 
-function unpromisifyGetComponent(route, injectors, store, fileName) {
-  return async function callbackGetComponent(nextState, callback) {
+function hookGetComponent(route, injectors, store, fileName) {
+  return async function callbackGetComponent(nextState) {
 
     try {
       const [component, sagas, reducers, providers] = await Promise.all([
@@ -136,14 +136,10 @@ function unpromisifyGetComponent(route, injectors, store, fileName) {
         }
       }
 
-      try {
-        callback(null, component);
-      } catch (e) {
-        logger.error(`Error while rendering route ${JSON.stringify(fileName)}`, e);
-      }
+      return component;
     } catch (e) {
       logger.error(`Error while loading route ${JSON.stringify(fileName)}`, e);
-      callback(e);
+      throw e;
     }
   };
 }
