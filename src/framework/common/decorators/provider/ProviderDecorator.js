@@ -404,40 +404,40 @@ function setTrap(target, property, value) {
 
 const proxied = Symbol('proxied');
 
-/* eslint-disable no-invalid-this */
-function useArrayMethodOnImmutableList(methodName) {
-
-  if (!Array.prototype[methodName]) {
-    return void 0;
-  }
-
-  function methodProxy(...args) {
-    if (this == null) {
-      throw new TypeError('`this` cannot be null / undefined.');
-    }
-
-    const target = this[proxied] ? this[proxied] : this;
-
-    let self;
-    if (target[mutableVersion]) {
-      self = target[mutableVersion];
-    } else if (target instanceof Collection.Indexed) {
-      self = target.toJS();
-      target[mutableVersion] = self;
-    } else if (Array.isArray(target)) {
-      self = target;
-    } else {
-      throw new TypeError('Expected `this` to be a list or array.');
-    }
-
-    return Array.prototype[methodName].apply(self, args);
-  }
-
-  attemptChangeName(methodProxy, methodName);
-
-  return methodProxy;
-}
-/* eslint-enable */
+// /* eslint-disable no-invalid-this */
+// function useArrayMethodOnImmutableList(methodName) {
+//
+//   if (!Array.prototype[methodName]) {
+//     return void 0;
+//   }
+//
+//   function methodProxy(...args) {
+//     if (this == null) {
+//       throw new TypeError('`this` cannot be null / undefined.');
+//     }
+//
+//     const target = this[proxied] ? this[proxied] : this;
+//
+//     let self;
+//     if (target[mutableVersion]) {
+//       self = target[mutableVersion];
+//     } else if (target instanceof Collection.Indexed) {
+//       self = target.toJS();
+//       target[mutableVersion] = self;
+//     } else if (Array.isArray(target)) {
+//       self = target;
+//     } else {
+//       throw new TypeError('Expected `this` to be a list or array.');
+//     }
+//
+//     return Array.prototype[methodName].apply(self, args);
+//   }
+//
+//   attemptChangeName(methodProxy, methodName);
+//
+//   return methodProxy;
+// }
+// /* eslint-enable */
 const proxyCache = new WeakMap();
 
 function proxyGet(store, propertyName) {
@@ -448,43 +448,55 @@ function proxyGet(store, propertyName) {
     return value;
   }
 
-  if (typeof Proxy === 'undefined') {
-    return value.toJS();
+  // Array.isArray won't work on proxies :(
+
+  // if (typeof Proxy === 'undefined') {
+  if (proxyCache.has(value)) {
+    return proxyCache.get(value);
   }
 
-  const cachedProxy = proxyCache.get(value);
-  if (cachedProxy) {
-    return cachedProxy;
-  }
+  const vanillaVersion = value.toJS();
 
-  const isIndexed = value instanceof Collection.Indexed;
+  // TODO deep freeze!
+  Object.freeze(vanillaVersion);
+  proxyCache.set(value, vanillaVersion);
 
-  const traps = {
-    get(target, property) {
-      if (typeof property === 'symbol') {
-        return target[property];
-      }
+  return vanillaVersion;
+  // }
 
-      if (!target.has(property) && isIndexed) {
-        // return immutableJS List methods.
-        if (property === 'length') {
-          return target.size;
-        }
-
-        return useArrayMethodOnImmutableList(property);
-      }
-
-      return proxyGet(target, property);
-    },
-
-    set: setTrap,
-    defineProperty: definePropertyTrap,
-  };
-
-  const proxy = new Proxy(value, traps);
-  proxy[proxied] = value;
-
-  proxyCache.set(value, proxy);
-
-  return proxy;
+  // const cachedProxy = proxyCache.get(value);
+  // if (cachedProxy) {
+  //   return cachedProxy;
+  // }
+  //
+  // const isIndexed = value instanceof Collection.Indexed;
+  //
+  // const traps = {
+  //   get(target, property) {
+  //     if (typeof property === 'symbol') {
+  //       return target[property];
+  //     }
+  //
+  //     if (!target.has(property) && isIndexed) {
+  //       // return immutableJS List methods.
+  //       if (property === 'length') {
+  //         return target.size;
+  //       }
+  //
+  //       return useArrayMethodOnImmutableList(property);
+  //     }
+  //
+  //     return proxyGet(target, property);
+  //   },
+  //
+  //   set: setTrap,
+  //   defineProperty: definePropertyTrap,
+  // };
+  //
+  // const proxy = new Proxy(value, traps);
+  // proxy[proxied] = value;
+  //
+  // proxyCache.set(value, proxy);
+  //
+  // return proxy;
 }
