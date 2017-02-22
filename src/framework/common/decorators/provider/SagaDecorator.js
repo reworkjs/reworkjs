@@ -33,5 +33,24 @@ export function transform(arg: MethodDecoratorArgument) {
     metadata.trackStatus = true;
   }
 
+  if (arg.options.take) {
+    if (!metadata.takeFunction) {
+      takeFunction = takeLatest;
+    } else if (typeof metadata.takeFunction === 'string') {
+      switch (metadata.takeFunction) {
+        case 'latest':
+          takeFunction = takeLatest;
+          break;
+
+        case 'every':
+          takeFunction = takeEvery;
+          break;
+
+        default:
+          throw new TypeError('Invalid value ')
+      }
+    }
+  }
+
   return descriptor;
 }

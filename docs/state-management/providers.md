@@ -276,6 +276,39 @@ class PreferenceMenu extends React.Component {
 }
 ```
 
+You can also define which saga dispatching function to use using the parameter `take`. This parameter accepts one of the following values:
+
+- `'every'`: Uses the [takeEvery](https://redux-saga.github.io/redux-saga/docs/api/index.html#takeeverypattern-saga-args) saga helper
+- `'latest'`: Uses the [takeLatest](https://redux-saga.github.io/redux-saga/docs/api/index.html#takelatestpattern-saga-args) saga helper
+- An effect function with the following signature: `(actionType: string, saga: GeneratorFunction)`.
+
+Examples:
+
+```javascript
+import { takeLatest } from 'redux-saga/effects';
+import { throttle } from 'rework-js';
+
+@provider
+class Test {
+  @saga({ take: 'every' })
+  static *everySaga(data) {
+    yield call(() => api.savePreferences(data));
+  }
+
+  @saga({ take: takeLatest }) // or 'latest'
+  static *latestSaga(data) {
+    yield call(() => api.savePreferences(data));
+  }
+
+  // throttle is a helper function that adapts redux-saga's throttle function.
+  // https://redux-saga.github.io/redux-saga/docs/api/index.html#throttlems-pattern-saga-args
+  @saga({ take: throttle(200) })
+  static *throttledSaga(data) {
+    yield call(() => api.savePreferences(data));
+  }
+}
+```
+
 ## Working Example
 
 This is an example of a fully working provider that handles the fragment 

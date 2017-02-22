@@ -1,3 +1,4 @@
+import { throttle as originalThrottle } from 'redux-saga/effects';
 export { default as provider } from './provider/ProviderDecorator';
 export { default as reducer } from './provider/ReducerDecorator';
 export { default as saga } from './provider/SagaDecorator';
@@ -15,4 +16,10 @@ export function isProvider(item) {
   }
 
   return Object.prototype.hasOwnProperty.call(item, Symbols.reducer);
+}
+
+export function throttle(ms) {
+  return function throttleBridge(pattern, saga, ...args) {
+    return originalThrottle(ms, pattern, saga, ...args);
+  };
 }

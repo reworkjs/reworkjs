@@ -3,8 +3,7 @@
 // TODO check selectors are optimised correctly https://github.com/reactjs/reselect#createselectorinputselectors--inputselectors-resultfunc
 
 import { fromJS, Collection, is as immutableIs } from 'immutable';
-import { takeLatest } from 'redux-saga';
-import { put } from 'redux-saga/effects';
+import { put, takeLatest, takeEvery } from 'redux-saga/effects';
 import { createSelector } from 'reselect';
 import constantCase from 'constant-case';
 import { attemptChangeName, killMethod, replaceMethod } from '../../../util/util';
@@ -274,8 +273,10 @@ function extractSaga(propertyName: string, dataBag: DataBag) {
     };
   }
 
+  const takeFunction = metadata.takeFunction || takeLatest;
+
   function *awaitAction() {
-    yield* takeLatest(metadata.actionType, callActionHandler);
+    yield takeFunction(metadata.actionType, callActionHandler);
   }
 
   attemptChangeName(awaitAction, `${ProviderClass.name}.${property.name}`);
