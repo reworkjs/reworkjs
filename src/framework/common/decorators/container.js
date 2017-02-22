@@ -10,7 +10,7 @@ export type ContainerDecoratorConfig = {
 };
 
 function checkInvalidKeys(conf) {
-  const authorizedKeys = ['state', 'dispatchers', 'actions', 'intl'];
+  const authorizedKeys = ['state', 'dispatchers', 'actions', 'intl', 'connectOptions'];
 
   const invalidKeys = Object.keys(conf).filter(key => !authorizedKeys.includes(key));
 
@@ -135,7 +135,7 @@ export default function container(config: ContainerDecoratorConfig = {}) {
     return result;
   }
 
-  const connector = connect(mapStateToProps, mapDispatchToProps);
+  const connector = connect(mapStateToProps, mapDispatchToProps, null, config.connectOptions);
 
   return function setupContainer(containerClass) {
     if (config.intl === true) {
