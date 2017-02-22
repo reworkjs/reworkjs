@@ -326,6 +326,8 @@ export default class WebpackBase {
       definePluginArg['process.env'] = {
         NODE_ENV: JSON.stringify(process.env.NODE_ENV), // eslint-disable-line no-process-env
       };
+
+      definePluginArg['process.argv'] = JSON.stringify(process.argv); // eslint-disable-line no-process-env
     }
 
     const plugins = [
