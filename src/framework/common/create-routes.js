@@ -112,6 +112,10 @@ function sanitizeRoute(routeData, injectors, store, fileName) {
     }
   }
 
+  if (route.indexRoute) {
+    route.indexRoute = sanitizeRoute(route.indexRoute, injectors, store, fileName);
+  }
+
   return route;
 }
 
