@@ -1,6 +1,7 @@
 // @flow
 
 // TODO check selectors are optimised correctly https://github.com/reactjs/reselect#createselectorinputselectors--inputselectors-resultfunc
+// TODO memoize getters
 
 import { fromJS, Collection, is as immutableIs } from 'immutable';
 import { put, takeLatest } from 'redux-saga/effects';
@@ -405,6 +406,10 @@ const proxied = Symbol('proxied');
 
 /* eslint-disable no-invalid-this */
 function useArrayMethodOnImmutableList(methodName) {
+
+  if (!Array.prototype[methodName]) {
+    return void 0;
+  }
 
   function methodProxy(...args) {
     if (this == null) {
