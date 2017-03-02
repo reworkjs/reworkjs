@@ -2,6 +2,7 @@
 /* eslint-disable global-require */
 
 module.exports = {
+  syntax: require('postcss-scss'),
   plugins: [
     // Add a :focus to every :hover
     require('postcss-focus')(),
