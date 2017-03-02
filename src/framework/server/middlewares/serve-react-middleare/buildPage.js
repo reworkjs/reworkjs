@@ -24,7 +24,7 @@ export default function buildPage($doc, html, appState) {
   $doc.find('#app').append(`<div>${html}</div>`);
 
   // Insert Redux State
-  $doc.find('script').last().before(`<script>window.__PRELOADED_STATE__ = ${JSON.stringify(preloadedState)}</script>`);
+  $doc.find('script').last().before(`<script>window.__PRELOADED_STATE__ = ${JSON.stringify(appState)}</script>`);
 }
 
 function replace($head, tagName, newTag) {
