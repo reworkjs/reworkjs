@@ -28,5 +28,6 @@ export default function createReducer(asyncReducers) {
   Object.freeze(reducers);
   debug.activeReducers = reducers;
 
+  // TODO https://github.com/gajus/redux-immutable
   return combineReducers(reducers);
 }

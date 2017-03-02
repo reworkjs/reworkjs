@@ -7,6 +7,7 @@ import { fromJS, Collection, is as immutableIs } from 'immutable';
 import { put, takeLatest } from 'redux-saga/effects';
 import { createSelector } from 'reselect';
 import constantCase from 'constant-case';
+import { noop } from 'lodash';
 import { attemptChangeName, killMethod, replaceMethod } from '../../../util/util';
 import logger from '../../../../shared/logger';
 import { Symbols } from '../provider';
@@ -35,8 +36,7 @@ const mutatedProperties = Symbol('mutatedProperties');
 const PROPERTY_BLACKLIST = Object.getOwnPropertyNames(Object.prototype)
 // use function() {} instead of Function because Function does not have the "caller" nor "arguments" properties on
 // Safari < 11
-  .concat(Object.getOwnPropertyNames(() => {
-  }));
+  .concat(Object.getOwnPropertyNames(noop));
 
 function denyAccess() {
   throw new Error('Cannot access @provider state outside of @reducer annotated methods. If you are trying to r/w the state from a @saga, you will need to use "yield put(this.<reducerMethodName>())"');

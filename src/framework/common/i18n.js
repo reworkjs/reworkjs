@@ -7,6 +7,7 @@ import { addLocaleData } from 'react-intl';
 import { getDefault } from '../../shared/util/ModuleUtil';
 import logger from '../../shared/logger';
 
+// TODO load Intl Polyfill if required
 // TODO support for .json locales.
 
 // WEBPACK
