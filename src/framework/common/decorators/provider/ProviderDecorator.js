@@ -47,7 +47,35 @@ const IMMUTABLE_STATE = {
   get: denyAccess,
 };
 
-const registeredProviders = [];
+const registeredDomains = [];
+
+function parseOptions(options) {
+  if (options.length > 1) {
+    throw new TypeError('@provider accepts only one argument. Try @provider({ domain: <string> }) or @provider(<string>).');
+  }
+
+  if (!options[0]) {
+    return {};
+  }
+
+  switch (typeof options[0]) {
+    case 'string':
+    case 'symbol':
+      return { domain: options[0] };
+
+    case 'object': {
+      const domain = options[0].domain;
+      if (typeof domain !== 'string' && typeof domain !== 'symbol') {
+        throw new TypeError(`@provider({ domain: ${JSON.stringify(domain)} }): Invalid domain. Expected string.`);
+      }
+
+      return options[0];
+    }
+
+    default:
+      throw new TypeError(`@provider(${JSON.stringify(options[0])}): Invalid first argument. Expected string or object.`);
+  }
+}
 
 /**
  * Decorator that transforms a static class into a provider
@@ -62,22 +90,26 @@ const registeredProviders = [];
  *   a @reducer annotated method and call state.set(fieldName, fieldValue) otherwise
  */
 const ProviderDecorator = classDecorator((arg: ClassDecoratorArgument) => {
-  if (arg.options.length > 0) {
-    throw new TypeError('@provider does not accept options.');
-  }
+  // if (arg.options.length > 0) {
+  //   throw new TypeError('@provider does not accept options.');
+  // }
 
   const providerClass = arg.target;
-
-  if (registeredProviders.includes(providerClass.name)) {
-    throw new Error(`A provider has already been registered under the name ${providerClass.name}. Please make sure all provider classes have unique names.`);
-  }
-
-  registeredProviders.push(providerClass.name);
   if (Object.getOwnPropertyNames(providerClass.prototype).length > 1) {
     logger.warn(`@provider ${providerClass.name} has instance properties. This is likely a bug as providers are fully static.`);
   }
 
-  const domainIdentifier = `RJS-${providerClass.name}`;
+  const options = parseOptions(arg.options);
+  if (!options.domain) {
+    logger.warn(`No domain specified for Provider ${providerClass.name}. Using the class name instead. This might be an issue with minified code as domains names might collide.`);
+  }
+
+  const domainIdentifier = options.domain || `RJS-${providerClass.name}`;
+  if (registeredDomains.includes(domainIdentifier)) {
+    throw new Error(`A provider has already been registered with the domain ${domainIdentifier}. Please make sure all provider domains are unique.`);
+  }
+
+  registeredDomains.push(domainIdentifier);
 
   function selectDomain() {
     return state => {
