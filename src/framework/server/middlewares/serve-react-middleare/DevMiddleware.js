@@ -60,7 +60,7 @@ export default class DevMiddleware {
     }));
   }
 
-  serveRoute(req, res, html, appState) {
+  serveRoute(req, res, data) {
     // Since webpackDevMiddleware uses memory-fs internally to store build
     // artifacts, we use it instead
     const fs = this.middleware.fileSystem;
@@ -72,13 +72,13 @@ export default class DevMiddleware {
       }
 
       // no server-side rendering
-      if (typeof html !== 'string') {
+      if (data == null) {
         return res.send(file.toString());
       }
 
       // server-side rendering:
       const $doc = cheerio(file.toString());
-      buildPage($doc, html, appState);
+      buildPage($doc, data);
       res.send($doc.toString());
     });
   }

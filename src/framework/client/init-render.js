@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { applyRouterMiddleware, Router } from 'react-router';
+import serverStyleCleanup from 'node-style-loader/clientCleanup';
 import { useScroll } from 'react-router-scroll';
 import ReworkJsWrapper from '../app/ReworkJsWrapper';
 import { rootRoute, history } from '../common/kernel';
@@ -18,3 +19,6 @@ ReactDOM.render(
   </ReworkJsWrapper>,
   document.getElementById('app'),
 );
+
+// remove server-generated CSS
+serverStyleCleanup();

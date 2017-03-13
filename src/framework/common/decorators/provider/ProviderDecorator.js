@@ -107,7 +107,7 @@ const ProviderDecorator = classDecorator((arg: ClassDecoratorArgument) => {
 
   const domainIdentifier = options.domain || `RJS-${providerClass.name}`;
   if (registeredDomains.includes(domainIdentifier)) {
-    throw new Error(`A provider has already been registered with the domain ${domainIdentifier}. Please make sure all provider domains are unique.`);
+    throw new Error(`A provider has already been registered with the domain ${JSON.stringify(domainIdentifier)}. Please make sure all provider domains are unique.`);
   }
 
   registeredDomains.push(domainIdentifier);

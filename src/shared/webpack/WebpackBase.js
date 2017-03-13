@@ -82,7 +82,7 @@ export default class WebpackBase {
     }
 
     return {
-      loader: this.isServer() ? 'css-loader/locals' : 'css-loader',
+      loader: 'css-loader',
       options: loaderOptions,
     };
   }
@@ -218,21 +218,13 @@ export default class WebpackBase {
       use: [this.buildCssLoader({ modules: false })],
     }];
 
-    // css-loader/locals
-
-    // nor ExtractTextPlugin nor style-loader should be used when prerendering.
-    // css-loader/locals is used instead.
-    if (this.isServer()) {
-      return cssLoaders;
-    }
-
+    const styleLoader = this.isServer() ? 'node-style-loader' : 'style-loader';
     for (const cssLoader of cssLoaders) {
-
       if (this.isDev) {
-        cssLoader.use = ['style-loader', ...cssLoader.use];
+        cssLoader.use = [styleLoader, ...cssLoader.use];
       } else {
         cssLoader.use = ExtractTextPlugin.extract({
-          fallbackLoader: 'style-loader',
+          fallbackLoader: styleLoader,
           use: cssLoader.use,
         });
       }

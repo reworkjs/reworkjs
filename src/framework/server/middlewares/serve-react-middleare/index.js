@@ -1,5 +1,6 @@
 import React from 'react';
 import { plugToRequest } from 'react-cookie';
+import { collectInitial, collectContext } from 'node-style-loader/collect';
 import { parse } from 'accept-language-parser';
 import { isProd } from '../../../../shared/EnvUtil';
 import { getDefault } from '../../../../shared/util/ModuleUtil';
@@ -83,16 +84,22 @@ function renderApp(serveRoute) {
 
       const unplugReactCookie = plugToRequest(req, res);
 
-      const appHtml = renderToString(
+      const initialStyleTag = collectInitial();
+      const [contextStyleTag, appHtml] = collectContext(() => renderToString(
         <App>
           <RouterContext {...props} />
         </App>,
-      );
+      ));
+
+      const styleTags = initialStyleTag + contextStyleTag;
 
       unplugReactCookie();
 
-      // TODO do we need to wrap appHtml in <div> here as well ?
-      return await serveRoute(req, res, `<div>${appHtml}</div>`, store.getState());
+      return await serveRoute(req, res, {
+        appHtml: `<div>${appHtml}</div>`,
+        state: store.getState(),
+        style: styleTags,
+      });
     } catch (preRenderingError) {
       logger.error(`renderApp: Serving "${req.url}" crashed, trying without server-side rendering.`);
       logger.error(preRenderingError);

@@ -1,6 +1,8 @@
 import Helmet from 'react-helmet';
 
-export default function buildPage($doc, html, appState) {
+export default function buildPage($doc, data) {
+  const { appHtml, state, style } = data;
+
   const { htmlAttributes, ...headChildren } = Helmet.rewind();
 
   const $html = $doc.find('html');
@@ -10,8 +12,10 @@ export default function buildPage($doc, html, appState) {
 
   const $head = $doc.find('head');
   const { title, base, ...appendableTags } = headChildren;
+
   replace($head, 'title', title.toString());
   replace($head, 'base', base.toString());
+  $head.append(style);
 
   // TODO replace meta tags ?
 
@@ -21,10 +25,10 @@ export default function buildPage($doc, html, appState) {
   }
 
   // Insert App HTML
-  $doc.find('#app').append(`<div>${html}</div>`);
+  $doc.find('#app').append(`<div>${appHtml}</div>`);
 
   // Insert Redux State
-  $doc.find('script').last().before(`<script>window.__PRELOADED_STATE__ = ${JSON.stringify(appState)}</script>`);
+  $doc.find('script').last().before(`<script>window.__PRELOADED_STATE__ = ${JSON.stringify(state)}</script>`);
 }
 
 function replace($head, tagName, newTag) {
