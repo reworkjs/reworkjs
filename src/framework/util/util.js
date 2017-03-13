@@ -15,7 +15,7 @@ export function attemptChangeName(obj, name) {
 export function canRedefineValue(obj, property) {
   const descriptor = Object.getOwnPropertyDescriptor(obj, property);
   if (!descriptor) {
-    return true;
+    return Object.isExtensible(obj);
   }
 
   return descriptor.configurable || descriptor.writable;
