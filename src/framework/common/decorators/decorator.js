@@ -47,7 +47,7 @@ export function methodDecorator(logicHandler: (arg: MethodDecoratorArgument) => 
   };
 }
 
-export function classDecorator(logicHandler: (arg: ClassDecoratorArgument) => Function) {
+export function classDecorator(logicHandler: (arg: ClassDecoratorArgument) => Function): Function {
   return function methodDecoratorWrapper(...decorateeOrOptions) {
     if (isDecoratedClass(decorateeOrOptions)) {
       return logicHandler({

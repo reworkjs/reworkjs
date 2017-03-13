@@ -1,15 +1,23 @@
 export function attemptChangeName(obj, name) {
-  if (!canRedefineValue(obj, 'name')) {
-    return;
+  if (canRedefineValue(obj, 'name')) {
+    Object.defineProperty(obj, 'name', {
+      value: name,
+    });
   }
 
-  Object.defineProperty(obj, 'name', {
-    value: name,
-  });
+  if (canRedefineValue(obj, 'displayName')) {
+    Object.defineProperty(obj, 'displayName', {
+      value: name,
+    });
+  }
 }
 
 export function canRedefineValue(obj, property) {
   const descriptor = Object.getOwnPropertyDescriptor(obj, property);
+  if (!descriptor) {
+    return true;
+  }
+
   return descriptor.configurable || descriptor.writable;
 }
 
