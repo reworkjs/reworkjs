@@ -1,11 +1,11 @@
 import fs from 'fs';
 import path from 'path';
-import querystring from 'querystring';
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import OfflinePlugin from 'offline-plugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import WebpackCleanupPlugin from 'webpack-cleanup-plugin';
+import nodeExternals from 'webpack-node-externals';
 import cheerio from 'cheerio';
 import findCacheDir from 'find-cache-dir';
 import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin';
@@ -42,10 +42,6 @@ function replaceBabelPreset(babelConfig) {
   return babelConfig;
 }
 
-function stringifyLoaderOptions(options) {
-  return querystring.stringify(options).replace(/(?:=)(&|$)/g, '$1');
-}
-
 export default class WebpackBase {
 
   static SIDE_SERVER = 0;
@@ -61,31 +57,34 @@ export default class WebpackBase {
   }
 
   buildCssLoader(options = {}) {
+    // TODO
+    // Note: For prerendering with extract-text-webpack-plugin you should use css-loader/locals instead of style-loader!css-loader in the prerendering bundle. It doesn't embed CSS but only exports the identifier mappings.
     const loaderOptions = {
-      // disable cssnano removing deprecated prefixes.
-      '-autoprefixer': '',
-      importLoaders: '1',
+      importLoaders: 1,
     };
 
     if (this.isDev) {
-      Object.assign(options, {
-        localIdentName: '[local]__[path][name]__[hash:base64:5]',
-        sourceMap: '',
+      Object.assign(loaderOptions, {
+        localIdentName: '[local]__[hash:base64:5]',
+        sourceMap: true,
       });
     } else {
-      Object.assign(options, {
-        minimize: '',
+      Object.assign(loaderOptions, {
+        minimize: true, // TODO cssnano options
       });
     }
 
     if (options.modules) {
       Object.assign(loaderOptions, {
-        modules: '',
-        camelCase: '',
+        modules: true,
+        camelCase: true,
       });
     }
 
-    return `css-loader?${stringifyLoaderOptions(loaderOptions)}`;
+    return {
+      loader: this.isServer() ? 'css-loader/locals' : 'css-loader',
+      options: loaderOptions,
+    };
   }
 
   buildConfig() {
@@ -125,10 +124,16 @@ export default class WebpackBase {
       // exclude any absolute module (npm/node) from the build, except this module.
       // this module must be included otherwise the server build will have two
       // separate versions of the framework loaded.
-      const anyAbsoluteExceptFramework = new RegExp(`^(?!${frameworkMetadata.name}(\\/.+)?$)[a-z\\-0-9]+(\\/.+)?$`);
+      // const anyAbsoluteExceptFrameworkAndCss = new RegExp(`^(?!${}(\\/.+)?$)[a-z\\-_0-9]+(?!.+\\.css$).+$`);
 
       config.externals = [
-        anyAbsoluteExceptFramework,
+        nodeExternals({
+          whitelist: [
+            new RegExp(`^${frameworkMetadata.name}`),
+            /\.css$/i,
+          ],
+        }),
+        // anyAbsoluteExceptFrameworkAndCss,
       ];
     } else {
       config.resolve.mainFields.unshift('web');
@@ -142,17 +147,17 @@ export default class WebpackBase {
 
   buildLoaders() {
 
-    const loaders = [{
-      test: /\.jsx?$/,
+    const rules = [{
+      test: /\.jsx?$/i,
       loader: 'babel-loader',
       exclude: ANY_MODULE_EXCEPT_FRAMEWORK,
       options: replaceBabelPreset(this.getBabelConfig()),
     }, {
-      test: /\.(eot|svg|ttf|woff|woff2)(\?.*$|$)/,
+      test: /\.(eot|ttf|woff|woff2)(\?.*$|$)/i,
       loader: 'file-loader',
     }, {
-      test: /\.(jpeg|png|gif|svg)$/,
-      loaders: ['file-loader', {
+      test: /\.(jpeg|png|gif|svg)$/i,
+      use: ['file-loader', {
         loader: 'image-webpack-loader',
         // TODO: Review image-webpack-loader configuration
         query: {
@@ -174,51 +179,62 @@ export default class WebpackBase {
         },
       }],
     }, {
-      test: /\.json$/,
+      test: /\.json$/i,
       loader: 'json-loader',
     }, {
-      test: /\.html$/,
+      test: /\.html$/i,
       loader: 'html-loader',
     }, {
-      test: /\.(mp4|webm)$/,
+      test: /\.(mp4|webm)$/i,
       loader: 'url-loader?limit=10000',
     }].concat(this.buildCssLoaders());
 
     if (this.isDev) {
-      loaders.push({
-        test: /\.jsx?$/,
+      rules.push({
+        test: /\.jsx?$/i,
         exclude: /node_modules/,
-        loader: 'eslint-loader?{rules:{"no-console":1, "no-debugger":1}}',
+        loader: 'eslint-loader',
+        options: {
+          rules: {
+            'no-console': 0,
+            'no-debugger': 0,
+          },
+        },
         enforce: 'pre',
       });
     }
 
-    return loaders;
+    return rules;
   }
 
   buildCssLoaders() {
     const cssLoaders = [{
-      test: /\.(sc|sa|c)ss$/,
+      test: /\.(sc|sa|c)ss$/i,
       exclude: ANY_MODULE_EXCEPT_FRAMEWORK,
-      loaders: [this.buildCssLoader({ modules: true }), 'postcss-loader', 'sass-loader'],
+      use: [this.buildCssLoader({ modules: true }), 'postcss-loader', 'sass-loader'],
     }, {
-      test: /\.css$/,
+      test: /\.css$/i,
       include: ANY_MODULE_EXCEPT_FRAMEWORK,
-      loaders: [this.buildCssLoader({ modules: false })],
+      use: [this.buildCssLoader({ modules: false })],
     }];
 
-    const styleLoader = this.isServer() ? 'node-style-loader' : 'style-loader';
+    // css-loader/locals
+
+    // nor ExtractTextPlugin nor style-loader should be used when prerendering.
+    // css-loader/locals is used instead.
+    if (this.isServer()) {
+      return cssLoaders;
+    }
+
     for (const cssLoader of cssLoaders) {
 
       if (this.isDev) {
-        cssLoader.loaders = [styleLoader, ...cssLoader.loaders];
+        cssLoader.use = ['style-loader', ...cssLoader.use];
       } else {
-        cssLoader.loader = ExtractTextPlugin.extract({
-          fallbackLoader: styleLoader,
-          loader: cssLoader.loaders,
+        cssLoader.use = ExtractTextPlugin.extract({
+          fallbackLoader: 'style-loader',
+          use: cssLoader.use,
         });
-
-        delete cssLoader.loaders;
       }
     }
 
@@ -455,9 +471,9 @@ export default class WebpackBase {
     // It enables caching results in ./node_modules/.cache/react-scripts/
     // directory for faster rebuilds. We use findCacheDir() because of:
     // https://github.com/facebookincubator/create-react-app/issues/483
-    config.cacheDirectory = findCacheDir({
+    config.cacheDirectory = `${findCacheDir({
       name: frameworkMetadata.name,
-    });
+    })}/babel`;
 
     return config;
   }
