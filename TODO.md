@@ -44,3 +44,6 @@ OfflinePlugin:
 
 Getting non-defined state outside of reducers should throw
 Setting non-defined state outside of reducers should throw
+
+- Make the tool build the client, not the server.
+- Auto-relaunch the server if HMR failed.
