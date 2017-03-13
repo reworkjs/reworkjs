@@ -1,4 +1,3 @@
-import 'sanitize.css/sanitize.css';
 import React from 'react';
 import { Provider } from 'react-redux';
 import logger from '../../shared/logger';
