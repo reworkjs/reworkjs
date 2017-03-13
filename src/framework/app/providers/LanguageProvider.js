@@ -5,7 +5,7 @@ import { installLocale } from '../../common/i18n';
 
 export const LOCALE_COOKIE_NAME = 'rjs-locale';
 
-@provider
+@provider('i18n')
 export default class LanguageProvider {
   static locale: string = 'en';
 
