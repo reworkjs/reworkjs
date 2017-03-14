@@ -116,7 +116,7 @@ export default class WebpackBase {
         alias: this.getAliases(),
       },
       performance: {
-        hints: !this.isDev,
+        hints: this.isDev ? false : 'warning',
       },
     };
 
@@ -224,7 +224,7 @@ export default class WebpackBase {
         cssLoader.use = [styleLoader, ...cssLoader.use];
       } else {
         cssLoader.use = ExtractTextPlugin.extract({
-          fallbackLoader: styleLoader,
+          fallback: styleLoader,
           use: cssLoader.use,
         });
       }
