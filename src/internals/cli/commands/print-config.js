@@ -1,6 +1,12 @@
 import frameworkConfig from '../../../shared/framework-config';
-import { info } from '../stdio';
+import logger from '../../../shared/logger';
 
-export default function printConfig() {
-  info(JSON.stringify(frameworkConfig, null, 2)); // eslint-disable-line
+export default function registerCommand(commander) {
+
+  commander
+    .command('print-config')
+    .description('Prints out the parsed configuration of the framework')
+    .action(() => {
+      logger.debug(JSON.stringify(frameworkConfig, null, 2));
+    });
 }

@@ -1,52 +1,156 @@
-import chalk from 'chalk';
-import frameworkConfig from '../../../shared/framework-config';
-import { getDefault } from '../../../shared/util/ModuleUtil';
-import compileWebpack, { StatDetails, EntryPoint } from '../../../shared/compile-webpack';
-import { runCommandSync } from '../run-command';
+import childProcess from 'child_process';
+import path from 'path';
+import { merge } from 'lodash';
+import Blessed from 'blessed';
+import framework from '../../../shared/framework-metadata';
 import { info } from '../stdio';
 
-export default async function start([mode = process.env.NODE_ENV || 'production'], otherArgs) {
-  if (mode === 'dev') {
-    process.env.NODE_ENV = 'development';
-  } else if (mode === 'prod') {
-    process.env.NODE_ENV = 'production';
-  } else {
-    process.env.NODE_ENV = mode;
+export default function registerCommand(commander) {
+
+  commander
+    .command('start [mode]')
+    .description('Launches the application')
+    .option('--no-prerendering', 'Disable server-side rendering')
+    .option('--port', 'The port the server will listen to', Number)
+    .option('--tunnel', 'The port of the tunnel', Number)
+    .option('--no-split', 'Disable terminal split-view')
+    .action((mode = process.env.NODE_ENV || 'production', options) => {
+      if (mode === 'dev') {
+        process.env.NODE_ENV = 'development';
+      } else if (mode === 'prod') {
+        process.env.NODE_ENV = 'production';
+      } else {
+        process.env.NODE_ENV = mode;
+      }
+
+      info(`Launching app in ${process.env.NODE_ENV} mode...`);
+
+      if (!options.prerendering) {
+        return runServerWithoutPrerendering();
+      }
+
+      return runServerWithPrerendering(options.split);
+    });
+}
+
+/**
+ * Need:
+ * - Start a client build process
+ * - Start a server build process
+ * - Start the server
+ * - Reload the server on rebuild if HMR did not work
+ *
+ * - The server needs to communicate with the client build process (needs to know the build status)
+ */
+function runServerWithPrerendering(split) {
+
+  const serverBuilder = fork('Server', path.normalize(`${__dirname}/../build-webpack-server.js`), split ? 'pipe' : 'inherit');
+  const clientBuilder = fork('Client', path.normalize(`${__dirname}/../build-webpack-client.js`), split ? 'pipe' : 'inherit');
+
+  if (!split) {
+    return;
   }
 
-  info(`Launching app in ${process.env.NODE_ENV} mode...`);
-  if (otherArgs.prerendering === false) {
-    await runServerWithoutPrerendering();
-  } else {
-    await runServerWithPrerendering();
-  }
+  const screen = Blessed.screen({
+    smartCSR: true,
+    title: framework.name,
+    dockBorders: true,
+  });
+
+  const serverOutput = simpleBox(screen, 'server', {
+    left: 0,
+  });
+
+  const clientOutput = simpleBox(screen, 'client', {
+    right: 0,
+  });
+
+  screen.key(['escape', 'q', 'C-c'], () => process.exit(0));
+  screen.render();
+
+  redirect(serverBuilder, serverOutput, screen);
+  redirect(clientBuilder, clientOutput, screen);
+}
+
+function redirect(child, subTerminal, screen) {
+
+  child.stdout.on('data', data => {
+    const msg = data.toString().trim();
+
+    subTerminal.pushLine(msg);
+    screen.render();
+  });
+
+  child.stderr.on('data', data => {
+    const msg = data.toString().trim();
+
+    subTerminal.pushLine(`{red-bg}${msg}\n{/}`);
+    screen.render();
+  });
+
+  child.on('close', code => {
+    subTerminal.pushLine(`\n{${code === 0 ? 'green' : 'red'}-bg}\nProcess completed ${code === 0 ? 'Successfully' : `with error code ${code}`}\n{/}`);
+    screen.render();
+  });
+}
+
+function fork(name, modulePath, out) {
+  return childProcess.fork(modulePath, process.argv, {
+    stdio: ['inherit', out, out, 'ipc'],
+    env: Object.assign(Object.create(process.env), {
+      PROCESS_NAME: name,
+    }),
+  });
 }
 
 function runServerWithoutPrerendering() {
   return require('../../../framework/server/init'); // eslint-disable-line
 }
 
-function runServerWithPrerendering() {
-  info('Building your server-side app, this might take a minute.');
-  info(`You can disable server-side rendering using ${chalk.blue('--no-prerendering')}.`);
-  const webpackConfig = getDefault(require('../../../shared/webpack/webpack.server.js')); // eslint-disable-line
+function simpleBox(screen, name, otherParams) {
 
-  compileWebpack(webpackConfig, true, (stats: StatDetails) => {
-    const entryPoints: EntryPoint = stats.entrypoints.main.assets.filter(fileName => fileName.endsWith('.js'));
+  const outerBox = Blessed.box(merge({
+    top: 0,
+    width: '50%',
+  }, otherParams));
 
-    if (entryPoints.length !== 1) {
-      throw new Error('Webpack built but the output does not have exactly one entry point. This is a bug.');
-    }
-
-    info('Starting server...');
-
-    const entryPoint = entryPoints[0];
-    // TODO replace webpack-server with variable.
-    runCommandSync(`node ${frameworkConfig.directories.build}/webpack-server/${entryPoint} ${process.argv.slice(1).join(' ')}`);
+  const titleBox = Blessed.text({
+    content: name,
+    width: '100%',
+    top: 1,
+    left: 1,
+    style: {
+      fg: 'white',
+    },
   });
+
+  const innerBox = Blessed.box({
+    tags: true,
+    border: {
+      type: 'line',
+    },
+    scrollable: true,
+    mouse: true,
+    keys: true,
+    // alwaysScroll: true,
+    scrollbar: {
+      ch: ' ',
+      inverse: true,
+    },
+    top: 2,
+    width: '100%',
+    // height: '80%',
+    style: {
+      border: {
+        fg: '#f0f0f0',
+      },
+    },
+  });
+
+  outerBox.append(titleBox);
+  outerBox.append(innerBox);
+
+  screen.append(outerBox);
+
+  return innerBox;
 }
-
-export const usage = `rjs start <mode> <options...>
-
-Possible modes: dev, prod
-Accepted options: --port <number>, --no-prerendering, --tunnel`;

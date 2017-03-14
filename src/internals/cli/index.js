@@ -1,35 +1,26 @@
+import program from 'commander';
+import requireAll from 'require-all';
 import '../../shared/regenerator';
-import argv from '../../shared/argv';
-import logger from '../../shared/logger';
-import commandList from './command-list';
+import framework from '../../shared/framework-metadata';
+import { getDefault } from '../../shared/util/ModuleUtil';
 
-const { _: mainArgs, ...otherArgs } = argv;
-const commandName = mainArgs[0] || commandList.help.name;
-const params = mainArgs.splice(1);
+// register all commands.
+const commands = requireAll({
+  dirname: `${__dirname}/commands`,
+  filter: /.*\.js$/,
+  recursive: true,
+});
 
-/**
- * Returns the command matching name, or die.
- * @param name - The name of the command.
- * @returns The command.
- */
-export function getCommand(name: string): Function {
-  if (Object.prototype.hasOwnProperty.call(commandList, name)) {
-    return commandList[name];
+program.version(framework.version);
+
+for (const file of Object.keys(commands)) {
+  const registerCommand = getDefault(commands[file]);
+  if (typeof registerCommand === 'function') {
+    registerCommand(program);
   }
-
-  logger.error(`Unknown command ${JSON.stringify(name)}`);
-  logger.info('Use `help` for a list of commands');
-  process.exit(1);
 }
 
-(async function main() {
-  try {
-    await getCommand(commandName)(params, otherArgs);
-  } catch (e) {
-    logger.error(e);
-    process.exit(1);
-  }
-}());
+program.parse(process.argv);
 
 /*
  ## `build`
