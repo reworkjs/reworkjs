@@ -1,41 +1,9 @@
 import childProcess from 'child_process';
 import path from 'path';
-import { merge } from 'lodash';
 import Blessed from 'blessed';
 import getPort from 'get-port';
 import framework from '../../../shared/framework-metadata';
-import { info } from '../stdio';
-
-export default function registerCommand(commander) {
-
-  commander
-    .command('start')
-    .description('Launches the application')
-    .option('--no-prerendering', 'Disable server-side rendering')
-    .option('--port <port>', 'The port the server will listen to', Number, 3000)
-    .option('--tunnel <tunnel_port>', 'The port of the tunnel', Number, -1)
-    .option('--no-split', 'Disable terminal split-view')
-    .option('--env <env>', 'Overwrite NODE_ENV value', String, process.env.NODE_ENV || 'production')
-    .action(options => {
-
-      const env = options.env;
-      if (env === 'dev') {
-        process.env.NODE_ENV = 'development';
-      } else if (env === 'prod') {
-        process.env.NODE_ENV = 'production';
-      } else {
-        process.env.NODE_ENV = env;
-      }
-
-      info(`Launching app in ${process.env.NODE_ENV} mode...`);
-
-      if (!options.prerendering) {
-        return runServerWithoutPrerendering();
-      }
-
-      return runServerWithPrerendering(options);
-    });
-}
+import logger from '../../../shared/logger';
 
 /**
  * Need:
@@ -46,13 +14,49 @@ export default function registerCommand(commander) {
  *
  * - The server needs to communicate with the client build process (needs to know the build status)
  */
+
+export default function registerCommand(commander) {
+
+  commander
+    .command('start')
+    .description('Launches the application')
+    .option('--no-prerendering', 'Disable server-side rendering')
+    .option('--port <port>', 'The port the server will listen to', Number, 3000)
+    .option('--tunnel <tunnel_port>', 'The port of the tunnel', Number, -1)
+    .option('--no-split', 'Disable terminal split-view')
+    .option('--env <env>', 'Overwrite NODE_ENV value', process.env.NODE_ENV || 'production')
+    .action(options => {
+
+      options.verbose = commander.verbose;
+
+      const env = options.env;
+      if (env === 'dev') {
+        process.env.NODE_ENV = 'development';
+      } else if (env === 'prod') {
+        process.env.NODE_ENV = 'production';
+      } else {
+        process.env.NODE_ENV = env;
+      }
+
+      logger.info(`Launching app in ${process.env.NODE_ENV} mode...`);
+
+      if (!options.prerendering) {
+        return runServerWithoutPrerendering();
+      }
+
+      return runServerWithPrerendering(options);
+    });
+}
+
 async function runServerWithPrerendering(options) {
 
   const out = options.split ? 'pipe' : 'inherit';
 
   const prerenderingPort = await getPort();
 
-  const clientBuilder = childProcess.fork(path.normalize(`${__dirname}/../build-webpack-client.js`), ['--port', options.port, '--prerendering-port', prerenderingPort], {
+  const clientBuilder = childProcess.fork(path.normalize(`${__dirname}/../build-webpack-client.js`), [
+    '--port', options.port, '--prerendering-port', prerenderingPort, '--verbose', options.verbose,
+  ], {
     stdio: ['inherit', out, out, 'ipc'],
     env: Object.assign(Object.create(process.env), {
       PROCESS_NAME: 'ClientBuilder',
@@ -85,7 +89,9 @@ async function runServerWithPrerendering(options) {
       serverInstance.kill();
     }
 
-    serverInstance = childProcess.fork(data.exe, ['--port', prerenderingPort], {
+    serverInstance = childProcess.fork(data.exe, [
+      '--port', prerenderingPort, '--hide-http', '--verbose', options.verbose,
+    ], {
       stdio: ['inherit', out, out, 'ipc'],
       env: Object.assign(Object.create(process.env), {
         PROCESS_NAME: 'Server',
@@ -166,7 +172,7 @@ function redirect(child, subTerminal, screen) {
 }
 
 function runServerWithoutPrerendering() {
-  return require('../../../framework/server/init'); // eslint-disable-line
+  return require('../.././init'); // eslint-disable-line
 }
 
 function simpleBox(screen, name, otherParams) {

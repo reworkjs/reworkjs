@@ -3,6 +3,7 @@ import requireAll from 'require-all';
 import '../../shared/regenerator';
 import framework from '../../shared/framework-metadata';
 import { getDefault } from '../../shared/util/ModuleUtil';
+import levels from '../../shared/logger/levels';
 
 // register all commands.
 const commands = requireAll({
@@ -11,7 +12,9 @@ const commands = requireAll({
   recursive: true,
 });
 
-program.version(framework.version);
+program
+  .version(framework.version)
+  .option('--verbose [verbose]', `set logger verbosity to one of {${Object.keys(levels).join(', ')}}`, 'info');
 
 for (const file of Object.keys(commands)) {
   const registerCommand = getDefault(commands[file]);

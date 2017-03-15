@@ -2,9 +2,9 @@ import fs from 'fs';
 import express from 'express';
 import compression from 'compression';
 import cheerio from 'cheerio';
-import webpackConfig from '../../../../shared/webpack/webpack.client';
-import compileWebpack from '../../../../shared/compile-webpack';
-import buildPage from './buildPage';
+import webpackConfig from '../../../shared/webpack/webpack.client';
+import compileWebpack from '../../../shared/compile-webpack';
+import buildPage from './build-page';
 
 const htmlEntryPoint = `${webpackConfig.output.path}/index.html`;
 
