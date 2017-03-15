@@ -50,11 +50,24 @@ export default function registerCommand(commander) {
 
 async function runServerWithPrerendering(options) {
 
+  const children = {};
+
+  process.on('exit', () => {
+    for (const childName of Object.keys(children)) {
+      const child = children[childName];
+
+      if (child) {
+        child.kill();
+      }
+    }
+  });
+
   const out = options.split ? 'pipe' : 'inherit';
 
   const prerenderingPort = await getPort();
 
-  const clientBuilder = childProcess.fork(path.normalize(`${__dirname}/../build-webpack-client.js`), [
+  // TODO: on dead process, ask user if they wish to relaunch them. Then do. Or don't.
+  children.clientBuilder = childProcess.fork(path.normalize(`${__dirname}/../build-webpack-client.js`), [
     '--port', options.port, '--prerendering-port', prerenderingPort, '--verbose', options.verbose,
   ], {
     stdio: ['inherit', out, out, 'ipc'],
@@ -63,16 +76,16 @@ async function runServerWithPrerendering(options) {
     }),
   });
 
-  const serverBuilder = childProcess.fork(path.normalize(`${__dirname}/../build-webpack-server.js`), process.argv, {
+  children.serverBuilder = childProcess.fork(path.normalize(`${__dirname}/../build-webpack-server.js`), process.argv, {
     stdio: ['inherit', out, out, 'ipc'],
     env: Object.assign(Object.create(process.env), {
       PROCESS_NAME: 'ServerBuilder',
     }),
   });
 
-  let serverInstance;
+  // TODO hot update serverInstance using "webpack/hot/signal"
   let serverOutput;
-  serverBuilder.on('message', data => {
+  children.serverBuilder.on('message', data => {
     if (data == null || typeof data !== 'object' || !data.cmd) {
       return;
     }
@@ -85,11 +98,11 @@ async function runServerWithPrerendering(options) {
       return;
     }
 
-    if (serverInstance) {
-      serverInstance.kill();
+    if (children.serverInstance) {
+      children.serverInstance.kill();
     }
 
-    serverInstance = childProcess.fork(data.exe, [
+    children.serverInstance = childProcess.fork(data.exe, [
       '--port', prerenderingPort, '--hide-http', '--verbose', options.verbose,
     ], {
       stdio: ['inherit', out, out, 'ipc'],
@@ -99,7 +112,7 @@ async function runServerWithPrerendering(options) {
     });
 
     if (serverOutput) {
-      redirect(serverInstance, serverOutput.inner, screen);
+      redirect(children.serverInstance, serverOutput.inner, screen);
     }
   });
 
@@ -113,7 +126,7 @@ async function runServerWithPrerendering(options) {
     dockBorders: true,
   });
 
-  const clientBuilderOutput = simpleBox(screen, 'client builder', {
+  const clientBuilderOutput = simpleBox('client builder', {
     right: 0,
     top: 0,
     width: '50%',
@@ -124,13 +137,13 @@ async function runServerWithPrerendering(options) {
     width: '50%',
   });
 
-  const serverBuilderOutput = simpleBox(screen, 'server builder', {
+  const serverBuilderOutput = simpleBox('server builder', {
     left: 0,
     top: 0,
     height: '50%',
   });
 
-  serverOutput = simpleBox(screen, 'server instance', {
+  serverOutput = simpleBox('server instance', {
     left: 0,
     top: '50%',
     height: '50%',
@@ -145,37 +158,44 @@ async function runServerWithPrerendering(options) {
   screen.key(['escape', 'q', 'C-c'], () => process.exit(0));
   screen.render();
 
-  redirect(serverBuilder, serverBuilderOutput.inner, screen);
-  redirect(clientBuilder, clientBuilderOutput.inner, screen);
+  redirect(children.serverBuilder, serverBuilderOutput.inner, screen);
+  redirect(children.clientBuilder, clientBuilderOutput.inner, screen);
 }
 
 function redirect(child, subTerminal, screen) {
 
   child.stdout.on('data', data => {
-    const msg = data.toString().trim();
+    // remove final \r\n added by writeln.
+    const msg = data.toString().replace(/(\r\n|\n|\r)$/, '');
 
     subTerminal.pushLine(msg);
     screen.render();
   });
 
   child.stderr.on('data', data => {
-    const msg = data.toString().trim();
+    // remove final \r\n added by writeln.
+    const msg = data.toString().replace(/(\r\n|\n|\r)$/, '');
 
     subTerminal.pushLine(`{red-bg}${msg}\n{/}`);
     screen.render();
   });
 
   child.on('close', code => {
-    subTerminal.pushLine(`\n{${code === 0 ? 'green' : 'red'}-bg}\nProcess completed ${code === 0 ? 'Successfully' : `with error code ${code}`}\n{/}`);
+    if (code == null) {
+      subTerminal.pushLine('\n{blue-bg}\nProcess terminated\n{/}');
+    } else {
+      subTerminal.pushLine(`\n{${code === 0 ? 'green' : 'red'}-bg}\nProcess completed ${code === 0 ? 'Successfully' : `with error code ${code}`}\n{/}`);
+    }
+
     screen.render();
   });
 }
 
 function runServerWithoutPrerendering() {
-  return require('../.././init'); // eslint-disable-line
+  return require('../../../framework/server'); // eslint-disable-line
 }
 
-function simpleBox(screen, name, otherParams) {
+function simpleBox(name, otherParams) {
 
   const outerBox = Blessed.box(otherParams);
 

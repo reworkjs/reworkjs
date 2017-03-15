@@ -14,37 +14,51 @@ export default function setupDevServer(preRenderReactApp, expressApp) {
 
     const fileName = getFilenameFromUrl(httpStaticPath, clientOutputPath, req.url);
 
-    // serve static assets if they exist
-    // FIXME compiler.outputPath will be served statically as-is.
-    if (fileName && fileName !== clientOutputPath) {
-      return serveStaticFile(res, fileName);
+    // pre-renderer root route rather than giving index.html.
+    if (!fileName || fileName === clientOutputPath) {
+      return renderRoute(req, res, clientOutputPath, preRenderReactApp);
     }
 
-    logger.debug(`pre-rendering app for ${JSON.stringify(req.url)}`);
-
-    // server-side rendering:
-    const clientEntryPoint = path.join(clientOutputPath, 'index.html');
-    fs.readFile(clientEntryPoint, (err, file) => {
-      if (err) {
-        return res.status(500).send('Missing file "index.html". Either the app is still building or something went wrong.');
+    isReadable(fileName, readable => {
+      if (readable) {
+        return serveStaticFile(res, fileName);
       }
 
-      try {
-        const renderedApp = preRenderReactApp(req, res);
-
-        const $doc = cheerio(file.toString());
-        buildPage($doc, renderedApp);
-        return res.send($doc.toString());
-      } catch (e) {
-        logger.error(`renderApp: Serving "${req.url}" crashed, trying without server-side rendering.`);
-        logger.error(e);
-
-        res.status(e.status || 500);
-
-        return serveStaticFile(res, clientEntryPoint);
-      }
+      return renderRoute(req, res, clientOutputPath, preRenderReactApp);
     });
   });
+}
+
+function renderRoute(req, res, clientOutputPath, preRenderReactApp) {
+
+  logger.debug(`pre-rendering app for route ${JSON.stringify(req.url)}`);
+
+  // server-side rendering:
+  const clientEntryPoint = path.join(clientOutputPath, 'index.html');
+  fs.readFile(clientEntryPoint, async (err, file) => {
+    if (err) {
+      return res.status(500).send('Missing file "index.html". Either the app is still building or something went wrong.');
+    }
+
+    try {
+      const renderedApp = await preRenderReactApp(req, res);
+
+      const $doc = cheerio(file.toString());
+      buildPage($doc, renderedApp);
+      return res.send($doc.toString());
+    } catch (e) {
+      logger.error(`renderApp: Serving "${req.url}" crashed, trying without server-side rendering.`);
+      logger.error(e);
+
+      res.status(e.status || 500);
+
+      return serveStaticFile(res, clientEntryPoint);
+    }
+  });
+}
+
+function isReadable(file, cb) {
+  fs.access(file, fs.constants.R_OK, err => cb(!err));
 }
 
 function serveStaticFile(res, file) {
