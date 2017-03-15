@@ -48,6 +48,10 @@ export default function registerCommand(commander) {
     });
 }
 
+function runServerWithoutPrerendering() {
+  return require('../build-webpack-client'); // eslint-disable-line
+}
+
 async function runServerWithPrerendering(options) {
 
   const children = {};
@@ -184,15 +188,11 @@ function redirect(child, subTerminal, screen) {
     if (code == null) {
       subTerminal.pushLine('\n{blue-bg}\nProcess terminated\n{/}');
     } else {
-      subTerminal.pushLine(`\n{${code === 0 ? 'green' : 'red'}-bg}\nProcess completed ${code === 0 ? 'Successfully' : `with error code ${code}`}\n{/}`);
+      subTerminal.pushLine(`\n{${code === 0 ? 'green' : 'red'}-bg}\nProcess completed ${code === 0 ? 'Successfully' : `with error code ${code}`}\n{/}\n`);
     }
 
     screen.render();
   });
-}
-
-function runServerWithoutPrerendering() {
-  return require('../../../framework/server'); // eslint-disable-line
 }
 
 function simpleBox(name, otherParams) {
