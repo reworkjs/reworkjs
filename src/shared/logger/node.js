@@ -34,6 +34,7 @@ logger.add(winston.transports.Console, {
   level: actualLevel,
   prettyPrint: true,
   colorize: true,
+  stderrLevels: ['warn', 'error'],
   silent: false,
   timestamp: false,
   label: globals.PROCESS_NAME,
