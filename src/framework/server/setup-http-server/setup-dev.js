@@ -40,15 +40,16 @@ async function renderRoute(req, res, clientOutputPath, preRenderReactApp) {
   let renderedApp;
   try {
     renderedApp = await preRenderReactApp(req, res);
-    if (renderedApp == null) {
-      return;
-    }
   } catch (e) {
     logger.error(`renderApp: Serving "${req.url}" crashed, trying without server-side rendering.`);
     logger.error(e);
 
     res.status(e.status || 500);
-    serveStaticFile(res, clientEntryPoint);
+    return serveStaticFile(res, clientEntryPoint);
+  }
+
+  if (renderedApp == null) {
+    return;
   }
 
   fs.readFile(clientEntryPoint, async (err, file) => {
