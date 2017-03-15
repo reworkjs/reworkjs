@@ -2,25 +2,29 @@ import childProcess from 'child_process';
 import path from 'path';
 import { merge } from 'lodash';
 import Blessed from 'blessed';
+import getPort from 'get-port';
 import framework from '../../../shared/framework-metadata';
 import { info } from '../stdio';
 
 export default function registerCommand(commander) {
 
   commander
-    .command('start [mode]')
+    .command('start')
     .description('Launches the application')
     .option('--no-prerendering', 'Disable server-side rendering')
-    .option('--port', 'The port the server will listen to', Number)
-    .option('--tunnel', 'The port of the tunnel', Number)
+    .option('--port <port>', 'The port the server will listen to', Number, 3000)
+    .option('--tunnel <tunnel_port>', 'The port of the tunnel', Number, -1)
     .option('--no-split', 'Disable terminal split-view')
-    .action((mode = process.env.NODE_ENV || 'production', options) => {
-      if (mode === 'dev') {
+    .option('--env <env>', 'Overwrite NODE_ENV value', String, process.env.NODE_ENV || 'production')
+    .action(options => {
+
+      const env = options.env;
+      if (env === 'dev') {
         process.env.NODE_ENV = 'development';
-      } else if (mode === 'prod') {
+      } else if (env === 'prod') {
         process.env.NODE_ENV = 'production';
       } else {
-        process.env.NODE_ENV = mode;
+        process.env.NODE_ENV = env;
       }
 
       info(`Launching app in ${process.env.NODE_ENV} mode...`);
@@ -29,7 +33,7 @@ export default function registerCommand(commander) {
         return runServerWithoutPrerendering();
       }
 
-      return runServerWithPrerendering(options.split);
+      return runServerWithPrerendering(options);
     });
 }
 
@@ -42,12 +46,58 @@ export default function registerCommand(commander) {
  *
  * - The server needs to communicate with the client build process (needs to know the build status)
  */
-function runServerWithPrerendering(split) {
+async function runServerWithPrerendering(options) {
 
-  const serverBuilder = fork('Server', path.normalize(`${__dirname}/../build-webpack-server.js`), split ? 'pipe' : 'inherit');
-  const clientBuilder = fork('Client', path.normalize(`${__dirname}/../build-webpack-client.js`), split ? 'pipe' : 'inherit');
+  const out = options.split ? 'pipe' : 'inherit';
 
-  if (!split) {
+  const prerenderingPort = await getPort();
+
+  const clientBuilder = childProcess.fork(path.normalize(`${__dirname}/../build-webpack-client.js`), ['--port', options.port, '--prerendering-port', prerenderingPort], {
+    stdio: ['inherit', out, out, 'ipc'],
+    env: Object.assign(Object.create(process.env), {
+      PROCESS_NAME: 'ClientBuilder',
+    }),
+  });
+
+  const serverBuilder = childProcess.fork(path.normalize(`${__dirname}/../build-webpack-server.js`), process.argv, {
+    stdio: ['inherit', out, out, 'ipc'],
+    env: Object.assign(Object.create(process.env), {
+      PROCESS_NAME: 'ServerBuilder',
+    }),
+  });
+
+  let serverInstance;
+  let serverOutput;
+  serverBuilder.on('message', data => {
+    if (data == null || typeof data !== 'object' || !data.cmd) {
+      return;
+    }
+
+    if (data.cmd !== 'launch') {
+      return;
+    }
+
+    if (!data.exe) {
+      return;
+    }
+
+    if (serverInstance) {
+      serverInstance.kill();
+    }
+
+    serverInstance = childProcess.fork(data.exe, ['--port', prerenderingPort], {
+      stdio: ['inherit', out, out, 'ipc'],
+      env: Object.assign(Object.create(process.env), {
+        PROCESS_NAME: 'Server',
+      }),
+    });
+
+    if (serverOutput) {
+      redirect(serverInstance, serverOutput.inner, screen);
+    }
+  });
+
+  if (!options.split) {
     return;
   }
 
@@ -57,19 +107,40 @@ function runServerWithPrerendering(split) {
     dockBorders: true,
   });
 
-  const serverOutput = simpleBox(screen, 'server', {
-    left: 0,
+  const clientBuilderOutput = simpleBox(screen, 'client builder', {
+    right: 0,
+    top: 0,
+    width: '50%',
   });
 
-  const clientOutput = simpleBox(screen, 'client', {
-    right: 0,
+  const serverWrapper = Blessed.box({
+    top: 0,
+    width: '50%',
   });
+
+  const serverBuilderOutput = simpleBox(screen, 'server builder', {
+    left: 0,
+    top: 0,
+    height: '50%',
+  });
+
+  serverOutput = simpleBox(screen, 'server instance', {
+    left: 0,
+    top: '50%',
+    height: '50%',
+  });
+
+  serverWrapper.append(serverOutput.outer);
+  serverWrapper.append(serverBuilderOutput.outer);
+
+  screen.append(serverWrapper);
+  screen.append(clientBuilderOutput.outer);
 
   screen.key(['escape', 'q', 'C-c'], () => process.exit(0));
   screen.render();
 
-  redirect(serverBuilder, serverOutput, screen);
-  redirect(clientBuilder, clientOutput, screen);
+  redirect(serverBuilder, serverBuilderOutput.inner, screen);
+  redirect(clientBuilder, clientBuilderOutput.inner, screen);
 }
 
 function redirect(child, subTerminal, screen) {
@@ -94,30 +165,18 @@ function redirect(child, subTerminal, screen) {
   });
 }
 
-function fork(name, modulePath, out) {
-  return childProcess.fork(modulePath, process.argv, {
-    stdio: ['inherit', out, out, 'ipc'],
-    env: Object.assign(Object.create(process.env), {
-      PROCESS_NAME: name,
-    }),
-  });
-}
-
 function runServerWithoutPrerendering() {
   return require('../../../framework/server/init'); // eslint-disable-line
 }
 
 function simpleBox(screen, name, otherParams) {
 
-  const outerBox = Blessed.box(merge({
-    top: 0,
-    width: '50%',
-  }, otherParams));
+  const outerBox = Blessed.box(otherParams);
 
   const titleBox = Blessed.text({
     content: name,
     width: '100%',
-    top: 1,
+    top: 0,
     left: 1,
     style: {
       fg: 'white',
@@ -137,7 +196,7 @@ function simpleBox(screen, name, otherParams) {
       ch: ' ',
       inverse: true,
     },
-    top: 2,
+    top: 1,
     width: '100%',
     // height: '80%',
     style: {
@@ -150,7 +209,5 @@ function simpleBox(screen, name, otherParams) {
   outerBox.append(titleBox);
   outerBox.append(innerBox);
 
-  screen.append(outerBox);
-
-  return innerBox;
+  return { outer: outerBox, inner: innerBox };
 }

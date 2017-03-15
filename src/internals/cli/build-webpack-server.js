@@ -3,8 +3,7 @@ import '../../shared/regenerator';
 import logger from '../../shared/logger';
 import serverWebpackConfig from '../../shared/webpack/webpack.server';
 import compileWebpack, { StatDetails, EntryPoint } from '../../shared/compile-webpack';
-// import { runCommandSync } from './run-command';
-// import frameworkConfig from '../../shared/framework-config';
+import frameworkConfig from '../../shared/framework-config';
 
 chalk.enabled = true;
 logger.info('Building your server-side app, this might take a minute.');
@@ -17,9 +16,16 @@ compileWebpack(serverWebpackConfig, true, (stats: StatDetails) => {
     throw new Error('Webpack built but the output does not have exactly one entry point. This is a bug.');
   }
 
-  // info('Starting server...');
+  const entryPoint = entryPoints[0];
+  const serverFile = `${frameworkConfig.directories.build}/webpack-server/${entryPoint}`;
 
-  // const entryPoint = entryPoints[0];
-  // TODO replace webpack-server with variable.
-  // runCommandSync(`node ${frameworkConfig.directories.build}/webpack-server/${entryPoint} ${process.argv.slice(1).join(' ')}`);
+  logger.debug(`Entry point: ${chalk.blue(serverFile)}`);
+
+  // tell manager CLI to launch server
+  if (process.send) {
+    process.send({
+      cmd: 'launch',
+      exe: serverFile,
+    });
+  }
 });
