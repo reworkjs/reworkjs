@@ -29,31 +29,37 @@ export default function setupDevServer(preRenderReactApp, expressApp) {
   });
 }
 
-function renderRoute(req, res, clientOutputPath, preRenderReactApp) {
+/**
+ * Server-side rendering
+ */
+async function renderRoute(req, res, clientOutputPath, preRenderReactApp) {
 
   logger.debug(`pre-rendering app for route ${JSON.stringify(req.url)}`);
 
-  // server-side rendering:
   const clientEntryPoint = path.join(clientOutputPath, 'index.html');
+  let renderedApp;
+  try {
+    renderedApp = await preRenderReactApp(req, res);
+    if (renderedApp == null) {
+      return;
+    }
+  } catch (e) {
+    logger.error(`renderApp: Serving "${req.url}" crashed, trying without server-side rendering.`);
+    logger.error(e);
+
+    res.status(e.status || 500);
+    serveStaticFile(res, clientEntryPoint);
+  }
+
   fs.readFile(clientEntryPoint, async (err, file) => {
     if (err) {
       return res.status(500).send('Missing file "index.html". Either the app is still building or something went wrong.');
     }
 
-    try {
-      const renderedApp = await preRenderReactApp(req, res);
+    const $doc = cheerio(file.toString());
+    buildPage($doc, renderedApp);
 
-      const $doc = cheerio(file.toString());
-      buildPage($doc, renderedApp);
-      return res.send($doc.toString());
-    } catch (e) {
-      logger.error(`renderApp: Serving "${req.url}" crashed, trying without server-side rendering.`);
-      logger.error(e);
-
-      res.status(e.status || 500);
-
-      return serveStaticFile(res, clientEntryPoint);
-    }
+    res.send($doc.toString());
   });
 }
 

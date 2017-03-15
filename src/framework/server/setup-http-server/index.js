@@ -33,19 +33,18 @@ function matchAsync(routes, url) {
   });
 }
 
-async function preRenderReactApp(req, res): { appHtml: string, state: Object, style: string } {
+async function preRenderReactApp(req, res): ?{ appHtml: string, state: Object, style: string } {
 
-  const preRenderingData = await matchAsync([rootRoute], req.url);
-  const redirect = preRenderingData.redirect;
-  const props = preRenderingData.props;
+  const { redirect, props } = await matchAsync([rootRoute], req.url);
 
   if (redirect) {
-    return res.redirect(redirect.pathname + redirect.search);
+    res.redirect(redirect.pathname + redirect.search);
+    return null;
   }
 
   if (!props) {
     res.status(404).send('This is a 404 page. To define the page to actually render when a 404 occurs, please create a new route object and set its "status" property to 404 (int)');
-    return;
+    return null;
   }
 
   const matchedRoute = props.routes[props.routes.length - 1];
