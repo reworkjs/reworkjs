@@ -21,7 +21,7 @@ export default function compileWebpack(config: Object, watch: boolean, callback:
         throw err;
       }
 
-      logger.debug(stats.toString());
+      logger.trace(stats.toString());
 
       if (hasErrors(stats) || hasWarnings(stats)) {
         printErrors(stats);
