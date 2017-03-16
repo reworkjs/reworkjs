@@ -57,10 +57,8 @@ export default class WebpackBase {
   }
 
   buildCssLoader(options = {}) {
-    // TODO
-    // Note: For prerendering with extract-text-webpack-plugin you should use css-loader/locals instead of style-loader!css-loader in the prerendering bundle. It doesn't embed CSS but only exports the identifier mappings.
     const loaderOptions = {
-      importLoaders: 1,
+      importLoaders: options.importLoaders || 1,
     };
 
     if (this.isDev) {
@@ -211,7 +209,7 @@ export default class WebpackBase {
     const cssLoaders = [{
       test: /\.(sc|sa|c)ss$/i,
       exclude: ANY_MODULE_EXCEPT_FRAMEWORK,
-      use: [this.buildCssLoader({ modules: true }), 'postcss-loader', 'sass-loader'],
+      use: [this.buildCssLoader({ modules: true, importLoaders: 2 }), 'postcss-loader', 'sass-loader'],
     }, {
       test: /\.css$/i,
       include: ANY_MODULE_EXCEPT_FRAMEWORK,
