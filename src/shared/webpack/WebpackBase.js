@@ -145,6 +145,23 @@ export default class WebpackBase {
 
   buildLoaders() {
 
+    /*
+     * Unsupported file formats:
+     * - BMP
+     * - PSD
+     * - TIFF
+     *
+     * Supported file formats:
+     * - GIF
+     * - JPEG/JPG
+     * - PNG
+     * - WebP
+     * - SVG
+     */
+
+    // TODO consider using url-loader rather than file-loader maybe ?
+    // Need to test perf gain.
+
     const rules = [{
       test: /\.jsx?$/i,
       loader: 'babel-loader',
@@ -154,28 +171,35 @@ export default class WebpackBase {
       test: /\.(eot|ttf|woff|woff2)(\?.*$|$)/i,
       loader: 'file-loader',
     }, {
-      test: /\.(jpeg|png|gif|svg)$/i,
-      use: ['file-loader', {
-        loader: 'image-webpack-loader',
-        // TODO: Review image-webpack-loader configuration
-        query: {
-          bypassOnDebug: true,
-          mozjpeg: {
-            progressive: true,
+      test: /\.(jpe?g|png|gif|svg)$/i,
+      use: [
+        'file-loader',
+        require.resolve('../../internals/global-srcset-loader'),
+        {
+          loader: 'image-webpack-loader',
+          // TODO: Review image-webpack-loader configuration
+          query: {
+            bypassOnDebug: true,
+            mozjpeg: {
+              progressive: true,
+            },
+            gifsicle: {
+              interlaced: false,
+            },
+            optipng: {
+              optimizationLevel: 7,
+            },
+            pngquant: {
+              quality: '65-90',
+              speed: 4,
+            },
+            svgo: {},
           },
-          gifsicle: {
-            interlaced: false,
-          },
-          optipng: {
-            optimizationLevel: 7,
-          },
-          pngquant: {
-            quality: '65-90',
-            speed: 4,
-          },
-          svgo: {},
         },
-      }],
+      ],
+    }, {
+      test: /\.webp/i,
+      loader: 'file-loader',
     }, {
       test: /\.json$/i,
       loader: 'json-loader',
