@@ -29,6 +29,8 @@ export default function buildPage($doc, data) {
 
   // Insert Redux State
   $doc.find('script').last().before(`<script>window.__PRELOADED_STATE__ = ${JSON.stringify(state)}</script>`);
+
+  return $doc.toString();
 }
 
 function replace($head, tagName, newTag) {

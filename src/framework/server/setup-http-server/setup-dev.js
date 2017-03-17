@@ -9,6 +9,7 @@ import buildPage from './build-page';
 const webpackClientConfig = getWebpackSettings(/* is server */ false);
 const httpStaticPath = webpackClientConfig.output.publicPath;
 const fsClientOutputPath = webpackClientConfig.output.path;
+const clientEntryPoint = path.join(fsClientOutputPath, 'index.html');
 
 export default function setupDevServer(preRenderReactApp, expressApp) {
 
@@ -38,7 +39,6 @@ async function renderRoute(req, res, preRenderReactApp) {
 
   logger.debug(`pre-rendering app for route ${JSON.stringify(req.url)}`);
 
-  const clientEntryPoint = path.join(fsClientOutputPath, 'index.html');
   let renderedApp;
   try {
     renderedApp = await preRenderReactApp(req, res);
@@ -60,9 +60,7 @@ async function renderRoute(req, res, preRenderReactApp) {
     }
 
     const $doc = cheerio(file.toString());
-    buildPage($doc, renderedApp);
-
-    res.send($doc.toString());
+    res.send(buildPage($doc, renderedApp));
   });
 }
 

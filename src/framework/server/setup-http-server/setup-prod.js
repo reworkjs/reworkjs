@@ -1,57 +1,52 @@
-// import fs from 'fs';
-// import express from 'express';
-// import compression from 'compression';
-// import cheerio from 'cheerio';
-// import webpackClientConfig from '../../../internals/webpack/webpack.client';
-// import compileWebpack from '../../../shared/compile-webpack';
-// import buildPage from './build-page';
-//
-// const htmlEntryPoint = `${webpackConfig.output.path}/index.html`;
-//
-// export default class ProdMiddleware {
-//   constructor(app, config) {
-//     this.app = app;
-//     this.config = config;
-//
-//     this.ready = false;
-//     compileWebpack(webpackConfig, false, () => {
-//       fs.readFile(htmlEntryPoint, (err, file) => {
-//         this.index = cheerio(file.toString());
-//         this.ready = true;
-//       });
-//     });
-//   }
-//
-//   registerMiddlewares() {
-//     const app = this.app;
-//     const config = this.config;
-//
-//     // compression middleware compresses your server responses which makes them
-//     // smaller (applies also to assets).
-//     app.use(compression());
-//
-//     const staticOptions = {};
-//     if (this.config.prerendering) {
-//       staticOptions.index = false;
-//     }
-//
-//     app.use(config.publicPath, express.static(webpackConfig.output.path, staticOptions));
-//   }
-//
-//   serveRoute(req, res, data) {
-//     if (!this.ready) {
-//       res.send('Application building...');
-//       return;
-//     }
-//
-//     // no server-side rendering
-//     if (data == null) {
-//       return res.sendFile(htmlEntryPoint);
-//     }
-//
-//     // server-side rendering
-//     const $doc = this.index.clone();
-//     buildPage($doc, data);
-//     res.send($doc.toString());
-//   }
-// }
+import fs from 'fs';
+import path from 'path';
+import express from 'express';
+import compression from 'compression';
+import cheerio from 'cheerio';
+import getWebpackSettings from '../../../shared/webpack-settings';
+import logger from '../../../shared/logger';
+import argv from '../../../shared/argv';
+import buildPage from './build-page';
+
+const webpackClientConfig = getWebpackSettings(/* is server */ false);
+const httpStaticPath = webpackClientConfig.output.publicPath;
+const fsClientOutputPath = webpackClientConfig.output.path;
+const clientEntryPoint = path.join(fsClientOutputPath, 'index.html');
+
+const HAS_PRERENDERING = argv.prerendering !== false;
+
+export default function setupDevServer(preRenderReactApp, expressApp) {
+
+  expressApp.use(compression());
+
+  const staticOptions = {
+    index: !HAS_PRERENDERING,
+  };
+
+  expressApp.use(httpStaticPath, express.static(fsClientOutputPath, staticOptions));
+
+  if (!HAS_PRERENDERING) {
+    expressApp.use((req, res) => {
+      res.sendFile(clientEntryPoint);
+    });
+  }
+
+  const $indexFile = cheerio(fs.readFileSync(clientEntryPoint));
+
+  expressApp.use(async (req, res) => {
+    const $doc = $indexFile.clone();
+
+    let renderedApp;
+    try {
+      renderedApp = await preRenderReactApp(req, res);
+    } catch (e) {
+      logger.error(`renderApp: Serving "${req.url}" crashed, trying without server-side rendering.`);
+      logger.error(e);
+
+      res.status(e.status || 500);
+      return res.sendFile(clientEntryPoint);
+    }
+
+    res.send(buildPage($doc, renderedApp));
+  });
+}
