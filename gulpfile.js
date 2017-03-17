@@ -3,10 +3,15 @@
 const fs = require('fs');
 const gulp = require('gulp');
 const babel = require('gulp-babel');
+const del = require('del');
 
 const babelRc = JSON.parse(fs.readFileSync('./.babelrc.node'));
 
-gulp.task('copy', () => {
+gulp.task('clean', () => {
+  return del(['./lib']);
+});
+
+gulp.task('copy', ['clean'], () => {
   return gulp
     .src('./src/**/*')
     .pipe(gulp.dest('./lib'));
