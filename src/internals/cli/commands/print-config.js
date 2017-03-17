@@ -7,6 +7,7 @@ export default function registerCommand(commander) {
     .command('print-config')
     .description('Prints out the parsed configuration of the framework')
     .action(() => {
-      logger.debug(JSON.stringify(frameworkConfig, null, 2));
+      logger.info('framework configuration:');
+      logger.info(`\n${JSON.stringify(frameworkConfig, null, 2)}`);
     });
 }

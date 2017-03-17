@@ -13,14 +13,12 @@ import defaultConfig from './default-config';
 function getUserConfig() {
   try {
     return JSON.parse(requireRawProject('.framework-config'));
-
-    // logger.info('".framework-config" found in app directory, overriding defaults.');
   } catch (e) {
     if (e.code !== 'ENOENT') {
       throw e;
     }
 
-    logger.info('No ".framework-config" found in app directory, using defaults.');
+    logger.debug('No ".framework-config" found in app directory, using defaults.');
     return {};
   }
 }
@@ -55,7 +53,7 @@ function checkDirectories(config: FrameworkConfigStruct) {
     const directory = config.directories[directoryName];
 
     if (!isDirectory(directory)) {
-      logger.warn(`framework configuration: directories.${directoryName} value ${JSON.stringify(directory)} is not a directory. Creating it.`);
+      logger.debug(`framework configuration: directories.${directoryName} value ${JSON.stringify(directory)} is not a directory. Creating it.`);
       mkdirp(config.directories[directoryName]);
     }
   }
@@ -74,9 +72,10 @@ function isDirectory(dir) {
 
 const config: FrameworkConfigStruct = merge(defaultConfig, resolveEntries(getUserConfig()));
 
-checkDirectories(config);
+if (config.directories.logs === null) {
+  config.directories.logs = config.directories.build;
+}
 
-logger.trace('Loaded App Configuration:');
-logger.trace(JSON.stringify(config));
+checkDirectories(config);
 
 export default config;
