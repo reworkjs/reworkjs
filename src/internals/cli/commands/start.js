@@ -36,7 +36,7 @@ export default function registerCommand(commander) {
       process.env.WATCH = process.env.NODE_ENV === 'development';
 
       if (!options.prerendering) {
-        return runServerWithoutPrerendering();
+        return runServerWithoutPrerendering(options);
       }
 
       logger.info(`You can disable server-side rendering using ${chalk.blue('--no-prerendering')}.`);
@@ -44,7 +44,11 @@ export default function registerCommand(commander) {
     });
 }
 
-function runServerWithoutPrerendering() {
+function runServerWithoutPrerendering(options) {
+  if (!process.argv.includes('--port')) {
+    process.arv.push('--port', options.port);
+  }
+
   return import(builders.client);
 }
 
