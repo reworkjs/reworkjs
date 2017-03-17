@@ -19,9 +19,6 @@ import { resolveRoot, resolveFrameworkSource } from '../../shared/resolve';
 import { isDev, isTest } from '../../shared/EnvUtil';
 import getWebpackSettings from '../../shared/webpack-settings';
 
-// TODO:
-// - Check out https://github.com/gaearon/react-hot-loader 3 when ready
-
 const ANY_MODULE_EXCEPT_FRAMEWORK = new RegExp(`node_modules\\/(?!${frameworkMetadata.name})`);
 
 function replaceBabelPreset(babelConfig) {
@@ -178,7 +175,6 @@ export default class WebpackBase {
         require.resolve('./global-srcset-loader'),
         {
           loader: 'image-webpack-loader',
-          // TODO: Review image-webpack-loader configuration
           query: {
             bypassOnDebug: true,
             mozjpeg: {
