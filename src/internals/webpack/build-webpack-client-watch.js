@@ -86,6 +86,10 @@ if (HAS_PRERENDERING) {
   });
 }
 
+if (!argv.port) {
+  throw new TypeError('missing argv --port.');
+}
+
 app.listen(argv.port, () => {
   printServerStarted(argv.port);
 });
