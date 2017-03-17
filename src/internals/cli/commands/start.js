@@ -1,9 +1,12 @@
 import childProcess from 'child_process';
-import path from 'path';
+import chalk from 'chalk';
 import Blessed from 'blessed';
 import getPort from 'get-port';
 import framework from '../../../shared/framework-metadata';
 import logger from '../../../shared/logger';
+import builders from '../../webpack/builders';
+
+chalk.enabled = true;
 
 /**
  * Need:
@@ -24,32 +27,25 @@ export default function registerCommand(commander) {
     .option('--port <port>', 'The port the server will listen to', Number, 3000)
     .option('--tunnel <tunnel_port>', 'The port of the tunnel', Number, -1)
     .option('--no-split', 'Disable terminal split-view')
-    .option('--env <env>', 'Overwrite NODE_ENV value', process.env.NODE_ENV || 'production')
     .action(options => {
 
       options.verbose = commander.verbose;
 
-      const env = options.env;
-      if (env === 'dev') {
-        process.env.NODE_ENV = 'development';
-      } else if (env === 'prod') {
-        process.env.NODE_ENV = 'production';
-      } else {
-        process.env.NODE_ENV = env;
-      }
+      logger.info(`Launching app in ${chalk.magenta(process.env.NODE_ENV)} mode...`);
 
-      logger.info(`Launching app in ${process.env.NODE_ENV} mode...`);
+      process.env.WATCH = process.env.NODE_ENV === 'development';
 
       if (!options.prerendering) {
         return runServerWithoutPrerendering();
       }
 
+      logger.info(`You can disable server-side rendering using ${chalk.blue('--no-prerendering')}.`);
       return runServerWithPrerendering(options);
     });
 }
 
 function runServerWithoutPrerendering() {
-  return require('../build-webpack-client'); // eslint-disable-line
+  return import(builders.client);
 }
 
 async function runServerWithPrerendering(options) {
@@ -71,7 +67,7 @@ async function runServerWithPrerendering(options) {
   const prerenderingPort = await getPort();
 
   // TODO: on dead process, ask user if they wish to relaunch them. Then do. Or don't.
-  children.clientBuilder = childProcess.fork(path.normalize(`${__dirname}/../build-webpack-client.js`), [
+  children.clientBuilder = childProcess.fork(builders.client, [
     '--port', options.port, '--prerendering-port', prerenderingPort, '--verbose', options.verbose,
   ], {
     stdio: ['inherit', out, out, 'ipc'],
@@ -80,7 +76,7 @@ async function runServerWithPrerendering(options) {
     }),
   });
 
-  children.serverBuilder = childProcess.fork(path.normalize(`${__dirname}/../build-webpack-server.js`), process.argv, {
+  children.serverBuilder = childProcess.fork(builders.server, process.argv, {
     stdio: ['inherit', out, out, 'ipc'],
     env: Object.assign(Object.create(process.env), {
       PROCESS_NAME: 'ServerBuilder',

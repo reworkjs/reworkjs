@@ -16,10 +16,11 @@ import projectMetadata from '../../shared/project-metadata';
 import frameworkMetadata from '../../shared/framework-metadata';
 import frameworkBabelRc from '../../shared/framework-babelrc';
 import { resolveRoot, resolveFrameworkSource } from '../../shared/resolve';
-import { isDev, isTest } from '../EnvUtil';
+import { isDev, isTest } from '../../shared/EnvUtil';
+import getWebpackSettings from '../../shared/webpack-settings';
 
 // TODO:
-// - Check out https://github.com/gaearon/react-hot-loader/tree/next/docs when ready
+// - Check out https://github.com/gaearon/react-hot-loader 3 when ready
 
 const ANY_MODULE_EXCEPT_FRAMEWORK = new RegExp(`node_modules\\/(?!${frameworkMetadata.name})`);
 
@@ -174,7 +175,7 @@ export default class WebpackBase {
       test: /\.(jpe?g|png|gif|svg)$/i,
       use: [
         'file-loader',
-        require.resolve('../../internals/global-srcset-loader'),
+        require.resolve('./global-srcset-loader'),
         {
           loader: 'image-webpack-loader',
           // TODO: Review image-webpack-loader configuration
@@ -282,10 +283,7 @@ export default class WebpackBase {
 
   getOutput(): Object {
     // Output to build directory.
-    const output = {
-      path: `${frameworkConfig.directories.build}/webpack-${this.isServer() ? 'server' : 'client'}`,
-      publicPath: this.getPublicPath(),
-    };
+    const output = getWebpackSettings(this.isServer()).output;
 
     if (this.isServer()) {
       output.libraryTarget = 'commonjs2';

@@ -6,9 +6,9 @@ import webpack from 'webpack';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 import printServerStarted from '../../framework/server/print-server-started';
-import webpackClientConfig from '../../shared/webpack/webpack.client';
 import logger from '../../shared/logger';
 import argv from '../../shared/argv';
+import webpackClientConfig from './webpack.client';
 
 const PRERENDERING_PORT = argv['prerendering-port'];
 const HAS_PRERENDERING = Boolean(PRERENDERING_PORT);

@@ -4,6 +4,7 @@ import '../../shared/regenerator';
 import framework from '../../shared/framework-metadata';
 import { getDefault } from '../../shared/util/ModuleUtil';
 import levels from '../../shared/logger/levels';
+import setEnv from './set-env';
 
 // register all commands.
 const commands = requireAll({
@@ -14,7 +15,8 @@ const commands = requireAll({
 
 program
   .version(framework.version)
-  .option('--verbose [verbose]', `set logger verbosity to one of {${Object.keys(levels).join(', ')}}`, 'info');
+  .option('--verbose [verbose]', `set logger verbosity to one of {${Object.keys(levels).join(', ')}}`, 'info')
+  .option('--env <env>', 'Overwrite NODE_ENV value');
 
 for (const file of Object.keys(commands)) {
   const registerCommand = getDefault(commands[file]);
@@ -22,6 +24,10 @@ for (const file of Object.keys(commands)) {
     registerCommand(program);
   }
 }
+
+program.parseOptions(process.argv);
+
+setEnv(program.env);
 
 program.parse(process.argv);
 

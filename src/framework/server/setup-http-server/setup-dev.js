@@ -2,21 +2,23 @@ import fs from 'fs';
 import path from 'path';
 import cheerio from 'cheerio';
 import getFilenameFromUrl from 'webpack-dev-middleware/lib/GetFilenameFromUrl';
-import webpackClientConfig from '../../../shared/webpack/webpack.client';
+import getWebpackSettings from '../../../shared/webpack-settings';
 import logger from '../../../shared/logger';
 import buildPage from './build-page';
+
+const webpackClientConfig = getWebpackSettings(/* is server */ false);
+const httpStaticPath = webpackClientConfig.output.publicPath;
+const fsClientOutputPath = webpackClientConfig.output.path;
 
 export default function setupDevServer(preRenderReactApp, expressApp) {
 
   expressApp.use((req, res) => {
-    const httpStaticPath = webpackClientConfig.output.publicPath;
-    const clientOutputPath = webpackClientConfig.output.path;
 
-    const fileName = getFilenameFromUrl(httpStaticPath, clientOutputPath, req.url);
+    const fileName = getFilenameFromUrl(httpStaticPath, fsClientOutputPath, req.url);
 
     // pre-renderer root route rather than giving index.html.
-    if (!fileName || fileName === clientOutputPath) {
-      return renderRoute(req, res, clientOutputPath, preRenderReactApp);
+    if (!fileName || fileName === fsClientOutputPath) {
+      return renderRoute(req, res, preRenderReactApp);
     }
 
     isReadable(fileName, readable => {
@@ -24,7 +26,7 @@ export default function setupDevServer(preRenderReactApp, expressApp) {
         return serveStaticFile(res, fileName);
       }
 
-      return renderRoute(req, res, clientOutputPath, preRenderReactApp);
+      return renderRoute(req, res, preRenderReactApp);
     });
   });
 }
@@ -32,11 +34,11 @@ export default function setupDevServer(preRenderReactApp, expressApp) {
 /**
  * Server-side rendering
  */
-async function renderRoute(req, res, clientOutputPath, preRenderReactApp) {
+async function renderRoute(req, res, preRenderReactApp) {
 
   logger.debug(`pre-rendering app for route ${JSON.stringify(req.url)}`);
 
-  const clientEntryPoint = path.join(clientOutputPath, 'index.html');
+  const clientEntryPoint = path.join(fsClientOutputPath, 'index.html');
   let renderedApp;
   try {
     renderedApp = await preRenderReactApp(req, res);

@@ -1,15 +1,14 @@
+import path from 'path';
 import chalk from 'chalk';
 import '../../shared/regenerator';
 import logger from '../../shared/logger';
-import serverWebpackConfig from '../../shared/webpack/webpack.server';
-import compileWebpack, { StatDetails, EntryPoint } from '../../shared/compile-webpack';
-import frameworkConfig from '../../shared/framework-config';
+import config from './webpack.server';
+import compileWebpack, { StatDetails, EntryPoint } from './compile-webpack';
 
 chalk.enabled = true;
 logger.info('Building your server-side app, this might take a minute.');
-logger.info(`You can disable server-side rendering using ${chalk.blue('--no-prerendering')}.`);
 
-compileWebpack(serverWebpackConfig, true, (stats: StatDetails) => {
+compileWebpack(config, process.env.WATCH === true, (stats: StatDetails) => {
   const entryPoints: EntryPoint = stats.entrypoints.main.assets.filter(fileName => {
     if (!fileName.endsWith('.js')) {
       return false;
@@ -25,16 +24,18 @@ compileWebpack(serverWebpackConfig, true, (stats: StatDetails) => {
     throw new Error('Webpack built but the output does not have exactly one entry point. This is a bug.');
   }
 
-  const entryPoint = entryPoints[0];
-  const serverFile = `${frameworkConfig.directories.build}/webpack-server/${entryPoint}`;
+  const entryPoint = path.join(config.output.path, entryPoints[0]);
 
-  logger.debug(`Entry point: ${chalk.blue(serverFile)}`);
+  // don't need to know about the entry point if it is handled by another process automatically.
+  const method = process.send ? 'debug' : 'info';
+
+  logger[method](`Server entry point: ${chalk.blue(entryPoint)}`);
 
   // tell manager CLI to launch server
   if (process.send) {
     process.send({
       cmd: 'launch',
-      exe: serverFile,
+      exe: entryPoint,
     });
   }
 });

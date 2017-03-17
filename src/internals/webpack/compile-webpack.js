@@ -1,10 +1,11 @@
 // @flow
+
 import fs from 'fs';
 import mkdirp from 'mkdirp';
 import webpack from 'webpack';
 import chalk from 'chalk';
-import logger from './logger';
-import frameworkConfig from './framework-config';
+import logger from '../../shared/logger';
+import frameworkConfig from '../../shared/framework-config';
 
 export default function compileWebpack(config: Object, watch: boolean, callback: ?(entryPoint: StatDetails) => void) {
   const compiler = webpack(config);
