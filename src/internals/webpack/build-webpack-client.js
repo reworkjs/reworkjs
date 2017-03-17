@@ -8,7 +8,7 @@ process.env.PROCESS_NAME = 'Server';
 
 logger.info('Building your client-side app, this might take a minute.');
 
-if (process.env.WATCH === true) {
+if (process.env.WATCH === 'true' || process.env.WATCH === true) {
   import('./build-webpack-client-watch');
 } else {
   compileWebpack(clientWebpackConfig, false, () => {
