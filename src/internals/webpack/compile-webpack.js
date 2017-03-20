@@ -13,6 +13,10 @@ export default function compileWebpack(config: Object, watch: boolean, callback:
     ? cb => compiler.watch({}, cb)
     : cb => compiler.run(cb);
 
+  compiler.plugin('compile', () => {
+    logger.info('Building...');
+  });
+
   try {
     compile((err: Error, stats: Stats) => {
 

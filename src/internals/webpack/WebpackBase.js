@@ -371,6 +371,8 @@ export default class WebpackBase {
       plugins.push(
         // enable hot reloading.
         new webpack.HotModuleReplacementPlugin(),
+        new webpack.NamedModulesPlugin(),
+
         new webpack.NoEmitOnErrorsPlugin(),
 
         // Watcher doesn't work well if you mistype casing in a path so we use
