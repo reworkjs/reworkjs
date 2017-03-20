@@ -3,6 +3,8 @@
 ## Parallel Builds
 
 - start: Auto-relaunch dead processes
+- rjs start --env prod --prerendering 
+- Add the possibility to close windows of completed processes in split view
 
 ## Future versions
 
@@ -20,7 +22,7 @@
   - Alternatively, run `https://www.npmjs.com/package/node-zopfli` + `https://www.npmjs.com/package/brotli`
    - output to /gzip + /brotli
    - server sends brotli or gzip or uncompressed depending on Accept Header
-   - Remove `compression` middleware
+   - Only use `compression` to compress pre-rendered index.html files
 - Server-side rendering:
   - allow ReactHelmet to override pre-existing meta-tags.
 - Intl:
@@ -47,14 +49,13 @@
 ## Potential future versions
 
 - eslint plugin that detects @provider and warns if anything in the annotated class isn't static
-- Install current React-HMR system with https://github.com/gaearon/react-hot-loader ?
+- Replace current React-HMR system with https://github.com/gaearon/react-hot-loader ?
 - Review css-loader's CSSNano options
 - Review image-webpack-loader options
 - Optimise Bundle-loader (if even possible)
 - Migrate to yarn
 - add "transform-export-default-name"
 - add "babel-plugin-annotate-console-log" (dev-only)
-- add webpack WatchMissingNodeModulesPlugin
 - @provider
   - Getting non-defined state outside of reducers should throw
   - Setting non-defined state outside of reducers should throw
