@@ -15,6 +15,7 @@ import framework from '../../../shared/framework-metadata';
 import logger from '../../../shared/logger';
 import builders from '../../webpack/builders';
 import { listenMsg } from '../process';
+import CliSplitView from '../CliSplitView';
 
 chalk.enabled = true;
 
@@ -90,7 +91,14 @@ async function runServerWithPrerendering(options) {
     }),
   });
 
-  let serverOutput;
+  let splitView;
+  if (options.split) {
+    splitView = new CliSplitView(framework.name);
+
+    splitView.addScreen('server builder', children.serverBuilder);
+    splitView.addScreen('client builder', children.clientBuilder);
+  }
+
   listenMsg(children.serverBuilder, 'launch', data => {
     const exe = data.exe;
 
@@ -102,58 +110,13 @@ async function runServerWithPrerendering(options) {
       // send HMR signal.
       children.serverInstance.kill('SIGUSR2');
     } else {
-      startPreRenderingServer({ children, exe, options, preRenderingPort, serverOutput, out, screen });
+      startPreRenderingServer({ children, exe, options, preRenderingPort, splitView, out });
     }
   });
-
-  if (!options.split) {
-    return;
-  }
-
-  const screen = Blessed.screen({
-    smartCSR: true,
-    title: framework.name,
-    dockBorders: true,
-  });
-
-  const clientBuilderOutput = simpleBox('client builder', {
-    right: 0,
-    top: 0,
-    width: '50%',
-  });
-
-  const serverWrapper = Blessed.box({
-    top: 0,
-    width: '50%',
-  });
-
-  const serverBuilderOutput = simpleBox('server builder', {
-    left: 0,
-    top: 0,
-    height: '50%',
-  });
-
-  serverOutput = simpleBox('server instance', {
-    left: 0,
-    top: '50%',
-    height: '50%',
-  });
-
-  serverWrapper.append(serverOutput.outer);
-  serverWrapper.append(serverBuilderOutput.outer);
-
-  screen.append(serverWrapper);
-  screen.append(clientBuilderOutput.outer);
-
-  screen.key(['escape', 'q', 'C-c'], () => process.exit(0));
-  screen.render();
-
-  redirect(children.serverBuilder, serverBuilderOutput.inner, screen);
-  redirect(children.clientBuilder, clientBuilderOutput.inner, screen);
 }
 
 function startPreRenderingServer(args) {
-  const { children, exe, options, preRenderingPort, serverOutput, out, screen } = args;
+  const { children, exe, options, preRenderingPort, splitView, out } = args;
 
   children.serverInstance = childProcess.fork(exe, [
     '--port', preRenderingPort, '--hide-http', '--verbose', options.verbose,
@@ -169,79 +132,7 @@ function startPreRenderingServer(args) {
     startPreRenderingServer(args);
   });
 
-  if (serverOutput) {
-    redirect(children.serverInstance, serverOutput.inner, screen);
+  if (splitView) {
+    splitView.addScreen('server', children.serverInstance);
   }
-}
-
-function redirect(child, subTerminal, screen) {
-
-  child.stdout.on('data', data => {
-    // remove final \r\n added by writeln.
-    const msg = data.toString().replace(/(\r\n|\n|\r)$/, '');
-
-    subTerminal.pushLine(msg);
-    screen.render();
-  });
-
-  child.stderr.on('data', data => {
-    // remove final \r\n added by writeln.
-    const msg = data.toString().replace(/(\r\n|\n|\r)$/, '');
-
-    subTerminal.pushLine(`{red-bg}${msg}\n{/}`);
-    screen.render();
-  });
-
-  child.on('close', code => {
-    if (code == null) {
-      subTerminal.pushLine('\n{blue-bg}\nProcess terminated\n{/}');
-    } else {
-      subTerminal.pushLine(`\n{${code === 0 ? 'green' : 'red'}-bg}\nProcess completed ${code === 0 ? 'Successfully' : `with error code ${code}`}\n{/}\n`);
-    }
-
-    screen.render();
-  });
-}
-
-function simpleBox(name, otherParams) {
-
-  const outerBox = Blessed.box(otherParams);
-
-  const titleBox = Blessed.text({
-    content: name,
-    width: '100%',
-    top: 0,
-    left: 1,
-    style: {
-      fg: 'white',
-    },
-  });
-
-  const innerBox = Blessed.box({
-    tags: true,
-    border: {
-      type: 'line',
-    },
-    scrollable: true,
-    mouse: true,
-    keys: true,
-    // alwaysScroll: true,
-    scrollbar: {
-      ch: ' ',
-      inverse: true,
-    },
-    top: 1,
-    width: '100%',
-    // height: '80%',
-    style: {
-      border: {
-        fg: '#f0f0f0',
-      },
-    },
-  });
-
-  outerBox.append(titleBox);
-  outerBox.append(innerBox);
-
-  return { outer: outerBox, inner: innerBox };
 }
