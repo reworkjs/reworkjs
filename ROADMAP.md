@@ -2,13 +2,25 @@
 
 ## Parallel Builds
 
-- Fix `rjs start --env prod --no-prerendering`
-- Fix `rjs start --env prod --prerendering`
-- start: Auto-relaunch the server if HMR failed.
 - start: Auto-relaunch dead processes
 
 ## Future versions
 
+- Add `rjs launch`
+  - Same as start but doesn't build.
+- Install `react-dev-utils`:
+  - use `formatWebpackMessages` in builder output
+  - use `openBrowser` in `rjs start`
+  - Install `webpackHotDevClient` & `WatchMissingNodeModulesPlugin`
+- ServerBuilder:
+  - Does not need to build static assets (index.html, .css, /public)
+  - Needs to know the reference to these assets
+- ClientBuilder:
+  - Add `compression-webpack-plugin` and `brotli-webpack-plugin` ?
+  - Alternatively, run `https://www.npmjs.com/package/node-zopfli` + `https://www.npmjs.com/package/brotli`
+   - output to /gzip + /brotli
+   - server sends brotli or gzip or uncompressed depending on Accept Header
+   - Remove `compression` middleware
 - Server-side rendering:
   - allow ReactHelmet to override pre-existing meta-tags.
 - Intl:
