@@ -44,12 +44,15 @@ export default function registerCommand(commander) {
     });
 }
 
-function runServerWithoutPrerendering(options) {
+async function runServerWithoutPrerendering(options) {
   if (!process.argv.includes('--port')) {
-    process.arv.push('--port', options.port);
+    process.argv.push('--port', options.port);
   }
 
-  return import(builders.client);
+  await Promise.all([
+    import(builders.client),
+    import('../../../framework/server/launch-http-server'),
+  ]);
 }
 
 async function runServerWithPrerendering(options) {
