@@ -4,8 +4,6 @@ import logger from '../../shared/logger';
 import clientWebpackConfig from './webpack.client';
 import compileWebpack from './compile-webpack';
 
-process.env.PROCESS_NAME = 'Server';
-
 logger.info('Building your client-side app, this might take a minute.');
 
 if (process.env.WATCH === 'true' || process.env.WATCH === true) {

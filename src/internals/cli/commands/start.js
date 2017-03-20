@@ -1,13 +1,3 @@
-import childProcess from 'child_process';
-import chalk from 'chalk';
-import Blessed from 'blessed';
-import getPort from 'get-port';
-import framework from '../../../shared/framework-metadata';
-import logger from '../../../shared/logger';
-import builders from '../../webpack/builders';
-
-chalk.enabled = true;
-
 /**
  * Need:
  * - Start a client build process
@@ -17,6 +7,16 @@ chalk.enabled = true;
  *
  * - The server needs to communicate with the client build process (needs to know the build status)
  */
+import childProcess from 'child_process';
+import chalk from 'chalk';
+import Blessed from 'blessed';
+import getPort from 'get-port';
+import framework from '../../../shared/framework-metadata';
+import logger from '../../../shared/logger';
+import builders from '../../webpack/builders';
+import { listenMsg } from '../process';
+
+chalk.enabled = true;
 
 export default function registerCommand(commander) {
 
@@ -71,11 +71,11 @@ async function runServerWithPrerendering(options) {
 
   const out = options.split ? 'pipe' : 'inherit';
 
-  const prerenderingPort = await getPort();
+  const preRenderingPort = await getPort();
 
   // TODO: on dead process, ask user if they wish to relaunch them. Then do. Or don't.
   children.clientBuilder = childProcess.fork(builders.client, [
-    '--port', options.port, '--prerendering-port', prerenderingPort, '--verbose', options.verbose,
+    '--port', options.port, '--prerendering-port', preRenderingPort, '--verbose', options.verbose,
   ], {
     stdio: ['inherit', out, out, 'ipc'],
     env: Object.assign(Object.create(process.env), {
@@ -90,36 +90,19 @@ async function runServerWithPrerendering(options) {
     }),
   });
 
-  // TODO hot update serverInstance using "webpack/hot/signal"
   let serverOutput;
-  children.serverBuilder.on('message', data => {
-    if (data == null || typeof data !== 'object' || !data.cmd) {
-      return;
-    }
+  listenMsg(children.serverBuilder, 'launch', data => {
+    const exe = data.exe;
 
-    if (data.cmd !== 'launch') {
-      return;
-    }
-
-    if (!data.exe) {
-      return;
+    if (!exe) {
+      throw new TypeError('received command "launch" from server-builder but did not receive the entry point to launch.');
     }
 
     if (children.serverInstance) {
-      children.serverInstance.kill();
-    }
-
-    children.serverInstance = childProcess.fork(data.exe, [
-      '--port', prerenderingPort, '--hide-http', '--verbose', options.verbose,
-    ], {
-      stdio: ['inherit', out, out, 'ipc'],
-      env: Object.assign(Object.create(process.env), {
-        PROCESS_NAME: 'Server',
-      }),
-    });
-
-    if (serverOutput) {
-      redirect(children.serverInstance, serverOutput.inner, screen);
+      // send HMR signal.
+      children.serverInstance.kill('SIGUSR2');
+    } else {
+      startPreRenderingServer({ children, exe, options, preRenderingPort, serverOutput, out, screen });
     }
   });
 
@@ -167,6 +150,28 @@ async function runServerWithPrerendering(options) {
 
   redirect(children.serverBuilder, serverBuilderOutput.inner, screen);
   redirect(children.clientBuilder, clientBuilderOutput.inner, screen);
+}
+
+function startPreRenderingServer(args) {
+  const { children, exe, options, preRenderingPort, serverOutput, out, screen } = args;
+
+  children.serverInstance = childProcess.fork(exe, [
+    '--port', preRenderingPort, '--hide-http', '--verbose', options.verbose,
+  ], {
+    stdio: ['inherit', out, out, 'ipc'],
+    env: Object.assign(Object.create(process.env), {
+      PROCESS_NAME: 'Server',
+    }),
+  });
+
+  listenMsg(children.serverInstance, 'restart', () => {
+    children.serverInstance.kill();
+    startPreRenderingServer(args);
+  });
+
+  if (serverOutput) {
+    redirect(children.serverInstance, serverOutput.inner, screen);
+  }
 }
 
 function redirect(child, subTerminal, screen) {

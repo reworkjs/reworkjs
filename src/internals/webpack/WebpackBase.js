@@ -125,6 +125,7 @@ export default class WebpackBase {
       config.externals = [
         nodeExternals({
           whitelist: [
+            // 'webpack/hot/signal',
             new RegExp(`^${frameworkMetadata.name}`),
             /\.css$/i,
           ],
@@ -144,11 +145,6 @@ export default class WebpackBase {
   buildLoaders() {
 
     /*
-     * Unsupported file formats:
-     * - BMP
-     * - PSD
-     * - TIFF
-     *
      * Supported file formats:
      * - GIF
      * - JPEG/JPG
@@ -266,7 +262,12 @@ export default class WebpackBase {
         // Necessary for hot reloading with IE
         'eventsource-polyfill',
         'webpack-hot-middleware/client',
-        resolveRoot('lib/internals/dev-preamble.js'),
+        require.resolve('./dev-preamble'),
+      );
+    } else if (this.isDev && this.isServer()) {
+      entry.unshift(
+        // hot reload if parent sends signal SIGUSR2
+        require.resolve('./hmr-server'),
       );
     }
 
@@ -332,8 +333,12 @@ export default class WebpackBase {
   }
 
   getPlugins() {
+    // TODO inject DLLs <script data-dll='true' src='/${dllName}.dll.js'></script>`
+    // TODO https://github.com/diurnalist/chunk-manifest-webpack-plugin
+
+    const NODE_ENV = JSON.stringify(process.env.NODE_ENV);
     const definePluginArg = {
-      'process.env.BUILD_ENV': JSON.stringify(process.env.NODE_ENV), // eslint-disable-line no-process-env
+      'process.env.BUILD_ENV': NODE_ENV, // eslint-disable-line no-process-env
       webpack_globals: {
         PROCESS_NAME: JSON.stringify(`${projectMetadata.name} (${this.isServer() ? 'server' : 'client'})`),
         SIDE: JSON.stringify(this.isServer() ? 'server' : 'client'),
@@ -347,9 +352,7 @@ export default class WebpackBase {
     };
 
     if (!this.isServer()) {
-      definePluginArg['process.env'] = {
-        NODE_ENV: JSON.stringify(process.env.NODE_ENV), // eslint-disable-line no-process-env
-      };
+      definePluginArg['process.env'] = { NODE_ENV };
 
       definePluginArg['process.argv'] = JSON.stringify(process.argv); // eslint-disable-line no-process-env
     }
@@ -363,9 +366,6 @@ export default class WebpackBase {
 
       new webpack.DefinePlugin(definePluginArg),
     ];
-
-    // TODO inject DLLs <script data-dll='true' src='/${dllName}.dll.js'></script>`
-    // TODO https://github.com/diurnalist/chunk-manifest-webpack-plugin
 
     if (this.isDev) {
       plugins.push(
@@ -390,30 +390,32 @@ export default class WebpackBase {
           templateContent: templateContent(),
         }),
       );
-    } else {
-      if (!this.isServer()) {
-        // there is no need to optimise bundle sizes on the server
-        plugins.push(
-          new webpack.optimize.CommonsChunkPlugin({
-            name: 'common',
-            children: true,
-            minChunks: 2,
-            async: true,
-          }),
+    }
 
-          new webpack.optimize.UglifyJsPlugin({
-            comments: false,
-            compress: {
-              warnings: false, // ...but do not show warnings in the console (there is a lot of them)
-            },
-          }),
+    if (!this.isDev && !this.isServer()) {
+      // there is no need to optimise bundle sizes on the server
+      plugins.push(
+        new webpack.optimize.CommonsChunkPlugin({
+          name: 'common',
+          children: true,
+          minChunks: 2,
+          async: true,
+        }),
 
-          // OccurrenceOrderPlugin is needed for long-term caching to work properly.
-          // See http://mxs.is/googmv
-          new webpack.optimize.OccurrenceOrderPlugin(true),
-        );
-      }
+        new webpack.optimize.UglifyJsPlugin({
+          comments: false,
+          compress: {
+            warnings: false, // ...but do not show warnings in the console (there is a lot of them)
+          },
+        }),
 
+        // OccurrenceOrderPlugin is needed for long-term caching to work properly.
+        // See http://mxs.is/googmv
+        new webpack.optimize.OccurrenceOrderPlugin(true),
+      );
+    }
+
+    if (!this.isDev) {
       plugins.push(
         new WebpackCleanupPlugin({ quiet: true }),
 
