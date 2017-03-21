@@ -10,6 +10,7 @@
     "transform-decorators-legacy",
     "syntax-async-functions",
     "transform-async-to-generator",
-    "transform-flow-strip-types"
+    "transform-flow-strip-types",
+    "system-import-transformer"
   ]
 }

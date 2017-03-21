@@ -1,5 +1,6 @@
 export type FrameworkConfigStruct = {
   directories: {
+    logs: string,
     build: string,
     resources: string,
     routes: string,

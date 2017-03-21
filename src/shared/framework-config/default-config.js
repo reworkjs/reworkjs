@@ -2,6 +2,7 @@ import { resolveProject, resolveFrameworkSource } from '../../shared/resolve';
 
 const defaultConfig = {
   directories: {
+    logs: null,
     build: resolveProject('.build'),
     resources: resolveProject('public'),
     routes: resolveProject('app/routes'),

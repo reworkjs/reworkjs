@@ -1,43 +1,53 @@
 // @flow
+
 import fs from 'fs';
 import mkdirp from 'mkdirp';
 import webpack from 'webpack';
 import chalk from 'chalk';
-import logger from './logger';
-import frameworkConfig from './framework-config';
+import logger from '../../shared/logger';
+import frameworkConfig from '../../shared/framework-config';
 
 export default function compileWebpack(config: Object, watch: boolean, callback: ?(entryPoint: StatDetails) => void) {
   const compiler = webpack(config);
-
   const compile = watch
     ? cb => compiler.watch({}, cb)
     : cb => compiler.run(cb);
 
-  compile((err: Error, stats: Stats) => {
-
-    if (err) {
-      logger.error('Fatal error when building.');
-      logger.error(err);
-      throw err;
-    }
-
-    logger.debug(stats.toString());
-
-    if (hasErrors(stats) || hasWarnings(stats)) {
-      printErrors(stats);
-      writeDebug(stats);
-    } else {
-      deleteDebug();
-    }
-
-    if (!hasErrors(stats)) {
-      logger.info('Build complete.');
-
-      if (callback) {
-        callback(stats.toJson());
-      }
-    }
+  compiler.plugin('compile', () => {
+    logger.info('Building...');
   });
+
+  try {
+    compile((err: Error, stats: Stats) => {
+
+      if (err) {
+        logger.error('Fatal error when building.');
+        logger.error(err);
+        throw err;
+      }
+
+      logger.trace(stats.toString());
+
+      if (hasErrors(stats) || hasWarnings(stats)) {
+        printErrors(stats);
+        writeDebug(stats);
+      } else {
+        deleteDebug();
+      }
+
+      if (!hasErrors(stats)) {
+        logger.info('Build complete.');
+
+        if (callback) {
+          callback(stats.toJson());
+        }
+      }
+    });
+  } catch (e) {
+    logger.error('Fatal error when building.');
+    logger.error(e);
+    throw e;
+  }
 }
 
 function hasErrors(stats: Stats) {

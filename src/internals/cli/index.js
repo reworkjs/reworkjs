@@ -1,35 +1,42 @@
+import program from 'commander';
+import requireAll from 'require-all';
 import '../../shared/regenerator';
-import argv from '../../shared/argv';
-import logger from '../../shared/logger';
-import commandList from './command-list';
+import framework from '../../shared/framework-metadata';
+import { getDefault } from '../../shared/util/ModuleUtil';
+import levels from '../../shared/logger/levels';
+import setEnv from './set-env';
 
-const { _: mainArgs, ...otherArgs } = argv;
-const commandName = mainArgs[0] || commandList.help.name;
-const params = mainArgs.splice(1);
+process.on('unhandledRejection', reason => {
+  console.error('Unhandled Rejections:');
+  console.error(reason);
 
-/**
- * Returns the command matching name, or die.
- * @param name - The name of the command.
- * @returns The command.
- */
-export function getCommand(name: string): Function {
-  if (Object.prototype.hasOwnProperty.call(commandList, name)) {
-    return commandList[name];
-  }
-
-  logger.error(`Unknown command ${JSON.stringify(name)}`);
-  logger.info('Use `help` for a list of commands');
   process.exit(1);
+});
+
+// register all commands.
+const commands = requireAll({
+  dirname: `${__dirname}/commands`,
+  filter: /.*\.js$/,
+  recursive: true,
+});
+
+program
+  .version(framework.version)
+  .option('--verbose [verbose]', `set logger verbosity to one of {${Object.keys(levels).join(', ')}}`, 'info')
+  .option('--env <env>', 'Overwrite NODE_ENV value');
+
+for (const file of Object.keys(commands)) {
+  const registerCommand = getDefault(commands[file]);
+  if (typeof registerCommand === 'function') {
+    registerCommand(program);
+  }
 }
 
-(async function main() {
-  try {
-    await getCommand(commandName)(params, otherArgs);
-  } catch (e) {
-    logger.error(e);
-    process.exit(1);
-  }
-}());
+program.parseOptions(process.argv);
+
+setEnv(program.env);
+
+program.parse(process.argv);
 
 /*
  ## `build`

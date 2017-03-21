@@ -1,6 +1,8 @@
 import winston from 'winston';
 import argv from '../argv';
 import globals from '../globals';
+import framework from '../framework-metadata';
+import { getDefault } from '../util/ModuleUtil';
 import levels from './levels';
 
 let requestedLevel;
@@ -34,25 +36,31 @@ logger.add(winston.transports.Console, {
   level: actualLevel,
   prettyPrint: true,
   colorize: true,
+  stderrLevels: ['warn', 'error'],
   silent: false,
   timestamp: false,
   label: globals.PROCESS_NAME,
 });
 
-logger.add(winston.transports.File, {
-  prettyPrint: false,
-  level: actualLevel,
-  silent: false,
-  colorize: true,
-  timestamp: true,
-  filename: './.framework.log',
-  maxsize: 40000,
-  maxFiles: 10,
-  json: false,
-});
-
 if (actualLevel !== requestedLevel) {
-  logger.warn(`Invalid verbosity value ${JSON.stringify(requestedLevel)}, must be one of "${Object.keys(levels).join('", "')}". Using "${actualLevel}" instead.`);
+  logger.warn(`Invalid --verbose value ${JSON.stringify(requestedLevel)}, must be one of "${Object.keys(levels).join('", "')}". Using "${actualLevel}" instead.`);
 }
 
 export default logger;
+
+// needs to be loaded after logger because the config builder uses the logger.
+import('../framework-config').then(config => {
+  config = getDefault(config);
+
+  logger.add(winston.transports.File, {
+    prettyPrint: false,
+    level: actualLevel,
+    silent: false,
+    colorize: true,
+    timestamp: true,
+    filename: `${config.directories.build}/${framework.name}.log`,
+    maxsize: 40000,
+    maxFiles: 10,
+    json: false,
+  });
+});

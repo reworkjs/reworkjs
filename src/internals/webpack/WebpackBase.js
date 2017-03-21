@@ -16,10 +16,8 @@ import projectMetadata from '../../shared/project-metadata';
 import frameworkMetadata from '../../shared/framework-metadata';
 import frameworkBabelRc from '../../shared/framework-babelrc';
 import { resolveRoot, resolveFrameworkSource } from '../../shared/resolve';
-import { isDev, isTest } from '../EnvUtil';
-
-// TODO:
-// - Check out https://github.com/gaearon/react-hot-loader/tree/next/docs when ready
+import { isDev, isTest } from '../../shared/EnvUtil';
+import getWebpackSettings from '../../shared/webpack-settings';
 
 const ANY_MODULE_EXCEPT_FRAMEWORK = new RegExp(`node_modules\\/(?!${frameworkMetadata.name})`);
 
@@ -57,10 +55,8 @@ export default class WebpackBase {
   }
 
   buildCssLoader(options = {}) {
-    // TODO
-    // Note: For prerendering with extract-text-webpack-plugin you should use css-loader/locals instead of style-loader!css-loader in the prerendering bundle. It doesn't embed CSS but only exports the identifier mappings.
     const loaderOptions = {
-      importLoaders: 1,
+      importLoaders: options.importLoaders || 1,
     };
 
     if (this.isDev) {
@@ -116,7 +112,7 @@ export default class WebpackBase {
         alias: this.getAliases(),
       },
       performance: {
-        hints: !this.isDev,
+        hints: this.isDev || this.isServer() ? false : 'warning',
       },
     };
 
@@ -129,6 +125,7 @@ export default class WebpackBase {
       config.externals = [
         nodeExternals({
           whitelist: [
+            // 'webpack/hot/signal',
             new RegExp(`^${frameworkMetadata.name}`),
             /\.css$/i,
           ],
@@ -147,6 +144,18 @@ export default class WebpackBase {
 
   buildLoaders() {
 
+    /*
+     * Supported file formats:
+     * - GIF
+     * - JPEG/JPG
+     * - PNG
+     * - WebP
+     * - SVG
+     */
+
+    // TODO consider using url-loader rather than file-loader maybe ?
+    // Need to test perf gain.
+
     const rules = [{
       test: /\.jsx?$/i,
       loader: 'babel-loader',
@@ -156,28 +165,34 @@ export default class WebpackBase {
       test: /\.(eot|ttf|woff|woff2)(\?.*$|$)/i,
       loader: 'file-loader',
     }, {
-      test: /\.(jpeg|png|gif|svg)$/i,
-      use: ['file-loader', {
-        loader: 'image-webpack-loader',
-        // TODO: Review image-webpack-loader configuration
-        query: {
-          bypassOnDebug: true,
-          mozjpeg: {
-            progressive: true,
+      test: /\.(jpe?g|png|gif|svg)$/i,
+      use: [
+        'file-loader',
+        require.resolve('./global-srcset-loader'),
+        {
+          loader: 'image-webpack-loader',
+          query: {
+            bypassOnDebug: true,
+            mozjpeg: {
+              progressive: true,
+            },
+            gifsicle: {
+              interlaced: false,
+            },
+            optipng: {
+              optimizationLevel: 7,
+            },
+            pngquant: {
+              quality: '65-90',
+              speed: 4,
+            },
+            svgo: {},
           },
-          gifsicle: {
-            interlaced: false,
-          },
-          optipng: {
-            optimizationLevel: 7,
-          },
-          pngquant: {
-            quality: '65-90',
-            speed: 4,
-          },
-          svgo: {},
         },
-      }],
+      ],
+    }, {
+      test: /\.webp/i,
+      loader: 'file-loader',
     }, {
       test: /\.json$/i,
       loader: 'json-loader',
@@ -211,7 +226,7 @@ export default class WebpackBase {
     const cssLoaders = [{
       test: /\.(sc|sa|c)ss$/i,
       exclude: ANY_MODULE_EXCEPT_FRAMEWORK,
-      use: [this.buildCssLoader({ modules: true }), 'postcss-loader', 'sass-loader'],
+      use: [this.buildCssLoader({ modules: true, importLoaders: 2 }), 'postcss-loader', 'sass-loader'],
     }, {
       test: /\.css$/i,
       include: ANY_MODULE_EXCEPT_FRAMEWORK,
@@ -224,7 +239,7 @@ export default class WebpackBase {
         cssLoader.use = [styleLoader, ...cssLoader.use];
       } else {
         cssLoader.use = ExtractTextPlugin.extract({
-          fallbackLoader: styleLoader,
+          fallback: styleLoader,
           use: cssLoader.use,
         });
       }
@@ -247,7 +262,12 @@ export default class WebpackBase {
         // Necessary for hot reloading with IE
         'eventsource-polyfill',
         'webpack-hot-middleware/client',
-        resolveRoot('lib/internals/dev-preamble.js'),
+        require.resolve('./dev-preamble'),
+      );
+    } else if (this.isDev && this.isServer()) {
+      entry.unshift(
+        // hot reload if parent sends signal SIGUSR2
+        require.resolve('./hmr-server'),
       );
     }
 
@@ -260,10 +280,7 @@ export default class WebpackBase {
 
   getOutput(): Object {
     // Output to build directory.
-    const output = {
-      path: `${frameworkConfig.directories.build}/webpack-${this.isServer() ? 'server' : 'client'}`,
-      publicPath: this.getPublicPath(),
-    };
+    const output = getWebpackSettings(this.isServer()).output;
 
     if (this.isServer()) {
       output.libraryTarget = 'commonjs2';
@@ -316,8 +333,12 @@ export default class WebpackBase {
   }
 
   getPlugins() {
+    // TODO inject DLLs <script data-dll='true' src='/${dllName}.dll.js'></script>`
+    // TODO https://github.com/diurnalist/chunk-manifest-webpack-plugin
+
+    const NODE_ENV = JSON.stringify(process.env.NODE_ENV);
     const definePluginArg = {
-      'process.env.BUILD_ENV': JSON.stringify(process.env.NODE_ENV), // eslint-disable-line no-process-env
+      'process.env.BUILD_ENV': NODE_ENV, // eslint-disable-line no-process-env
       webpack_globals: {
         PROCESS_NAME: JSON.stringify(`${projectMetadata.name} (${this.isServer() ? 'server' : 'client'})`),
         SIDE: JSON.stringify(this.isServer() ? 'server' : 'client'),
@@ -331,9 +352,7 @@ export default class WebpackBase {
     };
 
     if (!this.isServer()) {
-      definePluginArg['process.env'] = {
-        NODE_ENV: JSON.stringify(process.env.NODE_ENV), // eslint-disable-line no-process-env
-      };
+      definePluginArg['process.env'] = { NODE_ENV };
 
       definePluginArg['process.argv'] = JSON.stringify(process.argv); // eslint-disable-line no-process-env
     }
@@ -348,13 +367,12 @@ export default class WebpackBase {
       new webpack.DefinePlugin(definePluginArg),
     ];
 
-    // TODO inject DLLs <script data-dll='true' src='/${dllName}.dll.js'></script>`
-    // TODO https://github.com/diurnalist/chunk-manifest-webpack-plugin
-
     if (this.isDev) {
       plugins.push(
         // enable hot reloading.
         new webpack.HotModuleReplacementPlugin(),
+        new webpack.NamedModulesPlugin(),
+
         new webpack.NoEmitOnErrorsPlugin(),
 
         // Watcher doesn't work well if you mistype casing in a path so we use
@@ -374,30 +392,32 @@ export default class WebpackBase {
           templateContent: templateContent(),
         }),
       );
-    } else {
-      if (!this.isServer()) {
-        // there is no need to optimise bundle sizes on the server
-        plugins.push(
-          new webpack.optimize.CommonsChunkPlugin({
-            name: 'common',
-            children: true,
-            minChunks: 2,
-            async: true,
-          }),
+    }
 
-          new webpack.optimize.UglifyJsPlugin({
-            comments: false,
-            compress: {
-              warnings: false, // ...but do not show warnings in the console (there is a lot of them)
-            },
-          }),
+    if (!this.isDev && !this.isServer()) {
+      // there is no need to optimise bundle sizes on the server
+      plugins.push(
+        new webpack.optimize.CommonsChunkPlugin({
+          name: 'common',
+          children: true,
+          minChunks: 2,
+          async: true,
+        }),
 
-          // OccurrenceOrderPlugin is needed for long-term caching to work properly.
-          // See http://mxs.is/googmv
-          new webpack.optimize.OccurrenceOrderPlugin(true),
-        );
-      }
+        new webpack.optimize.UglifyJsPlugin({
+          comments: false,
+          compress: {
+            warnings: false, // ...but do not show warnings in the console (there is a lot of them)
+          },
+        }),
 
+        // OccurrenceOrderPlugin is needed for long-term caching to work properly.
+        // See http://mxs.is/googmv
+        new webpack.optimize.OccurrenceOrderPlugin(true),
+      );
+    }
+
+    if (!this.isDev) {
       plugins.push(
         new WebpackCleanupPlugin({ quiet: true }),
 
