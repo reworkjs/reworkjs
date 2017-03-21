@@ -6,6 +6,13 @@ import { getDefault } from '../../shared/util/ModuleUtil';
 import levels from '../../shared/logger/levels';
 import setEnv from './set-env';
 
+process.on('unhandledRejection', reason => {
+  console.error('Unhandled Rejections:');
+  console.error(reason);
+
+  process.exit(1);
+});
+
 // register all commands.
 const commands = requireAll({
   dirname: `${__dirname}/commands`,
