@@ -6,6 +6,7 @@ import OfflinePlugin from 'offline-plugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import WebpackCleanupPlugin from 'webpack-cleanup-plugin';
 import nodeExternals from 'webpack-node-externals';
+import UglifyJsPlugin from 'uglifyjs-webpack-plugin';
 import cheerio from 'cheerio';
 import findCacheDir from 'find-cache-dir';
 import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin';
@@ -312,7 +313,7 @@ export default class WebpackBase {
   }
 
   getDevTools() {
-    return this.isDev ? 'cheap-module-eval-source-map' : 'cheap-source-map';
+    return this.isDev ? 'cheap-module-eval-source-map' : 'source-map';
   }
 
   getAliases() {
@@ -337,11 +338,13 @@ export default class WebpackBase {
     // TODO https://github.com/diurnalist/chunk-manifest-webpack-plugin
 
     const NODE_ENV = JSON.stringify(process.env.NODE_ENV);
+    const SIDE = JSON.stringify(this.isServer() ? 'server' : 'client');
     const definePluginArg = {
       'process.env.BUILD_ENV': NODE_ENV, // eslint-disable-line no-process-env
+      'process.env.SIDE': SIDE, // eslint-disable-line no-process-env
       webpack_globals: {
         PROCESS_NAME: JSON.stringify(`${projectMetadata.name} (${this.isServer() ? 'server' : 'client'})`),
-        SIDE: JSON.stringify(this.isServer() ? 'server' : 'client'),
+        SIDE,
         PROJECT_DIR: JSON.stringify(process.cwd()),
         ROOT_DIR: JSON.stringify(path.resolve(__dirname, '../../..')),
       },
@@ -352,7 +355,7 @@ export default class WebpackBase {
     };
 
     if (!this.isServer()) {
-      definePluginArg['process.env'] = { NODE_ENV };
+      definePluginArg['process.env'] = { NODE_ENV, SIDE };
 
       definePluginArg['process.argv'] = JSON.stringify(process.argv); // eslint-disable-line no-process-env
     }
@@ -404,8 +407,12 @@ export default class WebpackBase {
           async: true,
         }),
 
-        new webpack.optimize.UglifyJsPlugin({
-          comments: false,
+        new UglifyJsPlugin({
+          // preserve LICENSE comments (*!, /**!, @preserve or @license) for legal stuff but extract them
+          // to their own file to reduce bundle size.
+          // comments: false,
+          extractComments: true,
+          sourceMap: true,
           compress: {
             warnings: false, // ...but do not show warnings in the console (there is a lot of them)
           },
