@@ -8,6 +8,7 @@
 
 ## Future versions
 
+- Logger: Remove color codes when writing to file
 - Add `rjs launch`
   - Same as start but doesn't build.
 - Install `react-dev-utils`:
