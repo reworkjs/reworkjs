@@ -1,6 +1,6 @@
 import global from 'global';
 import '../../shared/regenerator';
-import { isServer } from '../../shared/EnvUtil';
+import './source-map-support';
 
 export default function loadPolyfills() {
   const promises = [];
@@ -12,9 +12,11 @@ export default function loadPolyfills() {
     );
   }
 
-  if (isServer) { // eslint-disable-line
-    promises.push(import('source-map-support/register'));
-  }
+  // if (process.env.SIDE !== 'browser') { // eslint-disable-line
+  // promises.push(import('source-map-support').then(module => {
+  //   (module || module.default).install();
+  // }));
+  // }
 
   return Promise.all(promises);
 }
