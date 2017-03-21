@@ -50,10 +50,15 @@ async function runServerWithoutPrerendering(options) {
     process.argv.push('--port', options.port);
   }
 
-  await Promise.all([
-    import(builders.client),
-    import('../../../framework/server/launch-http-server'),
-  ]);
+  const promises = [import(builders.client)];
+
+  if (process.env.NODE_ENV === 'production') {
+    // the development builder launches its own server which supports HMR.
+    // in production, load the standalone server.
+    promises.push(import('../../../framework/server/launch-http-server'));
+  }
+
+  await Promise.all(promises);
 }
 
 async function runServerWithPrerendering(options) {
