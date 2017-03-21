@@ -21,24 +21,43 @@ function checkStore(store) {
   }
 }
 
+function forEach(item, callback) {
+  if (Array.isArray(item)) {
+    item.forEach(callback);
+  } else {
+    callback(item);
+  }
+}
+
 /**
  * Inject an asynchronously loaded reducer
  */
 function createAsyncReducerInjector(store) {
-  return function injectReducer(asyncReducer) {
-    const name = asyncReducer[Symbols.name] || asyncReducer.name;
+  return function injectReducer(asyncReducers) {
 
-    if (!isString(name) || isEmpty(name)) {
-      throw new TypeError('injectAsyncReducer: reducer is missing a name.');
+    let dirty = false;
+    forEach(asyncReducers, reducer => {
+      const name = reducer[Symbols.name] || reducer.name;
+
+      if (!isString(name) || isEmpty(name)) {
+        throw new TypeError('injectAsyncReducer: reducer is missing a name.');
+      }
+
+      if (!isFunction(reducer)) {
+        throw new TypeError('injectAsyncReducer: reducer is not a function.');
+      }
+
+      if (store.asyncReducers[name] === reducer) {
+        return;
+      }
+
+      store.asyncReducers[name] = reducer;
+      dirty = true;
+    });
+
+    if (dirty) {
+      store.replaceReducer(createReducer(store.asyncReducers));
     }
-
-    if (!isFunction(asyncReducer)) {
-      throw new TypeError('injectAsyncReducer: reducer is not a function.');
-    }
-
-    // replace reducer
-    store.asyncReducers[name] = asyncReducer;
-    store.replaceReducer(createReducer(store.asyncReducers));
   };
 }
 
@@ -47,15 +66,7 @@ function createAsyncReducerInjector(store) {
  */
 function createAsyncSagaInjector(store) {
   return function injectSagas(sagas) {
-    if (!Array.isArray(sagas)) {
-      throw new TypeError('(app/utils...) injectAsyncSagas: Expected `sagas` to be an array of generator functions');
-    }
-
-    if (isEmpty(sagas)) {
-      console.warn('(app/utils...) injectAsyncSagas: Received an empty `sagas` array');
-    }
-
-    sagas.forEach(store.runSaga);
+    forEach(sagas, store.runSaga);
   };
 }
 
