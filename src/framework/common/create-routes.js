@@ -130,15 +130,22 @@ function hookGetComponent(route, injectors, store, fileName) {
         callProviderLoader(route, nextState, store),
       ]);
 
-      injectSagas(injectors, sagas);
-      injectReducers(injectors, reducers);
-
       if (providers) {
         for (const provider of providers) {
-          injectSagas(injectors, provider[Symbols.sagas]);
-          injectReducers(injectors, provider[Symbols.reducer]);
+          const newSagas = provider[Symbols.sagas];
+          if (newSagas) {
+            sagas.push(...newSagas);
+          }
+
+          const newReducer = provider[Symbols.reducer];
+          if (newReducer) {
+            reducers.push(newReducer);
+          }
         }
       }
+
+      injectors.injectSagas(sagas);
+      injectors.injectReducer(reducers);
 
       return component;
     } catch (e) {
@@ -146,27 +153,6 @@ function hookGetComponent(route, injectors, store, fileName) {
       throw e;
     }
   };
-}
-
-function injectSagas(injectors, sagas) {
-  if (sagas && sagas.length > 0) {
-    injectors.injectSagas(sagas);
-  }
-}
-
-function injectReducers(injectors, reducers) {
-  if (!reducers) {
-    return;
-  }
-
-  if (!Array.isArray(reducers)) {
-    injectors.injectReducer(reducers);
-    return;
-  }
-
-  for (const reducer of reducers) {
-    injectors.injectReducer(reducer);
-  }
 }
 
 async function callComponentLoader(route, nextState, store, fileName) {
@@ -230,6 +216,10 @@ async function callLoader(loader, route, nextState, store) {
       if (item != null) {
         arrayResult.push(getDefault(item));
       }
+    }
+
+    if (arrayResult.length === 0) {
+      return null;
     }
 
     return arrayResult;
