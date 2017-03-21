@@ -25,12 +25,13 @@ type DataBag = {
   addActionListener: (actionType: string, actionHandler: Function) => void,
   initialState: Object,
   selectDomain: Function,
+  domainIdentifier: string,
 };
 
+export const ACTION_TYPE_DYNAMIC = Symbol('action-type-dynamic');
 const PROVIDER_APP_STATE_ACCESSOR = Symbol('app-state-holder');
 const PROVIDER_STATE_ACCESSOR = Symbol('state-holder');
 const mutatedProperties = Symbol('mutatedProperties');
-// const mutableVersion = Symbol('mutable-version');
 
 // Blacklist universal properties, Function static properties and @provider symbols.
 const PROPERTY_BLACKLIST = Object.getOwnPropertyNames(Object.prototype)
@@ -126,7 +127,7 @@ const ProviderDecorator = classDecorator((arg: ClassDecoratorArgument) => {
 
   providerClass[PROVIDER_STATE_ACCESSOR] = IMMUTABLE_STATE;
 
-  const { initialState, sagaList, actionListeners } = extractFromProvider(providerClass, selectDomain);
+  const { initialState, sagaList, actionListeners } = extractFromProvider(providerClass, selectDomain, domainIdentifier);
 
   function genericReducer(state = initialState, actionData) {
     const type = actionData.type;
@@ -190,7 +191,7 @@ ProviderDecorator.select = function select(property, store) {
 
 export default ProviderDecorator;
 
-function extractFromProvider(ProviderClass, selectDomain) {
+function extractFromProvider(ProviderClass, selectDomain, domainIdentifier) {
   const actionListeners: ActionListenerMap = new Map();
   const sagaList = [];
   const initialState = {};
@@ -201,6 +202,7 @@ function extractFromProvider(ProviderClass, selectDomain) {
     actionListeners,
     initialState,
     selectDomain,
+    domainIdentifier,
     addActionListener(actionType, actionListener) {
       if (!actionListeners.has(actionType)) {
         actionListeners.set(actionType, []);
@@ -242,7 +244,9 @@ function extractFromProvider(ProviderClass, selectDomain) {
   return dataBag;
 }
 
-function installActionBuilder(providerClass, propertyName) {
+function installActionBuilder(dataBag: DataBag, propertyName) {
+  const providerClass = dataBag.ProviderClass;
+
   const method = providerClass[propertyName];
   const metadata = getPropertyMetadata(method);
 
@@ -250,15 +254,25 @@ function installActionBuilder(providerClass, propertyName) {
     return killMethod(providerClass, propertyName);
   }
 
+  const actionType = parseActionType(metadata.actionType, dataBag.domainIdentifier, propertyName);
+
   function createAction(...args) {
-    return { type: metadata.actionType, payload: args };
+    return { type: actionType, payload: args };
   }
 
-  createAction.actionType = metadata.actionType;
+  createAction.actionType = actionType;
 
   replaceMethod(providerClass, propertyName, createAction);
 
   return createAction;
+}
+
+function parseActionType(actionType, domainIdentifier, propertyName) {
+  if (actionType === ACTION_TYPE_DYNAMIC) {
+    return `@@provider/${constantCase(domainIdentifier)}/action/${constantCase(propertyName)}`;
+  }
+
+  return actionType;
 }
 
 function extractReducer(propertyName: string, dataBag: DataBag) {
@@ -268,10 +282,10 @@ function extractReducer(propertyName: string, dataBag: DataBag) {
   const metadata = getPropertyMetadata(actionListener);
 
   for (const actionType of metadata.listenedActionTypes) {
-    addActionListener(actionType, actionListener);
+    addActionListener(parseActionType(actionType, dataBag.domainIdentifier, propertyName), actionListener);
   }
 
-  installActionBuilder(ProviderClass, propertyName);
+  installActionBuilder(dataBag, propertyName);
 }
 
 function extractSaga(propertyName: string, dataBag: DataBag) {
@@ -281,12 +295,12 @@ function extractSaga(propertyName: string, dataBag: DataBag) {
   const metadata = getPropertyMetadata(property);
 
   let callActionHandler;
-  const actionBuilder = installActionBuilder(ProviderClass, propertyName);
+  const actionBuilder = installActionBuilder(dataBag, propertyName);
 
   if (metadata.trackStatus) {
     const { initialState, addActionListener } = dataBag;
 
-    const trackActionType = `@@provider/${constantCase(ProviderClass.name)}/setRunning/${constantCase(propertyName)}`;
+    const trackActionType = `@@provider/${dataBag.domainIdentifier}/setRunning/${constantCase(propertyName)}`;
     callActionHandler = function *callActionHandlerWithTracking(action) {
       try {
         yield put({ type: trackActionType, payload: true });
@@ -321,7 +335,8 @@ function extractSaga(propertyName: string, dataBag: DataBag) {
     for (const listenedActionType of metadata.listenedActionTypes) {
       // select the takeFunction that was used in that @saga decorator.
       const takeFunction = tfKeys ? takeFunctions[orderedClampUp(tfKeys, i)] : takeLatest;
-      actionWatchers.push(takeFunction(listenedActionType, callActionHandler));
+      const realActionType = parseActionType(listenedActionType, dataBag.domainIdentifier, propertyName);
+      actionWatchers.push(takeFunction(realActionType, callActionHandler));
 
       i++;
     }

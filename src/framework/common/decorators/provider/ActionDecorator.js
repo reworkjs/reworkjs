@@ -3,7 +3,7 @@ import { setPropertyType } from './_util';
 
 export const TYPE_ACTION_GENERATOR = Symbol('TYPE_ACTION_GENERATOR');
 
-const USAGE = '@saga';
+const USAGE = '@action';
 
 export default methodDecorator((arg: MethodDecoratorArgument) => {
   const { descriptor, options, target } = arg;

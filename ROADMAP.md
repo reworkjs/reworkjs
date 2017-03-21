@@ -8,6 +8,7 @@
 
 ## Future versions
 
+- Extract decorators to their own package and rewrite them in a more modular way using visitor pattern.
 - Logger: Remove color codes when writing to file
 - Add `rjs launch`
   - Same as start but doesn't build.

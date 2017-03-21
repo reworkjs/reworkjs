@@ -1,6 +1,6 @@
-import constantCase from 'constant-case';
 import { methodDecorator, MethodDecoratorArgument } from '../decorator';
 import { getPropertyMetadata, setPropertyType } from './_util';
+import { ACTION_TYPE_DYNAMIC } from './ProviderDecorator';
 
 export const TYPE_REDUCER = Symbol('TYPE_REDUCER');
 const EMPTY_OBJ = {};
@@ -42,14 +42,14 @@ export function parseOptions(arg: MethodDecoratorArgument) {
 }
 
 export function transform(arg: MethodDecoratorArgument) {
-  const { descriptor, options, target: ProviderClass } = arg;
+  const { descriptor, options } = arg;
   const property = descriptor.value;
 
   const metadata = getPropertyMetadata(property);
   metadata.listenedActionTypes = metadata.listenedActionTypes || new Set();
 
   if (!options.actionType) {
-    metadata.actionType = `@@provider/${constantCase(ProviderClass.name)}/action/${constantCase(property.name)}`;
+    metadata.actionType = ACTION_TYPE_DYNAMIC;
     metadata.listenedActionTypes.add(metadata.actionType);
   } else if (Array.isArray(options.actionType)) {
     for (const actionType of options.actionType) {
