@@ -168,8 +168,8 @@ export default class WebpackBase {
     }, {
       test: /\.(jpe?g|png|gif|svg)$/i,
       use: [
-        'file-loader',
         require.resolve('./global-srcset-loader'),
+        'file-loader',
         {
           loader: 'image-webpack-loader',
           query: {
