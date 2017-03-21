@@ -2,6 +2,8 @@
 
 const fs = require('fs');
 const gulp = require('gulp');
+const watch = require('gulp-watch');
+const plumber = require('gulp-plumber');
 const babel = require('gulp-babel');
 const del = require('del');
 
@@ -19,10 +21,12 @@ gulp.task('copy', ['clean'], () => {
 
 gulp.task('build', ['copy'], () => {
   return gulp.src('./src/**/*.js')
+    .pipe(plumber())
     .pipe(babel(babelRc))
+    .pipe(plumber.stop())
     .pipe(gulp.dest('./lib'));
 });
 
 gulp.task('build:watch', ['build'], () => {
-  return gulp.watch('./src/**/*', ['build']);
+  return watch('./src/**/*', () => gulp.start('build'));
 });
