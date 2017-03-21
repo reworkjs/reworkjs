@@ -147,7 +147,7 @@ function refreshAliases(localeName) {
 }
 
 export function isLocaleValid(locale) {
-  return bestGuessTranslationLocale(locale) !== null;
+  return typeof locale === 'string' && bestGuessTranslationLocale(locale) !== null;
 }
 
 const reloadListeners = [];
