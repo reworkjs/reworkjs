@@ -1,7 +1,8 @@
 import { syncHistoryWithStore } from 'react-router-redux';
 import { browserHistory, createMemoryHistory } from 'react-router';
+import { createSelector } from 'reselect';
 import '../common/load-polyfills';
-import { selectLocationState } from '../app/providers/RouteProvider/route-selectors';
+import RouteProvider from '../app/providers/RouteProvider';
 import mainComponent from '../common/main-component';
 import globals from '../../shared/globals';
 import createRoutes from './create-routes';
@@ -14,7 +15,10 @@ const navigationHistory = isClient ? browserHistory : createMemoryHistory();
 const store = createStore(navigationHistory);
 
 const history = syncHistoryWithStore(navigationHistory, store, {
-  selectLocationState: selectLocationState(),
+  selectLocationState: createSelector(
+    RouteProvider.locationBeforeTransitions,
+    locationBeforeTransitions => ({ locationBeforeTransitions }),
+  ),
 });
 
 // Set up the router, wrapping all Routes in the App component
