@@ -21,10 +21,7 @@ export default class CliSplitView {
       width: '100%',
     });
 
-    this.rootNode.__name = 'RootNode';
-
     this.screen.append(this.rootNode);
-
 
     this.refresh();
   }
@@ -35,11 +32,7 @@ export default class CliSplitView {
       return;
     }
 
-    const subScreen = buildNamedBox(name, {
-      style: {
-        bg: 'blue',
-      },
-    });
+    const subScreen = buildNamedBox(name);
 
     append(this.rootNode, subScreen.outer);
     this.refresh();
@@ -76,7 +69,7 @@ export default class CliSplitView {
 
     child.on('close', code => {
       if (code == null) {
-        subScreen.inner.pushLine('\n{blue-bg}\nProcess terminated\n{/}');
+        subScreen.inner.pushLine('\n{blue-bg}\nProcess terminated\n{/}\n');
       } else {
         subScreen.inner.pushLine(`\n{${code === 0 ? 'green' : 'red'}-bg}\nProcess completed ${code === 0 ? 'Successfully' : `with error code ${code}`}\n{/}\n`);
       }
@@ -86,10 +79,9 @@ export default class CliSplitView {
   }
 }
 
-function buildNamedBox(name, otherParams) {
+function buildNamedBox(name) {
 
-  const outerBox = Blessed.box(otherParams);
-  outerBox.__name = 'NamedBox';
+  const outerBox = Blessed.box();
 
   const titleBox = Blessed.text({
     content: name,
