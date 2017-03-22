@@ -23,7 +23,7 @@ export default class LanguageComponent extends React.Component {
     messages: React.PropTypes.object,
     locale: React.PropTypes.string.isRequired,
     changeLocale: React.PropTypes.func.isRequired,
-    children: React.PropTypes.element.isRequired,
+    children: React.PropTypes.node.isRequired,
   };
 
   constructor(props) {

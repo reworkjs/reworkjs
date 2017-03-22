@@ -25,8 +25,6 @@
    - output to /gzip + /brotli
    - server sends brotli or gzip or uncompressed depending on Accept Header
    - Only use `compression` to compress pre-rendered index.html files
-- Server-side rendering:
-  - allow ReactHelmet to override pre-existing meta-tags.
 - Intl:
   - Allow the use of .json files for translation files.
   - Load and activate the IntlPolyfill for the active locale

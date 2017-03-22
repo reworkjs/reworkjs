@@ -5,20 +5,24 @@ import { isProd, isClient } from '../../shared/EnvUtil';
 import translationMessages from '../common/i18n';
 import { store } from '../common/kernel';
 import LanguageComponent from './LanguageComponent';
+import BaseHelmet from './BaseHelmet';
 
 export default function ReworkJsWrapper(props) {
 
   return (
-    <Provider store={store}>
-      <LanguageComponent messages={translationMessages}>
-        {props.children}
-      </LanguageComponent>
-    </Provider>
+    <div>
+      <BaseHelmet />
+      <Provider store={store}>
+        <LanguageComponent messages={translationMessages}>
+          {props.children}
+        </LanguageComponent>
+      </Provider>
+    </div>
   );
 }
 
 ReworkJsWrapper.propTypes = {
-  children: React.PropTypes.node,
+  children: React.PropTypes.any,
 };
 
 // Install ServiceWorker and AppCache in the end since
