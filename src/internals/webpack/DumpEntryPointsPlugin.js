@@ -22,6 +22,10 @@ export default class DumpEntryPoints {
 
 function getEntryPoints(stats) {
   const mainAssets = stats.entrypoints.main.assets.filter(fileName => {
+    if (!fileName.endsWith('.js') && !fileName.endsWith('.css')) {
+      return false;
+    }
+
     return !fileName.endsWith('.hot-update.js');
   });
 

@@ -120,8 +120,8 @@ function getEntryPoints() {
 
 function buildEntryPointTags(entryPoints) {
   // httpStaticPath
-  entryPoints.js = entryPoints.js.map(entryPoint => `<script src="${httpStaticPath}${entryPoint}"></script>`).join();
-  entryPoints.css = entryPoints.css.map(entryPoint => `<link rel="stylesheet" href="${httpStaticPath}${entryPoint}" />`).join();
+  entryPoints.js = entryPoints.js.map(entryPoint => `<script src="${httpStaticPath}${entryPoint}"></script>`).join('');
+  entryPoints.css = entryPoints.css.map(entryPoint => `<link rel="stylesheet" href="${httpStaticPath}${entryPoint}" />`).join('');
 
   return entryPoints;
 }
