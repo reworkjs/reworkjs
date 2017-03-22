@@ -8,6 +8,16 @@
 
 ## Future versions
 
+- Server-side rendering
+  - The current system does not pass the asynchronously loaded components. So `main.js` has to execute then load.
+  - The current system does not export the css of asynchronously loaded components because node-style-loader is broken.
+  - Ideally:
+    - Extract the css from every JS bundle (and put them in their own individual .css file).
+    - Detect which routes depend on which bundle, and pass these along in the HTML (both .js and .css).
+    - Detection: Look into the Webpack build manifest to see if we can check which bundle the route modules depend on. Use that info
+      in the prerendering server to know which bundles to pass along.
+- OfflinePlugin:
+  - Cache index.html and return it for every route if the server is unreachable.
 - Extract decorators to their own package and rewrite them in a more modular way using visitor pattern.
 - Logger: Remove color codes when writing to file
 - Add `rjs launch`
@@ -48,6 +58,7 @@
 
 ## Potential future versions
 
+- LoaderOptionsPlugin({ minimize: true })
 - eslint plugin that detects @provider and warns if anything in the annotated class isn't static
 - Replace current React-HMR system with https://github.com/gaearon/react-hot-loader ?
 - Review css-loader's CSSNano options
