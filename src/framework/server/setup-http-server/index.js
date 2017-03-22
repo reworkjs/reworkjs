@@ -3,6 +3,7 @@ import express from 'express';
 import compression from 'compression';
 import getWebpackSettings from '../../../shared/webpack-settings';
 import argv from '../../../shared/argv';
+import logger from '../../../shared/logger';
 import { getDefault } from '../../../shared/util/ModuleUtil';
 import { isProd } from '../../../shared/EnvUtil';
 
@@ -26,21 +27,23 @@ export default function setupHttpServer(expressApp) {
 
   expressApp.use(httpStaticPath, express.static(fsClientOutputPath, staticOptions));
 
+  expressApp.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
+    logger.error(`renderApp: Serving "${req.url}" crashed, trying without server-side rendering.`);
+    logger.error(err);
+
+    res.status(err.status || 500);
+    return res.sendFile(clientEntryPoint);
+  });
+
   if (!HAS_PRERENDERING) {
     expressApp.use((req, res) => {
       res.sendFile(clientEntryPoint);
     });
+  } else {
+    import('./serve-react-route').then(module => {
+      const serveReactRoute = getDefault(module);
 
-    return;
-  }
-
-  getPrerenderingModule()
-    .then(module => {
-      const setupPrerendering = getDefault(module);
-      setupPrerendering(expressApp, { clientEntryPoint });
+      expressApp.use(serveReactRoute);
     });
-}
-
-function getPrerenderingModule() {
-  return isProd ? import('./setup-prod-prerendering') : import('./setup-dev-prerendering');
+  }
 }

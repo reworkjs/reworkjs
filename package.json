@@ -55,7 +55,7 @@
     "react-router-redux": "^4.0.5",
     "redux-saga": "^0.14.3",
     "redux": "^3.6.0",
-    "react-helmet": "^4.0.0",
+    "react-helmet": "^5.0.0",
     "react-cookie": "^1.0.4"
   },
   "dependencies": {
@@ -94,7 +94,7 @@
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
     "ngrok": "^2.2.6",
-    "node-sass": "^4.5.0",
+    "node-sass": "^4.5.1",
     "node-style-loader": "0.0.1-alpha",
     "offline-plugin": "^4.6.2",
     "postcss-cssnext": "2.10.0",
@@ -115,7 +115,7 @@
     "style-loader": "^0.15.0",
     "uglifyjs-webpack-plugin": "^0.3.0",
     "url-loader": "0.5.8",
-    "webpack": "^2.2.1",
+    "webpack": "^2.3.0",
     "webpack-cleanup-plugin": "^0.5.1",
     "webpack-dev-middleware": "^1.10.1",
     "webpack-hot-middleware": "^2.17.1",
