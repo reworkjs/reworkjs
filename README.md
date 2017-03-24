@@ -1,4 +1,3 @@
-
 # ReworkJs
 
 ReworkJs (rjs) is an opinionated Framework designed for Progressive Web Apps and based on React-Boilerplate.
