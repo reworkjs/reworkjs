@@ -32,9 +32,7 @@ export default function renderPage({ body = '', header = '', footer = '' } = {})
   ${header}
 </head>
 <body ${toString(helmet.bodyAttributes)}>
-  <div id="app">
-    ${body}
-  </div>
+  <div id="app">${body}</div>
   ${footer}
 </body>
 </html>`;
