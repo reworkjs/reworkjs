@@ -20,7 +20,8 @@ import { isDev, isTest } from '../../shared/EnvUtil';
 import getWebpackSettings from '../../shared/webpack-settings';
 import BaseHelmet from '../../framework/app/BaseHelmet';
 import renderPage from '../../framework/server/setup-http-server/render-page';
-import DumpEntryPointsPlugin from './DumpEntryPointsPlugin';
+import RjsDumpStatsPlugin from './DumpEntryPointsPlugin';
+import RequireEnsureHookPlugin from './RequireEnsureHookPlugin';
 
 const ANY_MODULE_EXCEPT_FRAMEWORK = new RegExp(`node_modules\\/(?!${frameworkMetadata.name})`);
 
@@ -415,11 +416,17 @@ export default class WebpackBase {
           minifyURLs: true,
         },
       }),
+
+      // Dump chunk mapping and entryPoints so we can determine which client chunks to send depending on which
+      // chunks were imported during server-side rendering
+      new RjsDumpStatsPlugin(),
     ];
 
-    if (!this.isServer()) {
+    if (this.isServer()) {
       plugins.push(
-        new DumpEntryPointsPlugin(),
+        // Hook import() directives on the server-side so we can know which
+        // chunks are loaded for which routes and give them along with the HTTP response.
+        new RequireEnsureHookPlugin(),
       );
     }
 
