@@ -8,14 +8,12 @@
 
 ## Future versions
 
+- Disable image optimisation in dev mode.
 - Server-side rendering
-  - The current system does not pass the asynchronously loaded components. So `main.js` has to execute then load.
+  - Make sure server-side rendering works with named chunks that contain more than one module which aren't in other chunks.
   - The current system does not export the css of asynchronously loaded components because node-style-loader is broken.
-  - Ideally:
-    - Extract the css from every JS bundle (and put them in their own individual .css file).
-    - Detect which routes depend on which bundle, and pass these along in the HTML (both .js and .css).
-    - Detection: Look into the Webpack build manifest to see if we can check which bundle the route modules depend on. Use that info
-      in the prerendering server to know which bundles to pass along.
+  - Add a "no-js" class to body and remove it once the js has loaded
+  - Locales are only preloaded for the very first request, might need to call `import()` on them every time instead of caching as webpack already caches them.
 - OfflinePlugin:
   - Cache index.html and return it for every route if the server is unreachable.
 - Extract decorators to their own package and rewrite them in a more modular way using visitor pattern.
@@ -27,8 +25,8 @@
   - use `openBrowser` in `rjs start`
   - Install `webpackHotDevClient` & `WatchMissingNodeModulesPlugin`
 - ServerBuilder:
-  - Does not need to build static assets (index.html, .css, /public)
-  - Needs to know the reference to these assets
+  - Should not output non-js assets (index.html, .css, /public).
+  - Needs to know the reference to those assets.
 - ClientBuilder:
   - Add `compression-webpack-plugin` and `brotli-webpack-plugin` ?
   - Alternatively, run `https://www.npmjs.com/package/node-zopfli` + `https://www.npmjs.com/package/brotli`
@@ -58,6 +56,7 @@
 
 ## Potential future versions
 
+- Add support for https://developer.mozilla.org/en-US/docs/Web/HTML/Using_the_application_cache and manifest ?
 - LoaderOptionsPlugin({ minimize: true })
 - eslint plugin that detects @provider and warns if anything in the annotated class isn't static
 - Replace current React-HMR system with https://github.com/gaearon/react-hot-loader ?
