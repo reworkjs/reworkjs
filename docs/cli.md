@@ -34,7 +34,7 @@ Options:
 
 ### `rjs build`
 
-Builds the application
+Builds the application.
 
 Usage: `rjs build <...parts> [options]`  
 

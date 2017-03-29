@@ -6,8 +6,51 @@
 - rjs start --env prod --prerendering 
 - Add the possibility to close windows of completed processes in split view
 
+## `rjs init`
+
+- default .gitignore
+  - /.build
+  - /node_modules
+  - *.log
+  - /.idea
+- Prompt for eslint-config package      + default | skipable
+  - Install eslint
+  - Install preset
+  - print .eslintrc
+- Prompt for stylelint-config package   + default | skipable
+  - Install stylelint
+  - Install preset
+  - print .stylelintrc
+- Add stage-lint
+- Add default postcss.config.js
+- default README.md
+- default TodoMVC + skipable
+- print "Project ready, use `rjs start --env dev` to launch your project. Read more at <doc url>"
+- Install Dependencies
+  - `react`
+  - `react-dom`
+  - `react-helmet`
+  - `react-cookie`
+  - `react-router-redux`
+  - `redux-saga`
+  - `react-intl`
+- Install devDependencies
+  - `@reworkjs/babel-preset-reworkjs`
+
 ## Future versions
 
+- @@main-component should be optional
+- If no route matches, and no 404 is available, return a default 404 which prints the error message! (only in dev mode!)
+- Generator Scripts:
+  - !! Add Route
+  - Add Locale
+- Add `react-router-scroll` to dependencies
+- Add `react-router@3.0.2`, `redux` to dependencies
+- Can't resolve @@main-component <== Fix that!
+- if .babelrc in app root directory, use that instead of .babelrc.webpack
+- eslint-loader should only be enabled if eslint is in the app's devDependencies or dependencies
+- Don't build non-existing folders ? Do it only during rjs init if they skip TodoMVC
+- Replace .babelrc.webpack with @reworkjs/babel-preset-reworkjs
 - Disable image optimisation in dev mode.
 - Server-side rendering
   - Make sure server-side rendering works with named chunks that contain more than one module which aren't in other chunks.
@@ -25,7 +68,7 @@
   - use `openBrowser` in `rjs start`
   - Install `webpackHotDevClient` & `WatchMissingNodeModulesPlugin`
 - ServerBuilder:
-  - Should not output non-js assets (index.html, .css, /public).
+  - Should not output non-js assets (index.html, .css, /public). (file-loader: emitFile=false)
   - Needs to know the reference to those assets.
 - ClientBuilder:
   - Add `compression-webpack-plugin` and `brotli-webpack-plugin` ?
@@ -36,6 +79,7 @@
 - Intl:
   - Allow the use of .json files for translation files.
   - Load and activate the IntlPolyfill for the active locale
+  - http://blog.ksol.fr/user-locale-detection-browser-javascript/
 - Add support for DLL Plugin.
 - Name bundles
 - Create a default example project on github.
@@ -52,6 +96,7 @@
    ```
 - Documentation
   - How srcset-loader is used
+  - Don't use moment, use https://formatjs.io/|https://github.com/yahoo/react-intl.
 - Unit Tests
 
 ## Potential future versions

@@ -1,3 +1,4 @@
 # TODO sanitize these
-src/internals/generators
-src/internals/scripts
+/src/internals/generators
+/src/internals/scripts
+/lib
