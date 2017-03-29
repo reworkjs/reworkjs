@@ -26,7 +26,7 @@
     "test:firefox": "npm run test -- --browsers Firefox",
     "test:safari": "npm run test -- --browsers Safari",
     "test:ie": "npm run test -- --browsers IE",
-    "build": "gulp build:watch",
+    "build": "gulp build",
     "build:watch": "gulp build:watch",
     "coveralls": "cat ./coverage/lcov/lcov.info | coveralls"
   },
