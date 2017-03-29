@@ -57,22 +57,28 @@ if (HAS_PRERENDERING) {
   // WDM uses an in-memory file system, we need to
   // persist index.html to the real file system because it will be used by the pre-rendering server.
   compiler.plugin('done', () => {
-    const memoryFs = wdmInstance.fileSystem;
 
-    memoryFs.readFile(indexFileName, (readError, file) => {
-      if (readError) {
-        fs.unlink(file);
-      } else {
-        fs.writeFile(indexFileName, file, writeError => {
-          if (writeError) {
-            logger.error('error writing index.html');
-            logger.error(writeError);
-          } else {
-            logger.trace('index.html persisted');
-          }
-        });
-      }
-    });
+    try {
+      const memoryFs = wdmInstance.fileSystem;
+
+      memoryFs.readFile(indexFileName, (readError, file) => {
+        if (readError) {
+          fs.unlink(file);
+        } else {
+          fs.writeFile(indexFileName, file, writeError => {
+            if (writeError) {
+              logger.error('error writing index.html');
+              logger.error(writeError);
+            } else {
+              logger.trace('index.html persisted');
+            }
+          });
+        }
+      });
+    } catch (e) {
+      logger.error('error while persisting index.html:');
+      logger.error(e.message);
+    }
   });
 
   // redirect requests for non-static documents to the pre-rendering server.
