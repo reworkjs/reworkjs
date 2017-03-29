@@ -2,19 +2,18 @@ import path from 'path';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 import webpack from 'webpack';
+import findCacheDir from 'find-cache-dir';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import OfflinePlugin from 'offline-plugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import WebpackCleanupPlugin from 'webpack-cleanup-plugin';
 import nodeExternals from 'webpack-node-externals';
 import UglifyJsPlugin from 'uglifyjs-webpack-plugin';
-import findCacheDir from 'find-cache-dir';
 import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import frameworkConfig from '../../shared/framework-config';
 import projectMetadata from '../../shared/project-metadata';
 import frameworkMetadata from '../../shared/framework-metadata';
-import frameworkBabelRc from '../../shared/framework-babelrc';
 import { resolveRoot, resolveFrameworkSource } from '../../shared/resolve';
 import { isDev, isTest } from '../../shared/EnvUtil';
 import getWebpackSettings from '../../shared/webpack-settings';
@@ -22,27 +21,7 @@ import BaseHelmet from '../../framework/app/BaseHelmet';
 import renderPage from '../../framework/server/setup-http-server/render-page';
 import RjsDumpStatsPlugin from './DumpEntryPointsPlugin';
 import RequireEnsureHookPlugin from './RequireEnsureHookPlugin';
-
-const ANY_MODULE_EXCEPT_FRAMEWORK = new RegExp(`node_modules\\/(?!${frameworkMetadata.name})`);
-
-function replaceBabelPreset(babelConfig) {
-
-  for (const key of Object.keys(babelConfig)) {
-    const val = babelConfig[key];
-
-    if (Array.isArray(val)) {
-      for (let i = 0; i < val.length; i++) {
-        if (val[i] === 'es2015') {
-          val[i] = ['es2015', { modules: false }];
-        }
-      }
-    } else if (val && typeof val === 'object') {
-      replaceBabelPreset(val);
-    }
-  }
-
-  return babelConfig;
-}
+import getBabelConfig from './get-babel-config';
 
 export default class WebpackBase {
 
@@ -163,8 +142,8 @@ export default class WebpackBase {
     const rules = [{
       test: /\.jsx?$/i,
       loader: 'babel-loader',
-      exclude: ANY_MODULE_EXCEPT_FRAMEWORK,
-      options: replaceBabelPreset(this.getBabelConfig()),
+      exclude: /node_modules/,
+      options: this.getBabelConfig(),
     }, {
       test: /\.(eot|ttf|woff|woff2)(\?.*$|$)/i,
       loader: 'file-loader',
@@ -229,11 +208,11 @@ export default class WebpackBase {
   buildCssLoaders() {
     const cssLoaders = [{
       test: /\.(sc|sa|c)ss$/i,
-      exclude: ANY_MODULE_EXCEPT_FRAMEWORK,
+      exclude: /node_modules/,
       use: [this.buildCssLoader({ modules: true, importLoaders: 2 }), 'postcss-loader', 'sass-loader'],
     }, {
       test: /\.css$/i,
-      include: ANY_MODULE_EXCEPT_FRAMEWORK,
+      include: /node_modules/,
       use: [this.buildCssLoader({ modules: false })],
     }];
 
@@ -320,7 +299,6 @@ export default class WebpackBase {
   }
 
   getAliases() {
-
     return {
       // Framework configuration directories
       '@@pre-init': frameworkConfig['pre-init'],
@@ -349,7 +327,6 @@ export default class WebpackBase {
         ROOT_DIR: JSON.stringify(path.resolve(__dirname, '../../..')),
       },
       frameworkConfig: JSON.stringify(frameworkConfig),
-      frameworkBabelrc: JSON.stringify(frameworkBabelRc),
       projectMetadata: JSON.stringify(projectMetadata),
       frameworkMetadata: JSON.stringify(frameworkMetadata),
     };
@@ -495,7 +472,13 @@ export default class WebpackBase {
   }
 
   getBabelConfig() {
-    const config = frameworkBabelRc;
+    const config = getBabelConfig();
+
+    // use the app's .babelrc
+    if (!config) {
+      return config;
+    }
+
     config.plugins = config.plugins || [];
 
     if (this.isDev) {

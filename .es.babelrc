@@ -1,0 +1,5 @@
+{
+  "presets": [
+    "@reworkjs/babel-preset-reworkjs"
+  ]
+}

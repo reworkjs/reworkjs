@@ -1,3 +1,3 @@
-export container from './src/framework/common/decorators/container';
-export statelessComponent from './src/framework/common/decorators/statelessComponent';
-export * from './src/framework/common/decorators/provider';
+export container from './es/framework/common/decorators/container';
+export statelessComponent from './es/framework/common/decorators/statelessComponent';
+export * from './es/framework/common/decorators/provider';
