@@ -114,6 +114,7 @@
     "winston": "^2.3.1"
   },
   "devDependencies": {
+    "@foobarhq/eslint-config": "^1.0.1",
     "@reworkjs/babel-preset-reworkjs": "0.0.2",
     "babel-core": "6.24.0",
     "babel-plugin-react-intl": "2.3.1",
@@ -135,7 +136,6 @@
     "del": "^2.2.2",
     "enzyme": "2.7.1",
     "eslint": "^3.18.0",
-    "eslint-config-foobarhq": "git@bitbucket.org:foobarhq/eslint-config-foobarhq.git",
     "expect": "1.20.2",
     "expect-jsx": "3.0.0",
     "flow-bin": "^0.42.0",
