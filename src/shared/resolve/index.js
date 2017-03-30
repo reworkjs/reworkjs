@@ -30,5 +30,5 @@ export function resolveRoot(fileName: string = ''): string {
  * @returns The path of the file.
  */
 export function resolveFrameworkSource(fileName: string): string {
-  return resolve(rootDirectory, 'src/framework', removeStartSlash(fileName));
+  return resolve(rootDirectory, 'es/framework', removeStartSlash(fileName));
 }
