@@ -18,7 +18,7 @@ export default function getBabelConfig() {
 function getDefaultBabelConfig() {
 
   try {
-    return require('@reworkjs/babel-preset-reworkjs'); // eslint-disable-line
+    return require('@reworkjs/babel-preset-reworkjs').default(); // eslint-disable-line
   } catch (e) {
     if (e.code !== 'MODULE_NOT_FOUND') {
       throw e;
