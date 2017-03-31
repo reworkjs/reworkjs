@@ -6,39 +6,20 @@
 - rjs start --env prod --prerendering 
 - Add the possibility to close windows of completed processes in split view
 
-## `rjs init`
-
-- default .gitignore
-  - /.build
-  - /node_modules
-  - *.log
-  - /.idea
-- Prompt for eslint-config package      + default | skipable
-  - Install eslint
-  - Install preset
-  - print .eslintrc
-- Prompt for stylelint-config package   + default | skipable
-  - Install stylelint
-  - Install preset
-  - print .stylelintrc
-- Add stage-lint
-- Add default postcss.config.js
-- default README.md
-- default TodoMVC + skipable
-- print "Project ready, use `rjs start --env dev` to launch your project. Read more at <doc url>"
-- Install Dependencies
-  - `react`
-  - `react-dom`
-  - `react-helmet`
-  - `react-cookie`
-  - `react-router-redux`
-  - `redux-saga`
-  - `react-intl`
-- Install devDependencies
-  - `@reworkjs/babel-preset-reworkjs`
-
 ## Future versions
 
+- @container could register used providers
+- fork core-decorators to make it support tree-shaking
+- minimist is bundled for some reason ?
+- Add commonschunkplugin (https://webpack.js.org/plugins/commons-chunk-plugin/), because lodash is in multiple chunks
+- ReactIntl bundles 34kb of locales ?
+- Remove browser-source-map-support
+- In dev mode, getting .isRunning on a saga should throw if it doesn't have "trackStatus" enabled.
+- Resolve optimisations:
+  - Map `lodash` to `lodash-es` 
+  - Map `lodash/<part>` to `lodash-es/<part>`
+  - Map `lodash.<part>` to `lodash-es/<part>`
+  - Map `redux-saga/lib` to `redux-saga/es`. Sometimes, both are included
 - @@main-component should be optional
 - If no route matches, and no 404 is available, return a default 404 which prints the error message! (only in dev mode!)
 - Generator Scripts:
@@ -47,9 +28,8 @@
 - Add `react-router-scroll` to dependencies
 - Add `react-router@3.0.2`, `redux` to dependencies
 - Can't resolve @@main-component <== Fix that!
-- if .babelrc in app root directory, use that instead of .babelrc.webpack
 - eslint-loader should only be enabled if eslint is in the app's devDependencies or dependencies
-- Don't build non-existing folders ? Do it only during rjs init if they skip TodoMVC
+- Don't create non-existing folders ? Do it only during rjs init if they skip TodoMVC
 - Replace .babelrc.webpack with @reworkjs/babel-preset-reworkjs
 - Disable image optimisation in dev mode.
 - Server-side rendering
@@ -95,6 +75,7 @@
    @ multi main
    ```
 - Documentation
+  - Getting Started
   - How srcset-loader is used
   - Don't use moment, use https://formatjs.io/|https://github.com/yahoo/react-intl.
 - Unit Tests

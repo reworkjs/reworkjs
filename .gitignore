@@ -10,4 +10,4 @@ node_modules
 /es
 /.build
 /app
-public
+/public

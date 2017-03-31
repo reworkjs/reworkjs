@@ -9,15 +9,12 @@
  */
 import childProcess from 'child_process';
 import chalk from 'chalk';
-import Blessed from 'blessed';
 import getPort from 'get-port';
 import framework from '../../../shared/framework-metadata';
 import logger from '../../../shared/logger';
 import builders from '../../webpack/builders';
 import { listenMsg } from '../process';
 import CliSplitView from '../CliSplitView';
-
-chalk.enabled = true;
 
 export default function registerCommand(commander) {
 
