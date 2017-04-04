@@ -5,7 +5,6 @@ import '../../shared/regenerator';
 import framework from '../../shared/framework-metadata';
 import { getDefault } from '../../shared/util/ModuleUtil';
 import levels from '../../shared/logger/levels';
-import setEnv from './set-env';
 
 chalk.enabled = true;
 
@@ -41,6 +40,20 @@ setEnv(program.env);
 
 program.parse(process.argv);
 
+function setEnv(env = process.env.NODE_ENV || 'production') {
+
+  if (env === 'dev') {
+    process.env.NODE_ENV = 'development';
+  } else if (env === 'prod') {
+    process.env.NODE_ENV = 'production';
+  } else {
+    process.env.NODE_ENV = env;
+  }
+
+  return process.env.NODE_ENV;
+}
+
+
 /*
  ## `build`
 
@@ -51,10 +64,6 @@ program.parse(process.argv);
  ## `build dll`
 
  `babel-node -- ./framework/internals/scripts/dependencies.js`
-
- ## `build server`
-
- `babel server -d .build/server && babel internals -d .build/internals`
 
  ## `extract-intl`
 

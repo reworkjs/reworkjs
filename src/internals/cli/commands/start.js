@@ -1,12 +1,3 @@
-/**
- * Need:
- * - Start a client build process
- * - Start a server build process
- * - Start the server
- * - Reload the server on rebuild if HMR did not work
- *
- * - The server needs to communicate with the client build process (needs to know the build status)
- */
 import childProcess from 'child_process';
 import chalk from 'chalk';
 import getPort from 'get-port';
