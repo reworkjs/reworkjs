@@ -28,7 +28,7 @@ export default class BabelFeature extends BaseFeature {
       return config;
     }
 
-    if (this.isDev) {
+    if (this.isDev()) {
       config.presets.push('react-hmre');
     }
 
