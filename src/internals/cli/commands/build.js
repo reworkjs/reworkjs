@@ -9,6 +9,7 @@ export default function registerCommand(commander) {
 
   commander
     .command('build <parts...>')
+    .option('--features <feature>', 'List of features to enable or disable (e.g.: "--feature -sass,-postcss" disables sass and postcss support. "--feature analyze" enables the bundle analyze feature)')
     .description('Builds the application')
     .action(parts => {
 

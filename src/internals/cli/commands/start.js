@@ -25,8 +25,8 @@ export default function registerCommand(commander) {
     .option('--port <port>', 'The port the server will listen to', Number, 3000)
     .option('--tunnel <tunnel_port>', 'The port of the tunnel', Number, -1)
     .option('--no-split', 'Disable terminal split-view')
+    .option('--features <feature>', 'List of features to enable or disable (e.g.: "--feature -sass,-postcss" disables sass and postcss support. "--feature analyze" enables the bundle analyze feature)')
     .action(options => {
-
       options.verbose = commander.verbose;
 
       logger.info(`Launching app in ${chalk.magenta(process.env.NODE_ENV)} mode...`);

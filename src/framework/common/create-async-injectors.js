@@ -1,4 +1,5 @@
 import { conformsTo, isEmpty, isObject, isString, isFunction } from 'lodash';
+import forEach from '../../shared/util/for-each';
 import createReducer from './create-reducer';
 import { Symbols } from './decorators/provider';
 
@@ -18,14 +19,6 @@ function checkStore(store) {
 
   if (!conformsTo(store, shape)) {
     throw new TypeError('asyncInjectors: Expected a valid redux store');
-  }
-}
-
-function forEach(item, callback) {
-  if (Array.isArray(item)) {
-    item.forEach(callback);
-  } else {
-    callback(item);
   }
 }
 
