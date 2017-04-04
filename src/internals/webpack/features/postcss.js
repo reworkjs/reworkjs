@@ -6,6 +6,10 @@ export default class PostCssFeature extends BaseFeature {
     return 'postcss';
   }
 
+  getDescription() {
+    return 'Enables PostCss support on any CSS file.';
+  }
+
   visit(webpack) {
     webpack.injectCssLoader('postcss-loader');
   }

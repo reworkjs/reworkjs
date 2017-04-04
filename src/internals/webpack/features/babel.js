@@ -11,6 +11,10 @@ export default class BabelFeature extends BaseFeature {
     return 'babel';
   }
 
+  getDescription() {
+    return 'Transpiles JavaScript into ES5';
+  }
+
   visit(webpack) {
     webpack.injectRules({
       test: BaseFeature.FILE_TYPE_JS,

@@ -6,6 +6,10 @@ export default class EslintFeature extends BaseFeature {
     return 'eslint';
   }
 
+  getDescription() {
+    return 'Validates your source-code when building';
+  }
+
   isEnabled(enabled) {
     if (!this.isDev()) {
       return false;

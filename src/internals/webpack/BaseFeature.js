@@ -13,6 +13,10 @@ export default class BaseFeature {
     this._env = env;
   }
 
+  getDescription() {
+    return 'No description provided. Contact Feature author.';
+  }
+
   getFeatureName() {
     throw new Error('getFeatureName not implemented');
   }

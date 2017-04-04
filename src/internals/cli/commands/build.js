@@ -2,6 +2,7 @@ import childProcess from 'child_process';
 import chalk from 'chalk';
 import logger from '../../../shared/logger';
 import builders from '../../webpack/builders';
+import featureHelp from '../get-webpack-features-help';
 
 chalk.enabled = true;
 
@@ -9,7 +10,7 @@ export default function registerCommand(commander) {
 
   commander
     .command('build <parts...>')
-    .option('--features <feature>', 'List of features to enable or disable (e.g.: "--feature -sass,-postcss" disables sass and postcss support. "--feature analyze" enables the bundle analyze feature)')
+    .option(...featureHelp)
     .description('Builds the application')
     .action(parts => {
 

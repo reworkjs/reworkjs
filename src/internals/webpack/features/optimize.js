@@ -12,6 +12,10 @@ export default class OptimizeFeature extends BaseFeature {
     return 'optimize';
   }
 
+  getDescription() {
+    return 'Various optimisation designed to reduce the client bundle size';
+  }
+
   isEnabled(enabled) {
     if (!this.isProd() || this.isServer()) {
       return false;

@@ -2,7 +2,6 @@ import path from 'path';
 import React from 'react';
 import chalk from 'chalk';
 import { renderToString } from 'react-dom/server';
-import requireAll from 'require-all';
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
@@ -18,7 +17,6 @@ import { isDev, isTest } from '../../shared/EnvUtil';
 import argv from '../../shared/argv';
 import logger from '../../shared/logger';
 import getWebpackSettings from '../../shared/webpack-settings';
-import { getDefault } from '../../shared/util/ModuleUtil';
 import BaseHelmet from '../../framework/app/BaseHelmet';
 import renderPage from '../../framework/server/setup-http-server/render-page';
 import RjsDumpStatsPlugin from './DumpEntryPointsPlugin';
@@ -26,6 +24,7 @@ import RequireEnsureHookPlugin from './RequireEnsureHookPlugin';
 import BaseFeature from './BaseFeature';
 import WebpackConfigBuilder, * as wcbUtils from './WebpackConfigBuilder';
 import sortDependencies from './sort-dependencies';
+import featureClasses from './features';
 
 function parseFeatures(str) {
   if (!str) {
@@ -75,21 +74,10 @@ export default class WebpackBase {
   }
 
   injectFeatures() {
+    logger.debug('Injecting webpack Features.');
     const enabledFeatures = parseFeatures(argv.features);
 
-    const modules = requireAll({
-      dirname: `${__dirname}/features`,
-      filter: /(.+)\.js$/,
-      recursive: true,
-    });
-
-    const features: BaseFeature[] = Object.keys(modules)
-      .map(featureName => {
-        const Feature = getDefault(modules[featureName]);
-
-        return new Feature(this.isServer(), process.env.NODE_ENV);
-      });
-
+    const features = featureClasses.map(FeatureClass => new FeatureClass(this.isServer(), process.env.NODE_ENV));
     sortDependencies(features);
 
     for (const feature of features) {

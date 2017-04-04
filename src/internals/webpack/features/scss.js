@@ -11,6 +11,10 @@ export default class ScssFeature extends BaseFeature {
     return 'scss';
   }
 
+  getDescription() {
+    return 'Enables SCSS support';
+  }
+
   visit(webpack) {
     webpack.registerFileType(BaseFeature.FILE_TYPE_CSS, 'scss');
     webpack.registerFileType(BaseFeature.FILE_TYPE_CSS, 'sass');

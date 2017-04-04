@@ -6,6 +6,10 @@ export default class AnalyzeFeature extends BaseFeature {
     return 'analyze';
   }
 
+  getDescription() {
+    return 'Launches a view displaying the contents of the bundle in an interactive way. Great for debugging.';
+  }
+
   isEnabled(enabled = false) {
     if (this.isServer()) {
       return false;
