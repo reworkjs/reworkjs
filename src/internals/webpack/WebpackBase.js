@@ -294,7 +294,7 @@ export default class WebpackBase {
 
   /** @private */
   getAliases() {
-    return {
+    const frameworkAliases = {
       // Framework configuration directories
       '@@pre-init': frameworkConfig['pre-init'],
       '@@main-component': frameworkConfig['entry-react'],
@@ -306,6 +306,11 @@ export default class WebpackBase {
       // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
       'react-native': 'react-native-web',
     };
+
+    const customAliases = wcbUtils.getAliases(this.webpackConfigBuilder);
+    Object.assign(frameworkAliases, customAliases);
+
+    return frameworkAliases;
   }
 
   /** @private */

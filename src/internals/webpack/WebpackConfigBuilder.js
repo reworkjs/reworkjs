@@ -12,6 +12,7 @@ type WcbState = {
   rules: Array,
   cssLoaders: Array,
   plugins: Array,
+  aliases: { [Key: string]: string[] },
 };
 
 const stateHolder: WeakMap<WebpackConfigBuilder, WcbState> = new WeakMap();
@@ -37,6 +38,7 @@ export default class WebpackConfigBuilder {
       rules: [],
       cssLoaders: [],
       plugins: [],
+      aliases: {},
     };
 
     stateHolder.set(this, state);
@@ -62,6 +64,14 @@ export default class WebpackConfigBuilder {
   injectRules(rule) {
     pushAll(getState(this).rules, rule);
   }
+
+  injectAlias(original, alias) {
+    getState(this).aliases[original] = alias;
+  }
+}
+
+export function getAliases(instance) {
+  return getState(instance).aliases;
 }
 
 export function getPlugins(instance) {
