@@ -1,4 +1,4 @@
-import { attemptChangeName } from '../../util/util';
+import { attemptChangeName } from '../../../shared/util/util';
 import { classDecorator } from './decorator';
 
 const statelessComponent = classDecorator(args => {

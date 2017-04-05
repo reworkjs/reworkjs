@@ -13,13 +13,4 @@ module.exports = {
   componentExists(comp) {
     return components.indexOf(comp) >= 0;
   },
-
-  fileExists(fileName) {
-    try {
-      fs.accessSync(fileName, fs.F_OK);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  },
 };

@@ -2,7 +2,7 @@ import promiseAllProperties from 'promise-all-properties';
 import { flatten } from 'lodash';
 import { getDefault } from '../../shared/util/ModuleUtil';
 import logger from '../../shared/logger';
-import isPojo from '../util/is-pojo';
+import isPojo from '../../shared/util/is-pojo';
 import { Symbols } from './decorators/provider';
 import createAsyncInjectors from './create-async-injectors';
 
