@@ -59,7 +59,6 @@ export default class BaseFeature {
 
   getOptionalDependency(dependencyName) {
     try {
-      // TODO auto-install ?
       return require(dependencyName); // eslint-disable-line
     } catch (e) {
       if (e.code !== 'MODULE_NOT_FOUND') {
