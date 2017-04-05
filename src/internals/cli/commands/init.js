@@ -19,6 +19,33 @@ export default function registerCommand(commander) {
 }
 
 const scripts = {
+  'Install peer dependencies': {
+    isReady() {
+      return false;
+    },
+
+    async run() {
+      const { peerDependencies } = await fs.readJson(resolveRoot('package.json'));
+      const projectPkg = await fs.readJson(resolveProject('package.json'));
+
+      const installed = projectPkg.dependencies || {};
+
+      const toInstall = [];
+
+
+      for (const peerDep of Object.keys(peerDependencies)) {
+        if (!installed[peerDep]) {
+          toInstall.push(`${peerDep}@${peerDependencies[peerDep]}`);
+        }
+      }
+
+      if (toInstall.length > 0) {
+        logger.info(`Installing peer dependencies ${toInstall.map(dep => chalk.blue(dep)).join(', ')}`);
+        execSync(`npm install --save ${toInstall.join(' ')}`);
+      }
+    },
+  },
+
   'Install .gitignore': {
 
     /**
@@ -169,33 +196,6 @@ const scripts = {
         resolveRoot('resources/postcss.config.js.raw'),
         resolveProject('postcss.config.js')
       );
-    },
-  },
-
-  'Install peer dependencies': {
-    isReady() {
-      return false;
-    },
-
-    async run() {
-      const { peerDependencies } = await fs.readJson(resolveRoot('package.json'));
-      const projectPkg = await fs.readJson(resolveProject('package.json'));
-
-      const installed = projectPkg.dependencies || {};
-
-      const toInstall = [];
-
-
-      for (const peerDep of Object.keys(peerDependencies)) {
-        if (!installed[peerDep]) {
-          toInstall.push(`${peerDep}@${peerDependencies[peerDep]}`);
-        }
-      }
-
-      if (toInstall.length > 0) {
-        logger.info(`Installing peer dependencies ${toInstall.map(dep => chalk.blue(dep)).join(', ')}`);
-        execSync(`npm install --save ${toInstall.join(' ')}`);
-      }
     },
   },
 
