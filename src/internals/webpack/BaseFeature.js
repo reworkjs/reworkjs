@@ -66,7 +66,7 @@ export default class BaseFeature {
         throw e;
       }
 
-      logger.error(`Feature ${chalk.blue(this.getFeatureName())} is missing the dependency ${chalk.magenta(dependencyName)}.`);
+      logger.error(`Feature ${chalk.blue(this.getFeatureName())} is missing the dependency ${chalk.magenta(dependencyName)}. run ${chalk.magenta(`npm install ${dependencyName}`)}`);
       throw e;
     }
   }
