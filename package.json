@@ -38,7 +38,6 @@
     "webpack-bundle-analyzer": "^2.3.1"
   },
   "peerDependencies": {
-    "eslint": "^3.18.0",
     "react-intl": "^2.1.5",
     "react": "^15.3.2",
     "react-dom": "^15.3.2",
@@ -71,6 +70,7 @@
     "file-loader": "^0.10.1",
     "find-babel-config": "^1.0.1",
     "find-cache-dir": "^0.1.1",
+    "fs-promise": "^2.0.2",
     "get-port": "^3.0.0",
     "global": "^4.3.1",
     "html-loader": "^0.4.5",
@@ -79,6 +79,7 @@
     "ignore-loader": "^0.1.2",
     "image-webpack-loader": "^3.2.0",
     "immutable": "^3.8.1",
+    "inquirer": "^3.0.6",
     "intl": "^1.2.5",
     "ip": "^1.1.5",
     "json-loader": "^0.5.4",
