@@ -188,7 +188,7 @@ const scripts = {
 
       for (const peerDep of Object.keys(peerDependencies)) {
         if (!installed[peerDep]) {
-          toInstall.push(peerDep);
+          toInstall.push(`${peerDep}@${peerDependencies[peerDep]}`);
         }
       }
 
