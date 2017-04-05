@@ -1,69 +1,105 @@
 import path from 'path';
 import React from 'react';
+import chalk from 'chalk';
 import { renderToString } from 'react-dom/server';
 import webpack from 'webpack';
-import findCacheDir from 'find-cache-dir';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-import OfflinePlugin from 'offline-plugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import WebpackCleanupPlugin from 'webpack-cleanup-plugin';
 import nodeExternals from 'webpack-node-externals';
-import UglifyJsPlugin from 'uglifyjs-webpack-plugin';
 import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import frameworkConfig from '../../shared/framework-config';
 import projectMetadata from '../../shared/project-metadata';
 import frameworkMetadata from '../../shared/framework-metadata';
-import { resolveRoot, resolveFrameworkSource } from '../../shared/resolve';
+import { resolveFrameworkSource } from '../../shared/resolve';
 import { isDev, isTest } from '../../shared/EnvUtil';
+import argv from '../../shared/argv';
+import logger from '../../shared/logger';
 import getWebpackSettings from '../../shared/webpack-settings';
 import BaseHelmet from '../../framework/app/BaseHelmet';
 import renderPage from '../../framework/server/setup-http-server/render-page';
 import RjsDumpStatsPlugin from './DumpEntryPointsPlugin';
 import RequireEnsureHookPlugin from './RequireEnsureHookPlugin';
-import getBabelConfig from './get-babel-config';
+import BaseFeature from './BaseFeature';
+import WebpackConfigBuilder, * as wcbUtils from './WebpackConfigBuilder';
+import sortDependencies from './sort-dependencies';
+import featureClasses from './features';
+
+function parseFeatures(str) {
+  if (!str) {
+    return {};
+  }
+
+  const features = {};
+
+  str.split(',').forEach(featureName => {
+    if (featureName.charAt(0) === '-') {
+      features[featureName.substr(1)] = false;
+    } else {
+      features[featureName] = true;
+    }
+  });
+
+  return features;
+}
 
 export default class WebpackBase {
 
   static SIDE_SERVER = 0;
   static SIDE_CLIENT = 1;
 
+  /** @private */
   isDev: boolean;
+
+  /** @private */
   isTest: boolean;
+
+  /** @private */
+  side: number;
 
   constructor(side: number) {
     this.isDev = isDev;
     this.isTest = isTest;
     this.side = side;
+
+    this.webpackConfigBuilder = new WebpackConfigBuilder();
+
+    this.injectFeatures();
   }
 
-  buildCssLoader(options = {}) {
-    const loaderOptions = {
-      importLoaders: options.importLoaders || 1,
-    };
+  /** @private */
+  isServer() {
+    return this.side === WebpackBase.SIDE_SERVER;
+  }
 
-    if (this.isDev) {
-      Object.assign(loaderOptions, {
-        localIdentName: '[local]__[hash:base64:5]',
-        sourceMap: true,
-      });
-    } else {
-      Object.assign(loaderOptions, {
-        minimize: true, // TODO cssnano options
-      });
+  injectFeatures() {
+    logger.debug('Injecting webpack Features.');
+    const enabledFeatures = parseFeatures(argv.features);
+
+    const features = featureClasses.map(FeatureClass => new FeatureClass(this.isServer(), process.env.NODE_ENV));
+    sortDependencies(features);
+
+    for (const feature of features) {
+      this.injectFeature(feature, enabledFeatures);
+    }
+  }
+
+  /** @private */
+  injectFeature(feature: BaseFeature, enabledFeatures) {
+
+    const name = feature.getFeatureName();
+    const enabled = feature.isEnabled(enabledFeatures[name]);
+
+    logger.debug(`${enabled ? chalk.green('✓') : chalk.red('✘')} Feature ${name}`);
+
+    if (!enabled) {
+      return false;
     }
 
-    if (options.modules) {
-      Object.assign(loaderOptions, {
-        modules: true,
-        camelCase: true,
-      });
-    }
+    feature.visit(this.webpackConfigBuilder);
 
-    return {
-      loader: 'css-loader',
-      options: loaderOptions,
-    };
+    return true;
   }
 
   buildConfig() {
@@ -73,11 +109,14 @@ export default class WebpackBase {
       entry: this.getEntry(),
       output: this.getOutput(),
       module: {
-        rules: this.buildLoaders(),
+        rules: this.buildRules(),
       },
       plugins: this.getPlugins(),
-      devtool: this.getDevTools(),
-      target: this.getTarget(),
+      devtool: 'cheap-module-eval-source-map',
+      performance: {
+        hints: false,
+      },
+      target: this.isServer() ? 'node' : 'web',
       resolve: {
         modules: ['node_modules'],
         extensions: [
@@ -94,9 +133,6 @@ export default class WebpackBase {
         ],
         alias: this.getAliases(),
       },
-      performance: {
-        hints: this.isDev || this.isServer() ? false : 'warning',
-      },
     };
 
     if (this.isServer()) {
@@ -108,12 +144,10 @@ export default class WebpackBase {
       config.externals = [
         nodeExternals({
           whitelist: [
-            // 'webpack/hot/signal',
             new RegExp(`^${frameworkMetadata.name}`),
             /\.css$/i,
           ],
         }),
-        // anyAbsoluteExceptFrameworkAndCss,
       ];
     } else {
       config.resolve.mainFields.unshift('web');
@@ -122,115 +156,10 @@ export default class WebpackBase {
       config.resolve.mainFields.unshift('jsnext:browser');
     }
 
-    return config;
+    return wcbUtils.mergeRaw(this.webpackConfigBuilder, config);
   }
 
-  buildLoaders() {
-
-    /*
-     * Supported file formats:
-     * - GIF
-     * - JPEG/JPG
-     * - PNG
-     * - WebP
-     * - SVG
-     */
-
-    // TODO consider using url-loader rather than file-loader maybe ?
-    // Need to test perf gain.
-
-    const rules = [{
-      test: /\.jsx?$/i,
-      loader: 'babel-loader',
-      exclude: /node_modules/,
-      options: this.getBabelConfig(),
-    }, {
-      test: /\.(eot|ttf|woff|woff2)(\?.*$|$)/i,
-      loader: 'file-loader',
-    }, {
-      test: /\.(jpe?g|png|gif|svg)$/i,
-      use: [
-        require.resolve('./global-srcset-loader'),
-        'file-loader',
-        {
-          loader: 'image-webpack-loader',
-          query: {
-            bypassOnDebug: true,
-            mozjpeg: {
-              progressive: true,
-            },
-            gifsicle: {
-              interlaced: false,
-            },
-            optipng: {
-              optimizationLevel: 7,
-            },
-            pngquant: {
-              quality: '65-90',
-              speed: 4,
-            },
-            svgo: {},
-          },
-        },
-      ],
-    }, {
-      test: /\.webp/i,
-      loader: 'file-loader',
-    }, {
-      test: /\.json$/i,
-      loader: 'json-loader',
-    }, {
-      test: /\.html$/i,
-      loader: 'html-loader',
-    }, {
-      test: /\.(mp4|webm)$/i,
-      loader: 'url-loader?limit=10000',
-    }].concat(this.buildCssLoaders());
-
-    if (this.isDev) {
-      rules.push({
-        test: /\.jsx?$/i,
-        exclude: /node_modules/,
-        loader: 'eslint-loader',
-        options: {
-          rules: {
-            'no-console': 0,
-            'no-debugger': 0,
-          },
-        },
-        enforce: 'pre',
-      });
-    }
-
-    return rules;
-  }
-
-  buildCssLoaders() {
-    const cssLoaders = [{
-      test: /\.(sc|sa|c)ss$/i,
-      exclude: /node_modules/,
-      use: [this.buildCssLoader({ modules: true, importLoaders: 2 }), 'postcss-loader', 'sass-loader'],
-    }, {
-      test: /\.css$/i,
-      include: /node_modules/,
-      use: [this.buildCssLoader({ modules: false })],
-    }];
-
-    const styleLoader = this.isServer() ? 'node-style-loader' : 'style-loader';
-    for (const cssLoader of cssLoaders) {
-      if (this.isDev) {
-        cssLoader.use = [styleLoader, ...cssLoader.use];
-      } else {
-        cssLoader.use = ExtractTextPlugin.extract({
-          fallback: styleLoader,
-          use: cssLoader.use,
-        });
-      }
-    }
-
-    return cssLoaders;
-  }
-
+  /** @private */
   getEntry(): string[] {
     // front-end entry point.
     const entry = [
@@ -257,10 +186,7 @@ export default class WebpackBase {
     return entry;
   }
 
-  getPublicPath() {
-    return '/';
-  }
-
+  /** @private */
   getOutput(): Object {
     // Output to build directory.
     const output = getWebpackSettings(this.isServer()).output;
@@ -290,30 +216,92 @@ export default class WebpackBase {
     return output;
   }
 
-  getTarget() {
-    return this.isServer() ? 'node' : 'web';
+  /** @private */
+  buildRules() {
+
+    // TODO consider using url-loader rather than file-loader maybe ?
+    // Need to test perf gain.
+
+    return [{
+      test: /\.(eot|ttf|woff|woff2)(\?.*$|$)/i,
+      loader: 'file-loader',
+    }, {
+      test: wcbUtils.getFileTypeRegExp(this.webpackConfigBuilder, WebpackConfigBuilder.FILE_TYPE_IMG),
+      use: [
+        require.resolve('./global-srcset-loader'),
+        'file-loader',
+      ],
+    }, {
+      test: /\.(webp|mp4|webm)/i,
+      loader: 'file-loader',
+    }, {
+      test: /\.json$/i,
+      loader: 'json-loader',
+    }, {
+      test: /\.html$/i,
+      loader: 'html-loader',
+    }]
+      .concat(this.buildCssLoaders())
+      .concat(wcbUtils.buildRules(this.webpackConfigBuilder));
   }
 
-  getDevTools() {
-    return this.isDev ? 'cheap-module-eval-source-map' : 'source-map';
+  /** @private */
+  buildCssLoaders() {
+    const pluggedCssLoaders = wcbUtils.getCssLoaders(this.webpackConfigBuilder);
+
+    const cssLoaders = [{
+      test: wcbUtils.getFileTypeRegExp(this.webpackConfigBuilder, WebpackConfigBuilder.FILE_TYPE_CSS),
+      exclude: /node_modules/,
+      use: [
+        getCssLoader({
+          modules: true,
+          importLoaders: pluggedCssLoaders.length,
+        }),
+        ...pluggedCssLoaders,
+      ],
+    }, {
+      test: /\.css$/i,
+      include: /node_modules/,
+      use: [getCssLoader({ modules: false })],
+    }];
+
+    const styleLoader = this.isServer() ? 'node-style-loader' : 'style-loader';
+    for (const cssLoader of cssLoaders) {
+      if (this.isDev) {
+        cssLoader.use = [styleLoader, ...cssLoader.use];
+      } else {
+        cssLoader.use = ExtractTextPlugin.extract({
+          fallback: styleLoader,
+          use: cssLoader.use,
+        });
+      }
+    }
+
+    return cssLoaders;
   }
 
+  /** @private */
   getAliases() {
-    return {
+    const frameworkAliases = {
       // Framework configuration directories
       '@@pre-init': frameworkConfig['pre-init'],
       '@@main-component': frameworkConfig['entry-react'],
       '@@directories.routes': frameworkConfig.directories.routes,
       '@@directories.translations': frameworkConfig.directories.translations,
       '@@directories.providers': frameworkConfig.directories.providers,
-      [frameworkMetadata.name]: resolveRoot(''),
 
       // Support React Native Web
       // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
       'react-native': 'react-native-web',
     };
+
+    const customAliases = wcbUtils.getAliases(this.webpackConfigBuilder);
+    Object.assign(frameworkAliases, customAliases);
+
+    return frameworkAliases;
   }
 
+  /** @private */
   getDefinedVars() {
     const NODE_ENV = JSON.stringify(process.env.NODE_ENV);
     const SIDE = JSON.stringify(this.isServer() ? 'server' : 'client');
@@ -340,31 +328,7 @@ export default class WebpackBase {
     return definePluginArg;
   }
 
-  getBundleSizeOptimisationPlugins() {
-    return [
-      new webpack.optimize.CommonsChunkPlugin({
-        name: 'common',
-        children: true,
-        minChunks: 2,
-        async: true,
-      }),
-
-      new UglifyJsPlugin({
-        // preserve LICENSE comments (*!, /**!, @preserve or @license) for legal stuff but extract them
-        // to their own file to reduce bundle size.
-        extractComments: true,
-        sourceMap: true,
-        compress: {
-          warnings: false,
-        },
-      }),
-
-      // OccurrenceOrderPlugin is needed for long-term caching to work properly.
-      // See http://mxs.is/googmv
-      new webpack.optimize.OccurrenceOrderPlugin(true),
-    ];
-  }
-
+  /** @private */
   getPlugins() {
     // TODO inject DLLs <script data-dll='true' src='/${dllName}.dll.js'></script>`
     // TODO https://github.com/diurnalist/chunk-manifest-webpack-plugin
@@ -437,67 +401,7 @@ export default class WebpackBase {
       );
     }
 
-    if (!this.isDev && !this.isServer()) {
-      // only optimise the bundle size for the client in prod mode.
-      plugins.push(...this.getBundleSizeOptimisationPlugins());
-
-      plugins.push(
-        // Put it in the end to capture all the HtmlWebpackPlugin's assets
-        new OfflinePlugin({
-          relativePaths: false,
-          publicPath: this.getPublicPath(),
-
-          // No need to cache .htaccess. See http://mxs.is/googmp,
-          // this is applied before any match in `caches` section
-          excludes: ['.htaccess'],
-
-          caches: {
-            main: [':rest:'],
-
-            // All chunks marked as `additional`, loaded after main section
-            // and do not prevent SW to install. Change to `optional` if
-            // do not want them to be preloaded at all (cached only when first loaded)
-            additional: ['*.chunk.js'],
-          },
-
-          // Removes warning for about `additional` section usage
-          safeToUseOptionalCaches: true,
-
-          AppCache: false,
-        }),
-      );
-    }
-
-    return plugins;
-  }
-
-  getBabelConfig() {
-    const config = getBabelConfig();
-
-    // use the app's .babelrc
-    if (!config) {
-      return config;
-    }
-
-    config.plugins = config.plugins || [];
-
-    if (this.isDev) {
-      config.presets.push('react-hmre');
-    }
-
-    // This is a feature of `babel-loader` for webpack (not Babel itself).
-    // It enables caching build results in ./node_modules/.cache/reworkjs/babel
-    // directory for faster rebuilds. We use findCacheDir() because of:
-    // https://github.com/facebookincubator/create-react-app/issues/483
-    config.cacheDirectory = `${findCacheDir({
-      name: frameworkMetadata.name,
-    })}/babel`;
-
-    return config;
-  }
-
-  isServer() {
-    return this.side === WebpackBase.SIDE_SERVER;
+    return plugins.concat(...wcbUtils.getPlugins(this.webpackConfigBuilder));
   }
 }
 
@@ -505,4 +409,34 @@ function buildIndexPage() {
   return renderPage({
     body: renderToString(<BaseHelmet />),
   });
+}
+
+function getCssLoader(options = {}) {
+  const loaderOptions = {
+    importLoaders: options.importLoaders || 1,
+  };
+
+  if (isDev) {
+    Object.assign(loaderOptions, {
+      localIdentName: '[local]__[hash:base64:5]',
+      sourceMap: true,
+    });
+  } else {
+    // TODO cssnano options
+    Object.assign(loaderOptions, {
+      minimize: true,
+    });
+  }
+
+  if (options.modules) {
+    Object.assign(loaderOptions, {
+      modules: true,
+      camelCase: true,
+    });
+  }
+
+  return {
+    loader: 'css-loader',
+    options: loaderOptions,
+  };
 }

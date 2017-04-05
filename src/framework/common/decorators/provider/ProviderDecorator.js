@@ -8,7 +8,7 @@ import { put, takeLatest } from 'redux-saga/effects';
 import { createSelector } from 'reselect';
 import constantCase from 'constant-case';
 import { noop } from 'lodash';
-import { attemptChangeName, killMethod, replaceMethod } from '../../../util/util';
+import { attemptChangeName, killMethod, replaceMethod } from '../../../../shared/util/util';
 import logger from '../../../../shared/logger';
 import { Symbols } from '../provider';
 import { classDecorator, ClassDecoratorArgument } from '../decorator';

@@ -8,3 +8,12 @@ export function existsAsync(path) {
     });
   });
 }
+
+export function existsSync(fileName) {
+  try {
+    fs.accessSync(fileName, fs.F_OK);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}

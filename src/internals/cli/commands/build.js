@@ -2,6 +2,7 @@ import childProcess from 'child_process';
 import chalk from 'chalk';
 import logger from '../../../shared/logger';
 import builders from '../../webpack/builders';
+import featureHelp from '../get-webpack-features-help';
 
 chalk.enabled = true;
 
@@ -9,6 +10,7 @@ export default function registerCommand(commander) {
 
   commander
     .command('build <parts...>')
+    .option(...featureHelp)
     .description('Builds the application')
     .action(parts => {
 

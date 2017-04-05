@@ -1,12 +1,3 @@
-/**
- * Need:
- * - Start a client build process
- * - Start a server build process
- * - Start the server
- * - Reload the server on rebuild if HMR did not work
- *
- * - The server needs to communicate with the client build process (needs to know the build status)
- */
 import childProcess from 'child_process';
 import chalk from 'chalk';
 import getPort from 'get-port';
@@ -15,6 +6,7 @@ import logger from '../../../shared/logger';
 import builders from '../../webpack/builders';
 import { listenMsg } from '../process';
 import CliSplitView from '../CliSplitView';
+import featureHelp from '../get-webpack-features-help';
 
 export default function registerCommand(commander) {
 
@@ -25,8 +17,8 @@ export default function registerCommand(commander) {
     .option('--port <port>', 'The port the server will listen to', Number, 3000)
     .option('--tunnel <tunnel_port>', 'The port of the tunnel', Number, -1)
     .option('--no-split', 'Disable terminal split-view')
+    .option(...featureHelp)
     .action(options => {
-
       options.verbose = commander.verbose;
 
       logger.info(`Launching app in ${chalk.magenta(process.env.NODE_ENV)} mode...`);
