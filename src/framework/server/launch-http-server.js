@@ -3,8 +3,6 @@ import ngrok from 'ngrok';
 import chalk from 'chalk';
 import getPort from 'get-port';
 import argv from '../../shared/argv';
-import { isDev } from '../../shared/EnvUtil';
-import env from '../../shared/env';
 import logger from '../../shared/logger';
 import setupHttpServer from './setup-http-server';
 import printServerStarted from './print-server-started';
@@ -23,7 +21,7 @@ export default (async function initServer() {
     logger.info(`Use ${chalk.blue('--port <number>')} to set the port to use.`);
   }
 
-  const port = argv.port || env.PORT || await getPort();
+  const port = argv.port || process.env.PORT || await getPort();
   if (!hideHttp) {
     logger.info(`Server starting on port ${chalk.magenta(port)}.`);
   }
@@ -33,7 +31,7 @@ export default (async function initServer() {
 
   await promisify(app.listen).call(app, port);
 
-  const enableNgrok = (isDev && env.ENABLE_TUNNEL) || argv.tunnel;
+  const enableNgrok = (process.env.NODE_ENV === 'development' && process.env.ENABLE_TUNNEL) || argv.tunnel;
 
   let tunnelUrl = null;
   if (enableNgrok) {

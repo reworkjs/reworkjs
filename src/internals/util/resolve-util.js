@@ -1,8 +1,14 @@
 import { resolve } from 'path';
-import globals from '../globals';
-import { removeStartSlash } from './common';
 
-export const rootDirectory = globals.ROOT_DIR;
+function removeStartSlash(fileName) {
+  if (fileName[0] === '/') {
+    return fileName.substr(1);
+  }
+
+  return fileName;
+}
+
+export const rootDirectory = resolve(__dirname, '../../..');
 
 /**
  * Resolves a file in the root directory of the project using the framework.
@@ -11,7 +17,7 @@ export const rootDirectory = globals.ROOT_DIR;
  * @returns The path of the file.
  */
 export function resolveProject(fileName: string): string {
-  return resolve(process.PROJECT_DIR, removeStartSlash(fileName));
+  return resolve(process.cwd(), removeStartSlash(fileName));
 }
 
 /**
@@ -31,5 +37,5 @@ export function resolveRoot(fileName: string = ''): string {
  * @returns The path of the file.
  */
 export function resolveFrameworkSource(fileName: string): string {
-  return resolve(rootDirectory, 'src/framework', removeStartSlash(fileName));
+  return resolve(rootDirectory, 'es/framework', removeStartSlash(fileName));
 }

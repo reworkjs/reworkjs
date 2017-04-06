@@ -1,0 +1,6 @@
+{
+  "name": "argv",
+  "private": true,
+  "main": "./index.js",
+  "browser": "./browser.js"
+}

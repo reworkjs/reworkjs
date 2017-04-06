@@ -1,7 +1,7 @@
 import fs from 'fs';
 import mkdirp from 'mkdirp';
 import { merge } from 'lodash';
-import { resolveProject } from '../../shared/resolve';
+import { resolveProject } from '../../internals/util/resolve-util';
 import logger from '../../shared/logger';
 import { FrameworkConfigStruct } from '../../shared/FrameworkConfigStruct';
 import { requireRawProject } from '../../internals/util/RequireUtil';

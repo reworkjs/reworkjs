@@ -1,7 +1,7 @@
 import fs from 'fs-promise';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
-import { resolveProject, resolveRoot } from '../../../shared/resolve';
+import { resolveProject, resolveRoot } from '../../util/resolve-util';
 import logger from '../../../shared/logger';
 import { existsAsync } from '../../util/fs-util';
 import { execSync } from '../../util/process-util';

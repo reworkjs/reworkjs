@@ -1,6 +1,5 @@
 import winston from 'winston';
 import argv from '../argv';
-import globals from '../globals';
 import framework from '../framework-metadata';
 import { getDefault } from '../util/ModuleUtil';
 import levels from './levels';
@@ -39,7 +38,7 @@ logger.add(winston.transports.Console, {
   stderrLevels: ['warn', 'error'],
   silent: false,
   timestamp: false,
-  label: globals.PROCESS_NAME,
+  label: process.env.PROCESS_NAME || 'FrameworkCli',
 });
 
 if (actualLevel !== requestedLevel) {

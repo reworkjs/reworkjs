@@ -1,4 +1,4 @@
-import { resolveProject, resolveFrameworkSource } from '../../shared/resolve';
+import { resolveProject, resolveFrameworkSource } from '../../internals/util/resolve-util';
 
 const defaultConfig = {
   directories: {

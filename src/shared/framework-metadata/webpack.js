@@ -1,3 +1,3 @@
-// Webpack global
+// Webpack DefinePlugin
 // noinspection JSUnresolvedVariable
-export default frameworkMetadata; // eslint-disable-line no-undef
+export default $$RJS_VARS$$.FRAMEWORK_METADATA; // eslint-disable-line no-undef

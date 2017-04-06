@@ -1,7 +1,7 @@
 import findCacheDir from 'find-cache-dir';
 import findBabelConfig from 'find-babel-config';
 import frameworkMetadata from '../../../shared/framework-metadata';
-import { resolveProject } from '../../../shared/resolve';
+import { resolveProject } from '../../util/resolve-util';
 import { getDefault } from '../../../shared/util/ModuleUtil';
 import BaseFeature from '../BaseFeature';
 

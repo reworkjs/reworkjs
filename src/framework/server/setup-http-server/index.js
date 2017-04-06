@@ -5,7 +5,6 @@ import getWebpackSettings from '../../../shared/webpack-settings';
 import argv from '../../../shared/argv';
 import logger from '../../../shared/logger';
 import { getDefault } from '../../../shared/util/ModuleUtil';
-import { isProd } from '../../../shared/EnvUtil';
 
 const webpackClientConfig = getWebpackSettings(/* is server */ false);
 const httpStaticPath = webpackClientConfig.output.publicPath;
@@ -16,7 +15,7 @@ const HAS_PRERENDERING = argv.prerendering !== false;
 
 export default function setupHttpServer(expressApp) {
 
-  if (isProd) {
+  if (process.env.NODE_ENV === 'production') {
     // Note: if static assets are pre-compressed, move compression() to pre-rendering.
     expressApp.use(compression());
   }

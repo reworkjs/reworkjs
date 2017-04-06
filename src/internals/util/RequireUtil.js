@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { resolveProject, resolveRoot, resolveFrameworkSource } from '../../shared/resolve';
+import { resolveProject, resolveRoot, resolveFrameworkSource } from './resolve-util';
 
 /**
  * Require a file in the root directory of the project using the framework.

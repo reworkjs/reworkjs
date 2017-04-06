@@ -1,7 +1,7 @@
 import { FrameworkConfigStruct } from '../../shared/FrameworkConfigStruct';
 
-// Webpack global
+// Webpack DefinePlugin
 // noinspection JSUnresolvedVariable
-const config: FrameworkConfigStruct = frameworkConfig; // eslint-disable-line no-undef
+const config: FrameworkConfigStruct = $$RJS_VARS$$.FRAMEWORK_CONFIG; // eslint-disable-line no-undef
 
 export default config;

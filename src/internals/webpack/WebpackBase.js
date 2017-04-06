@@ -1,4 +1,3 @@
-import path from 'path';
 import React from 'react';
 import chalk from 'chalk';
 import { renderToString } from 'react-dom/server';
@@ -12,8 +11,7 @@ import CopyWebpackPlugin from 'copy-webpack-plugin';
 import frameworkConfig from '../../shared/framework-config';
 import projectMetadata from '../../shared/project-metadata';
 import frameworkMetadata from '../../shared/framework-metadata';
-import { resolveFrameworkSource } from '../../shared/resolve';
-import { isDev, isTest } from '../../shared/EnvUtil';
+import { resolveFrameworkSource } from '../util/resolve-util';
 import argv from '../../shared/argv';
 import logger from '../../shared/logger';
 import getWebpackSettings from '../../shared/webpack-settings';
@@ -25,6 +23,9 @@ import BaseFeature from './BaseFeature';
 import WebpackConfigBuilder, * as wcbUtils from './WebpackConfigBuilder';
 import sortDependencies from './sort-dependencies';
 import featureClasses from './features';
+
+const isDev = process.env.NODE_ENV === 'development';
+const isTest = process.env.NODE_ENV === 'test';
 
 function parseFeatures(str) {
   if (!str) {
@@ -305,27 +306,31 @@ export default class WebpackBase {
   getDefinedVars() {
     const NODE_ENV = JSON.stringify(process.env.NODE_ENV);
     const SIDE = JSON.stringify(this.isServer() ? 'server' : 'client');
-    const definePluginArg = {
-      'process.env.BUILD_ENV': NODE_ENV, // eslint-disable-line no-process-env
-      'process.env.SIDE': SIDE, // eslint-disable-line no-process-env
-      webpack_globals: {
-        PROCESS_NAME: JSON.stringify(`${projectMetadata.name} (${this.isServer() ? 'server' : 'client'})`),
-        SIDE,
-        PROJECT_DIR: JSON.stringify(process.cwd()),
-        ROOT_DIR: JSON.stringify(path.resolve(__dirname, '../../..')),
+
+    const definedVariables = {
+      'process.env.SIDE': SIDE,
+      'process.env.BUILD_ENV': NODE_ENV,
+      'process.env.PROCESS_NAME': JSON.stringify(`${projectMetadata.name} (${this.isServer() ? 'server' : 'client'})`),
+      $$RJS_VARS$$: {
+        FRAMEWORK_CONFIG: JSON.stringify(frameworkConfig),
+        FRAMEWORK_METADATA: JSON.stringify(frameworkMetadata),
+        PROJECT_METADATA: JSON.stringify(projectMetadata),
       },
-      frameworkConfig: JSON.stringify(frameworkConfig),
-      projectMetadata: JSON.stringify(projectMetadata),
-      frameworkMetadata: JSON.stringify(frameworkMetadata),
     };
 
     if (!this.isServer()) {
-      definePluginArg['process.env'] = { NODE_ENV, SIDE };
+      // define process on the browser
+      definedVariables.process = {
+        env: {
+          NODE_ENV,
+        },
+        argv: JSON.stringify(process.argv),
+      };
 
-      definePluginArg['process.argv'] = JSON.stringify(process.argv); // eslint-disable-line no-process-env
+      definedVariables.$$RJS_VARS$$.PARSED_ARGV = JSON.stringify(argv);
     }
 
-    return definePluginArg;
+    return definedVariables;
   }
 
   /** @private */
