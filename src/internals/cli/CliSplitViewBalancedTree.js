@@ -1,5 +1,4 @@
 import Blessed from 'blessed';
-import { pick } from 'lodash';
 
 type BlessedNode = Blessed.Box;
 

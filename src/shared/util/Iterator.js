@@ -1,26 +1,26 @@
-export default function *Iterator(arg) {
+export default function *iterator(arg) {
   if (typeof arg !== 'object' || arg == null) {
     throw new TypeError('Cannot iterate over a non-object variable');
   }
 
   if (typeof Symbol !== 'undefined' && Symbol.iterator) {
-    const iterator = arg[Symbol.iterator];
+    const theIterator = arg[Symbol.iterator];
 
-    if (iterator) {
-      yield* iterator;
+    if (theIterator) {
+      yield* theIterator;
       return;
     }
   }
 
   if (Array.isArray(arg)) {
-    yield* ArrayIterator(arg);
+    yield* arrayIterator(arg);
     return;
   }
 
-  yield* ObjectIterator(arg);
+  yield* objectIterator(arg);
 }
 
-export function *ArrayIterator(arg) {
+export function *arrayIterator(arg) {
   const length = arg.length;
 
   for (let i = 0; i < length; i++) {
@@ -28,7 +28,7 @@ export function *ArrayIterator(arg) {
   }
 }
 
-export function *ObjectIterator(arg) {
+export function *objectIterator(arg) {
   const keys = Object.keys(arg);
   const length = keys.length;
 

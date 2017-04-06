@@ -1,4 +1,5 @@
 import { throttle as originalThrottle } from 'redux-saga/effects';
+
 export { default as provider } from './provider/ProviderDecorator';
 export { default as reducer } from './provider/ReducerDecorator';
 export { default as saga } from './provider/SagaDecorator';

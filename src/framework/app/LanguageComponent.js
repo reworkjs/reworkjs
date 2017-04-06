@@ -3,7 +3,7 @@ import { IntlProvider } from 'react-intl';
 import { load as getCookie } from 'react-cookie';
 import { isLocaleValid, onHotReload } from '../common/i18n';
 import container from '../common/decorators/container';
-import serverLocales from '../server/setup-http-server/request-locale';
+import { getCurrentRequestLocales } from '../server/setup-http-server/request-locale';
 import LanguageProvider, { LOCALE_COOKIE_NAME } from './providers/LanguageProvider';
 
 /*
@@ -69,6 +69,7 @@ function guessPreferredLocale() {
   }
 
   // server-side
+  const serverLocales = getCurrentRequestLocales();
   if (serverLocales) {
     for (const serverLocale of serverLocales) {
       if (isLocaleValid(serverLocale)) {

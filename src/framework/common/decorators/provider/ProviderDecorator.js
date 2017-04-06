@@ -127,7 +127,11 @@ const ProviderDecorator = classDecorator((arg: ClassDecoratorArgument) => {
 
   providerClass[PROVIDER_STATE_ACCESSOR] = IMMUTABLE_STATE;
 
-  const { initialState, sagaList, actionListeners } = extractFromProvider(providerClass, selectDomain, domainIdentifier);
+  const {
+    initialState,
+    sagaList,
+    actionListeners,
+  } = extractFromProvider(providerClass, selectDomain, domainIdentifier);
 
   function genericReducer(state = initialState, actionData) {
     const type = actionData.type;
