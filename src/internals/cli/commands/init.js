@@ -7,6 +7,9 @@ import { existsAsync } from '../../util/fs-util';
 import { execSync } from '../../util/process-util';
 
 // TODO: handle NPM install crashes if module not found
+// TODO: while running, print that the task is running
+// TODO init git if package.json contains a repo ?
+// TODO: Hide NPM's STDOUT if verbosity isn't debug.
 
 export default function registerCommand(commander) {
 
@@ -31,8 +34,6 @@ const scripts = {
       const installed = projectPkg.dependencies || {};
 
       const toInstall = [];
-
-
       for (const peerDep of Object.keys(peerDependencies)) {
         if (!installed[peerDep]) {
           toInstall.push(`${peerDep}@${peerDependencies[peerDep]}`);
@@ -224,7 +225,6 @@ function runInitScripts() {
   }
 
   /*
-   - run scripts
    - print "Project ready, use `rjs start --env dev` to launch your project. Read more at <getting started doc url>"
    */
 }

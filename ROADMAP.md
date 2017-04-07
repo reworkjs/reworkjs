@@ -79,6 +79,7 @@
 
 ## Potential future versions
 
+- https://www.npmjs.com/package/postcss-image-set-polyfill
 - Disable chunk names in prod ? Could save a few bytes.
 - Make `react-router@3.0.2`, `redux` dependencies instead of peerDeps ?
 - Remove browser-source-map-support in prod ?
