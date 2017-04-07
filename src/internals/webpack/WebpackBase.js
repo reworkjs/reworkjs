@@ -229,7 +229,12 @@ export default class WebpackBase {
     }, {
       test: wcbUtils.getFileTypeRegExp(this.webpackConfigBuilder, WebpackConfigBuilder.FILE_TYPE_IMG),
       use: [
-        require.resolve('./global-srcset-loader'),
+        {
+          loader: 'srcset-loader',
+          options: {
+            lightweight: true,
+          },
+        },
         'file-loader',
       ],
     }, {
