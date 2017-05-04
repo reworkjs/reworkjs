@@ -86,6 +86,7 @@
     "lodash": "^4.17.4",
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
+    "negotiator": "^0.6.1",
     "ngrok": "^2.2.6",
     "node-sass": "^4.5.1",
     "node-style-loader": "^0.0.1-alpha",
