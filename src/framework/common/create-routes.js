@@ -6,6 +6,8 @@ import isPojo from '../../shared/util/is-pojo';
 import { Symbols } from './decorators/provider';
 import createAsyncInjectors from './create-async-injectors';
 
+let routeCount = 0;
+
 export default function createRoutes(store) {
 
   const routeLoader = require.context('@@directories.routes', true, /\.js$/);
@@ -19,7 +21,24 @@ export default function createRoutes(store) {
 
   return fileNames
     .map(file => {
-      const route = getDefault(routeLoader(file));
+      let route = getDefault(routeLoader(file));
+
+      if (route == null) {
+        return null;
+      }
+
+      if (typeof route !== 'object') {
+        return null;
+      }
+
+      if (typeof route.toJSON === 'function') {
+        route = route.toJSON() || route;
+      }
+
+      // only register those routes as children of other routes.
+      if (route.standalone === false) {
+        return null;
+      }
 
       if (route.status === 404) {
         route.priority = route.priority || Number.MIN_SAFE_INTEGER + 1;
@@ -33,6 +52,7 @@ export default function createRoutes(store) {
 
       return route;
     })
+    .filter(route => route !== null)
     .sort((a, b) => (b.priority || 0) - (a.priority || 0))
     .map((route, i) => sanitizeRoute(route, injectors, store, fileNames[i]));
 }
@@ -45,7 +65,23 @@ function assertUnique(singularMethodName, routeData, fileName) {
   }
 }
 
+const SANITIZED = Symbol('sanitized');
+export const ROUTE_ID = Symbol('route-id');
 function sanitizeRoute(routeData, injectors, store, fileName) {
+
+  if (typeof routeData.toJSON === 'function') {
+    routeData = routeData.toJSON() || routeData;
+  }
+
+  // prevent resanitizing the same route,
+  // can happen if the same route is used as the child of two parent routes.
+  if (routeData[SANITIZED] === true) {
+    return;
+  }
+
+  routeData[SANITIZED] = true;
+
+  routeData[ROUTE_ID] = routeCount++;
 
   assertUnique('getComponent', routeData, fileName);
   assertUnique('getSaga', routeData, fileName);
