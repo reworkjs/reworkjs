@@ -6,6 +6,7 @@ import RouteProvider from '../app/providers/RouteProvider';
 import mainComponent from '../common/main-component';
 import createRoutes from './create-routes';
 import createStore from './create-store';
+import debug from './debug';
 
 // useRouterHistory creates a composable higher-order function
 const navigationHistory = process.env.SIDE === 'client' ? browserHistory : createMemoryHistory();
@@ -23,5 +24,7 @@ const rootRoute = {
   component: mainComponent,
   childRoutes: createRoutes(store),
 };
+
+debug.rootRoute = rootRoute;
 
 export { rootRoute, history, store };
