@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
 import logger from '../../shared/logger';
 import translationMessages from '../common/i18n';
@@ -21,7 +22,7 @@ export default function ReworkJsWrapper(props) {
 }
 
 ReworkJsWrapper.propTypes = {
-  children: React.PropTypes.any,
+  children: PropTypes.any,
 };
 
 // Install ServiceWorker and AppCache in the end since
