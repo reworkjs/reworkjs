@@ -92,7 +92,7 @@
     "node-sass": "^4.5.1",
     "node-style-loader": "^0.0.1-alpha",
     "offline-plugin": "^4.6.2",
-    "postcss-loader": "^1.3.3",
+    "postcss-loader": "^2.0.1",
     "promise-all-properties": "^0.2.0",
     "prop-types": "^15.5.8",
     "react-cookie": "^2.0.6",
