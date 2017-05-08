@@ -1,5 +1,4 @@
 import { call, put } from 'redux-saga/effects';
-import { save as setCookie } from 'react-cookie';
 import { provider, saga, reducer } from '../../common/decorators/provider';
 import { installLocale } from '../../common/i18n';
 
@@ -10,12 +9,12 @@ export default class LanguageProvider {
   static locale: string = 'en';
 
   @saga
-  static *changeLocale(newLocale, persist) {
+  static *changeLocale(newLocale, cookie) {
     yield call(installLocale, newLocale);
     yield put(this._setLocale(newLocale));
 
-    if (persist) {
-      setCookie(LOCALE_COOKIE_NAME, newLocale);
+    if (cookie && cookie.get(LOCALE_COOKIE_NAME) !== newLocale) {
+      cookie.set(LOCALE_COOKIE_NAME, newLocale, { path: '/' });
     }
   }
 

@@ -2,6 +2,7 @@ import path from 'path';
 import express from 'express';
 import getPreferredEncodings from 'negotiator/lib/encoding';
 import compression from 'compression';
+import cookiesMiddleware from 'universal-cookie-express';
 import getWebpackSettings from '../../../shared/webpack-settings';
 import argv from '../../../shared/argv';
 import logger from '../../../shared/logger';
@@ -81,6 +82,7 @@ export default function setupHttpServer(expressApp) {
     import('./serve-react-route').then(module => {
       const serveReactRoute = getDefault(module);
 
+      expressApp.use(cookiesMiddleware());
       expressApp.use(serveReactRoute);
     });
   }

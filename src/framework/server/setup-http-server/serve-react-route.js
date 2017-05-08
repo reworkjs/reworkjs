@@ -1,6 +1,6 @@
 import fs from 'fs';
 import React from 'react';
-import { plugToRequest as plugReactCookie } from 'react-cookie';
+import { CookiesProvider } from 'react-cookie';
 import { match, RouterContext } from 'react-router';
 import { renderToString } from 'react-dom/server';
 import { collectInitial, collectContext } from 'node-style-loader/collect';
@@ -69,12 +69,12 @@ export default async function serveReactRoute(req, res, next): ?{ appHtml: strin
       ? compilationStats.client.entryPoints.css
       : collectInitial();
 
-    const unplugReactCookie = plugReactCookie(req, res);
-
     const [contextStyleTag, appHtml] = collectContext(() => renderToString(
-      <ReworkJsWrapper>
-        <RouterContext {...props} />
-      </ReworkJsWrapper>,
+      <CookiesProvider cookies={req.universalCookies}>
+        <ReworkJsWrapper>
+          <RouterContext {...props} />
+        </ReworkJsWrapper>
+      </CookiesProvider>,
     ));
 
     const importedServerChunks: Set = unhookWebpackAsyncRequire();
@@ -85,8 +85,6 @@ export default async function serveReactRoute(req, res, next): ?{ appHtml: strin
         importableClientChunks.push(getChunkPrefetchLink(clientChunk, compilationStats));
       }
     }
-
-    unplugReactCookie();
 
     res.send(renderPage({
       // initial react app

@@ -1,5 +1,6 @@
 import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
+import { withCookies } from 'react-cookie';
 import { createSelector } from 'reselect';
 
 export type ContainerDecoratorConfig = {
@@ -10,7 +11,7 @@ export type ContainerDecoratorConfig = {
 };
 
 function checkInvalidKeys(conf) {
-  const authorizedKeys = ['state', 'dispatchers', 'actions', 'intl', 'connectOptions'];
+  const authorizedKeys = ['state', 'dispatchers', 'actions', 'intl', 'cookies', 'connectOptions'];
 
   const invalidKeys = Object.keys(conf).filter(key => !authorizedKeys.includes(key));
 
@@ -140,6 +141,10 @@ export default function container(config: ContainerDecoratorConfig = {}) {
   return function setupContainer(containerClass) {
     if (config.intl === true) {
       containerClass = injectIntl(containerClass);
+    }
+
+    if (config.cookies === true) {
+      containerClass = withCookies(containerClass);
     }
 
     return connector(containerClass);

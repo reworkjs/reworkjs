@@ -1,6 +1,7 @@
 import React from 'react';
 import { IntlProvider } from 'react-intl';
-import { load as getCookie } from 'react-cookie';
+import { instanceOf } from 'prop-types';
+import { Cookies } from 'react-cookie';
 import { isLocaleValid, onHotReload } from '../common/i18n';
 import container from '../common/decorators/container';
 import { getCurrentRequestLocales } from '../server/setup-http-server/request-locale';
@@ -17,6 +18,7 @@ import LanguageProvider, { LOCALE_COOKIE_NAME } from './providers/LanguageProvid
   actions: {
     changeLocale: LanguageProvider.changeLocale,
   },
+  cookies: true,
 })
 export default class LanguageComponent extends React.Component {
   static propTypes = {
@@ -24,12 +26,13 @@ export default class LanguageComponent extends React.Component {
     locale: React.PropTypes.string.isRequired,
     changeLocale: React.PropTypes.func.isRequired,
     children: React.PropTypes.node.isRequired,
+    cookies: instanceOf(Cookies).isRequired,
   };
 
   constructor(props) {
     super(props);
 
-    props.changeLocale(guessPreferredLocale(), false);
+    props.changeLocale(guessPreferredLocale(props.cookies), false);
 
     if (module.hot) {
       onHotReload(() => this.forceUpdate());
@@ -45,10 +48,10 @@ export default class LanguageComponent extends React.Component {
   }
 }
 
-function guessPreferredLocale() {
+function guessPreferredLocale(cookies) {
   // TODO add hook ?
 
-  const cookieLocale = getCookie(LOCALE_COOKIE_NAME);
+  const cookieLocale = cookies.get(LOCALE_COOKIE_NAME);
   if (cookieLocale && isLocaleValid(cookieLocale)) {
     return cookieLocale;
   }
