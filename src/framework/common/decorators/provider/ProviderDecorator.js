@@ -4,7 +4,7 @@
 // TODO memoize getters
 
 import { fromJS, Collection, is as immutableIs } from 'immutable';
-import { put, takeLatest } from 'redux-saga/effects';
+import { put, takeLatest, all } from 'redux-saga/effects';
 import { createSelector } from 'reselect';
 import constantCase from 'constant-case';
 import { noop } from 'lodash';
@@ -346,7 +346,7 @@ function extractSaga(propertyName: string, dataBag: DataBag) {
     }
 
     function *awaitAction() { // eslint-disable-line
-      yield actionWatchers;
+      yield all(actionWatchers);
     }
 
     attemptChangeName(awaitAction, `${ProviderClass.name}.${property.name}`);
