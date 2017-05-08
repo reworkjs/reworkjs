@@ -35,10 +35,10 @@
   },
   "optionalDependencies": {
     "@reworkjs/babel-preset-reworkjs": "^0.1.1",
-    "webpack-bundle-analyzer": "^2.3.1"
+    "webpack-bundle-analyzer": "^2.6.0"
   },
   "peerDependencies": {
-    "react-intl": "^2.1.5",
+    "react-intl": "^2.2.3",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
     "prop-types": "^15.5.8",
@@ -46,7 +46,7 @@
     "react-router-redux": "^4.0.5",
     "redux-saga": "^0.15.3",
     "redux": "^3.6.0",
-    "react-helmet": "^5.0.0",
+    "react-helmet": "^5.0.3",
     "react-cookie": "^2.0.6"
   },
   "dependencies": {
@@ -71,7 +71,7 @@
     "file-loader": "^0.11.1",
     "find-babel-config": "^1.0.1",
     "find-cache-dir": "^0.1.1",
-    "fs-promise": "^2.0.2",
+    "fs-promise": "^2.0.3",
     "get-port": "^3.0.0",
     "global": "^4.3.1",
     "html-loader": "^0.4.5",
@@ -104,16 +104,16 @@
     "reselect": "^2.5.4",
     "sass-loader": "^6.0.3",
     "source-map-support": "^0.4.14",
-    "srcset-loader": "^2.0.1",
+    "srcset-loader": "^2.0.2",
     "style-loader": "^0.17.0",
     "toposort-class": "^1.0.1",
     "universal-cookie-express": "^2.0.5",
     "url-loader": "^0.5.8",
-    "webpack": "^2.3.0",
+    "webpack": "^2.5.1",
     "webpack-cleanup-plugin": "^0.5.1",
     "webpack-dev-middleware": "^1.10.1",
     "webpack-hot-middleware": "^2.17.1",
-    "webpack-node-externals": "^1.5.4",
+    "webpack-node-externals": "^1.6.0",
     "winston": "^2.3.1"
   },
   "devDependencies": {
@@ -141,8 +141,8 @@
     "gulp-watch": "^4.3.11",
     "isparta": "^4.0.0",
     "isparta-loader": "^2.0.0",
-    "karma": "^1.5.0",
-    "karma-chrome-launcher": "^2.0.0",
+    "karma": "^1.7.0",
+    "karma-chrome-launcher": "^2.1.1",
     "karma-coverage": "^1.1.1",
     "karma-firefox-launcher": "^1.0.1",
     "karma-ie-launcher": "^1.0.0",
