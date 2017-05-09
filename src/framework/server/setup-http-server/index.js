@@ -1,5 +1,6 @@
 import path from 'path';
 import express from 'express';
+import mime from 'mime';
 import getPreferredEncodings from 'negotiator/lib/encoding';
 import compression from 'compression';
 import cookiesMiddleware from 'universal-cookie-express';
@@ -37,8 +38,12 @@ function redirectToPreCompressed(root, encodingTransforms = {}) {
         continue;
       }
 
-      req.url = transform(req.url);
+      const originalUrl = req.url;
+      req.url = transform(originalUrl);
       res.set('Content-Encoding', encoding);
+
+      // express would use the redirected url to set the content-type, which would result in octet-stream.
+      setContentType(res, originalUrl);
       break;
     }
 
@@ -86,4 +91,20 @@ export default function setupHttpServer(expressApp) {
       expressApp.use(serveReactRoute);
     });
   }
+}
+
+function setContentType(res, path) {
+  if (res.getHeader('Content-Type')) {
+    return;
+  }
+
+  const type = mime.lookup(path);
+
+  if (!type) {
+    return;
+  }
+
+  const charset = mime.charsets.lookup(type);
+
+  res.setHeader('Content-Type', `${type}${charset ? `; charset=${charset}` : ''}`);
 }

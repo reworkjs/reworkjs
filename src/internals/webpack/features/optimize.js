@@ -1,5 +1,6 @@
 import webpack from 'webpack';
 import OfflinePlugin from 'offline-plugin';
+import CompressionPlugin from 'compression-webpack-plugin';
 import BaseFeature from '../BaseFeature';
 
 export default class OptimizeFeature extends BaseFeature {
@@ -59,6 +60,16 @@ export default class OptimizeFeature extends BaseFeature {
     });
 
     config.injectPlugins([
+
+      // TODO brotli
+      new CompressionPlugin([{
+        asset: '[path].gz[query]',
+        algorithm: 'gzip',
+        test: /\.(js|html|svg)$/,
+        threshold: 0,
+        minRatio: 0.8,
+      }]),
+
       new webpack.optimize.CommonsChunkPlugin({
         name: 'common',
         children: true,
