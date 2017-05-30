@@ -1,4 +1,4 @@
-import fs from 'fs-promise';
+import fs from 'mz/fs';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
 import { resolveProject, resolveRoot } from '../../util/resolve-util';
