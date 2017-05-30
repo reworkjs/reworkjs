@@ -1,6 +1,6 @@
 import React from 'react';
 import { IntlProvider } from 'react-intl';
-import { instanceOf } from 'prop-types';
+import PropTypes from 'prop-types';
 import { Cookies } from 'react-cookie';
 import { isLocaleValid, onHotReload } from '../common/i18n';
 import container from '../common/decorators/container';
@@ -22,11 +22,11 @@ import LanguageProvider, { LOCALE_COOKIE_NAME } from './providers/LanguageProvid
 })
 export default class LanguageComponent extends React.Component {
   static propTypes = {
-    messages: React.PropTypes.object,
-    locale: React.PropTypes.string.isRequired,
-    changeLocale: React.PropTypes.func.isRequired,
-    children: React.PropTypes.node.isRequired,
-    cookies: instanceOf(Cookies).isRequired,
+    messages: PropTypes.object,
+    locale: PropTypes.string.isRequired,
+    changeLocale: PropTypes.func.isRequired,
+    children: PropTypes.node.isRequired,
+    cookies: PropTypes.instanceOf(Cookies).isRequired,
   };
 
   constructor(props) {
