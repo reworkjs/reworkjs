@@ -30,6 +30,8 @@
 
 ## Future versions
 
+- `/app/resources` could be `/resources` ? 
+- locale directory should be `/(app/)resources/<project_name>/translations`
 - Update React-Router
 - Routes could be instances of classes which extend a default route class.
   - This could expose a method which allows building the route using parameters.
@@ -79,6 +81,11 @@
 
 ## Potential future versions
 
+- https://github.com/jhamlet/svg-react-loader for svg with query ?inline
+https://github.com/jantimon/favicons-webpack-plugin
+- https://github.com/webpack-contrib/json5-loader
+- https://github.com/webpack-contrib/npm-install-webpack-plugin
+- Remove @@main-component ? Let users who want it define it using the route config ?
 - https://www.npmjs.com/package/postcss-image-set-polyfill
 - Disable chunk names in prod ? Could save a few bytes.
 - Make `react-router@3.0.2`, `redux` dependencies instead of peerDeps ?
@@ -98,3 +105,4 @@
 - @provider
   - Getting non-defined state outside of reducers should throw
   - Setting non-defined state outside of reducers should throw
+- FaviconsWebpackPlugin
