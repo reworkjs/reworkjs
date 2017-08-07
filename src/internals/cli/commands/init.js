@@ -38,7 +38,7 @@ const scripts = {
       for (const depName of Object.keys(peerDependencies)) {
         const depVersionRange = peerDependencies[depName];
 
-        if (!installed[depName] || !semver.satisfies(installed[depName], depVersionRange)) {
+        if (!installed[depName] || !semver.satisfies(semver.clean(installed[depName]), depVersionRange)) {
           toInstall.push(`${depName}@${depVersionRange}`);
         }
       }
