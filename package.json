@@ -19,7 +19,8 @@
     "lint:staged": "lint-staged",
     "build": "gulp build",
     "build:watch": "gulp build:watch",
-    "precommit": "npm run lint:staged"
+    "precommit": "npm run lint:staged",
+    "prepublishOnly": "npm run build"
   },
   "bin": {
     "rjs": "bin/framework.bin.js"
