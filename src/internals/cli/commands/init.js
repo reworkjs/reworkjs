@@ -2,6 +2,7 @@ import fs from 'mz/fs';
 import fsExtra from 'fs-extra';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
+import semver from 'semver';
 import { resolveProject, resolveRoot } from '../../util/resolve-util';
 import logger from '../../../shared/logger';
 import { execSync } from '../../util/process-util';
@@ -34,9 +35,11 @@ const scripts = {
       const installed = projectPkg.dependencies || {};
 
       const toInstall = [];
-      for (const peerDep of Object.keys(peerDependencies)) {
-        if (!installed[peerDep]) {
-          toInstall.push(`${peerDep}@${peerDependencies[peerDep]}`);
+      for (const depName of Object.keys(peerDependencies)) {
+        const depVersionRange = peerDependencies[depName];
+
+        if (!installed[depName] || !semver.satisfies(installed[depName], depVersionRange)) {
+          toInstall.push(`${depName}@${depVersionRange}`);
         }
       }
 

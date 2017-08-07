@@ -95,6 +95,7 @@
     "require-all": "^2.2.0",
     "reselect": "^2.5.4",
     "sass-loader": "^6.0.6",
+    "semver": "^5.4.1",
     "source-map-support": "^0.4.15",
     "srcset-loader": "^2.1.0",
     "style-loader": "^0.18.2",
