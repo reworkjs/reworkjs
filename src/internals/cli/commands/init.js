@@ -93,7 +93,7 @@ const scripts = {
 
       execSync(`npm install --save-dev eslint ${preset}`);
 
-      return fs.writeFile(
+      return void fs.writeFile(
         resolveProject('.eslintrc'),
         `{
   "extends": "${preset}"
@@ -129,7 +129,7 @@ const scripts = {
 
       execSync(`npm install --save-dev stylelint ${preset}`);
 
-      return fs.writeFile(
+      return void fs.writeFile(
         resolveProject('.stylelintrc'),
         `{
   "extends": "${preset}"
@@ -152,31 +152,24 @@ const scripts = {
         return false;
       }
 
-      if (!pck.devDependencies['pre-commit']) {
-        return false;
-      }
-
-      return true;
+      return pck.devDependencies.husky !== void 0;
     },
 
     async run() {
-      execSync('npm install --save-dev pre-commit lint-staged');
+      execSync('npm install --save-dev husky lint-staged');
 
       const pckFile = resolveProject('package.json');
 
       const pkg = await fs.readJson(pckFile);
 
-      // tell pre-commit which NPM script it should run
-      pkg['pre-commit'] = pkg['pre-commit'] || 'lint-staged';
-
       // NPM script to run
       pkg.scripts = pkg.scripts || {};
-      pkg.scripts['lint-staged'] = pkg.scripts['lint-staged'] || 'lint-staged';
+      pkg.scripts.precommit = pkg.scripts.precommit || 'lint-staged';
 
       await fs.writeJson(pckFile, pkg);
 
       // lint-staged config
-      if (!pkg['lint-staged'] && !await existsAsync('.lintstagedrc')) {
+      if (!await existsAsync('.lintstagedrc')) {
         await fs.copy(
           resolveRoot('resources/.lintstagedrc.raw'),
           resolveProject('.lintstagedrc')
