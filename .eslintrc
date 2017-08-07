@@ -7,9 +7,11 @@
     "es6": true
   },
   "rules": {
+    // Rules specific to this project
+    "import/no-extraneous-dependencies": ["error", {"packageDir": "./"}],
     "valid-jsdoc": 0,
     "no-console": 2,
-    "no-underscore-dangle": 0,
-    "import/order": 0
+    "import/order": 0,
+    "no-underscore-dangle": 0
   }
 }

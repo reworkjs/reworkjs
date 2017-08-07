@@ -15,6 +15,8 @@ type WcbState = {
   aliases: { [Key: string]: string[] },
 };
 
+// FIXME https://github.com/gajus/eslint-plugin-flowtype/issues/213
+// eslint-disable-next-line no-use-before-define
 const stateHolder: WeakMap<WebpackConfigBuilder, WcbState> = new WeakMap();
 
 function getState(instance): WcbState {

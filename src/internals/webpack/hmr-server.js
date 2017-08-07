@@ -21,13 +21,13 @@ process.on('SIGUSR2', () => {
 });
 
 function checkForUpdate(fromUpdate) {
-  module.hot.check().then(updatedModules => {
+  module.hot.check().then(async updatedModules => {
     if (!updatedModules && fromUpdate) {
       console.info('[HMR] Update applied.');
       return;
     }
 
-    return module.hot.apply({
+    await module.hot.apply({
       ignoreUnaccepted: true,
       onUnaccepted(data) {
         console.warn(`Ignored an update to unaccepted module ${data.chain.join(' -> ')}`);
@@ -57,7 +57,7 @@ function checkForUpdate(fromUpdate) {
 
 function tryRestart() {
   if (!process.send) {
-    return;
+    return Promise.resolve();
   }
 
   console.info('[HMR]');

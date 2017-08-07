@@ -35,8 +35,9 @@ const mutatedProperties = Symbol('mutatedProperties');
 
 // Blacklist universal properties, Function static properties and @provider symbols.
 const PROPERTY_BLACKLIST = Object.getOwnPropertyNames(Object.prototype)
-// use function() {} instead of Function because Function does not have the "caller" nor "arguments" properties on
-// Safari < 11
+
+  // use noop instead of Function because Function does not have the "caller" nor "arguments" properties on
+  // Safari < 11
   .concat(Object.getOwnPropertyNames(noop))
   .concat('displayName'); // used by chrome, same purpose as 'name'.
 

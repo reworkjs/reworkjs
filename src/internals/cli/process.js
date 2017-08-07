@@ -20,7 +20,6 @@ function bindMessageHandler(proc) {
 
     const msgType = data.cmd;
 
-
     const listeners = proc[LISTENERS].get(msgType);
     if (!listeners) {
       return;

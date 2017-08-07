@@ -7,6 +7,25 @@ import chalk from 'chalk';
 import logger from '../../shared/logger';
 import frameworkConfig from '../../shared/framework-config';
 
+// Bare minimum, there is more than that (see webpack docs).
+export type EntryPoint = {
+  chunks: number[],
+  assets: string[],
+};
+
+export type StatDetails = {
+  errors: string[],
+  warnings: string[],
+  entrypoints: { [key: string]: EntryPoint },
+};
+
+export type Stats = {
+  hasErrors: () => boolean,
+  hasWarnings: () => boolean,
+  toJson: () => StatDetails,
+  toString: () => string,
+};
+
 export default function compileWebpack(config: Object, watch: boolean, callback: ?(entryPoint: StatDetails) => void) {
   const compiler = webpack(config);
   const compile = watch
@@ -113,22 +132,3 @@ function deleteDebug() {
     }
   }
 }
-
-// Bare minimum, there is more than that (see webpack docs).
-export type Stats = {
-  hasErrors: () => boolean,
-  hasWarnings: () => boolean,
-  toJson: () => StatDetails,
-  toString: () => string,
-};
-
-export type StatDetails = {
-  errors: string[],
-  warnings: string[],
-  entrypoints: { [key: string]: EntryPoint },
-};
-
-export type EntryPoint = {
-  chunks: number[],
-  assets: string[],
-};

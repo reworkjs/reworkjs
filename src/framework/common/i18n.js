@@ -42,7 +42,7 @@ function downloadLocale(requestedLocaleName) {
   const translationPromise = new Promise((resolve, reject) => {
 
     if (translationLocale === null) {
-      return reject(new Error(`Unknown locale ${JSON.stringify(requestedLocaleName)}. Did you forget to add the translation file ?`));
+      return void reject(new Error(`Unknown locale ${JSON.stringify(requestedLocaleName)}. Did you forget to add the translation file ?`));
     }
 
     const file = localeToFileMapping.get(translationLocale);

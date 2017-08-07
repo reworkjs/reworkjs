@@ -50,7 +50,7 @@ function promisify(func) {
     return new Promise((resolve, reject) => {
       args.push((err, result) => {
         if (err) {
-          return reject(err);
+          return void reject(err);
         }
 
         resolve(result);

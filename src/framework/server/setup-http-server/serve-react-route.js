@@ -36,12 +36,12 @@ export default async function serveReactRoute(req, res, next): ?{ appHtml: strin
 
     if (redirect) {
       res.redirect(redirect.pathname + redirect.search);
-      return null;
+      return;
     }
 
     if (!props) {
       res.status(404).send('This is a 404 page. To define the page to actually render when a 404 occurs, please create a new route object and set its "status" property to 404 (int)');
-      return null;
+      return;
     }
 
     const matchedRoute = props.routes[props.routes.length - 1];
@@ -87,6 +87,7 @@ export default async function serveReactRoute(req, res, next): ?{ appHtml: strin
     }
 
     res.send(renderPage({
+
       // initial react app
       body: appHtml,
 
@@ -103,19 +104,6 @@ export default async function serveReactRoute(req, res, next): ?{ appHtml: strin
   }
 }
 
-function serverChunkToClientChunk(serverChunk, stats: CompilationStats) {
-  const moduleName = stats.server.chunkToModule[serverChunk];
-  if (!moduleName) {
-    return null;
-  }
-
-  return stats.client.moduleToChunk[moduleName] || null;
-}
-
-const webpackClientConfig = getWebpackSettings(/* is server */ false);
-const clientBuildDirectory = webpackClientConfig.output.path;
-const serverBuildDirectory = getWebpackSettings(/* is server */ true).output.path;
-
 type CompilationStats = {
   client: {
     entryPoints: {
@@ -129,6 +117,19 @@ type CompilationStats = {
     chunkToModule: { [key: string]: string },
   },
 };
+
+function serverChunkToClientChunk(serverChunk, stats: CompilationStats) {
+  const moduleName = stats.server.chunkToModule[serverChunk];
+  if (!moduleName) {
+    return null;
+  }
+
+  return stats.client.moduleToChunk[moduleName] || null;
+}
+
+const webpackClientConfig = getWebpackSettings(/* is server */ false);
+const clientBuildDirectory = webpackClientConfig.output.path;
+const serverBuildDirectory = getWebpackSettings(/* is server */ true).output.path;
 
 let compStatCache;
 function getCompilationStats(): CompilationStats {
@@ -207,7 +208,7 @@ function readFileAsync(path) {
   return new Promise((resolve, reject) => {
     fs.readFile(path, 'utf8', (err, data) => {
       if (err) {
-        return reject(err);
+        return void reject(err);
       }
 
       resolve(data);

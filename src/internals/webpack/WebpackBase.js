@@ -172,6 +172,7 @@ export default class WebpackBase {
     // front-end dev libs.
     if (this.isDev && !this.isServer()) {
       entry.unshift(
+
         // Necessary for hot reloading with IE
         'eventsource-polyfill',
         'webpack-hot-middleware/client',
@@ -179,6 +180,7 @@ export default class WebpackBase {
       );
     } else if (this.isDev && this.isServer()) {
       entry.unshift(
+
         // hot reload if parent sends signal SIGUSR2
         require.resolve('./hmr-server'),
       );
@@ -286,6 +288,7 @@ export default class WebpackBase {
   /** @private */
   getAliases() {
     const frameworkAliases = {
+
       // Framework configuration directories
       '@@pre-init': frameworkConfig['pre-init'],
       '@@main-component': frameworkConfig['entry-react'],
@@ -372,6 +375,7 @@ export default class WebpackBase {
 
     if (this.isServer()) {
       plugins.push(
+
         // Hook import() directives on the server-side so we can know which
         // chunks are loaded for which routes and give them along with the HTTP response.
         new RequireEnsureHookPlugin(),
@@ -380,6 +384,7 @@ export default class WebpackBase {
 
     if (this.isDev) {
       plugins.push(
+
         // enable hot reloading.
         new webpack.HotModuleReplacementPlugin(),
         new webpack.NamedModulesPlugin(),

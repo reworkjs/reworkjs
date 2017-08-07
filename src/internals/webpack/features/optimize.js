@@ -78,6 +78,7 @@ export default class OptimizeFeature extends BaseFeature {
       }),
 
       new webpack.optimize.UglifyJsPlugin({
+
         // preserve LICENSE comments (*!, /**!, @preserve or @license) for legal stuff but extract them
         // to their own file to reduce bundle size.
         extractComments: true,

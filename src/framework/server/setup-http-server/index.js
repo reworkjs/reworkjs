@@ -1,4 +1,5 @@
 import path from 'path';
+import fs from 'mz/fs';
 import express from 'express';
 import mime from 'mime';
 import getPreferredEncodings from 'negotiator/lib/encoding';
@@ -8,7 +9,6 @@ import getWebpackSettings from '../../../shared/webpack-settings';
 import argv from '../../../shared/argv';
 import logger from '../../../shared/logger';
 import { getDefault } from '../../../shared/util/ModuleUtil';
-import { existsAsync } from '../../../internals/util/fs-util';
 
 const webpackClientConfig = getWebpackSettings(/* is server */ false);
 const httpStaticPath = webpackClientConfig.output.publicPath;
@@ -33,7 +33,7 @@ function redirectToPreCompressed(root, encodingTransforms = {}) {
       const newPath = transform(req.path);
 
       // eslint-disable-next-line no-await-in-loop
-      const exists = await existsAsync(path.join(root, newPath));
+      const exists = await fs.exists(path.join(root, newPath));
       if (!exists) {
         continue;
       }
@@ -93,12 +93,12 @@ export default function setupHttpServer(expressApp) {
   }
 }
 
-function setContentType(res, path) {
+function setContentType(res, filePath) {
   if (res.getHeader('Content-Type')) {
     return;
   }
 
-  const type = mime.lookup(path);
+  const type = mime.lookup(filePath);
 
   if (!type) {
     return;

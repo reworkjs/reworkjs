@@ -76,7 +76,7 @@ function sanitizeRoute(routeData, injectors, store, fileName) {
   // prevent resanitizing the same route,
   // can happen if the same route is used as the child of two parent routes.
   if (routeData[SANITIZED] === true) {
-    return;
+    return routeData;
   }
 
   routeData[SANITIZED] = true;

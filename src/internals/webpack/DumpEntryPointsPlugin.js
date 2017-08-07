@@ -11,7 +11,7 @@ export default class DumpEntryPoints {
 
       const entryPoints = getEntryPoints(stats);
       if (entryPoints.js.length === 0) {
-        return callback();
+        return void callback();
       }
 
       const moduleToChunk = makeModuleToChunkMapping(stats);

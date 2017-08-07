@@ -101,14 +101,12 @@ function buildNamedBox(name) {
     scrollable: true,
     mouse: true,
     keys: true,
-    // alwaysScroll: true,
     scrollbar: {
       ch: ' ',
       inverse: true,
     },
     top: 1,
     width: '100%',
-    // height: '80%',
     style: {
       border: {
         fg: '#f0f0f0',

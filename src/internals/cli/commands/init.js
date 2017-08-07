@@ -3,7 +3,7 @@ import chalk from 'chalk';
 import inquirer from 'inquirer';
 import { resolveProject, resolveRoot } from '../../util/resolve-util';
 import logger from '../../../shared/logger';
-import { existsAsync } from '../../util/fs-util';
+import { readJson } from '../../util/fs-util';
 import { execSync } from '../../util/process-util';
 
 // TODO: handle NPM install crashes if module not found
@@ -28,8 +28,8 @@ const scripts = {
     },
 
     async run() {
-      const { peerDependencies } = await fs.readJson(resolveRoot('package.json'));
-      const projectPkg = await fs.readJson(resolveProject('package.json'));
+      const { peerDependencies } = await readJson(resolveRoot('package.json'));
+      const projectPkg = await readJson(resolveProject('package.json'));
 
       const installed = projectPkg.dependencies || {};
 
@@ -55,7 +55,7 @@ const scripts = {
      * @returns {!boolean}
      */
     isReady() {
-      return existsAsync(resolveProject('.gitignore'));
+      return fs.exists(resolveProject('.gitignore'));
     },
 
     run() {
@@ -74,7 +74,7 @@ const scripts = {
      * @returns {!boolean}
      */
     isReady() {
-      return existsAsync(resolveProject('.browserslistrc'));
+      return fs.exists(resolveProject('.browserslistrc'));
     },
 
     run() {
@@ -93,7 +93,7 @@ const scripts = {
      * @returns {!boolean}
      */
     isReady() {
-      return existsAsync(resolveProject('.eslintrc'));
+      return fs.exists(resolveProject('.eslintrc'));
     },
 
     async run() {
@@ -129,7 +129,7 @@ const scripts = {
      * @returns {!boolean}
      */
     isReady() {
-      return existsAsync(resolveProject('.stylelintrc'));
+      return fs.exists(resolveProject('.stylelintrc'));
     },
 
     async run() {
@@ -188,7 +188,7 @@ const scripts = {
       await fs.writeJson(pckFile, pkg);
 
       // lint-staged config
-      if (!await existsAsync('.lintstagedrc')) {
+      if (!await fs.exists('.lintstagedrc')) {
         await fs.copy(
           resolveRoot('resources/.lintstagedrc.raw'),
           resolveProject('.lintstagedrc')
@@ -199,7 +199,7 @@ const scripts = {
 
   'Configure PostCss': {
     isReady() {
-      return existsAsync(resolveProject('postcss.config.js'));
+      return fs.exists(resolveProject('postcss.config.js'));
     },
 
     run() {
