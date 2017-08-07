@@ -243,9 +243,6 @@ export default class WebpackBase {
     }, {
       test: /\.json$/i,
       loader: 'json-loader',
-    }, {
-      test: /\.html$/i,
-      loader: 'html-loader',
     }]
       .concat(this.buildCssLoaders())
       .concat(wcbUtils.buildRules(this.webpackConfigBuilder));
