@@ -4,7 +4,6 @@ import chalk from 'chalk';
 import inquirer from 'inquirer';
 import { resolveProject, resolveRoot } from '../../util/resolve-util';
 import logger from '../../../shared/logger';
-import { readJson } from '../../util/fs-util';
 import { execSync } from '../../util/process-util';
 
 // TODO: handle NPM install crashes if module not found
@@ -29,8 +28,8 @@ const scripts = {
     },
 
     async run() {
-      const { peerDependencies } = await readJson(resolveRoot('package.json'));
-      const projectPkg = await readJson(resolveProject('package.json'));
+      const { peerDependencies } = await fsExtra.readJson(resolveRoot('package.json'));
+      const projectPkg = await fsExtra.readJson(resolveProject('package.json'));
 
       const installed = projectPkg.dependencies || {};
 
@@ -161,7 +160,7 @@ const scripts = {
   'Install stage-lint': {
     async isReady() {
 
-      const pck = await fs.readJson(resolveProject('package.json'));
+      const pck = await fsExtra.readJson(resolveProject('package.json'));
 
       // pre-commit disabled
       if (pck['pre-commit'] === false) {
@@ -180,13 +179,13 @@ const scripts = {
 
       const pckFile = resolveProject('package.json');
 
-      const pkg = await fs.readJson(pckFile);
+      const pkg = await fsExtra.readJson(pckFile);
 
       // NPM script to run
       pkg.scripts = pkg.scripts || {};
       pkg.scripts.precommit = pkg.scripts.precommit || 'lint-staged';
 
-      await fs.writeJson(pckFile, pkg);
+      await fsExtra.writeJson(pckFile, pkg);
 
       // lint-staged config
       if (!await fs.exists('.lintstagedrc')) {
