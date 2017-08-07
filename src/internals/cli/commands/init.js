@@ -66,6 +66,25 @@ const scripts = {
     },
   },
 
+  'Install .browserslistrc': {
+
+    /**
+     * Check that the project contains a .browserslistrc file.
+     * @async
+     * @returns {!boolean}
+     */
+    isReady() {
+      return existsAsync(resolveProject('.browserslistrc'));
+    },
+
+    run() {
+      return fs.copy(
+        resolveRoot('resources/.browserslistrc.raw'),
+        resolveProject('.browserslistrc')
+      );
+    },
+  },
+
   'Install eslint': {
 
     /**
