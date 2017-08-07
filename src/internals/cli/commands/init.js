@@ -1,4 +1,5 @@
 import fs from 'mz/fs';
+import fsExtra from 'fs-extra';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
 import { resolveProject, resolveRoot } from '../../util/resolve-util';
@@ -59,7 +60,7 @@ const scripts = {
     },
 
     run() {
-      return fs.copy(
+      return fsExtra.copy(
         resolveRoot('resources/.gitignore.raw'),
         resolveProject('.gitignore')
       );
@@ -78,7 +79,7 @@ const scripts = {
     },
 
     run() {
-      return fs.copy(
+      return fsExtra.copy(
         resolveRoot('resources/.browserslistrc.raw'),
         resolveProject('.browserslistrc')
       );
@@ -189,7 +190,7 @@ const scripts = {
 
       // lint-staged config
       if (!await fs.exists('.lintstagedrc')) {
-        await fs.copy(
+        await fsExtra.copy(
           resolveRoot('resources/.lintstagedrc.raw'),
           resolveProject('.lintstagedrc')
         );
@@ -205,7 +206,7 @@ const scripts = {
     run() {
       execSync('npm install --save-dev @reworkjs/postcss-preset-reworkjs');
 
-      return fs.copy(
+      return fsExtra.copy(
         resolveRoot('resources/postcss.config.js.raw'),
         resolveProject('postcss.config.js')
       );
