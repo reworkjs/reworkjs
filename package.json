@@ -1,6 +1,6 @@
 {
   "name": "@reworkjs/reworkjs",
-  "version": "0.3.11-alpha",
+  "version": "0.4.0-alpha",
   "description": "A framework based on react-boilerplate 3.1.0",
   "repository": {
     "type": "git",
@@ -75,7 +75,7 @@
     "ip": "^1.1.5",
     "json-loader": "^0.5.7",
     "lodash": "^4.17.4",
-    "mime": "^2.0.3",
+    "mime": "^1.4.1",
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
     "mz": "^2.7.0",
