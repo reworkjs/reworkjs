@@ -16,10 +16,10 @@ export default class LodashFeature extends BaseFeature {
   }
 
   visit(webpack) {
-    webpack.injectAlias('lodash', 'lodash-es');
+    webpack.injectAlias('lodash-es', 'lodash');
 
     for (const module of getLodashModules()) {
-      webpack.injectAlias(`lodash.${module}`, `lodash-es/${module}`);
+      webpack.injectAlias(`lodash.${module}`, `lodash/${module}`);
     }
   }
 }
