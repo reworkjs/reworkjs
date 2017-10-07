@@ -12,6 +12,14 @@ export default class LodashFeature extends BaseFeature {
     return 'lodash';
   }
 
+  isEnabled(enabled) {
+    if (!this.isProd()) {
+      return false;
+    }
+
+    return super.isEnabled(enabled);
+  }
+
   getDescription() {
     return 'Optimises the lodash bundle. It aliases all known versions of lodash to lodash-es for tree-shaking.';
   }
