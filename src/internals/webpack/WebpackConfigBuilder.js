@@ -34,7 +34,7 @@ export default class WebpackConfigBuilder {
       fileTypes: {
         [FILE_TYPE_JS]: ['js', 'jsx'],
         [FILE_TYPE_CSS]: ['css'],
-        [FILE_TYPE_IMG]: ['jpg', 'jpeg', 'png', 'gif', 'svg'],
+        [FILE_TYPE_IMG]: ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'],
       },
       rawConfig: {},
       rules: [],
