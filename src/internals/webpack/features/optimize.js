@@ -70,6 +70,8 @@ export default class OptimizeFeature extends BaseFeature {
         minRatio: 0.8,
       }]),
 
+      new webpack.optimize.ModuleConcatenationPlugin(),
+
       new webpack.optimize.CommonsChunkPlugin({
         name: 'common',
         children: true,
