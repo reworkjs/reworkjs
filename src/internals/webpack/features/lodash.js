@@ -27,16 +27,26 @@ export default class LodashFeature extends BaseFeature {
     webpack.injectRules({
       test: BaseFeature.FILE_TYPE_JS,
       loader: 'babel-loader',
-      include: /node_modules/,
+      include: [getNodeModules()],
+      exclude: [getLodashDir()],
       options: {
-        plugins: ['lodash'],
+        babelrc: false,
+        plugins: ['lodash', 'syntax-dynamic-import'],
       },
     });
   }
 }
 
+function getNodeModules() {
+  return path.dirname(getLodashDir());
+}
+
+function getLodashDir() {
+  return path.dirname(require.resolve('lodash'));
+}
+
 function getLodashModules() {
-  const moduleNames = fs.readdirSync(path.dirname(require.resolve('lodash')));
+  const moduleNames = fs.readdirSync(getLodashDir());
 
   return moduleNames
     .filter(moduleName => moduleName.endsWith('.js'))
