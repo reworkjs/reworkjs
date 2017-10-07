@@ -3,7 +3,8 @@ import path from 'path';
 import BaseFeature from '../BaseFeature';
 
 /**
- * This feature aliases lodash and lodash.<part> packages to lodash-es
+ * This feature aliases lodash-es and lodash.<part> packages to lodash
+ * And transforms code to remove unused lodash features.
  */
 export default class LodashFeature extends BaseFeature {
 
@@ -21,6 +22,16 @@ export default class LodashFeature extends BaseFeature {
     for (const module of getLodashModules()) {
       webpack.injectAlias(`lodash.${module}`, `lodash/${module}`);
     }
+
+    // Run babel-plugin-lodash on node_modules
+    webpack.injectRules({
+      test: BaseFeature.FILE_TYPE_JS,
+      loader: 'babel-loader',
+      include: /node_modules/,
+      options: {
+        plugins: ['lodash'],
+      },
+    });
   }
 }
 
