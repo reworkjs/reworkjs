@@ -7,6 +7,10 @@ import container from '../common/decorators/container';
 import { getCurrentRequestLocales } from '../server/setup-http-server/request-locale';
 import LanguageProvider, { LOCALE_COOKIE_NAME } from './providers/LanguageProvider';
 
+function Fragment(props) {
+  return props.children;
+}
+
 /*
  * this component connects the redux state language locale to the
  * IntlProvider component and i18n messages (loaded from `app/translations`)
@@ -41,7 +45,11 @@ export default class LanguageComponent extends React.Component {
 
   render() {
     return (
-      <IntlProvider locale={this.props.locale} messages={this.props.messages[this.props.locale]}>
+      <IntlProvider
+        locale={this.props.locale}
+        messages={this.props.messages[this.props.locale]}
+        node={Fragment}
+      >
         {React.Children.only(this.props.children)}
       </IntlProvider>
     );
