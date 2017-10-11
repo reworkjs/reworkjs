@@ -48,7 +48,7 @@ export default class LanguageComponent extends React.Component {
       <IntlProvider
         locale={this.props.locale}
         messages={this.props.messages[this.props.locale]}
-        node={Fragment}
+        textComponent={Fragment}
       >
         {React.Children.only(this.props.children)}
       </IntlProvider>
