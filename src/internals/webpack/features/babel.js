@@ -27,10 +27,7 @@ export default class BabelFeature extends BaseFeature {
   getTransformedBabelConfig() {
     const config = this.getBabelConfig();
 
-    // use the app's .babelrc
-    if (!config) {
-      return config;
-    }
+    config.babelrc = false;
 
     if (this.isDev()) {
       config.presets.push('react-hmre');
@@ -55,7 +52,6 @@ export default class BabelFeature extends BaseFeature {
       return getDefault(this.getOptionalDependency('@reworkjs/babel-preset-reworkjs'))();
     }
 
-    // no need to load it, babel will do it on its own.
-    return null;
+    return config;
   }
 }
