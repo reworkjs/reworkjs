@@ -97,7 +97,6 @@ export default class OptimizeFeature extends BaseFeature {
       // Put it in the end to capture all the HtmlWebpackPlugin's assets
       new OfflinePlugin({
         relativePaths: false,
-        publicPath: '/',
 
         // No need to cache .htaccess. See http://mxs.is/googmp,
         // this is applied before any match in `caches` section
