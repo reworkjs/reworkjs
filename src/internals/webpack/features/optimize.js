@@ -101,7 +101,11 @@ export default class OptimizeFeature extends BaseFeature {
 
         // No need to cache .htaccess. See http://mxs.is/googmp,
         // this is applied before any match in `caches` section
-        excludes: ['.htaccess'],
+        excludes: [
+          '.htaccess',
+          '*.gz',
+          '*.map',
+        ],
 
         caches: {
           main: [':rest:'],
