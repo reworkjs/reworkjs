@@ -12,5 +12,9 @@ export default function loadPolyfills() {
     );
   }
 
+  if (typeof Symbol === 'undefined') {
+    promises.push(import('core-js/modules/es6.symbol'));
+  }
+
   return Promise.all(promises);
 }
