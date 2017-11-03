@@ -8,6 +8,7 @@ import WebpackCleanupPlugin from 'webpack-cleanup-plugin';
 import nodeExternals from 'webpack-node-externals';
 import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
+import PolyfillInjectorPlugin from 'webpack-polyfill-injector';
 import frameworkConfig from '../../shared/framework-config';
 import projectMetadata from '../../shared/project-metadata';
 import frameworkMetadata from '../../shared/framework-metadata';
@@ -379,6 +380,14 @@ export default class WebpackBase {
         // Hook import() directives on the server-side so we can know which
         // chunks are loaded for which routes and give them along with the HTTP response.
         new RequireEnsureHookPlugin(),
+      );
+    }
+
+    if (!this.isServer()) {
+      plugins.push(
+        new PolyfillInjectorPlugin([
+          'Promise',
+        ]),
       );
     }
 
