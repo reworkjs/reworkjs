@@ -385,9 +385,10 @@ export default class WebpackBase {
 
     if (!this.isServer()) {
       plugins.push(
-        new PolyfillInjectorPlugin([
-          'Promise',
-        ]),
+        new PolyfillInjectorPlugin({
+          polyfills: ['Promise'],
+          service: true,
+        }),
       );
     }
 
