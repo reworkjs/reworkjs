@@ -104,6 +104,7 @@ export default class OptimizeFeature extends BaseFeature {
           '.htaccess',
           '*.gz',
           '*.map',
+          '*.LICENSE',
         ],
 
         caches: {
