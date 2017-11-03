@@ -6,5 +6,5 @@ preInit().then(() => {
   require('./init-render');
 }).catch(e => {
   console.error('Error while rendering client');
-  console.error(e);
+  console.dir(e);
 });
