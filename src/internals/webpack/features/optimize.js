@@ -98,13 +98,11 @@ export default class OptimizeFeature extends BaseFeature {
       new OfflinePlugin({
         relativePaths: false,
 
-        // No need to cache .htaccess. See http://mxs.is/googmp,
         // this is applied before any match in `caches` section
         excludes: [
-          '.htaccess',
-          '*.gz',
-          '*.map',
-          '*.LICENSE',
+          '**/*.gz',
+          '**/*.map',
+          '**/*.LICENSE',
         ],
 
         caches: {
