@@ -1,4 +1,4 @@
-import { FrameworkConfigStruct } from '../../shared/FrameworkConfigStruct';
+import { FrameworkConfigStruct } from './framework-config-type';
 
 // Webpack DefinePlugin
 // noinspection JSUnresolvedVariable

@@ -1,26 +1,26 @@
+// @flow
+
 import fs from 'fs';
 import mkdirp from 'mkdirp';
 import { merge } from 'lodash';
 import { resolveProject } from '../../internals/util/resolve-util';
 import logger from '../../shared/logger';
-import { FrameworkConfigStruct } from '../../shared/FrameworkConfigStruct';
-import { requireRawProject } from '../../internals/util/RequireUtil';
-import defaultConfig from './default-config';
+import { FrameworkConfigStruct } from './framework-config-type';
+import defaultConfig from './default-config.json';
 
 /**
  * Loads the .framework-config file and returns the config merged with defaults.
  */
 function getUserConfig() {
-  try {
-    return JSON.parse(requireRawProject('.framework-config'));
-  } catch (e) {
-    if (e.code !== 'ENOENT') {
-      throw e;
-    }
+  const frameworkConfigFile = resolveProject('.framework-config');
 
-    logger.debug('No ".framework-config" found in app directory, using defaults.');
+  if (!fs.existsSync(frameworkConfigFile)) {
+    logger.debug('No ".framework-config" found in app directory, creating.');
+    fs.writeFileSync(defaultConfig, frameworkConfigFile);
     return {};
   }
+
+  return JSON.parse(fs.readFileSync(frameworkConfigFile).toString());
 }
 
 function resolveEntries(obj) {
@@ -35,6 +35,7 @@ function resolveEntries(obj) {
       case 'object':
         if (val === null) {
           delete obj[key];
+          continue;
         }
 
         resolveEntries(val);
@@ -70,7 +71,7 @@ function isDirectory(dir) {
   }
 }
 
-const config: FrameworkConfigStruct = merge(defaultConfig, resolveEntries(getUserConfig()));
+const config: FrameworkConfigStruct = resolveEntries(merge(defaultConfig, getUserConfig()));
 
 if (config.directories.logs === null) {
   config.directories.logs = config.directories.build;

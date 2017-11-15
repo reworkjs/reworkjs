@@ -9,6 +9,6 @@ export type FrameworkConfigStruct = {
   },
 
   'entry-react': string,
-  'entry-html': ?string,
+  'render-html': ?string,
   'pre-init': ?string,
 };

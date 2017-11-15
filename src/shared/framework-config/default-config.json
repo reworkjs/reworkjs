@@ -1,0 +1,14 @@
+{
+  "directories": {
+    "logs": "./.build",
+    "build": "./.build",
+    "resources": "./public",
+    "routes": "./app/routes",
+    "providers": "./app/providers",
+    "translations": "./app/translations"
+  },
+
+  "entry-react": "./app/containers/App",
+  "render-html": null,
+  "pre-init": null
+}
