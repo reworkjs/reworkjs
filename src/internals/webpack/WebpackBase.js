@@ -435,12 +435,11 @@ function buildIndexPage() {
 
 function getCssLoader(options = {}) {
   const loaderOptions = {
-    importLoaders: options.importLoaders || 1,
+    importLoaders: options.importLoaders || 0,
   };
 
   if (isDev) {
     Object.assign(loaderOptions, {
-      localIdentName: '[local]__[hash:base64:5]',
       sourceMap: true,
     });
   } else {
@@ -455,6 +454,12 @@ function getCssLoader(options = {}) {
       modules: true,
       camelCase: true,
     });
+
+    if (isDev) {
+      Object.assign(loaderOptions, {
+        localIdentName: '[local]__[hash:base64:5]',
+      });
+    }
   }
 
   return {
