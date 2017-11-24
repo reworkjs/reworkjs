@@ -1,3 +1,5 @@
+// @flow
+
 import winston from 'winston';
 import argv from '../argv';
 import framework from '../framework-metadata';

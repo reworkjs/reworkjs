@@ -1,5 +1,3 @@
-import preInit from '../common/pre-init';
-
 process.on('unhandledRejection', reason => {
   console.error('Unhandled Rejections:');
   console.error(reason);
@@ -7,6 +5,5 @@ process.on('unhandledRejection', reason => {
   process.exit(1);
 });
 
-preInit().then(() => {
-  require('./launch-http-server'); // eslint-disable-line global-require
-});
+// eslint-disable-next-line import/no-commonjs
+require('./launch-http-server');

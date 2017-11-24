@@ -7,6 +7,8 @@ import chalk from 'chalk';
 import getPort from 'get-port';
 import argv from '../../shared/argv';
 import logger from '../../shared/logger';
+import preInit from '../common/pre-init';
+import { dispatchHook } from './server-hooks';
 import setupHttpServer from './setup-http-server';
 import printServerStarted from './print-server-started';
 
@@ -18,6 +20,8 @@ chalk.enabled = true;
  * 2. Otherwise, pre-render the app and send the output.
  */
 export default (async function initServer() {
+  await preInit();
+
   const hideHttp = Boolean(argv['hide-http']);
 
   if (!argv.port && !hideHttp) {
@@ -30,7 +34,9 @@ export default (async function initServer() {
   }
 
   const app = express();
+  dispatchHook('pre-init-server', app);
   setupHttpServer(app);
+  dispatchHook('post-init-server', app);
 
   await promisify(app.listen).call(app, port);
 
