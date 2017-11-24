@@ -1,7 +1,11 @@
 {
   "presets": [
     "react",
-    "latest",
+    ["env", {
+      "targets": {
+        "node": "8.9.1"
+      }
+    }],
     "stage-0"
   ],
   "plugins": [
