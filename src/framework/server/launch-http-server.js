@@ -1,3 +1,6 @@
+// @flow
+
+import { promisify } from 'util';
 import express from 'express';
 import ngrok from 'ngrok';
 import chalk from 'chalk';
@@ -44,19 +47,3 @@ export default (async function initServer() {
     printServerStarted(port, tunnelUrl);
   }
 }());
-
-function promisify(func) {
-  return function callbackToPromise(...args) {
-    return new Promise((resolve, reject) => {
-      args.push((err, result) => {
-        if (err) {
-          return void reject(err);
-        }
-
-        resolve(result);
-      });
-
-      func.apply(this, args); // eslint-disable-line
-    });
-  };
-}
