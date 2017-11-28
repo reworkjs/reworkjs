@@ -3,7 +3,6 @@
 import chalk from 'chalk';
 import program from 'commander';
 import requireAll from 'require-all';
-import '../../shared/regenerator';
 import framework from '../../shared/framework-metadata';
 import { getDefault } from '../../shared/util/ModuleUtil';
 import levels from '../../shared/logger/levels';
