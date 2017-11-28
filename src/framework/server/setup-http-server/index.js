@@ -15,7 +15,7 @@ const httpStaticPath = webpackClientConfig.output.publicPath;
 const fsClientOutputPath = webpackClientConfig.output.path;
 const clientEntryPoint = path.join(fsClientOutputPath, 'index.html');
 
-const HAS_PRERENDERING = argv.prerendering !== false;
+const HAS_PRERENDERING = argv.prerendering === true;
 
 function redirectToPreCompressed(root, encodingTransforms = {}) {
   root = path.resolve(root);
