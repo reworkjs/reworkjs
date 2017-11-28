@@ -7,7 +7,7 @@ import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 import printServerStarted from '../../framework/server/print-server-started';
 import logger from '../../shared/logger';
-import argv from '../../shared/argv';
+import argv from '../rjs-argv';
 import webpackClientConfig from './webpack.client';
 
 const PRERENDERING_PORT = argv['prerendering-port'];

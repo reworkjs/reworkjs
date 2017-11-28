@@ -3,4 +3,4 @@ export { default as LanguageProvider } from './es/framework/app/providers/Langua
 export { store } from './es/framework/common/kernel';
 export { default as debug } from './es/framework/common/debug';
 export { throttle } from './es/framework/common/decorators/provider';
-export { default as argv } from './es/shared/argv';
+export { default as argv } from './es/framework/common/app-argv';

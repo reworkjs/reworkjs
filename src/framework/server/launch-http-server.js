@@ -5,7 +5,7 @@ import express from 'express';
 import ngrok from 'ngrok';
 import chalk from 'chalk';
 import getPort from 'get-port';
-import argv from '../../shared/argv';
+import argv from '../../internals/rjs-argv';
 import logger from '../../shared/logger';
 import setupHttpServer from './setup-http-server';
 import printServerStarted from './print-server-started';
