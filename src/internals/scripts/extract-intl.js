@@ -128,11 +128,14 @@ const extractFromFile = async (fileName) => {
       let messages = Object.values(localeMappings[locale]).sort((a, b) => {
         a = a.id.toUpperCase();
         b = b.id.toUpperCase();
-        return do {
-          if (a < b) -1;
-          else if (a > b) 1;
-          else 0;
-        };
+
+        if (a < b) {
+          return -1;
+        } else if (a > b) {
+          return 1;
+        } else {
+          return 0;
+        }
       });
 
       // Write to file the JSON representation of the translation messages
