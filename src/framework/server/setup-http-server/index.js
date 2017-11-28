@@ -6,7 +6,7 @@ import getPreferredEncodings from 'negotiator/lib/encoding';
 import compression from 'compression';
 import cookiesMiddleware from 'universal-cookie-express';
 import getWebpackSettings from '../../../shared/webpack-settings';
-import argv from '../../../shared/argv';
+import argv from '../../../internals/rjs-argv';
 import logger from '../../../shared/logger';
 import { getDefault } from '../../../shared/util/ModuleUtil';
 
@@ -15,7 +15,7 @@ const httpStaticPath = webpackClientConfig.output.publicPath;
 const fsClientOutputPath = webpackClientConfig.output.path;
 const clientEntryPoint = path.join(fsClientOutputPath, 'index.html');
 
-const HAS_PRERENDERING = argv.prerendering !== false;
+const HAS_PRERENDERING = argv.prerendering === true;
 
 function redirectToPreCompressed(root, encodingTransforms = {}) {
   root = path.resolve(root);

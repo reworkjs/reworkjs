@@ -5,11 +5,11 @@
       "targets": {
         "node": "8.9.1"
       }
-    }],
-    "stage-0"
+    }]
   ],
   "plugins": [
+    "transform-class-properties",
     "transform-decorators-legacy",
-    "system-import-transformer"
+    "dynamic-import-node"
   ]
 }

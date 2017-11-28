@@ -3,8 +3,9 @@
 [include]
 
 [libs]
+./flow-typed/
 
 [options]
-suppress_type=$FlowBug
-suppress_type=$FlowIgnore
-suppress_type=$FlowFixMe
+suppress_comment=\\(.\\|\n\\)*\\$FlowBug
+suppress_comment=\\(.\\|\n\\)*\\$FlowIgnore
+suppress_comment=\\(.\\|\n\\)*\\$FlowFixMe

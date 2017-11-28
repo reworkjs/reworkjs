@@ -1,3 +1,5 @@
+// @flow
+
 import childProcess from 'child_process';
 import chalk from 'chalk';
 import getPort from 'get-port';
@@ -8,29 +10,45 @@ import { listenMsg } from '../process';
 import CliSplitView from '../CliSplitView';
 import featureHelp from '../get-webpack-features-help';
 
-export default function registerCommand(commander) {
+export default function registerCommand(cli) {
 
-  commander
-    .command('start')
-    .description('Launches the application')
-    .option('--no-prerendering', 'Disable server-side rendering')
-    .option('--port <port>', 'The port the server will listen to', Number, 3000)
-    .option('--tunnel <tunnel_port>', 'The port of the tunnel', Number, -1)
-    .option('--no-split', 'Disable terminal split-view')
-    .option(...featureHelp)
-    .action(options => {
-      options.verbose = commander.verbose;
+  cli
+    .command('start', 'Launches the application', yargs => {
+      yargs
+        .option('prerendering', {
+          type: 'boolean',
+          default: false,
+          describe: 'Enable server-side rendering',
+        })
+        .option('split', {
+          type: 'boolean',
+          default: false,
+          describe: 'Enable terminal split-view',
+        })
+        .option('port', {
+          type: 'number',
+          default: 3000,
+          describe: 'The port the server will listen to',
+        })
+        .option('tunnel', {
+          type: 'number',
+          default: -1,
+          describe: 'The port of the tunnel -- -1 to disable',
+        })
+        .option(...featureHelp);
+    }, argv => {
+      argv.verbose = cli.verbose;
 
       logger.info(`Launching app in ${chalk.magenta(process.env.NODE_ENV)} mode...`);
 
-      process.env.WATCH = process.env.NODE_ENV === 'development';
+      process.env.WATCH = String(process.env.NODE_ENV === 'development');
 
-      if (!options.prerendering) {
-        return runServerWithoutPrerendering(options);
+      if (!argv.prerendering) {
+        return runServerWithoutPrerendering(argv);
       }
 
       logger.info(`You can disable server-side rendering using ${chalk.blue('--no-prerendering')}.`);
-      return runServerWithPrerendering(options);
+      return runServerWithPrerendering(argv);
     });
 }
 
@@ -39,6 +57,7 @@ async function runServerWithoutPrerendering(options) {
     process.argv.push('--port', options.port);
   }
 
+  // $FlowIgnore
   const promises = [import(builders.client)];
 
   if (process.env.NODE_ENV === 'production') {

@@ -1,3 +1,6 @@
+// @flow
+
+import minimist from 'minimist';
 import React from 'react';
 import chalk from 'chalk';
 import { renderToString } from 'react-dom/server';
@@ -13,7 +16,7 @@ import frameworkConfig from '../../shared/framework-config';
 import projectMetadata from '../../shared/project-metadata';
 import frameworkMetadata from '../../shared/framework-metadata';
 import { resolveFrameworkSource } from '../util/resolve-util';
-import argv from '../../shared/argv';
+import argv from '../rjs-argv';
 import logger from '../../shared/logger';
 import getWebpackSettings from '../../shared/webpack-settings';
 import BaseHelmet from '../../framework/app/BaseHelmet';
@@ -313,6 +316,8 @@ export default class WebpackBase {
     const NODE_ENV = JSON.stringify(process.env.NODE_ENV);
     const SIDE = JSON.stringify(this.isServer() ? 'server' : 'client');
 
+    const programArgv = minimist(argv['--'] || []);
+
     const definedVariables = {
       'process.env.SIDE': SIDE,
       'process.env.BUILD_ENV': NODE_ENV,
@@ -321,6 +326,7 @@ export default class WebpackBase {
         FRAMEWORK_CONFIG: JSON.stringify(frameworkConfig),
         FRAMEWORK_METADATA: JSON.stringify(frameworkMetadata),
         PROJECT_METADATA: JSON.stringify(projectMetadata),
+        PARSED_ARGV: JSON.stringify(programArgv),
       },
     };
 
@@ -330,10 +336,7 @@ export default class WebpackBase {
         env: {
           NODE_ENV,
         },
-        argv: JSON.stringify(process.argv),
       };
-
-      definedVariables.$$RJS_VARS$$.PARSED_ARGV = JSON.stringify(argv);
     }
 
     return definedVariables;

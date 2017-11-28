@@ -1,5 +1,5 @@
 import winston from 'winston';
-import argv from '../argv';
+import argv from '../../internals/rjs-argv';
 import framework from '../framework-metadata';
 import { getDefault } from '../util/ModuleUtil';
 import levels from './levels';
