@@ -1,7 +1,8 @@
+// @flow
+
 import { syncHistoryWithStore } from 'react-router-redux';
 import { browserHistory, createMemoryHistory } from 'react-router';
 import { createSelector } from 'reselect';
-import '../common/load-polyfills';
 import RouteProvider from '../app/providers/RouteProvider';
 import mainComponent from '../common/main-component';
 import createRoutes from './create-routes';

@@ -112,12 +112,12 @@ export default function renderPage(data: { body?: string, header?: string, foote
 function defaultRenderPage(pageHtml: PageHtml) {
 
   return `<!DOCTYPE html>
-<html ${pageHtml.htmlAttributes}>
+<html ${String(pageHtml.htmlAttributes)}>
 <head>
-  ${pageHtml.head}
+  ${String(pageHtml.head)}
 </head>
-<body ${pageHtml.bodyAttributes}>
-  ${pageHtml.body}
+<body ${String(pageHtml.bodyAttributes)}>
+  ${String(pageHtml.body)}
 </body>
 </html>`;
 }

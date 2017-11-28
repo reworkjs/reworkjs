@@ -1,3 +1,5 @@
+// @flow
+
 import React from 'react';
 import chalk from 'chalk';
 import { renderToString } from 'react-dom/server';

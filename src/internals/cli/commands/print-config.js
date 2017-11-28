@@ -1,3 +1,5 @@
+// @flow
+
 import frameworkConfig from '../../../shared/framework-config';
 import logger from '../../../shared/logger';
 

@@ -1,3 +1,5 @@
+// @flow
+
 import childProcess from 'child_process';
 import chalk from 'chalk';
 import getPort from 'get-port';
@@ -23,7 +25,7 @@ export default function registerCommand(commander) {
 
       logger.info(`Launching app in ${chalk.magenta(process.env.NODE_ENV)} mode...`);
 
-      process.env.WATCH = process.env.NODE_ENV === 'development';
+      process.env.WATCH = String(process.env.NODE_ENV === 'development');
 
       if (!options.prerendering) {
         return runServerWithoutPrerendering(options);
@@ -39,6 +41,7 @@ async function runServerWithoutPrerendering(options) {
     process.argv.push('--port', options.port);
   }
 
+  // $FlowIgnore
   const promises = [import(builders.client)];
 
   if (process.env.NODE_ENV === 'production') {

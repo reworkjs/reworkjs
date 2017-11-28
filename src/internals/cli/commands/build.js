@@ -1,3 +1,5 @@
+// @flow
+
 import childProcess from 'child_process';
 import chalk from 'chalk';
 import logger from '../../../shared/logger';
@@ -24,12 +26,16 @@ export default function registerCommand(commander) {
 
       process.env.WATCH = false;
 
+
+      // if more than one builder, run them in separate processes
       for (let i = 1; i < parts.length; i++) {
         runProcess(builders[parts[i]]);
       }
 
+      // run first builder in this process.
       const syncBuilder = builders[parts[0]];
 
+      // $FlowIgnore
       import(syncBuilder);
     });
 }

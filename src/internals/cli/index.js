@@ -1,3 +1,5 @@
+// @flow
+
 import chalk from 'chalk';
 import program from 'commander';
 import requireAll from 'require-all';

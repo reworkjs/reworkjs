@@ -1,3 +1,5 @@
+// @flow
+
 import fs from 'mz/fs';
 import fsExtra from 'fs-extra';
 import chalk from 'chalk';
