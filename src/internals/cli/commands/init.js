@@ -2,6 +2,7 @@
 
 import fs from 'mz/fs';
 import fsExtra from 'fs-extra';
+import { noop } from 'lodash';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
 import semver from 'semver';
@@ -17,9 +18,7 @@ import { execSync } from '../../util/process-util';
 export default function registerCommand(commander) {
 
   commander
-    .command('init')
-    .description('Setups your project')
-    .action(() => {
+    .command('init', 'Setups your project', noop, () => {
       runInitScripts();
     });
 }

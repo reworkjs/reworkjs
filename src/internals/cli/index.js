@@ -1,7 +1,7 @@
 // @flow
 
 import chalk from 'chalk';
-import program from 'commander';
+import cli from 'yargs';
 import requireAll from 'require-all';
 import framework from '../../shared/framework-metadata';
 import { getDefault } from '../../shared/util/ModuleUtil';
@@ -16,6 +16,19 @@ process.on('unhandledRejection', reason => {
   process.exit(1);
 });
 
+process.env.NODE_ENV = process.env.NODE_ENV || 'production';
+
+cli
+  .strict()
+  .version(framework.version)
+  .option('v', {
+    alias: 'verbose',
+    default: 'info',
+    describe: `set logger verbosity.`,
+    type: 'string',
+    choices: Object.keys(levels),
+  });
+
 // register all commands.
 const commands = requireAll({
   dirname: `${__dirname}/commands`,
@@ -23,36 +36,15 @@ const commands = requireAll({
   recursive: true,
 });
 
-program
-  .version(framework.version)
-  .option('--verbose [verbose]', `set logger verbosity to one of {${Object.keys(levels).join(', ')}}`, 'info')
-  .option('--env <env>', 'Overwrite NODE_ENV value');
-
 for (const file of Object.keys(commands)) {
   const registerCommand = getDefault(commands[file]);
   if (typeof registerCommand === 'function') {
-    registerCommand(program);
+    registerCommand(cli);
   }
 }
 
-program.parseOptions(process.argv);
-
-setEnv(program.env);
-
-program.parse(process.argv);
-
-function setEnv(env = process.env.NODE_ENV || 'production') {
-
-  if (env === 'dev') {
-    process.env.NODE_ENV = 'development';
-  } else if (env === 'prod') {
-    process.env.NODE_ENV = 'production';
-  } else {
-    process.env.NODE_ENV = env;
-  }
-
-  return process.env.NODE_ENV;
-}
+// eslint-disable-next-line no-unused-expressions
+cli.demandCommand(1).recommendCommands().argv;
 
 /*
  ## `build`
