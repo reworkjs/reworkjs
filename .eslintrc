@@ -12,6 +12,9 @@
     "valid-jsdoc": 0,
     "no-console": 2,
     "import/order": 0,
-    "no-underscore-dangle": 0
+    "no-underscore-dangle": 0,
+
+    // https://github.com/gajus/eslint-plugin-flowtype/issues/293
+    "flowtype/no-dupe-keys": 0
   }
 }
