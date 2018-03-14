@@ -110,7 +110,7 @@
     "yargs": "^11.0.0"
   },
   "devDependencies": {
-    "@foobarhq/eslint-config": "^3.2.0",
+    "@foobarhq/eslint-config": "^4.0.1",
     "@reworkjs/babel-preset-reworkjs": "^0.3.0",
     "babel-plugin-dynamic-import-node": "^1.2.0",
     "babel-plugin-transform-class-properties": "^6.24.1",

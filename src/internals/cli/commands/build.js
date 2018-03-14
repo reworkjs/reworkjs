@@ -23,7 +23,8 @@ export default function registerCommand(commander) {
       const parts = argv.parts;
 
       logger.info(`Building ${parts.map(
-        str => chalk.blue(str)).join(', ')} in ${chalk.magenta(process.env.NODE_ENV)} mode...`);
+        str => chalk.blue(str)
+      ).join(', ')} in ${chalk.magenta(process.env.NODE_ENV)} mode...`);
 
       process.env.WATCH = 'false';
 
