@@ -248,7 +248,9 @@ export default class WebpackBase {
       test: /\.(mp4|webm)/i,
       loader: 'file-loader',
     }, {
+      // FIXME temporary fix for webpack 4 https://github.com/webpack-contrib/bundle-loader/issues/74
       test: /\.json$/i,
+      type: 'javascript/auto',
       loader: 'json-loader',
     }]
       .concat(this.buildCssLoaders())
