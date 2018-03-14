@@ -361,6 +361,9 @@ export default class WebpackBase {
       new HtmlWebpackPlugin({
         inject: true,
         templateContent: buildIndexPage(),
+
+        // FIXME temporary hack for webpack 4 https://github.com/jantimon/html-webpack-plugin/issues/870
+        chunksSortMode: 'none',
         minify: this.isDev ? false : {
           removeComments: true,
           collapseWhitespace: true,
