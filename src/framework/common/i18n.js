@@ -11,8 +11,8 @@ import logger from '../../shared/logger';
 // TODO support for .json locales.
 
 // WEBPACK
-let translationLoaders = require.context('bundle-loader?lazy&name=Translation-[name]!@@directories.translations', true, /\.js(?:on)?$/);
-const localeDataLoaders = require.context('bundle-loader?lazy&name=IntlLocale-[name]!react-intl/locale-data', true, /\.js$/);
+let translationLoaders = require.context('bundle-loader?lazy&name=Translation-[name]!@@directories.translations');
+const localeDataLoaders = require.context('bundle-loader?lazy&name=IntlLocale-[name]!react-intl/locale-data');
 
 const availableIntls = localeDataLoaders.keys().map(getFileName);
 
