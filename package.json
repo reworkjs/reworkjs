@@ -15,7 +15,7 @@
   "license": "MIT",
   "scripts": {
     "lint": "npm run lint:eslint && flow",
-    "lint:eslint": "eslint src",
+    "lint:eslint": "eslint src --report-unused-disable-directives",
     "lint:staged": "lint-staged",
     "build": "gulp build",
     "build:watch": "gulp build:watch",
