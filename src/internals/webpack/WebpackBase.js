@@ -125,6 +125,7 @@ export default class WebpackBase {
       resolve: {
         modules: ['node_modules'],
         extensions: [
+          '.mjs',
           '.js',
           '.jsx',
           '.react.js',
