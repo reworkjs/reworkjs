@@ -245,7 +245,7 @@ export default class WebpackBase {
         'file-loader',
       ],
     }, {
-      test: /\.(webp|mp4|webm)/i,
+      test: /\.(mp4|webm)/i,
       loader: 'file-loader',
     }, {
       test: /\.json$/i,
