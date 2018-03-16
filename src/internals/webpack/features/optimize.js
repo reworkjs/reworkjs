@@ -88,9 +88,11 @@ export default class OptimizeFeature extends BaseFeature {
         bypassOnDebug: true,
         mozjpeg: {
           progressive: true,
+          quality: 80,
         },
         gifsicle: {
           interlaced: false,
+          optimizationLevel: 3,
         },
         optipng: {
           optimizationLevel: 7,
@@ -100,6 +102,14 @@ export default class OptimizeFeature extends BaseFeature {
           speed: 4,
         },
         svgo: {},
+        webp: {
+          quality: 75,
+
+          // TODO add a way to define the type of image for "preset"
+          // default, photo, picture, drawing, icon and text.
+          // https://github.com/imagemin/imagemin-webp
+          method: 5,
+        },
       },
     });
 
