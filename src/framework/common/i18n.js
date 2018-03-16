@@ -8,11 +8,11 @@ import { getDefault } from '../../shared/util/ModuleUtil';
 import logger from '../../shared/logger';
 
 // TODO load Intl Polyfill if required
-// TODO support for .json locales.
+// TODO make locales load any kind of JS file webpack would + json
 
 // WEBPACK
-let translationLoaders = require.context('bundle-loader?lazy&name=Translation-[name]!@@directories.translations');
-const localeDataLoaders = require.context('bundle-loader?lazy&name=IntlLocale-[name]!react-intl/locale-data');
+let translationLoaders = require.context('bundle-loader?lazy&name=Translation-[name]!@@directories.translations', true, /\.js(on|x|m)$/);
+const localeDataLoaders = require.context('bundle-loader?lazy&name=IntlLocale-[name]!react-intl/locale-data', true, /\.js$/);
 
 const availableIntls = localeDataLoaders.keys().map(getFileName);
 
