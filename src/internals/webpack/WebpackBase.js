@@ -142,6 +142,9 @@ export default class WebpackBase {
         ],
         alias: this.getAliases(),
         mode: this.isDev ? 'development' : 'production',
+        optimization: {
+          noEmitOnErrors: true,
+        },
       },
     };
 
@@ -417,9 +420,6 @@ export default class WebpackBase {
       plugins.push(
         // enable hot reloading.
         new webpack.HotModuleReplacementPlugin(),
-        new webpack.NamedModulesPlugin(),
-
-        new webpack.NoEmitOnErrorsPlugin(),
 
         // Watcher doesn't work well if you mistype casing in a path so we use
         // a plugin that prints an error when you attempt to do this.
