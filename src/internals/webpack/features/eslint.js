@@ -1,4 +1,7 @@
+// @flow
+
 import BaseFeature from '../BaseFeature';
+import type WebpackConfigBuilder from '../WebpackConfigBuilder';
 
 export default class EslintFeature extends BaseFeature {
 
@@ -10,15 +13,11 @@ export default class EslintFeature extends BaseFeature {
     return 'Validates your source-code when building';
   }
 
-  isEnabled(enabled) {
-    if (!this.isDev()) {
-      return false;
-    }
-
-    return super.isEnabled(enabled);
+  isDefaultEnabled() {
+    return this.isDev();
   }
 
-  visit(webpack) {
+  visit(webpack: WebpackConfigBuilder) {
     webpack.injectRules({
       enforce: 'pre',
       test: BaseFeature.FILE_TYPE_JS,

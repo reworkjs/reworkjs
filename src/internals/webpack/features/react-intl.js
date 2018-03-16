@@ -1,3 +1,5 @@
+// @flow
+
 import fs from 'fs';
 import path from 'path';
 import webpack from 'webpack';
@@ -5,6 +7,7 @@ import { uniq } from 'lodash';
 import BaseFeature from '../BaseFeature';
 import logger from '../../../shared/logger';
 import config from '../../../shared/framework-config';
+import type WebpackConfigBuilder from '../WebpackConfigBuilder';
 
 export default class ReactIntlFeature extends BaseFeature {
 
@@ -16,15 +19,11 @@ export default class ReactIntlFeature extends BaseFeature {
     return 'Removes locales of unsupported languages.';
   }
 
-  isEnabled(enabled) {
-    if (!this.isProd()) {
-      return false;
-    }
-
-    return super.isEnabled(enabled);
+  isDefaultEnabled() {
+    return this.isProd();
   }
 
-  visit(webpackConfig) {
+  visit(webpackConfig: WebpackConfigBuilder) {
     const supportedLocales = uniq(fs.readdirSync(config.directories.translations)
       .map(fileName => {
         const locale = removeExtension(fileName);

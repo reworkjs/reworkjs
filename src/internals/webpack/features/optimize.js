@@ -1,7 +1,10 @@
+// @flow
+
 import webpack from 'webpack';
 import OfflinePlugin from 'offline-plugin';
 import CompressionPlugin from 'compression-webpack-plugin';
 import BaseFeature from '../BaseFeature';
+import type WebpackConfigBuilder from '../WebpackConfigBuilder';
 
 export default class OptimizeFeature extends BaseFeature {
 
@@ -17,15 +20,11 @@ export default class OptimizeFeature extends BaseFeature {
     return 'Various optimisation designed to reduce the client bundle size';
   }
 
-  isEnabled(enabled) {
-    if (!this.isProd() || this.isServer()) {
-      return false;
-    }
-
-    return super.isEnabled(enabled);
+  isDefaultEnabled() {
+    return this.isProd() && !this.isServer();
   }
 
-  visit(config) {
+  visit(config: WebpackConfigBuilder) {
     config.injectRawConfig({
       devtool: 'source-map',
       performance: {

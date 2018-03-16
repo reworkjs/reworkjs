@@ -1,3 +1,5 @@
+// @flow
+
 import chalk from 'chalk';
 import logger from '../../shared/logger';
 import WebpackConfigBuilder from './WebpackConfigBuilder';
@@ -8,48 +10,47 @@ export default class BaseFeature {
   static FILE_TYPE_CSS = WebpackConfigBuilder.FILE_TYPE_CSS;
   static FILE_TYPE_IMG = WebpackConfigBuilder.FILE_TYPE_IMG;
 
-  constructor(isServer, env) {
+  _isServer: boolean;
+  _env: string;
+
+  constructor(isServer: boolean, env: string) {
     this._isServer = isServer;
     this._env = env;
   }
 
-  getDescription() {
+  getDescription(): string {
     return 'No description provided. Contact Feature author.';
   }
 
-  getFeatureName() {
+  getFeatureName(): string {
     throw new Error('getFeatureName not implemented');
   }
 
-  loadAfter() {
+  loadAfter(): ?string {
     return null;
   }
 
-  loadBefore() {
+  loadBefore(): ?string {
     return null;
   }
 
-  isEnabled(enabled) {
-    if (enabled === void 0) {
-      return true;
-    }
-
-    return enabled;
+  isDefaultEnabled(): boolean {
+    return true;
   }
 
-  isDev() {
+  isDev(): boolean {
     return !this.isProd();
   }
 
-  isProd() {
+  isProd(): boolean {
     return this._env === 'production';
   }
 
-  isServer() {
+  isServer(): boolean {
     return this._isServer;
   }
 
-  isClient() {
+  isClient(): boolean {
     return !this.isServer();
   }
 
@@ -57,9 +58,10 @@ export default class BaseFeature {
     throw new Error('visit not implemented');
   }
 
-  getOptionalDependency(dependencyName) {
+  getOptionalDependency(dependencyName: string) {
     try {
-      return require(dependencyName); // eslint-disable-line
+      // $FlowIgnore
+      return require(dependencyName);
     } catch (e) {
       if (e.code !== 'MODULE_NOT_FOUND') {
         throw e;

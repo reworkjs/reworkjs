@@ -11,7 +11,7 @@ import WebpackCleanupPlugin from 'webpack-cleanup-plugin';
 import nodeExternals from 'webpack-node-externals';
 import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
-import PolyfillInjectorPlugin from 'webpack-polyfill-injector';
+// import PolyfillInjectorPlugin from 'webpack-polyfill-injector';
 import frameworkConfig from '../../shared/framework-config';
 import projectMetadata from '../../shared/project-metadata';
 import frameworkMetadata from '../../shared/framework-metadata';
@@ -80,21 +80,21 @@ export default class WebpackBase {
 
   injectFeatures() {
     logger.debug('Injecting webpack Features.');
-    const enabledFeatures = parseFeatures(argv.features);
+    const requestedFeatures = parseFeatures(argv.features);
 
     const features = featureClasses.map(FeatureClass => new FeatureClass(this.isServer(), process.env.NODE_ENV));
     sortDependencies(features);
 
     for (const feature of features) {
-      this.injectFeature(feature, enabledFeatures);
+      this.injectFeature(feature, requestedFeatures);
     }
   }
 
   /** @private */
-  injectFeature(feature: BaseFeature, enabledFeatures) {
+  injectFeature(feature: BaseFeature, requestedFeatures: { [string]: boolean }) {
 
     const name = feature.getFeatureName();
-    const enabled = feature.isEnabled(enabledFeatures[name]);
+    const enabled = requestedFeatures[name] != null ? requestedFeatures[name] : feature.isDefaultEnabled();
 
     logger.debug(`${enabled ? chalk.green('✓') : chalk.red('✘')} Feature ${name}`);
 
@@ -108,7 +108,7 @@ export default class WebpackBase {
   }
 
   buildConfig() {
-    const config = {
+    const config: Object = {
       cache: true,
       name: this.isServer() ? 'Server' : 'Client',
       entry: this.getEntry(),
@@ -138,6 +138,7 @@ export default class WebpackBase {
           'main',
         ],
         alias: this.getAliases(),
+        mode: this.isDev ? 'development' : 'production',
       },
     };
 
@@ -156,6 +157,12 @@ export default class WebpackBase {
         }),
       ];
     } else {
+
+      // https://github.com/SebastianS90/webpack-polyfill-injector
+      // config.entry = `webpack-polyfill-injector?${JSON.stringify({
+      //   modules: [config.entry],
+      // })}!`;
+
       config.resolve.mainFields.unshift('web');
       config.resolve.mainFields.unshift('jsnext:web');
       config.resolve.mainFields.unshift('browser');
@@ -177,7 +184,6 @@ export default class WebpackBase {
     // front-end dev libs.
     if (this.isDev && !this.isServer()) {
       entry.unshift(
-
         // Necessary for hot reloading with IE
         'eventsource-polyfill',
         'webpack-hot-middleware/client',
@@ -185,7 +191,6 @@ export default class WebpackBase {
       );
     } else if (this.isDev && this.isServer()) {
       entry.unshift(
-
         // hot reload if parent sends signal SIGUSR2
         require.resolve('./hmr-server'),
       );
@@ -385,25 +390,22 @@ export default class WebpackBase {
 
     if (this.isServer()) {
       plugins.push(
-
         // Hook import() directives on the server-side so we can know which
         // chunks are loaded for which routes and give them along with the HTTP response.
         new RequireEnsureHookPlugin(),
       );
     }
 
-    if (!this.isServer()) {
-      plugins.push(
-        new PolyfillInjectorPlugin({
-          polyfills: ['Promise'],
-          service: true,
-        }),
-      );
-    }
+    // if (!this.isServer()) {
+    //   plugins.push(
+    //     new PolyfillInjectorPlugin({
+    //       polyfills: ['Promise'],
+    //     }),
+    //   );
+    // }
 
     if (this.isDev) {
       plugins.push(
-
         // enable hot reloading.
         new webpack.HotModuleReplacementPlugin(),
         new webpack.NamedModulesPlugin(),

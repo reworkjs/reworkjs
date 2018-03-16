@@ -1,8 +1,11 @@
+// @flow
+
 import BaseFeature from '../BaseFeature';
+import type WebpackConfigBuilder from '../WebpackConfigBuilder';
 
 export default class PostCssFeature extends BaseFeature {
 
-  getFeatureName() {
+  getFeatureName(): string {
     return 'postcss';
   }
 
@@ -10,7 +13,7 @@ export default class PostCssFeature extends BaseFeature {
     return 'Enables PostCss support on any CSS file.';
   }
 
-  visit(webpack) {
+  visit(webpack: WebpackConfigBuilder) {
     webpack.injectCssLoader('postcss-loader');
   }
 }
