@@ -117,7 +117,10 @@ export default class WebpackBase {
         rules: this.buildRules(),
       },
       plugins: this.getPlugins(),
-      devtool: 'cheap-module-eval-source-map',
+
+      // Allow error boundaries to display errors in non-main chunks
+      // https://reactjs.org/docs/cross-origin-errors.html
+      devtool: 'cheap-module-source-map',
       performance: {
         hints: false,
       },
@@ -206,6 +209,12 @@ export default class WebpackBase {
 
     if (this.isServer()) {
       output.libraryTarget = 'commonjs2';
+    }
+
+    if (this.isDev && !this.isServer()) {
+      // Allow error boundaries to display errors in non-main chunks
+      // https://reactjs.org/docs/cross-origin-errors.html
+      output.crossOriginLoading = 'anonymous';
     }
 
     if (this.isDev || this.isServer()) {
