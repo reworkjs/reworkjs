@@ -36,6 +36,44 @@ export default class OptimizeFeature extends BaseFeature {
       return;
     }
 
+    config.injectRawConfig({
+      optimization: {
+        minimize: true,
+        minimizer: [
+
+          new webpack.optimize.UglifyJsPlugin({
+            parallel: true,
+            cache: true,
+
+            // preserve LICENSE comments (*!, /**!, @preserve or @license) for legal stuff but extract them
+            // to their own file to reduce bundle size.
+            extractComments: true,
+            sourceMap: true,
+
+            uglifyOptions: {
+              compress: {
+                warnings: false,
+              },
+
+              output: {
+                // TODO set to 6/7/8 if .browserlistrc supports it
+                // Will use newer features to optimize
+                ecma: 5,
+              },
+
+              // TODO this should be based on .browserlistrc
+              ecma: 5,
+
+              // TODO this should be based on .browserlistrc
+              safari10: true,
+
+              ie8: false,
+            },
+          }),
+        ],
+      },
+    });
+
     config.injectRules({
       test: BaseFeature.FILE_TYPE_IMG,
       loader: 'image-webpack-loader',
@@ -68,30 +106,6 @@ export default class OptimizeFeature extends BaseFeature {
         threshold: 0,
         minRatio: 0.8,
       }]),
-
-      new webpack.optimize.ModuleConcatenationPlugin(),
-
-      new webpack.optimize.CommonsChunkPlugin({
-        name: 'common',
-        children: true,
-        minChunks: 2,
-        async: true,
-      }),
-
-      new webpack.optimize.UglifyJsPlugin({
-
-        // preserve LICENSE comments (*!, /**!, @preserve or @license) for legal stuff but extract them
-        // to their own file to reduce bundle size.
-        extractComments: true,
-        sourceMap: true,
-        compress: {
-          warnings: false,
-        },
-      }),
-
-      // OccurrenceOrderPlugin is needed for long-term caching to work properly.
-      // See http://mxs.is/googmv
-      new webpack.optimize.OccurrenceOrderPlugin(true),
 
       // Put it in the end to capture all the HtmlWebpackPlugin's assets
       new OfflinePlugin({
