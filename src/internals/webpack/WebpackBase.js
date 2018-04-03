@@ -7,7 +7,7 @@ import { renderToString } from 'react-dom/server';
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import ExtractCssPlugin from 'mini-css-extract-plugin';
-import WebpackCleanupPlugin from 'webpack-cleanup-plugin';
+import CleanObsoleteChunks from 'webpack-clean-obsolete-chunks';
 import nodeExternals from 'webpack-node-externals';
 import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
@@ -438,7 +438,8 @@ export default class WebpackBase {
 
     if (!this.isDev) {
       plugins.push(
-        new WebpackCleanupPlugin({ quiet: true }),
+        // remove outdated assets from previous builds (because the file names contain a content hash).
+        new CleanObsoleteChunks({ verbose: false }),
 
         // Extract the CSS into a seperate file
         new ExtractCssPlugin({
