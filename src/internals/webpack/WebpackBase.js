@@ -145,6 +145,7 @@ export default class WebpackBase {
       mode: this.isDev ? 'development' : 'production',
       optimization: {
         noEmitOnErrors: true,
+        minimize: false,
       },
     };
 
@@ -459,7 +460,7 @@ function buildIndexPage() {
 }
 
 function getCssLoader(options = {}) {
-  const loaderOptions = {
+  const loaderOptions: Object = {
     importLoaders: options.importLoaders || 0,
   };
 

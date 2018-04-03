@@ -21,12 +21,19 @@ export default class OptimizeFeature extends BaseFeature {
   }
 
   isDefaultEnabled() {
-    return this.isProd() && !this.isServer();
+    return this.isProd();
   }
 
   visit(config: WebpackConfigBuilder) {
     config.injectRawConfig({
       devtool: 'source-map',
+    });
+
+    if (this.isServer()) {
+      return;
+    }
+
+    config.injectRawConfig({
       performance: {
         hints: 'warning',
       },
@@ -36,15 +43,6 @@ export default class OptimizeFeature extends BaseFeature {
           // https://medium.com/webpack/webpack-4-code-splitting-chunk-graph-and-the-splitchunks-optimization-be739a861366
           name: false,
         },
-      },
-    });
-
-    if (this.isServer()) {
-      return;
-    }
-
-    config.injectRawConfig({
-      optimization: {
         minimize: true,
         minimizer: [
 
