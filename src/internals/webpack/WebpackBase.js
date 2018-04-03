@@ -6,7 +6,7 @@ import chalk from 'chalk';
 import { renderToString } from 'react-dom/server';
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-import ExtractTextPlugin from 'extract-text-webpack-plugin';
+import ExtractCssPlugin from 'mini-css-extract-plugin';
 import WebpackCleanupPlugin from 'webpack-cleanup-plugin';
 import nodeExternals from 'webpack-node-externals';
 import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin';
@@ -294,16 +294,18 @@ export default class WebpackBase {
       use: [getCssLoader({ modules: false })],
     }];
 
-    const styleLoader = this.isServer() ? 'node-style-loader' : 'style-loader';
-    for (const cssLoader of cssLoaders) {
-      if (this.isDev) {
-        cssLoader.use = [styleLoader, ...cssLoader.use];
-      } else {
-        cssLoader.use = ExtractTextPlugin.extract({
-          fallback: styleLoader,
-          use: cssLoader.use,
-        });
+    const styleLoader = (() => {
+      if (!this.isDev) {
+        // in prod, extract CSS to separate .css files
+        return ExtractCssPlugin.loader;
       }
+
+      // in dev, use <style> tags
+      return this.isServer() ? 'node-style-loader' : 'style-loader';
+    })();
+
+    for (const cssLoader of cssLoaders) {
+      cssLoader.use = [styleLoader, ...cssLoader.use];
     }
 
     return cssLoaders;
@@ -439,7 +441,9 @@ export default class WebpackBase {
         new WebpackCleanupPlugin({ quiet: true }),
 
         // Extract the CSS into a seperate file
-        new ExtractTextPlugin('[name].[contenthash].css'),
+        new ExtractCssPlugin({
+          filename: '[name].[contenthash].css',
+        }),
       );
     }
 
