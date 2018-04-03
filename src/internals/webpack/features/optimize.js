@@ -148,6 +148,10 @@ export default class OptimizeFeature extends BaseFeature {
         safeToUseOptionalCaches: true,
 
         AppCache: false,
+        ServiceWorker: {
+          // FIXME remove this once OfflinePlugin 5 releases
+          minify: false,
+        },
       }),
     ]);
   }
