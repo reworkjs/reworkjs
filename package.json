@@ -26,7 +26,7 @@
     "rjs": "bin/framework.bin.js"
   },
   "optionalDependencies": {
-    "webpack-bundle-analyzer": "^2.9.0",
+    "webpack-bundle-analyzer": "^2.11.1",
     "@reworkjs/babel-preset-reworkjs": "^0.3.0"
   },
   "peerDependencies": {
