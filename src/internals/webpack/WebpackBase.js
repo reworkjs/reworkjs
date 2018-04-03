@@ -141,10 +141,10 @@ export default class WebpackBase {
           'main',
         ],
         alias: this.getAliases(),
-        mode: this.isDev ? 'development' : 'production',
-        optimization: {
-          noEmitOnErrors: true,
-        },
+      },
+      mode: this.isDev ? 'development' : 'production',
+      optimization: {
+        noEmitOnErrors: true,
       },
     };
 
