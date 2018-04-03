@@ -14,7 +14,7 @@ export default class AnalyzeFeature extends BaseFeature {
   }
 
   isDefaultEnabled() {
-    return !this.isServer();
+    return false;
   }
 
   visit(webpack: WebpackConfigBuilder) {
