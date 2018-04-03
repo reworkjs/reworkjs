@@ -1,6 +1,6 @@
 // @flow
 
-import webpack from 'webpack';
+import UglifyJsPlugin from 'uglifyjs-webpack-plugin';
 import OfflinePlugin from 'offline-plugin';
 import CompressionPlugin from 'compression-webpack-plugin';
 import BaseFeature from '../BaseFeature';
@@ -48,7 +48,7 @@ export default class OptimizeFeature extends BaseFeature {
         minimize: true,
         minimizer: [
 
-          new webpack.optimize.UglifyJsPlugin({
+          new UglifyJsPlugin({
             parallel: true,
             cache: true,
 
