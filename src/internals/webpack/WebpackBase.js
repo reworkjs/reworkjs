@@ -275,6 +275,44 @@ export default class WebpackBase {
       .concat(wcbUtils.buildRules(this.webpackConfigBuilder));
   }
 
+  getCssLoader(options: Object = {}) {
+    const loaderOptions: Object = {
+      importLoaders: options.importLoaders || 0,
+    };
+
+    if (isDev) {
+      Object.assign(loaderOptions, {
+        sourceMap: true,
+      });
+    } else {
+      Object.assign(loaderOptions, {
+        minimize: true,
+      });
+    }
+
+    if (options.modules) {
+      Object.assign(loaderOptions, {
+        modules: true,
+        camelCase: true,
+      });
+
+      if (isDev) {
+        Object.assign(loaderOptions, {
+          localIdentName: '[local]__[hash:base64:5]',
+        });
+      }
+    }
+
+    // in prod with pre-rendering, we don't generate the CSS. Only the mapping "css class" => "css module class"
+    // the actual CSS is served directly from the client bundle.
+    const loader = this.isServer() && !this.isDev ? 'css-loader/locals' : 'css-loader';
+
+    return {
+      loader,
+      options: loaderOptions,
+    };
+  }
+
   /** @private */
   buildCssLoaders() {
     const pluggedCssLoaders = wcbUtils.getCssLoaders(this.webpackConfigBuilder);
@@ -283,7 +321,7 @@ export default class WebpackBase {
       test: wcbUtils.getFileTypeRegExp(this.webpackConfigBuilder, WebpackConfigBuilder.FILE_TYPE_CSS),
       exclude: /node_modules/,
       use: [
-        getCssLoader({
+        this.getCssLoader({
           modules: true,
           importLoaders: pluggedCssLoaders.length,
         }),
@@ -292,21 +330,27 @@ export default class WebpackBase {
     }, {
       test: /\.css$/i,
       include: /node_modules/,
-      use: [getCssLoader({ modules: false })],
+      use: [this.getCssLoader({ modules: false })],
     }];
 
     const styleLoader = (() => {
-      if (!this.isDev) {
-        // in prod, extract CSS to separate .css files
-        return ExtractCssPlugin.loader;
+      // in prod, extract CSS to separate .css files.
+      // Note: The server ignores the file because it simply sends the ones built for the Client
+      //       that match used bundle names.
+      if (this.isDev) {
+        // in dev, use <style> tags
+        return this.isServer() ? 'node-style-loader' : 'style-loader';
       }
 
-      // in dev, use <style> tags
-      return this.isServer() ? 'node-style-loader' : 'style-loader';
+      // in prod, extract CSS to separate .css files
+      // on the server, don't generate the CSS -- load client version
+      return this.isServer() ? null : ExtractCssPlugin.loader;
     })();
 
-    for (const cssLoader of cssLoaders) {
-      cssLoader.use = [styleLoader, ...cssLoader.use];
+    if (styleLoader != null) {
+      for (const cssLoader of cssLoaders) {
+        cssLoader.use = [styleLoader, ...cssLoader.use];
+      }
     }
 
     return cssLoaders;
@@ -435,8 +479,12 @@ export default class WebpackBase {
       plugins.push(
         // remove outdated assets from previous builds (because the file names contain a content hash).
         new CleanObsoleteChunks({ verbose: false }),
+      );
+    }
 
-        // Extract the CSS into a seperate file
+    if (!this.isDev && !this.isServer()) {
+      // Extract the CSS into a seperate file (only prod, and plugin is not compatible with SSR).
+      plugins.push(
         new ExtractCssPlugin({
           filename: '[name].[contenthash].css',
         }),
@@ -451,39 +499,4 @@ function buildIndexPage() {
   return renderPage({
     body: renderToString(<BaseHelmet />),
   });
-}
-
-function getCssLoader(options = {}) {
-  const loaderOptions: Object = {
-    importLoaders: options.importLoaders || 0,
-  };
-
-  if (isDev) {
-    Object.assign(loaderOptions, {
-      sourceMap: true,
-    });
-  } else {
-    // TODO cssnano options
-    Object.assign(loaderOptions, {
-      minimize: true,
-    });
-  }
-
-  if (options.modules) {
-    Object.assign(loaderOptions, {
-      modules: true,
-      camelCase: true,
-    });
-
-    if (isDev) {
-      Object.assign(loaderOptions, {
-        localIdentName: '[local]__[hash:base64:5]',
-      });
-    }
-  }
-
-  return {
-    loader: 'css-loader',
-    options: loaderOptions,
-  };
 }
