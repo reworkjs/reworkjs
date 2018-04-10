@@ -2,10 +2,10 @@ import React from 'react';
 import { IntlProvider } from 'react-intl';
 import PropTypes from 'prop-types';
 import { Cookies } from 'react-cookie';
-import { isLocaleValid, onHotReload } from '../common/i18n';
+import { guessPreferredLocale } from '../common/get-preferred-locale';
+import { onHotReload } from '../common/i18n';
 import container from '../common/decorators/container';
-import { getCurrentRequestLocales } from '../server/setup-http-server/request-locale';
-import LanguageProvider, { LOCALE_COOKIE_NAME } from './providers/LanguageProvider';
+import LanguageProvider from './providers/LanguageProvider';
 
 function Fragment(props) {
   return props.children;
@@ -54,40 +54,4 @@ export default class LanguageComponent extends React.Component {
       </IntlProvider>
     );
   }
-}
-
-function guessPreferredLocale(cookies) {
-  // TODO add hook ?
-
-  const cookieLocale = cookies.get(LOCALE_COOKIE_NAME);
-  if (cookieLocale && isLocaleValid(cookieLocale)) {
-    return cookieLocale;
-  }
-
-  // client-side
-  if (typeof navigator !== 'undefined') {
-    if (navigator.languages) {
-      for (const language of navigator.languages) {
-        if (isLocaleValid(language)) {
-          return language;
-        }
-      }
-    }
-
-    if (isLocaleValid(navigator.language)) {
-      return navigator.language;
-    }
-  }
-
-  // server-side
-  const serverLocales = getCurrentRequestLocales();
-  if (serverLocales) {
-    for (const serverLocale of serverLocales) {
-      if (isLocaleValid(serverLocale)) {
-        return serverLocale;
-      }
-    }
-  }
-
-  return 'en';
 }

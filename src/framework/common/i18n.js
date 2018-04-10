@@ -4,6 +4,7 @@
  * This will setup the i18n language files and locale data for your app.
  */
 import { addLocaleData } from 'react-intl';
+import { loadTranslationList, loadLocaleList } from '../../shared/get-translations';
 import { getDefault } from '../../shared/util/ModuleUtil';
 import logger from '../../shared/logger';
 
@@ -11,8 +12,8 @@ import logger from '../../shared/logger';
 // TODO make locales load any kind of JS file webpack would + json
 
 // WEBPACK
-let translationLoaders = require.context('bundle-loader?lazy&name=Translation-[name]!@@directories.translations', true, /\.js(on|x|m)$/);
-const localeDataLoaders = require.context('bundle-loader?lazy&name=IntlLocale-[name]!react-intl/locale-data', true, /\.js$/);
+let translationLoaders = loadTranslationList();
+const localeDataLoaders = loadLocaleList();
 
 const availableIntls = localeDataLoaders.keys().map(getFileName);
 
@@ -158,7 +159,7 @@ export function onHotReload(callback) {
 // HOT RELOAD INDIVIDUAL TRANSLATION FILES
 if (module.hot) {
   module.hot.accept(translationLoaders.id, () => {
-    const reloadedTranslationLoaders = require.context('bundle-loader!@@directories.translations', true, /\.js$/);
+    const reloadedTranslationLoaders = loadTranslationList();
     translationLoaders = reloadedTranslationLoaders;
     buildLocaleList();
 
