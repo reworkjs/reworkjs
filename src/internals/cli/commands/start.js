@@ -47,7 +47,6 @@ export default function registerCommand(cli) {
         return runServerWithoutPrerendering(argv);
       }
 
-      logger.info(`You can disable server-side rendering using ${chalk.blue('--no-prerendering')}.`);
       return runServerWithPrerendering(argv);
     });
 }
