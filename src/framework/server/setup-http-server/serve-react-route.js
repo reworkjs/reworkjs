@@ -5,7 +5,6 @@ import { match, RouterContext } from 'react-router';
 import { renderToString } from 'react-dom/server';
 import { collectInitial, collectContext } from 'node-style-loader/collect';
 import { parse } from 'accept-language-parser';
-import { invert } from 'lodash';
 import getWebpackSettings from '../../../shared/webpack-settings';
 import { rootRoute, store } from '../../common/kernel';
 import ReworkJsWrapper from '../../app/ReworkJsWrapper';
@@ -80,10 +79,12 @@ export default async function serveReactRoute(req, res, next): ?{ appHtml: strin
     const importedServerChunks: Set = unhookWebpackAsyncRequire();
     const importableClientChunks = [];
     for (const importedServerChunk of importedServerChunks) {
-      const clientChunk = serverChunkToClientChunk(importedServerChunk, compilationStats);
-      if (clientChunk) {
-        importableClientChunks.push(getChunkPrefetchLink(clientChunk, compilationStats));
+      const chunkFiles: ?Array<string> = getClientFilesFromServerChunkId(importedServerChunk, compilationStats);
+      if (!chunkFiles) {
+        continue;
       }
+
+      importableClientChunks.push(...chunkFiles.map(getChunkPrefetchLink));
     }
 
     res.send(renderPage({
@@ -110,21 +111,26 @@ type CompilationStats = {
       js: string,
       css: string,
     },
-    moduleToChunk: { [key: string]: any },
     chunkFileNames: { [key: string]: string },
   },
   server: {
-    chunkToModule: { [key: string]: string },
+    chunkNames: { [key: string]: string },
   },
 };
 
-function serverChunkToClientChunk(serverChunk, stats: CompilationStats) {
-  const moduleName = stats.server.chunkToModule[serverChunk];
-  if (!moduleName) {
+/**
+ * Return the list of files a chunk has in the client build, using the id of a chunk from the server build.
+ * This is done using uniquely named chunks.
+ */
+function getClientFilesFromServerChunkId(serverChunkId: number, stats: CompilationStats): ?Array<string> {
+  // Get the name of a chunk using its server build ID.
+  const chunkName = stats.server.chunkNames[serverChunkId];
+  if (!chunkName) {
     return null;
   }
 
-  return stats.client.moduleToChunk[moduleName] || null;
+  // Get list of files that compose the Chunk in the client build.
+  return stats.client.chunkFileNames[chunkName] || null;
 }
 
 const webpackClientConfig = getWebpackSettings(/* is server */ false);
@@ -145,18 +151,15 @@ function getCompilationStats(): CompilationStats {
     serverStats = JSON.parse(serverStats);
     clientStats = JSON.parse(clientStats);
 
-    serverStats.chunkToModule = invert(serverStats.moduleToChunk);
-    serverStats.moduleToChunk = void 0;
-
     clientStats.entryPoints = buildEntryPointTags(clientStats.entryPoints);
-    serverStats.entryPoints = void 0;
+    delete serverStats.entryPoints;
 
     const compStats = {
       server: serverStats,
       client: clientStats,
     };
 
-    if (process.env.NODE_ENV === 'production') { // eslint-disable-line no-process-env
+    if (process.env.NODE_ENV === 'production') {
       compStatCache = compStats;
     }
 
@@ -166,12 +169,21 @@ function getCompilationStats(): CompilationStats {
 
 const httpStaticPath = webpackClientConfig.output.publicPath;
 
-function getChunkPrefetchLink(chunkId, stats: CompilationStats) {
-  return `<link rel="prefetch" href="${httpStaticPath + stats.client.chunkFileNames[chunkId]}" as="script" pr="1.0" />`;
+function getChunkPrefetchLink(fileName: string) {
+  const path = httpStaticPath + fileName;
+
+  if (fileName.endsWith('.css')) {
+    return `<link rel="stylesheet" href="${path}" />`;
+  }
+
+  if (fileName.endsWith('.js')) {
+    return `<link rel="prefetch" href="${path}" as="script" pr="1.0" />`;
+  }
+
+  throw new Error(`Trying to load unsupported file ${fileName}.`);
 }
 
 function buildEntryPointTags(entryPoints) {
-  // httpStaticPath
   entryPoints.js = entryPoints.js.map(entryPoint => `<script src="${httpStaticPath + entryPoint}"></script>`).join('');
   entryPoints.css = entryPoints.css.map(entryPoint => `<link rel="stylesheet" href="${httpStaticPath + entryPoint}" />`).join('');
 

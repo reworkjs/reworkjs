@@ -14,12 +14,11 @@ export default class DumpEntryPoints {
         return void callback();
       }
 
-      const moduleToChunk = makeModuleToChunkMapping(stats);
-      const chunkFileNames = extractChunkFileNames(stats);
+      const { chunkNames, chunkFileNames } = extractChunkMeta(stats);
 
       const json = JSON.stringify({
         entryPoints,
-        moduleToChunk,
+        chunkNames,
         chunkFileNames,
       });
 
@@ -45,48 +44,28 @@ function getEntryPoints(stats) {
   };
 }
 
-function extractChunkFileNames(stats) {
+function extractChunkMeta(stats) {
   const chunkFileNames = {};
+  const chunkNames = {};
   for (const chunk of stats.chunks) {
-    chunkFileNames[chunk.id] = chunk.files[0];
-  }
-
-  return chunkFileNames;
-}
-
-// TODO named chunks mapping
-function makeModuleToChunkMapping(stats) {
-  const modules = stats.modules;
-
-  const moduleToChunk = {};
-  const assignedChunks = [];
-
-  let unprocessedModules = Object.keys(modules);
-  let nextUnprocessedModules;
-  let newFoundChunks;
-  do {
-    newFoundChunks = 0;
-    nextUnprocessedModules = [];
-
-    for (let i = 0; i < unprocessedModules.length; i++) {
-      const module = modules[unprocessedModules[i]];
-      module.chunks = module.chunks.filter(chunkId => !assignedChunks.includes(chunkId));
-
-      if (module.chunks.length === 0) {
-        continue;
-      }
-
-      if (module.chunks.length === 1) {
-        moduleToChunk[module.id] = module.chunks[0];
-        assignedChunks.push(module.chunks[0]);
-        newFoundChunks++;
-      } else {
-        nextUnprocessedModules.push(i);
-      }
+    if (chunk.names.length !== 1) {
+      // DEOPTIMIZATION:
+      // if a chunk is not named or has more than one name, we cannot
+      // properly match it between client/server builds
+      // so they are not pre-rendered.
+      continue;
     }
 
-    unprocessedModules = nextUnprocessedModules;
-  } while (newFoundChunks > 0);
+    const chunkName = chunk.names[0];
+    chunkNames[chunk.id] = chunkName;
 
-  return moduleToChunk;
+    const files = chunk.files.filter(file => file.endsWith('.js') || file.endsWith('.css'));
+    if (files.length === 0) {
+      continue;
+    }
+
+    chunkFileNames[chunkName] = files;
+  }
+
+  return { chunkFileNames, chunkNames };
 }
