@@ -7,7 +7,7 @@ import { renderToString } from 'react-dom/server';
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import ExtractCssPlugin from 'mini-css-extract-plugin';
-import CleanObsoleteChunks from 'webpack-clean-obsolete-chunks';
+import WebpackCleanupPlugin from 'webpack-cleanup-plugin';
 import nodeExternals from 'webpack-node-externals';
 import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
@@ -414,6 +414,8 @@ export default class WebpackBase {
     // TODO inject DLLs <script data-dll='true' src='/${dllName}.dll.js'></script>`
     // TODO https://github.com/diurnalist/chunk-manifest-webpack-plugin
     const plugins = [
+      // remove outdated assets from previous builds.
+      new WebpackCleanupPlugin({ quiet: true }),
       new webpack.DefinePlugin(this.getDefinedVars()),
       new CopyWebpackPlugin([{
         from: { glob: `${frameworkConfig.directories.resources}/**/**/*` },
@@ -472,13 +474,6 @@ export default class WebpackBase {
         // a plugin that prints an error when you attempt to do this.
         // See https://github.com/facebookincubator/create-react-app/issues/240
         new CaseSensitivePathsPlugin(),
-      );
-    }
-
-    if (!this.isDev) {
-      plugins.push(
-        // remove outdated assets from previous builds (because the file names contain a content hash).
-        new CleanObsoleteChunks({ verbose: false }),
       );
     }
 

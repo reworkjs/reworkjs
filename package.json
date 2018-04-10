@@ -103,7 +103,7 @@
     "universal-cookie-express": "^2.1.2",
     "url-loader": "^1.0.1",
     "webpack": "^4.4.1",
-    "webpack-clean-obsolete-chunks": "^0.4.0",
+    "webpack-cleanup-plugin": "^0.5.1",
     "webpack-dev-middleware": "^3.1.0",
     "webpack-hot-middleware": "^2.21.2",
     "webpack-node-externals": "^1.7.2",
