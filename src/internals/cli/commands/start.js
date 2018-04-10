@@ -10,6 +10,27 @@ import { listenMsg } from '../process';
 import CliSplitView from '../CliSplitView';
 import featureHelp from '../get-webpack-features-help';
 
+/**
+ * This command registers a "start" command that launches builds and serve the app.
+ *
+ * With Pre-rendering:
+ *  PROD:
+ *    Build Server & Client
+ *    Launch "Server" with pre-rendering. (Server serves assets and pre-renders).
+ *  DEV:
+ *    Build Server & Client.
+ *    Launch HMR Server for client? -- for front-end HMR.
+ *    Launch Server for pre-rendering.
+ *    HMR Server (back-end HMR).
+ *
+ * Without Pre-rendering:
+ *  PROD:
+ *    rjs build client
+ *    Serve assets & index.html
+ *  DEV:
+ *    Build Client
+ *    Delegate to webpack-dev-middleware
+ */
 export default function registerCommand(cli) {
 
   cli
@@ -37,7 +58,8 @@ export default function registerCommand(cli) {
         })
         .option(...featureHelp);
     }, argv => {
-      argv.verbose = cli.verbose;
+      // remove 'start' from extraneous options.
+      argv._.shift();
 
       logger.info(`Launching app in ${chalk.magenta(process.env.NODE_ENV)} mode...`);
 
@@ -84,18 +106,32 @@ async function runServerWithPrerendering(options) {
 
   const out = options.split ? 'pipe' : 'inherit';
 
-  const preRenderingPort = await getPort();
+  const preRenderingPort = process.env.NODE_ENV === 'development' ? await getPort() : options.port;
 
   // TODO: on dead process, ask user if they wish to relaunch them. Then do. Or don't.
-  children.clientBuilder = childProcess.fork(builders.client, [
-    '--port', options.port, '--prerendering-port', preRenderingPort, '--verbose', options.verbose,
-  ], {
+
+  // Launch Client Builder
+  const clientBuilderArgv = ['--verbose', options.verbose];
+
+  if (process.env.NODE_ENV === 'development') {
+    // in WATCH (dev) mode, the front-end server is handled by the ClientBuilder process
+    // running on --port, and dispatching to --prerendering-port for routes that need to be pre-rendered.
+
+    clientBuilderArgv.push('--port', options.port, '--prerendering-port', preRenderingPort);
+  }
+
+  if (options._.length > 0) {
+    clientBuilderArgv.push('--', ...options._);
+  }
+
+  children.clientBuilder = childProcess.fork(builders.client, clientBuilderArgv, {
     stdio: ['inherit', out, out, 'ipc'],
     env: Object.assign(Object.create(process.env), {
       PROCESS_NAME: 'ClientBuilder',
     }),
   });
 
+  // Launch Server Builder
   children.serverBuilder = childProcess.fork(builders.server, process.argv, {
     stdio: ['inherit', out, out, 'ipc'],
     env: Object.assign(Object.create(process.env), {
@@ -111,7 +147,8 @@ async function runServerWithPrerendering(options) {
     splitView.addScreen('client builder', children.clientBuilder);
   }
 
-  listenMsg(children.serverBuilder, 'launch', data => {
+  // Launch Server once it has been built
+  listenMsg(children.serverBuilder, 'built', data => {
     const exe = data.exe;
 
     if (!exe) {
@@ -119,7 +156,7 @@ async function runServerWithPrerendering(options) {
     }
 
     if (children.serverInstance) {
-      // send HMR signal.
+      // server process already exists, this is a re-build. Send Hot Module Replacement signal.
       children.serverInstance.kill('SIGUSR2');
     } else {
       startPreRenderingServer({ children, exe, options, preRenderingPort, splitView, out });
@@ -130,15 +167,31 @@ async function runServerWithPrerendering(options) {
 function startPreRenderingServer(args) {
   const { children, exe, options, preRenderingPort, splitView, out } = args;
 
-  children.serverInstance = childProcess.fork(exe, [
-    '--port', preRenderingPort, '--hide-http', '--verbose', options.verbose,
-  ], {
+  // Launch pre-rendering server that was just built (exe)
+  const serverArgs = [
+    '--verbose', options.verbose,
+    '--prerendering',
+  ];
+
+  if (process.env.NODE_ENV === 'development') {
+    // in WATCH (dev) mode, the front-end server is handled by the ClientBuilder process
+    // which dispatches to the pre-rendering server for non-asset routes.
+    serverArgs.push(
+      '--hide-http',
+      '--port', preRenderingPort
+    );
+  } else {
+    serverArgs.push('--port', options.port);
+  }
+
+  children.serverInstance = childProcess.fork(exe, serverArgs, {
     stdio: ['inherit', out, out, 'ipc'],
     env: Object.assign(Object.create(process.env), {
       PROCESS_NAME: 'Server',
     }),
   });
 
+  // Re-launch pre-rendering server (for when HMR fails).
   listenMsg(children.serverInstance, 'restart', () => {
     children.serverInstance.kill();
     startPreRenderingServer(args);
