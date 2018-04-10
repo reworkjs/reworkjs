@@ -63,8 +63,8 @@ export default async function serveReactRoute(req, res, next): ?{ appHtml: strin
 
     const compilationStats = await getCompilationStats();
 
-    // There is no CSS entry point in dev mode, generate it instead.
-    const initialStyleTag = compilationStats.client.entryPoints.css
+    // There is no CSS entry point in dev mode, generate it with collectInitial instead.
+    const initialStyleTag = process.env.NODE_ENV !== 'development'
       ? compilationStats.client.entryPoints.css
       : collectInitial();
 
