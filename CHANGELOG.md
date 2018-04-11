@@ -1,0 +1,93 @@
+# Change Log
+
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+<a name="0.11.0"></a>
+# 0.11.0 (2018-04-11)
+
+
+### Bug Fixes
+
+* Alias alternate lodash packages to lodash instead of lodash-es ([d47437d](https://github.com/foobarhq/reworkjs/commit/d47437d))
+* Bump required webpack-bundle-analyzer version to solve issue with concat modules ([de8494a](https://github.com/foobarhq/reworkjs/commit/de8494a))
+* Clean range before testing ([2799d04](https://github.com/foobarhq/reworkjs/commit/2799d04))
+* Commit rjs argv file ([c9ee73b](https://github.com/foobarhq/reworkjs/commit/c9ee73b))
+* console.dir the error so old browsers display it correctly ([93d3e02](https://github.com/foobarhq/reworkjs/commit/93d3e02))
+* Disable analyze module by default ([4114bc6](https://github.com/foobarhq/reworkjs/commit/4114bc6))
+* Disable minifying the server ([2a42871](https://github.com/foobarhq/reworkjs/commit/2a42871))
+* Disable source-map-support until it is compatible with webpack again ([ee759f8](https://github.com/foobarhq/reworkjs/commit/ee759f8))
+* Don't pre-fetch .gz & .map files located in subdirectories ([2302252](https://github.com/foobarhq/reworkjs/commit/2302252)), closes [#9](https://github.com/foobarhq/reworkjs/issues/9)
+* Don't specify localIndentName not importLoaders for node_modules css files ([70dd829](https://github.com/foobarhq/reworkjs/commit/70dd829))
+* Don't ss-render context style tags in production ([d9f28b2](https://github.com/foobarhq/reworkjs/commit/d9f28b2))
+* Don't use Logger before polyfills have been loaded ([9316016](https://github.com/foobarhq/reworkjs/commit/9316016))
+* Fix app builder crashing in watch mode when initial build failed and an user tries to access it ([fa274bb](https://github.com/foobarhq/reworkjs/commit/fa274bb))
+* Fix crash when using a custom babelrc file ([b0c720f](https://github.com/foobarhq/reworkjs/commit/b0c720f))
+* Fix fs.copy is not a function ([251899a](https://github.com/foobarhq/reworkjs/commit/251899a))
+* Fix react not being able to display errors due to cross-origin issues ([49dfbcb](https://github.com/foobarhq/reworkjs/commit/49dfbcb))
+* Fix server-side loading of CSS ([fd27864](https://github.com/foobarhq/reworkjs/commit/fd27864))
+* Launch pre-rendering server on correct port in prod ([38003c3](https://github.com/foobarhq/reworkjs/commit/38003c3))
+* Load promise polyfill on client ([e6882e9](https://github.com/foobarhq/reworkjs/commit/e6882e9))
+* Load Symbol if required polyfill as the framework uses it ([7f5b250](https://github.com/foobarhq/reworkjs/commit/7f5b250))
+* Make readJson return the read file ([2135776](https://github.com/foobarhq/reworkjs/commit/2135776))
+* Make render-html config entry work with SSR ([d9c5a73](https://github.com/foobarhq/reworkjs/commit/d9c5a73))
+* Mark webpack-polyfill-injector as a dependency instead of devDependency ([ac0f1f9](https://github.com/foobarhq/reworkjs/commit/ac0f1f9))
+* Migrate optimization plugins to webpack.optimization ([bd8152d](https://github.com/foobarhq/reworkjs/commit/bd8152d))
+* Move webpack config option to their right place ([2a57491](https://github.com/foobarhq/reworkjs/commit/2a57491))
+* Only pre-render CSS as <style> tags in development ([71ce71b](https://github.com/foobarhq/reworkjs/commit/71ce71b))
+* Only pre-serve named bundles for reliability ([7d4f6ae](https://github.com/foobarhq/reworkjs/commit/7d4f6ae))
+* Optimize images on the server too so their hash is identical to the front-end ([8a6af49](https://github.com/foobarhq/reworkjs/commit/8a6af49))
+* Prevent passing webp files to file-loader twice ([c072796](https://github.com/foobarhq/reworkjs/commit/c072796))
+* re-add babel preset to optional dependencies ([7c53725](https://github.com/foobarhq/reworkjs/commit/7c53725))
+* Re-add babel-core to dependencies ([ca89695](https://github.com/foobarhq/reworkjs/commit/ca89695))
+* Remove --no-prerendering warning as prerendering is now off by default ([a605987](https://github.com/foobarhq/reworkjs/commit/a605987))
+* Remove gzip, & sourcemap files from service worker ([dc65819](https://github.com/foobarhq/reworkjs/commit/dc65819))
+* Remove usage of do-expression -- let's not use super-unstable ecma features ([dfa4b2b](https://github.com/foobarhq/reworkjs/commit/dfa4b2b))
+* Replace deprecated webpack.optimize.UglifyJsPlugin with uglifyjs-webpack-plugin ([f0eac80](https://github.com/foobarhq/reworkjs/commit/f0eac80))
+* Replace readJson with fs-extra ([ab39da3](https://github.com/foobarhq/reworkjs/commit/ab39da3))
+* Replace webpack-cleanup-plugin with webpack-clean-obsolete-chunks ([7bbf45d](https://github.com/foobarhq/reworkjs/commit/7bbf45d))
+* **feature-lodash:** Exclude lodash, don't use babelrc, support `import` ([dcce05a](https://github.com/foobarhq/reworkjs/commit/dcce05a))
+* Revert react-router version ([86c60f9](https://github.com/foobarhq/reworkjs/commit/86c60f9))
+* Rollback mime as they removed .charset api ([ffc9848](https://github.com/foobarhq/reworkjs/commit/ffc9848))
+* Set lang html attribute to loaded language ([f64c6b2](https://github.com/foobarhq/reworkjs/commit/f64c6b2))
+* Temporarily disable chunk sorting in HTMLWebpackPlugin due to plugin issues ([dcb6964](https://github.com/foobarhq/reworkjs/commit/dcb6964))
+* Temporarily disable Service Worker minification until OfflinePlugin 5 is released ([9ad7738](https://github.com/foobarhq/reworkjs/commit/9ad7738))
+* Temporarily use polyfill.io to inject Promise ([e127911](https://github.com/foobarhq/reworkjs/commit/e127911))
+* Update RequireEnsureHookPlugin ([8f93401](https://github.com/foobarhq/reworkjs/commit/8f93401))
+* Use textComponent instead of node (prevent react-intl from generating spans) ([2a00bbc](https://github.com/foobarhq/reworkjs/commit/2a00bbc))
+* Use webpack public path for service worker ([8d453a8](https://github.com/foobarhq/reworkjs/commit/8d453a8))
+* **service-worker:** Don't preload LICENSE files ([b8423f3](https://github.com/foobarhq/reworkjs/commit/b8423f3))
+* Validate semver when installing peer dependencies in rjs init ([daf5d28](https://github.com/foobarhq/reworkjs/commit/daf5d28))
+* Workaround broken interaction between bundle-loader & JSON module types ([90e68d1](https://github.com/foobarhq/reworkjs/commit/90e68d1))
+
+
+### Features
+
+* Accept any extension for app translation files ([eb43e84](https://github.com/foobarhq/reworkjs/commit/eb43e84))
+* Add a way to define how the HTML file is built ([6de679f](https://github.com/foobarhq/reworkjs/commit/6de679f))
+* Add default .browserlistrc ([807a821](https://github.com/foobarhq/reworkjs/commit/807a821))
+* Add new feature that removes unused react-intl locales ([d893a2c](https://github.com/foobarhq/reworkjs/commit/d893a2c))
+* Add standard-version to streamline releases ([00dd2e6](https://github.com/foobarhq/reworkjs/commit/00dd2e6))
+* Add support for loading .mjs files ([2c80a58](https://github.com/foobarhq/reworkjs/commit/2c80a58))
+* Add support for webp ([06843a5](https://github.com/foobarhq/reworkjs/commit/06843a5))
+* Disable lodash feature in dev by default ([e53e61f](https://github.com/foobarhq/reworkjs/commit/e53e61f))
+* Disable SSR by default ([2432eb9](https://github.com/foobarhq/reworkjs/commit/2432eb9))
+* Don't generate chunk names in splitChunks for long term caching ([fa82439](https://github.com/foobarhq/reworkjs/commit/fa82439))
+* Drop core-js dependency ([acdf78b](https://github.com/foobarhq/reworkjs/commit/acdf78b))
+* Drop support for node < latest LTS ([80b76be](https://github.com/foobarhq/reworkjs/commit/80b76be))
+* Enable eslint report-unused-disable-directives by default for rjs projects ([ef80d57](https://github.com/foobarhq/reworkjs/commit/ef80d57))
+* Migrate from commnader to yargs ([b3e40b5](https://github.com/foobarhq/reworkjs/commit/b3e40b5))
+* Prevent react-intl from generating spans ([b80711c](https://github.com/foobarhq/reworkjs/commit/b80711c))
+* Remove html-loader ([354d0c9](https://github.com/foobarhq/reworkjs/commit/354d0c9))
+* Replace extract-text-webpack-plugin with mini-css-extract-plugin ([43554a3](https://github.com/foobarhq/reworkjs/commit/43554a3))
+* Run babel-transform-lodash on node_modules ([c9c705e](https://github.com/foobarhq/reworkjs/commit/c9c705e))
+* **optimize:** Add ModuleConcatenationPlugin ([0e2356c](https://github.com/foobarhq/reworkjs/commit/0e2356c))
+* **webpack:** Pass WebP to imagemin, configure mozjpeg&gifsicle ([1660ad3](https://github.com/foobarhq/reworkjs/commit/1660ad3))
+* Separate cli argv & app argv. ([22341d1](https://github.com/foobarhq/reworkjs/commit/22341d1))
+* Update dependencies ([a4265af](https://github.com/foobarhq/reworkjs/commit/a4265af))
+* Update peer dependencies ([32646bb](https://github.com/foobarhq/reworkjs/commit/32646bb))
+
+
+### Reverts
+
+* **intl:** Re-filter locale files to json & js files ([ac404f4](https://github.com/foobarhq/reworkjs/commit/ac404f4))
+* fix: Replace webpack-cleanup-plugin with webpack-clean-obsolete-chunks ([ed42e16](https://github.com/foobarhq/reworkjs/commit/ed42e16))
