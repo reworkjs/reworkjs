@@ -29,6 +29,38 @@ export default class OptimizeFeature extends BaseFeature {
       devtool: 'source-map',
     });
 
+    config.injectRules({
+      test: BaseFeature.FILE_TYPE_IMG,
+      loader: 'image-webpack-loader',
+      query: {
+        bypassOnDebug: true,
+        mozjpeg: {
+          progressive: true,
+          quality: 80,
+        },
+        gifsicle: {
+          interlaced: false,
+          optimizationLevel: 3,
+        },
+        optipng: {
+          optimizationLevel: 7,
+        },
+        pngquant: {
+          quality: '65-90',
+          speed: 4,
+        },
+        svgo: {},
+        webp: {
+          quality: 75,
+
+          // TODO add a way to define the type of image for "preset"
+          // default, photo, picture, drawing, icon and text.
+          // https://github.com/imagemin/imagemin-webp
+          method: 5,
+        },
+      },
+    });
+
     if (this.isServer()) {
       return;
     }
@@ -76,38 +108,6 @@ export default class OptimizeFeature extends BaseFeature {
             },
           }),
         ],
-      },
-    });
-
-    config.injectRules({
-      test: BaseFeature.FILE_TYPE_IMG,
-      loader: 'image-webpack-loader',
-      query: {
-        bypassOnDebug: true,
-        mozjpeg: {
-          progressive: true,
-          quality: 80,
-        },
-        gifsicle: {
-          interlaced: false,
-          optimizationLevel: 3,
-        },
-        optipng: {
-          optimizationLevel: 7,
-        },
-        pngquant: {
-          quality: '65-90',
-          speed: 4,
-        },
-        svgo: {},
-        webp: {
-          quality: 75,
-
-          // TODO add a way to define the type of image for "preset"
-          // default, photo, picture, drawing, icon and text.
-          // https://github.com/imagemin/imagemin-webp
-          method: 5,
-        },
       },
     });
 
