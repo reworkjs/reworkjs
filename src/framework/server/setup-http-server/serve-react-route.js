@@ -61,20 +61,28 @@ export default async function serveReactRoute(req, res, next): ?{ appHtml: strin
         }),
     );
 
-    const compilationStats = await getCompilationStats();
-
-    // There is no CSS entry point in dev mode, generate it with collectInitial instead.
-    const initialStyleTag = process.env.NODE_ENV !== 'development'
-      ? compilationStats.client.entryPoints.css
-      : collectInitial();
-
-    const [contextStyleTag, appHtml] = collectContext(() => renderToString(
+    const renderApp = () => renderToString(
       <CookiesProvider cookies={req.universalCookies}>
         <ReworkJsWrapper>
           <RouterContext {...props} />
         </ReworkJsWrapper>
       </CookiesProvider>,
-    ));
+    );
+
+    const compilationStats = await getCompilationStats();
+
+    let header = '';
+    let appHtml;
+    if (process.env.NODE_ENV === 'development') {
+      // There is no CSS entry point in dev mode, generate it with collectInitial/collectContext instead.
+      header += collectInitial();
+      const renderedApp = collectContext(renderApp);
+      header += renderedApp[0]; // 0 = collected CSS
+      appHtml = renderedApp[1]; // 1 = rendered HTML
+    } else {
+      header += compilationStats.client.entryPoints.css;
+      appHtml = renderApp();
+    }
 
     const importedServerChunks: Set = unhookWebpackAsyncRequire();
     const importableClientChunks = [];
@@ -87,15 +95,17 @@ export default async function serveReactRoute(req, res, next): ?{ appHtml: strin
       importableClientChunks.push(...chunkFiles.map(getChunkPrefetchLink));
     }
 
+    header += importableClientChunks.join('');
+
     res.send(renderPage({
 
       // initial react app
       body: appHtml,
 
-      // initial style
-      header: initialStyleTag + contextStyleTag + importableClientChunks.join(''),
+      // initial style & pre-loaded JS
+      header,
 
-      // initial redux state + webpack bundle
+      // initial redux state + main webpack bundle
       footer: `<script>window.__PRELOADED_STATE__ = ${JSON.stringify(store.getState())}</script>${compilationStats.client.entryPoints.js}`,
     }));
   } catch (e) {
