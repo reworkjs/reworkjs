@@ -22,4 +22,6 @@ function getLangFromLocale(locale) {
   return locale.split(/[-_]/)[0];
 }
 
-export default withCookies(BaseHelmet);
+// only inject cookies if we're in HTTP server or the browser context
+// not if we're the builder.
+export default process.env.SIDE == null ? BaseHelmet : withCookies(BaseHelmet);
