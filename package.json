@@ -26,6 +26,12 @@
   "bin": {
     "rjs": "bin/framework.bin.js"
   },
+  "standard-version": {
+    "scripts": {
+      "prebump": "git flow release start $(standard-version --dry-run | grep -E \"^✔ bumping version in package.json from .+ to .+\" | grep -Eo \"[^ ]+$\") > /dev/null",
+      "posttag": "git flow release finish -n $(cat package.json | json version)"
+    }
+  },
   "optionalDependencies": {
     "webpack-bundle-analyzer": "^2.11.1",
     "@reworkjs/babel-preset-reworkjs": "^0.3.0"
