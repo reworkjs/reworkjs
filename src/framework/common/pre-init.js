@@ -7,7 +7,7 @@ export default async function loadPreInit() {
   await loadReworkPolyfills();
 
   // webpack
-  const preInit = getDefault(require('@@pre-init')); // eslint-disable-line
+  const preInit = getDefault(require('@@pre-init'));
   if (typeof preInit === 'function') {
     await preInit();
   } else {
@@ -28,10 +28,6 @@ function loadReworkPolyfills() {
       // TODO dynamically load appropriate intl locales
       import('intl/locale-data/jsonp/en.js'),
     );
-  }
-
-  if (typeof Symbol === 'undefined') {
-    promises.push(import('core-js/modules/es6.symbol'));
   }
 
   return Promise.all(promises);

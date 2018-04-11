@@ -53,7 +53,6 @@
     "compression-webpack-plugin": "^1.1.11",
     "constant-case": "^2.0.0",
     "copy-webpack-plugin": "^4.5.1",
-    "core-js": "^2.5.3",
     "css-loader": "^0.28.11",
     "escape-string-regexp": "^1.0.5",
     "eslint-loader": "^2.0.0",
