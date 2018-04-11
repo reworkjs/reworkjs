@@ -20,7 +20,8 @@
     "build": "gulp build",
     "build:watch": "gulp build:watch",
     "precommit": "npm run lint:staged",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "release": "standard-version"
   },
   "bin": {
     "rjs": "bin/framework.bin.js"
@@ -137,6 +138,7 @@
     "react-router": "^4.2.0",
     "react-router-redux": "^4.0.8",
     "redux": "^3.7.2",
-    "redux-saga": "^0.16.0"
+    "redux-saga": "^0.16.0",
+    "standard-version": "^4.3.0"
   }
 }
