@@ -362,6 +362,7 @@ export default class WebpackBase {
 
       // Framework configuration directories
       '@@pre-init': frameworkConfig['pre-init'],
+      '@@render-html': frameworkConfig['render-html'],
       '@@main-component': frameworkConfig['entry-react'],
       '@@directories.routes': frameworkConfig.directories.routes,
       '@@directories.translations': frameworkConfig.directories.translations,

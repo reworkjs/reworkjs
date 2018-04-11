@@ -1,0 +1,6 @@
+{
+  "name": "render-html",
+  "private": true,
+  "main": "./index.js",
+  "webpack:main": "./webpack.js"
+}
