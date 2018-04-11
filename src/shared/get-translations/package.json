@@ -1,0 +1,6 @@
+{
+  "name": "get-translations",
+  "private": true,
+  "main": "./index.js",
+  "webpack:main": "./webpack.js"
+}

@@ -36,7 +36,7 @@ compileWebpack(config, WATCH, (stats: StatDetails) => {
   // tell manager CLI to launch server
   if (process.send) {
     process.send({
-      cmd: 'launch',
+      cmd: 'built',
       exe: entryPoint,
     });
   }

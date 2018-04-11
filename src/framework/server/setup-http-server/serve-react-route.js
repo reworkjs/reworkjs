@@ -5,7 +5,6 @@ import { match, RouterContext } from 'react-router';
 import { renderToString } from 'react-dom/server';
 import { collectInitial, collectContext } from 'node-style-loader/collect';
 import { parse } from 'accept-language-parser';
-import { invert } from 'lodash';
 import getWebpackSettings from '../../../shared/webpack-settings';
 import { rootRoute, store } from '../../common/kernel';
 import ReworkJsWrapper from '../../app/ReworkJsWrapper';
@@ -62,39 +61,51 @@ export default async function serveReactRoute(req, res, next): ?{ appHtml: strin
         }),
     );
 
-    const compilationStats = await getCompilationStats();
-
-    // There is no CSS entry point in dev mode, generate it instead.
-    const initialStyleTag = compilationStats.client.entryPoints.css
-      ? compilationStats.client.entryPoints.css
-      : collectInitial();
-
-    const [contextStyleTag, appHtml] = collectContext(() => renderToString(
+    const renderApp = () => renderToString(
       <CookiesProvider cookies={req.universalCookies}>
         <ReworkJsWrapper>
           <RouterContext {...props} />
         </ReworkJsWrapper>
       </CookiesProvider>,
-    ));
+    );
+
+    const compilationStats = await getCompilationStats();
+
+    let header = '';
+    let appHtml;
+    if (process.env.NODE_ENV === 'development') {
+      // There is no CSS entry point in dev mode, generate it with collectInitial/collectContext instead.
+      header += collectInitial();
+      const renderedApp = collectContext(renderApp);
+      header += renderedApp[0]; // 0 = collected CSS
+      appHtml = renderedApp[1]; // 1 = rendered HTML
+    } else {
+      header += compilationStats.client.entryPoints.css;
+      appHtml = renderApp();
+    }
 
     const importedServerChunks: Set = unhookWebpackAsyncRequire();
     const importableClientChunks = [];
     for (const importedServerChunk of importedServerChunks) {
-      const clientChunk = serverChunkToClientChunk(importedServerChunk, compilationStats);
-      if (clientChunk) {
-        importableClientChunks.push(getChunkPrefetchLink(clientChunk, compilationStats));
+      const chunkFiles: ?Array<string> = getClientFilesFromServerChunkId(importedServerChunk, compilationStats);
+      if (!chunkFiles) {
+        continue;
       }
+
+      importableClientChunks.push(...chunkFiles.map(getChunkPrefetchLink));
     }
+
+    header += importableClientChunks.join('');
 
     res.send(renderPage({
 
       // initial react app
       body: appHtml,
 
-      // initial style
-      header: initialStyleTag + contextStyleTag + importableClientChunks.join(''),
+      // initial style & pre-loaded JS
+      header,
 
-      // initial redux state + webpack bundle
+      // initial redux state + main webpack bundle
       footer: `<script>window.__PRELOADED_STATE__ = ${JSON.stringify(store.getState())}</script>${compilationStats.client.entryPoints.js}`,
     }));
   } catch (e) {
@@ -110,21 +121,26 @@ type CompilationStats = {
       js: string,
       css: string,
     },
-    moduleToChunk: { [key: string]: any },
     chunkFileNames: { [key: string]: string },
   },
   server: {
-    chunkToModule: { [key: string]: string },
+    chunkNames: { [key: string]: string },
   },
 };
 
-function serverChunkToClientChunk(serverChunk, stats: CompilationStats) {
-  const moduleName = stats.server.chunkToModule[serverChunk];
-  if (!moduleName) {
+/**
+ * Return the list of files a chunk has in the client build, using the id of a chunk from the server build.
+ * This is done using uniquely named chunks.
+ */
+function getClientFilesFromServerChunkId(serverChunkId: number, stats: CompilationStats): ?Array<string> {
+  // Get the name of a chunk using its server build ID.
+  const chunkName = stats.server.chunkNames[serverChunkId];
+  if (!chunkName) {
     return null;
   }
 
-  return stats.client.moduleToChunk[moduleName] || null;
+  // Get list of files that compose the Chunk in the client build.
+  return stats.client.chunkFileNames[chunkName] || null;
 }
 
 const webpackClientConfig = getWebpackSettings(/* is server */ false);
@@ -145,18 +161,15 @@ function getCompilationStats(): CompilationStats {
     serverStats = JSON.parse(serverStats);
     clientStats = JSON.parse(clientStats);
 
-    serverStats.chunkToModule = invert(serverStats.moduleToChunk);
-    serverStats.moduleToChunk = void 0;
-
     clientStats.entryPoints = buildEntryPointTags(clientStats.entryPoints);
-    serverStats.entryPoints = void 0;
+    delete serverStats.entryPoints;
 
     const compStats = {
       server: serverStats,
       client: clientStats,
     };
 
-    if (process.env.NODE_ENV === 'production') { // eslint-disable-line no-process-env
+    if (process.env.NODE_ENV === 'production') {
       compStatCache = compStats;
     }
 
@@ -166,12 +179,21 @@ function getCompilationStats(): CompilationStats {
 
 const httpStaticPath = webpackClientConfig.output.publicPath;
 
-function getChunkPrefetchLink(chunkId, stats: CompilationStats) {
-  return `<link rel="prefetch" href="${httpStaticPath + stats.client.chunkFileNames[chunkId]}" as="script" pr="1.0" />`;
+function getChunkPrefetchLink(fileName: string) {
+  const path = httpStaticPath + fileName;
+
+  if (fileName.endsWith('.css')) {
+    return `<link rel="stylesheet" href="${path}" />`;
+  }
+
+  if (fileName.endsWith('.js')) {
+    return `<link rel="prefetch" href="${path}" as="script" pr="1.0" />`;
+  }
+
+  throw new Error(`Trying to load unsupported file ${fileName}.`);
 }
 
 function buildEntryPointTags(entryPoints) {
-  // httpStaticPath
   entryPoints.js = entryPoints.js.map(entryPoint => `<script src="${httpStaticPath + entryPoint}"></script>`).join('');
   entryPoints.css = entryPoints.css.map(entryPoint => `<link rel="stylesheet" href="${httpStaticPath + entryPoint}" />`).join('');
 

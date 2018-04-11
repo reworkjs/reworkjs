@@ -1,9 +1,12 @@
+// @flow
+
 import BaseFeature from '../BaseFeature';
+import type WebpackConfigBuilder from '../WebpackConfigBuilder';
 import PostCssFeature from './postcss';
 
 export default class ScssFeature extends BaseFeature {
 
-  loadBefore() {
+  loadBefore(): ?string {
     return PostCssFeature.prototype.getFeatureName();
   }
 
@@ -15,7 +18,7 @@ export default class ScssFeature extends BaseFeature {
     return 'Enables SCSS support';
   }
 
-  visit(webpack) {
+  visit(webpack: WebpackConfigBuilder) {
     webpack.registerFileType(BaseFeature.FILE_TYPE_CSS, 'scss');
     webpack.registerFileType(BaseFeature.FILE_TYPE_CSS, 'sass');
 

@@ -1,6 +1,9 @@
+// @flow
+
 import fs from 'fs';
 import path from 'path';
 import BaseFeature from '../BaseFeature';
+import type WebpackConfigBuilder from '../WebpackConfigBuilder';
 
 /**
  * This feature aliases lodash-es and lodash.<part> packages to lodash
@@ -12,19 +15,15 @@ export default class LodashFeature extends BaseFeature {
     return 'lodash';
   }
 
-  isEnabled(enabled) {
-    if (!this.isProd()) {
-      return false;
-    }
-
-    return super.isEnabled(enabled);
+  isDefaultEnabled() {
+    return this.isProd();
   }
 
   getDescription() {
     return 'Optimises the lodash bundle. It aliases all known versions of lodash to lodash-es for tree-shaking.';
   }
 
-  visit(webpack) {
+  visit(webpack: WebpackConfigBuilder) {
     webpack.injectAlias('lodash-es', 'lodash');
 
     for (const module of getLodashModules()) {

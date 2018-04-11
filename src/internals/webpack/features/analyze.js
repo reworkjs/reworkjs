@@ -1,4 +1,7 @@
+// @flow
+
 import BaseFeature from '../BaseFeature';
+import type WebpackConfigBuilder from '../WebpackConfigBuilder';
 
 export default class AnalyzeFeature extends BaseFeature {
 
@@ -10,15 +13,11 @@ export default class AnalyzeFeature extends BaseFeature {
     return 'Launches a view displaying the contents of the bundle in an interactive way. Great for debugging.';
   }
 
-  isEnabled(enabled = false) {
-    if (this.isServer()) {
-      return false;
-    }
-
-    return enabled;
+  isDefaultEnabled() {
+    return false;
   }
 
-  visit(webpack) {
+  visit(webpack: WebpackConfigBuilder) {
     const BundleAnalyzerPlugin = this.getOptionalDependency('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
     webpack.injectPlugins(new BundleAnalyzerPlugin({

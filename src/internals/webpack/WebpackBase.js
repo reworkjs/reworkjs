@@ -6,12 +6,12 @@ import chalk from 'chalk';
 import { renderToString } from 'react-dom/server';
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-import ExtractTextPlugin from 'extract-text-webpack-plugin';
+import ExtractCssPlugin from 'mini-css-extract-plugin';
 import WebpackCleanupPlugin from 'webpack-cleanup-plugin';
 import nodeExternals from 'webpack-node-externals';
 import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
-import PolyfillInjectorPlugin from 'webpack-polyfill-injector';
+// import PolyfillInjectorPlugin from 'webpack-polyfill-injector';
 import frameworkConfig from '../../shared/framework-config';
 import projectMetadata from '../../shared/project-metadata';
 import frameworkMetadata from '../../shared/framework-metadata';
@@ -80,21 +80,21 @@ export default class WebpackBase {
 
   injectFeatures() {
     logger.debug('Injecting webpack Features.');
-    const enabledFeatures = parseFeatures(argv.features);
+    const requestedFeatures = parseFeatures(argv.features);
 
     const features = featureClasses.map(FeatureClass => new FeatureClass(this.isServer(), process.env.NODE_ENV));
     sortDependencies(features);
 
     for (const feature of features) {
-      this.injectFeature(feature, enabledFeatures);
+      this.injectFeature(feature, requestedFeatures);
     }
   }
 
   /** @private */
-  injectFeature(feature: BaseFeature, enabledFeatures) {
+  injectFeature(feature: BaseFeature, requestedFeatures: { [string]: boolean }) {
 
     const name = feature.getFeatureName();
-    const enabled = feature.isEnabled(enabledFeatures[name]);
+    const enabled = requestedFeatures[name] != null ? requestedFeatures[name] : feature.isDefaultEnabled();
 
     logger.debug(`${enabled ? chalk.green('✓') : chalk.red('✘')} Feature ${name}`);
 
@@ -108,7 +108,7 @@ export default class WebpackBase {
   }
 
   buildConfig() {
-    const config = {
+    const config: Object = {
       cache: true,
       name: this.isServer() ? 'Server' : 'Client',
       entry: this.getEntry(),
@@ -117,7 +117,10 @@ export default class WebpackBase {
         rules: this.buildRules(),
       },
       plugins: this.getPlugins(),
-      devtool: 'cheap-module-eval-source-map',
+
+      // Allow error boundaries to display errors in non-main chunks
+      // https://reactjs.org/docs/cross-origin-errors.html
+      devtool: 'cheap-module-source-map',
       performance: {
         hints: false,
       },
@@ -125,6 +128,7 @@ export default class WebpackBase {
       resolve: {
         modules: ['node_modules'],
         extensions: [
+          '.mjs',
           '.js',
           '.jsx',
           '.react.js',
@@ -137,6 +141,11 @@ export default class WebpackBase {
           'main',
         ],
         alias: this.getAliases(),
+      },
+      mode: this.isDev ? 'development' : 'production',
+      optimization: {
+        noEmitOnErrors: true,
+        minimize: false,
       },
     };
 
@@ -155,6 +164,12 @@ export default class WebpackBase {
         }),
       ];
     } else {
+
+      // https://github.com/SebastianS90/webpack-polyfill-injector
+      // config.entry = `webpack-polyfill-injector?${JSON.stringify({
+      //   modules: [config.entry],
+      // })}!`;
+
       config.resolve.mainFields.unshift('web');
       config.resolve.mainFields.unshift('jsnext:web');
       config.resolve.mainFields.unshift('browser');
@@ -176,7 +191,6 @@ export default class WebpackBase {
     // front-end dev libs.
     if (this.isDev && !this.isServer()) {
       entry.unshift(
-
         // Necessary for hot reloading with IE
         'eventsource-polyfill',
         'webpack-hot-middleware/client',
@@ -184,7 +198,6 @@ export default class WebpackBase {
       );
     } else if (this.isDev && this.isServer()) {
       entry.unshift(
-
         // hot reload if parent sends signal SIGUSR2
         require.resolve('./hmr-server'),
       );
@@ -200,6 +213,12 @@ export default class WebpackBase {
 
     if (this.isServer()) {
       output.libraryTarget = 'commonjs2';
+    }
+
+    if (this.isDev && !this.isServer()) {
+      // Allow error boundaries to display errors in non-main chunks
+      // https://reactjs.org/docs/cross-origin-errors.html
+      output.crossOriginLoading = 'anonymous';
     }
 
     if (this.isDev || this.isServer()) {
@@ -244,14 +263,54 @@ export default class WebpackBase {
         'file-loader',
       ],
     }, {
-      test: /\.(webp|mp4|webm)/i,
+      test: /\.(mp4|webm)/i,
       loader: 'file-loader',
     }, {
+      // FIXME temporary fix for webpack 4 https://github.com/webpack-contrib/bundle-loader/issues/74
       test: /\.json$/i,
+      type: 'javascript/auto',
       loader: 'json-loader',
     }]
       .concat(this.buildCssLoaders())
       .concat(wcbUtils.buildRules(this.webpackConfigBuilder));
+  }
+
+  getCssLoader(options: Object = {}) {
+    const loaderOptions: Object = {
+      importLoaders: options.importLoaders || 0,
+    };
+
+    if (isDev) {
+      Object.assign(loaderOptions, {
+        sourceMap: true,
+      });
+    } else {
+      Object.assign(loaderOptions, {
+        minimize: true,
+      });
+    }
+
+    if (options.modules) {
+      Object.assign(loaderOptions, {
+        modules: true,
+        camelCase: true,
+      });
+
+      if (isDev) {
+        Object.assign(loaderOptions, {
+          localIdentName: '[local]__[hash:base64:5]',
+        });
+      }
+    }
+
+    // in prod with pre-rendering, we don't generate the CSS. Only the mapping "css class" => "css module class"
+    // the actual CSS is served directly from the client bundle.
+    const loader = this.isServer() && !this.isDev ? 'css-loader/locals' : 'css-loader';
+
+    return {
+      loader,
+      options: loaderOptions,
+    };
   }
 
   /** @private */
@@ -262,7 +321,7 @@ export default class WebpackBase {
       test: wcbUtils.getFileTypeRegExp(this.webpackConfigBuilder, WebpackConfigBuilder.FILE_TYPE_CSS),
       exclude: /node_modules/,
       use: [
-        getCssLoader({
+        this.getCssLoader({
           modules: true,
           importLoaders: pluggedCssLoaders.length,
         }),
@@ -271,18 +330,26 @@ export default class WebpackBase {
     }, {
       test: /\.css$/i,
       include: /node_modules/,
-      use: [getCssLoader({ modules: false })],
+      use: [this.getCssLoader({ modules: false })],
     }];
 
-    const styleLoader = this.isServer() ? 'node-style-loader' : 'style-loader';
-    for (const cssLoader of cssLoaders) {
+    const styleLoader = (() => {
+      // in prod, extract CSS to separate .css files.
+      // Note: The server ignores the file because it simply sends the ones built for the Client
+      //       that match used bundle names.
       if (this.isDev) {
+        // in dev, use <style> tags
+        return this.isServer() ? 'node-style-loader' : 'style-loader';
+      }
+
+      // in prod, extract CSS to separate .css files
+      // on the server, don't generate the CSS -- load client version
+      return this.isServer() ? null : ExtractCssPlugin.loader;
+    })();
+
+    if (styleLoader != null) {
+      for (const cssLoader of cssLoaders) {
         cssLoader.use = [styleLoader, ...cssLoader.use];
-      } else {
-        cssLoader.use = ExtractTextPlugin.extract({
-          fallback: styleLoader,
-          use: cssLoader.use,
-        });
       }
     }
 
@@ -295,6 +362,7 @@ export default class WebpackBase {
 
       // Framework configuration directories
       '@@pre-init': frameworkConfig['pre-init'],
+      '@@render-html': frameworkConfig['render-html'],
       '@@main-component': frameworkConfig['entry-react'],
       '@@directories.routes': frameworkConfig.directories.routes,
       '@@directories.translations': frameworkConfig.directories.translations,
@@ -347,6 +415,8 @@ export default class WebpackBase {
     // TODO inject DLLs <script data-dll='true' src='/${dllName}.dll.js'></script>`
     // TODO https://github.com/diurnalist/chunk-manifest-webpack-plugin
     const plugins = [
+      // remove outdated assets from previous builds.
+      new WebpackCleanupPlugin({ quiet: true }),
       new webpack.DefinePlugin(this.getDefinedVars()),
       new CopyWebpackPlugin([{
         from: { glob: `${frameworkConfig.directories.resources}/**/**/*` },
@@ -358,6 +428,9 @@ export default class WebpackBase {
       new HtmlWebpackPlugin({
         inject: true,
         templateContent: buildIndexPage(),
+
+        // FIXME temporary hack for webpack 4 https://github.com/jantimon/html-webpack-plugin/issues/870
+        chunksSortMode: 'none',
         minify: this.isDev ? false : {
           removeComments: true,
           collapseWhitespace: true,
@@ -379,50 +452,38 @@ export default class WebpackBase {
 
     if (this.isServer()) {
       plugins.push(
-
         // Hook import() directives on the server-side so we can know which
         // chunks are loaded for which routes and give them along with the HTTP response.
         new RequireEnsureHookPlugin(),
       );
     }
 
-    if (!this.isServer()) {
-      plugins.push(
-        new PolyfillInjectorPlugin({
-          polyfills: ['Promise'],
-          service: true,
-        }),
-      );
-    }
+    // if (!this.isServer()) {
+    //   plugins.push(
+    //     new PolyfillInjectorPlugin({
+    //       polyfills: ['Promise'],
+    //     }),
+    //   );
+    // }
 
     if (this.isDev) {
       plugins.push(
-
         // enable hot reloading.
         new webpack.HotModuleReplacementPlugin(),
-        new webpack.NamedModulesPlugin(),
-
-        new webpack.NoEmitOnErrorsPlugin(),
 
         // Watcher doesn't work well if you mistype casing in a path so we use
         // a plugin that prints an error when you attempt to do this.
         // See https://github.com/facebookincubator/create-react-app/issues/240
         new CaseSensitivePathsPlugin(),
-
-        // If you require a missing module and then `npm install` it, you still have
-        // to restart the development server for Webpack to discover it. This plugin
-        // makes the discovery automatic so you don't have to restart.
-        // See https://github.com/facebookincubator/create-react-app/issues/186
-        // new WatchMissingNodeModulesPlugin(paths.appNodeModules), // TODO
       );
     }
 
-    if (!this.isDev) {
+    if (!this.isDev && !this.isServer()) {
+      // Extract the CSS into a seperate file (only prod, and plugin is not compatible with SSR).
       plugins.push(
-        new WebpackCleanupPlugin({ quiet: true }),
-
-        // Extract the CSS into a seperate file
-        new ExtractTextPlugin('[name].[contenthash].css'),
+        new ExtractCssPlugin({
+          filename: '[name].[contenthash].css',
+        }),
       );
     }
 
@@ -434,39 +495,4 @@ function buildIndexPage() {
   return renderPage({
     body: renderToString(<BaseHelmet />),
   });
-}
-
-function getCssLoader(options = {}) {
-  const loaderOptions = {
-    importLoaders: options.importLoaders || 0,
-  };
-
-  if (isDev) {
-    Object.assign(loaderOptions, {
-      sourceMap: true,
-    });
-  } else {
-    // TODO cssnano options
-    Object.assign(loaderOptions, {
-      minimize: true,
-    });
-  }
-
-  if (options.modules) {
-    Object.assign(loaderOptions, {
-      modules: true,
-      camelCase: true,
-    });
-
-    if (isDev) {
-      Object.assign(loaderOptions, {
-        localIdentName: '[local]__[hash:base64:5]',
-      });
-    }
-  }
-
-  return {
-    loader: 'css-loader',
-    options: loaderOptions,
-  };
 }

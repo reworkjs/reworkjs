@@ -1,9 +1,7 @@
 // @flow
 
 import Helmet from 'react-helmet';
-import logger from '../../../shared/logger';
-import frameworkConfig from '../../../shared/framework-config';
-import { getDefault } from '../../../shared/util/ModuleUtil';
+import loadRenderPage from '../../../shared/render-html';
 
 type HelmetItem = {
   toComponent: Function,
@@ -64,24 +62,9 @@ type PageHtml = {
   bodyAttributes: string,
 };
 
-type RenderPageFunction = (PageHtml) => string;
+export type RenderPageFunction = (PageHtml) => string;
 
-const actualRenderPage: RenderPageFunction = ((() => {
-  const rendererFile = frameworkConfig['render-html'];
-  if (!rendererFile) {
-    return defaultRenderPage;
-  }
-
-  try {
-    // -- We need this to be dynamic
-    // $FlowIgnore
-    return getDefault(require(rendererFile));
-  } catch (e) {
-    logger.error(`Error while loading HTML renderer script ${rendererFile}`);
-    logger.error(e);
-    return defaultRenderPage;
-  }
-})());
+const renderPageDelegate = loadRenderPage() || defaultRenderPage;
 
 export default function renderPage(data: { body?: string, header?: string, footer?: string } = {}) {
   const helmet: RenderedHelmet = Helmet.renderStatic();
@@ -106,7 +89,7 @@ export default function renderPage(data: { body?: string, header?: string, foote
     htmlAttributes: stringifyHelmet(helmet.htmlAttributes),
   };
 
-  return actualRenderPage(pageHtml);
+  return renderPageDelegate(pageHtml);
 }
 
 function defaultRenderPage(pageHtml: PageHtml) {

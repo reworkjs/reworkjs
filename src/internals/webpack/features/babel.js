@@ -1,9 +1,12 @@
+// @flow
+
 import findCacheDir from 'find-cache-dir';
 import findBabelConfig from 'find-babel-config';
 import frameworkMetadata from '../../../shared/framework-metadata';
 import { resolveProject } from '../../util/resolve-util';
 import { getDefault } from '../../../shared/util/ModuleUtil';
 import BaseFeature from '../BaseFeature';
+import type WebpackConfigBuilder from '../WebpackConfigBuilder';
 
 export default class BabelFeature extends BaseFeature {
 
@@ -15,7 +18,7 @@ export default class BabelFeature extends BaseFeature {
     return 'Transpiles JavaScript into ES5';
   }
 
-  visit(webpack) {
+  visit(webpack: WebpackConfigBuilder) {
     webpack.injectRules({
       test: BaseFeature.FILE_TYPE_JS,
       loader: 'babel-loader',

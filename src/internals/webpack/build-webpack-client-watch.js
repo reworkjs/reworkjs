@@ -63,7 +63,7 @@ if (HAS_PRERENDERING) {
 
       memoryFs.readFile(indexFileName, (readError, file) => {
         if (readError) {
-          fs.unlink(file);
+          fs.unlink(indexFileName);
         } else {
           fs.writeFile(indexFileName, file, writeError => {
             if (writeError) {
@@ -87,8 +87,12 @@ if (HAS_PRERENDERING) {
 } else {
   // send index.html for all not found routes.
   app.use((req, res) => {
-    const readStream = wdmInstance.fileSystem.createReadStream(indexFileName);
-    readStream.pipe(res);
+    try {
+      const readStream = wdmInstance.fileSystem.createReadStream(indexFileName);
+      readStream.pipe(res);
+    } catch (e) {
+      res.end('Application failed to build');
+    }
   });
 }
 

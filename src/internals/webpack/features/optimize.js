@@ -1,7 +1,10 @@
-import webpack from 'webpack';
+// @flow
+
+import UglifyJsPlugin from 'uglifyjs-webpack-plugin';
 import OfflinePlugin from 'offline-plugin';
 import CompressionPlugin from 'compression-webpack-plugin';
 import BaseFeature from '../BaseFeature';
+import type WebpackConfigBuilder from '../WebpackConfigBuilder';
 
 export default class OptimizeFeature extends BaseFeature {
 
@@ -17,25 +20,14 @@ export default class OptimizeFeature extends BaseFeature {
     return 'Various optimisation designed to reduce the client bundle size';
   }
 
-  isEnabled(enabled) {
-    if (!this.isProd() || this.isServer()) {
-      return false;
-    }
-
-    return super.isEnabled(enabled);
+  isDefaultEnabled() {
+    return this.isProd();
   }
 
-  visit(config) {
+  visit(config: WebpackConfigBuilder) {
     config.injectRawConfig({
       devtool: 'source-map',
-      performance: {
-        hints: 'warning',
-      },
     });
-
-    if (this.isServer()) {
-      return;
-    }
 
     config.injectRules({
       test: BaseFeature.FILE_TYPE_IMG,
@@ -44,9 +36,11 @@ export default class OptimizeFeature extends BaseFeature {
         bypassOnDebug: true,
         mozjpeg: {
           progressive: true,
+          quality: 80,
         },
         gifsicle: {
           interlaced: false,
+          optimizationLevel: 3,
         },
         optipng: {
           optimizationLevel: 7,
@@ -56,6 +50,64 @@ export default class OptimizeFeature extends BaseFeature {
           speed: 4,
         },
         svgo: {},
+        webp: {
+          quality: 75,
+
+          // TODO add a way to define the type of image for "preset"
+          // default, photo, picture, drawing, icon and text.
+          // https://github.com/imagemin/imagemin-webp
+          method: 5,
+        },
+      },
+    });
+
+    if (this.isServer()) {
+      return;
+    }
+
+    config.injectRawConfig({
+      performance: {
+        hints: 'warning',
+      },
+      optimization: {
+        splitChunks: {
+          // don't generate names for long term caching
+          // https://medium.com/webpack/webpack-4-code-splitting-chunk-graph-and-the-splitchunks-optimization-be739a861366
+          name: false,
+        },
+        minimize: true,
+        minimizer: [
+
+          new UglifyJsPlugin({
+            parallel: true,
+            cache: true,
+
+            // preserve LICENSE comments (*!, /**!, @preserve or @license) for legal stuff but extract them
+            // to their own file to reduce bundle size.
+            extractComments: true,
+            sourceMap: true,
+
+            uglifyOptions: {
+              compress: {
+                warnings: false,
+              },
+
+              output: {
+                // TODO set to 6/7/8 if .browserlistrc supports it
+                // Will use newer features to optimize
+                ecma: 5,
+              },
+
+              // TODO this should be based on .browserlistrc
+              ecma: 5,
+
+              // TODO this should be based on .browserlistrc
+              safari10: true,
+
+              ie8: false,
+            },
+          }),
+        ],
       },
     });
 
@@ -69,30 +121,6 @@ export default class OptimizeFeature extends BaseFeature {
         threshold: 0,
         minRatio: 0.8,
       }]),
-
-      new webpack.optimize.ModuleConcatenationPlugin(),
-
-      new webpack.optimize.CommonsChunkPlugin({
-        name: 'common',
-        children: true,
-        minChunks: 2,
-        async: true,
-      }),
-
-      new webpack.optimize.UglifyJsPlugin({
-
-        // preserve LICENSE comments (*!, /**!, @preserve or @license) for legal stuff but extract them
-        // to their own file to reduce bundle size.
-        extractComments: true,
-        sourceMap: true,
-        compress: {
-          warnings: false,
-        },
-      }),
-
-      // OccurrenceOrderPlugin is needed for long-term caching to work properly.
-      // See http://mxs.is/googmv
-      new webpack.optimize.OccurrenceOrderPlugin(true),
 
       // Put it in the end to capture all the HtmlWebpackPlugin's assets
       new OfflinePlugin({
@@ -118,6 +146,10 @@ export default class OptimizeFeature extends BaseFeature {
         safeToUseOptionalCaches: true,
 
         AppCache: false,
+        ServiceWorker: {
+          // FIXME remove this once OfflinePlugin 5 releases
+          minify: false,
+        },
       }),
     ]);
   }
