@@ -14,7 +14,7 @@ export default class EslintFeature extends BaseFeature {
   }
 
   isDefaultEnabled() {
-    return this.isDev();
+    return false;
   }
 
   visit(webpack: WebpackConfigBuilder) {
