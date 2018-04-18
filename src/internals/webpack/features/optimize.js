@@ -50,14 +50,21 @@ export default class OptimizeFeature extends BaseFeature {
           speed: 4,
         },
         svgo: {},
-        webp: {
-          quality: 75,
 
-          // TODO add a way to define the type of image for "preset"
-          // default, photo, picture, drawing, icon and text.
-          // https://github.com/imagemin/imagemin-webp
-          method: 5,
-        },
+        // Enabling WebP causes imagemin to convert every image to WebP,
+        // making them unusable on non chrome browsers
+        // TODO enable once
+        // https://github.com/tcoopman/image-webpack-loader/issues/112
+        // https://github.com/tcoopman/image-webpack-loader/issues/111
+        // is fixed
+        // webp: {
+        //   quality: 75,
+        //
+        //   // TODO add a way to define the type of image for "preset"
+        //   // default, photo, picture, drawing, icon and text.
+        //   // https://github.com/imagemin/imagemin-webp
+        //   method: 5,
+        // },
       },
     });
 
@@ -70,6 +77,7 @@ export default class OptimizeFeature extends BaseFeature {
         hints: 'warning',
       },
       optimization: {
+        removeAvailableModules: false,
         splitChunks: {
           // don't generate names for long term caching
           // https://medium.com/webpack/webpack-4-code-splitting-chunk-graph-and-the-splitchunks-optimization-be739a861366

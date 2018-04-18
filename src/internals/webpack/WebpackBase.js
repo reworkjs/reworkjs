@@ -146,6 +146,7 @@ export default class WebpackBase {
       optimization: {
         noEmitOnErrors: true,
         minimize: false,
+        removeAvailableModules: false,
       },
     };
 
