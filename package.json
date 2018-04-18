@@ -21,14 +21,14 @@
     "build:watch": "gulp build:watch",
     "precommit": "npm run lint:staged",
     "prepublishOnly": "npm run build",
-    "release": "standard-version"
+    "release": "standard-version --release-as $RELEASE_TYPE"
   },
   "bin": {
     "rjs": "bin/framework.bin.js"
   },
   "standard-version": {
     "scripts": {
-      "prebump": "git flow release start $(standard-version --dry-run | grep -E \"^✔ bumping version in package.json from .+ to .+\" | grep -Eo \"[^ ]+$\") > /dev/null",
+      "prebump": "git flow release start $(standard-version --dry-run --release-as $RELEASE_TYPE | grep -E \"^✔ bumping version in package.json from .+ to .+\" | grep -Eo \"[^ ]+$\") > /dev/null",
       "posttag": "git flow release finish -n $(cat package.json | json version)"
     }
   },
