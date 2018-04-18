@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.12.0"></a>
+# [0.12.0](https://github.com/foobarhq/reworkjs/compare/v0.11.0...v0.12.0) (2018-04-18)
+
+
+### Bug Fixes
+
+* Disable removeAvailableModules in development ([c7ec6ee](https://github.com/foobarhq/reworkjs/commit/c7ec6ee))
+* Disable webp minification ([2832d19](https://github.com/foobarhq/reworkjs/commit/2832d19))
+* Fix injecting cookies into BaseHelmet when building the app ([faefd8d](https://github.com/foobarhq/reworkjs/commit/faefd8d))
+
+
+### Features
+
+* Disable eslint by default ([f1f9e4b](https://github.com/foobarhq/reworkjs/commit/f1f9e4b))
+
+
+### BREAKING CHANGES
+
+* Enable eslint using --features=eslint
+
+
+
 <a name="0.11.0"></a>
 # 0.11.0 (2018-04-11)
 
