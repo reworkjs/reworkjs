@@ -141,13 +141,17 @@ export default class OptimizeFeature extends BaseFeature {
           '**/*.LICENSE',
         ],
 
+        externals: [
+          '/',
+        ],
+
         caches: {
           main: [':rest:'],
 
           // All chunks marked as `additional`, loaded after main section
           // and do not prevent SW to install. Change to `optional` if
           // do not want them to be preloaded at all (cached only when first loaded)
-          additional: ['*.chunk.js'],
+          additional: ['*.chunk.js', ':externals:'],
         },
 
         // Removes warning for about `additional` section usage
@@ -155,6 +159,8 @@ export default class OptimizeFeature extends BaseFeature {
 
         AppCache: false,
         ServiceWorker: {
+          navigateFallbackURL: '/',
+
           // FIXME remove this once OfflinePlugin 5 releases
           minify: false,
         },
