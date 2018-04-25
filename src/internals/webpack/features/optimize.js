@@ -2,7 +2,9 @@
 
 import UglifyJsPlugin from 'uglifyjs-webpack-plugin';
 import OfflinePlugin from 'offline-plugin';
-import CompressionPlugin from 'compression-webpack-plugin';
+import GzipPlugin from 'compression-webpack-plugin';
+import BrotliPlugin from 'brotli-webpack-plugin';
+
 import BaseFeature from '../BaseFeature';
 import type WebpackConfigBuilder from '../WebpackConfigBuilder';
 
@@ -121,11 +123,18 @@ export default class OptimizeFeature extends BaseFeature {
 
     config.injectPlugins([
 
-      // TODO brotli
-      new CompressionPlugin([{
+      new BrotliPlugin({
+        asset: '[path].br[query]',
+        test: /\.(js|css|html|svg)$/,
+        threshold: 0,
+        minRatio: 0.8,
+        quality: 11,
+      }),
+
+      new GzipPlugin([{
         asset: '[path].gz[query]',
         algorithm: 'gzip',
-        test: /\.(js|html|svg)$/,
+        test: /\.(js|css|html|svg)$/,
         threshold: 0,
         minRatio: 0.8,
       }]),
@@ -137,6 +146,7 @@ export default class OptimizeFeature extends BaseFeature {
         // this is applied before any match in `caches` section
         excludes: [
           '**/*.gz',
+          '**/*.br',
           '**/*.map',
           '**/*.LICENSE',
         ],
