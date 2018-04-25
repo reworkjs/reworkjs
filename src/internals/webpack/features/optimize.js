@@ -125,7 +125,7 @@ export default class OptimizeFeature extends BaseFeature {
       new CompressionPlugin([{
         asset: '[path].gz[query]',
         algorithm: 'gzip',
-        test: /\.(js|html|svg)$/,
+        test: /\.(js|css|html|svg)$/,
         threshold: 0,
         minRatio: 0.8,
       }]),
