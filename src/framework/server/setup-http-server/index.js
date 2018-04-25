@@ -3,7 +3,7 @@ import path from 'path';
 import fs from 'mz/fs';
 import express from 'express';
 import mime from 'mime';
-import getPreferredEncodings from 'negotiator/lib/encoding';
+import accept from 'accept';
 import compression from 'compression';
 import cookiesMiddleware from 'universal-cookie-express';
 import getWebpackSettings from '../../../shared/webpack-settings';
@@ -25,7 +25,7 @@ function redirectToPreCompressed(root, encodingTransforms = {}) {
   return async function redirect(req, res, next) {
     // req.acceptsEncoding is not powerful enough, and creates a new instance of Accept AND Negociator
     // on every single call. negotiator/lib/encoding.getPreferredEncodings is a pure function, I'm going to use that.
-    const encodings = getPreferredEncodings(req.header('Accept-Encoding'), availableEncodings);
+    const encodings = accept.encodings(req.header('Accept-Encoding'), availableEncodings);
 
     for (const encoding of encodings) {
       const getCompressedPath = encodingTransforms[encoding];
