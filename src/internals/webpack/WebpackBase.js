@@ -1,5 +1,6 @@
 // @flow
 
+import path from 'path';
 import minimist from 'minimist';
 import React from 'react';
 import chalk from 'chalk';
@@ -125,6 +126,10 @@ export default class WebpackBase {
         hints: false,
       },
       target: this.isServer() ? 'node' : 'web',
+      node: {
+        // don't transform __dirname when running inside Node.
+        __dirname: !this.isServer(),
+      },
       resolve: {
         modules: ['node_modules'],
         extensions: [
@@ -387,12 +392,11 @@ export default class WebpackBase {
 
     const programArgv = minimist(argv['--'] || []);
 
-    const definedVariables = {
+    const definedVariables: Object = {
       'process.env.SIDE': SIDE,
       'process.env.BUILD_ENV': NODE_ENV,
       'process.env.PROCESS_NAME': JSON.stringify(`${projectMetadata.name} (${this.isServer() ? 'server' : 'client'})`),
       $$RJS_VARS$$: {
-        FRAMEWORK_CONFIG: JSON.stringify(frameworkConfig),
         FRAMEWORK_METADATA: JSON.stringify(frameworkMetadata),
         PROJECT_METADATA: JSON.stringify(projectMetadata),
         PARSED_ARGV: JSON.stringify(programArgv),
@@ -406,6 +410,33 @@ export default class WebpackBase {
           NODE_ENV,
         },
       };
+    } else {
+      const outputDirectory = getWebpackSettings(this.isServer()).output.path;
+
+      // we only pass build & logs to bundled code
+      // as they are the only folders that NEED to exist for the
+      // app to run.
+      // Using anything else MUST be an error.
+
+      // We don't give any information to the client bundle as they cannot interact
+      // with the filesystem at all and trying to MUST be an error too.
+
+      // We give the path relative to the output directory so the project can be
+      // moved around freely after being built. This can happen when updating a live app: The app will be built
+      // in a temporary folder then moved to its final destination.
+
+      // The path relative path will be transformed into an absolute path at runtime.
+
+      // all executed JS files will be located at the root of outputDirectory, so we the new absolute path
+      // will be the correct one no matter which bundle produces it.
+      const FRAMEWORK_CONFIG = {
+        directories: {
+          logs: path.relative(outputDirectory, frameworkConfig.directories.logs),
+          build: path.relative(outputDirectory, frameworkConfig.directories.build),
+        },
+      };
+
+      definedVariables.$$RJS_VARS$$.FRAMEWORK_CONFIG = JSON.stringify(FRAMEWORK_CONFIG);
     }
 
     return definedVariables;
