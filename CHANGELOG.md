@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.13.0"></a>
+# [0.13.0](https://github.com/foobarhq/reworkjs/compare/v0.12.0...v0.13.0) (2018-05-09)
+
+
+### Bug Fixes
+
+* Compress CSS files with gzip ([572b59f](https://github.com/foobarhq/reworkjs/commit/572b59f))
+* Fix sending a corrupted response when trying to access a precompressed resource with a query parameter ([0d9ca5d](https://github.com/foobarhq/reworkjs/commit/0d9ca5d))
+* Make SW cache root route ([5c77e0e](https://github.com/foobarhq/reworkjs/commit/5c77e0e))
+* Make the built server able to run from a different directory than the one it was built in ([4f1480c](https://github.com/foobarhq/reworkjs/commit/4f1480c))
+* only import framework-config in bundle in development mode ([fc2c95e](https://github.com/foobarhq/reworkjs/commit/fc2c95e))
+* Use log directory to store app logs instead of build directory ([cb6837d](https://github.com/foobarhq/reworkjs/commit/cb6837d))
+
+
+### Features
+
+* Add brotli pre-compress support ([c43844b](https://github.com/foobarhq/reworkjs/commit/c43844b))
+
+
+
 <a name="0.12.0"></a>
 # [0.12.0](https://github.com/foobarhq/reworkjs/compare/v0.11.0...v0.12.0) (2018-04-18)
 

@@ -57,7 +57,7 @@ import('../framework-config').then(config => {
     silent: false,
     colorize: true,
     timestamp: true,
-    filename: `${config.directories.build}/${framework.name}.log`,
+    filename: `${config.directories.log}/${framework.name}.log`,
     maxsize: 40000,
     maxFiles: 10,
     json: false,

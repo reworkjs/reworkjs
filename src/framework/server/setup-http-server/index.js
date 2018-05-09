@@ -1,8 +1,9 @@
+import UrlUtil from 'url';
 import path from 'path';
 import fs from 'mz/fs';
 import express from 'express';
 import mime from 'mime';
-import getPreferredEncodings from 'negotiator/lib/encoding';
+import accept from 'accept';
 import compression from 'compression';
 import cookiesMiddleware from 'universal-cookie-express';
 import getWebpackSettings from '../../../shared/webpack-settings';
@@ -24,26 +25,32 @@ function redirectToPreCompressed(root, encodingTransforms = {}) {
   return async function redirect(req, res, next) {
     // req.acceptsEncoding is not powerful enough, and creates a new instance of Accept AND Negociator
     // on every single call. negotiator/lib/encoding.getPreferredEncodings is a pure function, I'm going to use that.
-    const encodings = getPreferredEncodings(req.header('Accept-Encoding'), availableEncodings);
+    const encodings = accept.encodings(req.header('Accept-Encoding'), availableEncodings);
 
     for (const encoding of encodings) {
-      const transform = encodingTransforms[encoding];
+      const getCompressedPath = encodingTransforms[encoding];
 
       // '/test.js' => '/test.js.gz'
-      const newPath = transform(req.path);
+      const newPath = getCompressedPath(req.path);
 
+      // TODO cache result of fs.exists in prod
       // eslint-disable-next-line no-await-in-loop
       const exists = await fs.exists(path.join(root, newPath));
-      if (!exists) {
+      if (!exists) { // asset is not pre-compressed using this encoding
         continue;
       }
 
-      const originalUrl = req.url;
-      req.url = transform(originalUrl);
+      // append compressed suffix to pathname part of url
+      const urlParts = UrlUtil.parse(req.url);
+      const originalPathname = urlParts.pathname;
+      urlParts.pathname = getCompressedPath(originalPathname);
+      req.url = UrlUtil.format(urlParts);
+      // \
+
       res.set('Content-Encoding', encoding);
 
       // express would use the redirected url to set the content-type, which would result in octet-stream.
-      setContentType(res, originalUrl);
+      setContentType(res, originalPathname);
       break;
     }
 

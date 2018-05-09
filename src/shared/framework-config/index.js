@@ -1,5 +1,13 @@
 // @flow
 
+/**
+ * @module framework-config
+ *
+ * Version for internal tools (cli, builders).
+ *
+ * DO NOT use in client or server bundle.
+ */
+
 import fs from 'fs';
 import mkdirp from 'mkdirp';
 import { merge } from 'lodash';
