@@ -64,7 +64,7 @@ type PageHtml = {
 
 export type RenderPageFunction = (PageHtml) => string;
 
-const renderPageDelegate = loadRenderPage() || defaultRenderPage;
+const renderPageDelegate = loadRenderPage();
 
 export default function renderPage(data: { body?: string, header?: string, footer?: string } = {}) {
   const helmet: RenderedHelmet = Helmet.renderStatic();
@@ -90,19 +90,6 @@ export default function renderPage(data: { body?: string, header?: string, foote
   };
 
   return renderPageDelegate(pageHtml);
-}
-
-function defaultRenderPage(pageHtml: PageHtml) {
-
-  return `<!DOCTYPE html>
-<html ${String(pageHtml.htmlAttributes)}>
-<head>
-  ${String(pageHtml.head)}
-</head>
-<body ${String(pageHtml.bodyAttributes)}>
-  ${String(pageHtml.body)}
-</body>
-</html>`;
 }
 
 function stringifyHelmet(part) {
