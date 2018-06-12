@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.14.0"></a>
+# [0.14.0](https://github.com/foobarhq/reworkjs/compare/v0.13.0...v0.14.0) (2018-06-12)
+
+
+### Bug Fixes
+
+* Fix crash when loading a project without an existing configuration file ([48aaf40](https://github.com/foobarhq/reworkjs/commit/48aaf40))
+* Make render-html & pre-init optional ([81c5cf2](https://github.com/foobarhq/reworkjs/commit/81c5cf2))
+
+
+### Features
+
+* Add a way to append a script to the service worker ([5baeb49](https://github.com/foobarhq/reworkjs/commit/5baeb49))
+
+
+
 <a name="0.13.0"></a>
 # [0.13.0](https://github.com/foobarhq/reworkjs/compare/v0.12.0...v0.13.0) (2018-05-09)
 
