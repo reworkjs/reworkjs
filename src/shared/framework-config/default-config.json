@@ -10,5 +10,6 @@
 
   "entry-react": "./app/containers/App",
   "render-html": null,
-  "pre-init": null
+  "pre-init": null,
+  "service-worker": null
 }

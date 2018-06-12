@@ -11,4 +11,5 @@ export type FrameworkConfigStruct = {
   'entry-react': string,
   'render-html': ?string,
   'pre-init': ?string,
+  'service-worker': ?string,
 };
