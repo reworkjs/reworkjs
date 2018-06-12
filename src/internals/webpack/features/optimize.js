@@ -1,7 +1,6 @@
 // @flow
 
 import UglifyJsPlugin from 'uglifyjs-webpack-plugin';
-import OfflinePlugin from 'offline-plugin';
 import GzipPlugin from 'compression-webpack-plugin';
 import BrotliPlugin from 'brotli-webpack-plugin';
 
@@ -138,43 +137,6 @@ export default class OptimizeFeature extends BaseFeature {
         threshold: 0,
         minRatio: 0.8,
       }]),
-
-      // Put it in the end to capture all the HtmlWebpackPlugin's assets
-      new OfflinePlugin({
-        relativePaths: false,
-
-        // this is applied before any match in `caches` section
-        excludes: [
-          '**/*.gz',
-          '**/*.br',
-          '**/*.map',
-          '**/*.LICENSE',
-        ],
-
-        externals: [
-          '/',
-        ],
-
-        caches: {
-          main: [':rest:'],
-
-          // All chunks marked as `additional`, loaded after main section
-          // and do not prevent SW to install. Change to `optional` if
-          // do not want them to be preloaded at all (cached only when first loaded)
-          additional: ['*.chunk.js', ':externals:'],
-        },
-
-        // Removes warning for about `additional` section usage
-        safeToUseOptionalCaches: true,
-
-        AppCache: false,
-        ServiceWorker: {
-          navigateFallbackURL: '/',
-
-          // FIXME remove this once OfflinePlugin 5 releases
-          minify: false,
-        },
-      }),
     ]);
   }
 }

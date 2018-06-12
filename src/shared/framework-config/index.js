@@ -24,7 +24,7 @@ function getUserConfig() {
 
   if (!fs.existsSync(frameworkConfigFile)) {
     logger.debug('No ".framework-config" found in app directory, creating.');
-    fs.writeFileSync(defaultConfig, frameworkConfigFile);
+    fs.writeFileSync(frameworkConfigFile, JSON.stringify(defaultConfig));
     return {};
   }
 

@@ -28,9 +28,9 @@ ReworkJsWrapper.propTypes = {
 // Install ServiceWorker and AppCache in the end since
 // it's not most important operation and if main code fails,
 // we do not want it installed
-if (process.env.NODE_ENV === 'production' && process.env.SIDE === 'client') {
+if (process.env.SIDE === 'client') {
   try {
-    require('offline-plugin/runtime').install(); // eslint-disable-line global-require
+    require('offline-plugin/runtime').install();
   } catch (e) {
     logger.error('Service Worker could not be installed');
     logger.error(e);
