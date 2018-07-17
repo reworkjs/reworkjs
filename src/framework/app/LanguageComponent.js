@@ -1,54 +1,70 @@
-import React from 'react';
+// @flow
+
+import * as React from 'react';
 import { IntlProvider } from 'react-intl';
-import PropTypes from 'prop-types';
-import { Cookies } from 'react-cookie';
-import { guessPreferredLocale } from '../common/get-preferred-locale';
-import { onHotReload } from '../common/i18n';
-import container from '../common/decorators/container';
-import LanguageProvider from './providers/LanguageProvider';
+import { Cookies, withCookies } from 'react-cookie';
+import { guessPreferredLocale } from '../common/i18n/get-preferred-locale';
+import {
+  getActiveLocale,
+  getReactIntlMessages,
+  offActiveLocaleChange,
+  onActiveLocaleChange,
+  onIntlHotReload,
+  setActiveLocale,
+} from '../common/i18n/index';
 
-function Fragment(props) {
-  return props.children;
-}
+type Props = {
+  children: any,
+  cookies: Cookies,
+};
 
-/*
- * this component connects the redux state language locale to the
- * IntlProvider component and i18n messages (loaded from `app/translations`)
+type State = {
+  activeLocale: string,
+};
+
+/**
+ * this component synchronizes the internal i18n state with react-intl.
  */
-@container({
-  state: {
-    locale: LanguageProvider.locale,
-  },
-  actions: {
-    changeLocale: LanguageProvider.changeLocale,
-  },
-  cookies: true,
-})
-export default class LanguageComponent extends React.Component {
-  static propTypes = {
-    messages: PropTypes.object,
-    locale: PropTypes.string.isRequired,
-    changeLocale: PropTypes.func.isRequired,
-    children: PropTypes.node.isRequired,
-    cookies: PropTypes.instanceOf(Cookies).isRequired,
+@withCookies()
+export default class LanguageComponent extends React.Component<Props, State> {
+
+  state = {
+    activeLocale: getActiveLocale(),
   };
 
-  constructor(props) {
+  constructor(props: Props) {
     super(props);
 
-    props.changeLocale(guessPreferredLocale(props.cookies), false);
-
+    // $FlowFixMe
     if (module.hot) {
-      onHotReload(() => this.forceUpdate());
+      onIntlHotReload(() => this.forceUpdate());
     }
+
+    // $FlowFixMe
+    this.onActiveLocaleChange = this.onActiveLocaleChange.bind(this);
+  }
+
+  componentDidMount() {
+    onActiveLocaleChange(this.onActiveLocaleChange);
+
+    setActiveLocale(guessPreferredLocale(this.props.cookies));
+  }
+
+  componentWillUnmount() {
+    offActiveLocaleChange(this.onActiveLocaleChange);
+  }
+
+  onActiveLocaleChange(newLocale: string) {
+    this.setState({ activeLocale: newLocale });
   }
 
   render() {
+
     return (
       <IntlProvider
-        locale={this.props.locale}
-        messages={this.props.messages[this.props.locale]}
-        textComponent={Fragment}
+        locale={this.state.activeLocale}
+        messages={getReactIntlMessages()}
+        textComponent={React.Fragment}
       >
         {React.Children.only(this.props.children)}
       </IntlProvider>

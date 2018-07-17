@@ -6,7 +6,7 @@ import { renderToString } from 'react-dom/server';
 import { collectInitial, collectContext } from 'node-style-loader/collect';
 import { parse } from 'accept-language-parser';
 import getWebpackSettings from '../../../shared/webpack-settings';
-import { rootRoute, store } from '../../common/kernel';
+import { rootRoute } from '../../common/kernel';
 import ReworkJsWrapper from '../../app/ReworkJsWrapper';
 import { setRequestLocales } from './request-locale';
 import renderPage from './render-page';
@@ -105,8 +105,8 @@ export default async function serveReactRoute(req, res, next): ?{ appHtml: strin
       // initial style & pre-loaded JS
       header,
 
-      // initial redux state + main webpack bundle
-      footer: `<script>window.__PRELOADED_STATE__ = ${JSON.stringify(store.getState())}</script>${compilationStats.client.entryPoints.js}`,
+      // inject main webpack bundle
+      footer: `${compilationStats.client.entryPoints.js}`,
     }));
   } catch (e) {
     next(e);

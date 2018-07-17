@@ -1,5 +1,5 @@
-import { getCurrentRequestLocales } from '../server/setup-http-server/request-locale';
-import { isLocaleValid } from './i18n';
+import { getCurrentRequestLocales } from '../../server/setup-http-server/request-locale';
+import { isTranslationSupported } from './index';
 
 export const LOCALE_COOKIE_NAME = 'rjs-locale';
 
@@ -13,7 +13,7 @@ export function guessPreferredLocale(cookies) {
   // TODO add hook ?
 
   const cookieLocale = cookies.get(LOCALE_COOKIE_NAME);
-  if (cookieLocale && isLocaleValid(cookieLocale)) {
+  if (cookieLocale && isTranslationSupported(cookieLocale)) {
     return cookieLocale;
   }
 
@@ -21,13 +21,13 @@ export function guessPreferredLocale(cookies) {
   if (typeof navigator !== 'undefined') {
     if (navigator.languages) {
       for (const language of navigator.languages) {
-        if (isLocaleValid(language)) {
+        if (isTranslationSupported(language)) {
           return language;
         }
       }
     }
 
-    if (isLocaleValid(navigator.language)) {
+    if (isTranslationSupported(navigator.language)) {
       return navigator.language;
     }
   }
@@ -36,7 +36,7 @@ export function guessPreferredLocale(cookies) {
   const serverLocales = getCurrentRequestLocales();
   if (serverLocales) {
     for (const serverLocale of serverLocales) {
-      if (isLocaleValid(serverLocale)) {
+      if (isTranslationSupported(serverLocale)) {
         return serverLocale;
       }
     }

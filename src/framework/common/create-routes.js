@@ -1,14 +1,11 @@
 import promiseAllProperties from 'promise-all-properties';
-import { flatten } from 'lodash';
 import { getDefault } from '../../shared/util/ModuleUtil';
 import logger from '../../shared/logger';
 import isPojo from '../../shared/util/is-pojo';
-import { Symbols } from './decorators/provider';
-import createAsyncInjectors from './create-async-injectors';
 
 let routeCount = 0;
 
-export default function createRoutes(store) {
+export default function createRoutes() {
 
   const routeLoader = require.context('@@directories.routes', true, /\.js$/);
   const fileNames = routeLoader.keys();
@@ -16,8 +13,6 @@ export default function createRoutes(store) {
   if (fileNames.length === 0) {
     logger.warn('Your framework does not contain any route. Add your route descriptions in the directory specified by the "directories.routes" entry of your framework configuration file.');
   }
-
-  const injectors = createAsyncInjectors(store);
 
   return fileNames
     .map(file => {
@@ -54,7 +49,7 @@ export default function createRoutes(store) {
     })
     .filter(route => route !== null)
     .sort((a, b) => (b.priority || 0) - (a.priority || 0))
-    .map((route, i) => sanitizeRoute(route, injectors, store, fileNames[i]));
+    .map((route, i) => sanitizeRoute(route, fileNames[i]));
 }
 
 function assertUnique(singularMethodName, routeData, fileName) {
@@ -67,7 +62,7 @@ function assertUnique(singularMethodName, routeData, fileName) {
 
 const SANITIZED = Symbol('sanitized');
 export const ROUTE_ID = Symbol('route-id');
-function sanitizeRoute(routeData, injectors, store, fileName) {
+function sanitizeRoute(routeData, fileName) {
 
   if (typeof routeData.toJSON === 'function') {
     routeData = routeData.toJSON() || routeData;
@@ -92,43 +87,13 @@ function sanitizeRoute(routeData, injectors, store, fileName) {
   const route = Object.assign({}, routeData);
 
   if (route.getComponent) {
-    route.getComponent = hookGetComponent(routeData, injectors, store, fileName);
+    route.getComponent = hookGetComponent(routeData, fileName);
   } else if (route.getComponents) {
-    route.getComponents = hookGetComponent(routeData, injectors, store, fileName);
+    route.getComponents = hookGetComponent(routeData, fileName);
   } else {
     throw new TypeError(`Missing method getComponent(s) on route ${JSON.stringify(fileName)}`);
   }
 
-  // onEnter(nextState, replace, callback?)
-  // onChange(prevState, nextState, replace, callback?)
-  // onLeave(prevState)
-  if (route.onEnter) {
-    const oldOnEnter = route.onEnter;
-    route.onEnter = function onEnter(nextState, replace) {
-      return oldOnEnter.call(this, nextState, replace, store);
-    };
-  }
-
-  if (route.onChange) {
-    const oldOnChange = route.onChange;
-    route.onChange = function onChange(prevState, nextState, replace) {
-      return oldOnChange.call(this, prevState, nextState, replace, store);
-    };
-  }
-
-  if (route.onLeave) {
-    const oldOnLeave = route.onLeave;
-    route.onLeave = function onLeave(prevState) {
-      return oldOnLeave.call(this, prevState, store);
-    };
-  }
-
-  delete route.getSaga;
-  delete route.getSagas;
-  delete route.getReducer;
-  delete route.getReducers;
-  delete route.getProvider;
-  delete route.getProviders;
   delete route.priority;
 
   if (route.children && route.childRoutes) {
@@ -142,52 +107,24 @@ function sanitizeRoute(routeData, injectors, store, fileName) {
 
   if (route.childRoutes) {
     if (Array.isArray(route.childRoutes)) {
-      route.childRoutes = route.childRoutes.map(subRoute => sanitizeRoute(subRoute, injectors, store, fileName));
+      route.childRoutes = route.childRoutes.map(subRoute => sanitizeRoute(subRoute, fileName));
     } else {
-      route.childRoutes = [sanitizeRoute(route.childRoutes, injectors, store, fileName)];
+      route.childRoutes = [sanitizeRoute(route.childRoutes, fileName)];
     }
   }
 
   if (route.indexRoute) {
-    route.indexRoute = sanitizeRoute(route.indexRoute, injectors, store, fileName);
+    route.indexRoute = sanitizeRoute(route.indexRoute, fileName);
   }
 
   return route;
 }
 
-function hookGetComponent(route, injectors, store, fileName) {
-  return async function callbackGetComponent(nextState) {
+function hookGetComponent(route, fileName) {
+  return function callbackGetComponent(nextState) {
 
-    try {
-      const [component, sagas, reducers, providers] = await Promise.all([
-        callComponentLoader(route, nextState, store, fileName),
-        callSagaLoader(route, nextState, store),
-        callReducerLoader(route, nextState, store),
-        callProviderLoader(route, nextState, store),
-      ]);
-
-      if (providers) {
-        for (const provider of providers) {
-          const newSagas = provider[Symbols.sagas];
-          if (newSagas) {
-            sagas.push(...newSagas);
-          }
-
-          const newReducer = provider[Symbols.reducer];
-          if (newReducer) {
-            reducers.push(newReducer);
-          }
-        }
-      }
-
-      injectors.injectSagas(sagas);
-      injectors.injectReducer(reducers);
-
-      return component;
-    } catch (e) {
-      logger.error(`Error while loading route ${JSON.stringify(fileName)}`, e);
-      throw e;
-    }
+    // eslint-disable-next-line no-invalid-this
+    return callComponentLoader.call(this, route, nextState, fileName);
   };
 }
 
@@ -205,28 +142,6 @@ async function callComponentLoader(route, nextState, store, fileName) {
   }
 
   return promiseAllProperties(components);
-}
-
-async function callSagaLoader(route, nextState, store) {
-  const method = route.getSaga || route.getSagas;
-  const sagas = toArray(await callLoader(method, route, nextState, store));
-
-  return sagas ? flatten(sagas) : sagas;
-}
-
-async function callProviderLoader(route, nextState, store) {
-  const method = route.getProvider || route.getProviders;
-  const providers = toArray(await callLoader(method, route, nextState, store));
-
-  return providers ? flatten(providers) : providers;
-}
-
-/*
- * Unifies the possible outputs of route.getReducer-s
- */
-async function callReducerLoader(route, nextState, store) {
-  const method = route.getReducer || route.getReducers;
-  return toArray(await callLoader(method, route, nextState, store));
 }
 
 async function callLoader(loader, route, nextState, store) {
@@ -262,16 +177,4 @@ async function callLoader(loader, route, nextState, store) {
   }
 
   return getDefault(rawOutput);
-}
-
-function toArray(obj) {
-  if (obj == null) {
-    return [];
-  }
-
-  if (Array.isArray(obj)) {
-    return obj;
-  }
-
-  return [obj];
 }

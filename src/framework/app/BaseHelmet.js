@@ -1,9 +1,15 @@
+// @flow
+
 import React from 'react';
 import Helmet from 'react-helmet';
-import { withCookies } from 'react-cookie';
-import { guessPreferredLocale } from '../common/get-preferred-locale';
+import { withCookies, type ReactCookieProps } from 'react-cookie';
+import { guessPreferredLocale } from '../common/i18n/get-preferred-locale';
 
-function BaseHelmet(props) {
+type Props = {
+  cookies: ReactCookieProps,
+};
+
+function BaseHelmet(props: Props) {
 
   // is process.env.SIDE is null, we're the build process. Use default value.
   const lang = process.env.SIDE == null ? 'en' : getLangFromLocale(guessPreferredLocale(props.cookies));

@@ -1,9 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Provider } from 'react-redux';
 import logger from '../../shared/logger';
-import translationMessages from '../common/i18n';
-import { store } from '../common/kernel';
 import LanguageComponent from './LanguageComponent';
 import BaseHelmet from './BaseHelmet';
 
@@ -12,11 +9,9 @@ export default function ReworkJsWrapper(props) {
   return (
     <div>
       <BaseHelmet />
-      <Provider store={store}>
-        <LanguageComponent messages={translationMessages}>
-          {props.children}
-        </LanguageComponent>
-      </Provider>
+      <LanguageComponent>
+        {props.children}
+      </LanguageComponent>
     </div>
   );
 }
