@@ -4,12 +4,12 @@ import { applyRouterMiddleware, Router } from 'react-router';
 import { CookiesProvider } from 'react-cookie';
 import serverStyleCleanup from 'node-style-loader/clientCleanup';
 import { useScroll } from 'react-router-scroll';
-import ReworkJsWrapper from '../app/ReworkJsWrapper';
+import ReworkRootComponent from '../app/ReworkRootComponent';
 import { rootRoute, history } from '../common/kernel';
 
 ReactDOM.render(
   <CookiesProvider>
-    <ReworkJsWrapper>
+    <ReworkRootComponent>
       <Router
         history={history}
         routes={rootRoute}
@@ -19,7 +19,7 @@ ReactDOM.render(
           applyRouterMiddleware(useScroll())
         }
       />
-    </ReworkJsWrapper>
+    </ReworkRootComponent>
   </CookiesProvider>,
   document.getElementById('app'),
 );

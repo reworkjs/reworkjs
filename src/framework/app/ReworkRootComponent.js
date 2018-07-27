@@ -9,7 +9,7 @@ type Props = {
   children: any,
 };
 
-export default function ReworkJsWrapper(props: Props) {
+export default function ReworkRootComponent(props: Props) {
 
   return (
     <React.Fragment>

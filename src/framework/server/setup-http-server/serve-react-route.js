@@ -7,7 +7,7 @@ import { collectInitial, collectContext } from 'node-style-loader/collect';
 import { parse } from 'accept-language-parser';
 import getWebpackSettings from '../../../shared/webpack-settings';
 import { rootRoute } from '../../common/kernel';
-import ReworkJsWrapper from '../../app/ReworkJsWrapper';
+import ReworkRootComponent from '../../app/ReworkRootComponent';
 import { setRequestLocales } from './request-locale';
 import renderPage from './render-page';
 
@@ -63,9 +63,9 @@ export default async function serveReactRoute(req, res, next): ?{ appHtml: strin
 
     const renderApp = () => renderToString(
       <CookiesProvider cookies={req.universalCookies}>
-        <ReworkJsWrapper>
+        <ReworkRootComponent>
           <RouterContext {...props} />
-        </ReworkJsWrapper>
+        </ReworkRootComponent>
       </CookiesProvider>,
     );
 
