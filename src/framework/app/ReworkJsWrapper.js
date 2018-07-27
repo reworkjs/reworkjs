@@ -1,24 +1,25 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+// @flow
+
+import * as React from 'react';
 import logger from '../../shared/logger';
 import LanguageComponent from './LanguageComponent';
 import BaseHelmet from './BaseHelmet';
 
-export default function ReworkJsWrapper(props) {
+type Props = {
+  children: any,
+};
+
+export default function ReworkJsWrapper(props: Props) {
 
   return (
-    <div>
+    <React.Fragment>
       <BaseHelmet />
       <LanguageComponent>
         {props.children}
       </LanguageComponent>
-    </div>
+    </React.Fragment>
   );
 }
-
-ReworkJsWrapper.propTypes = {
-  children: PropTypes.any,
-};
 
 // Install ServiceWorker and AppCache in the end since
 // it's not most important operation and if main code fails,
