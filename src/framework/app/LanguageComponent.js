@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { IntlProvider } from 'react-intl';
 import { Cookies, withCookies } from 'react-cookie';
-import { guessPreferredLocale } from '../common/i18n/get-preferred-locale';
+import { guessPreferredLocale, storePreferredLocale } from '../common/i18n/get-preferred-locale';
 import {
   getActiveLocale,
   getReactIntlMessages,
@@ -56,6 +56,8 @@ export default class LanguageComponent extends React.Component<Props, State> {
 
   onActiveLocaleChange(newLocale: string) {
     this.setState({ activeLocale: newLocale });
+
+    storePreferredLocale(newLocale);
   }
 
   render() {
