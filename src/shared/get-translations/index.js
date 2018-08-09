@@ -17,8 +17,9 @@ export function loadLocaleList() {
 function requireContext(path: string, recursive: boolean, filter: RegExp) {
   const files = recursiveReadSync(path)
     .filter(file => filter.test(file))
-    // replace absolute path with relative path to webpack behavior
-    .map(file => `.${file.substr(path.length)}`);
+    // replace absolute path with relative path to match webpack behavior
+    // and replace windows \ path delimiter with UNIX & web style
+    .map(file => `.${file.substr(path.length)}`.replace(/\\/g, '/'));
 
   // mock bundle-loader:
   const bundle = function getLoader() {};
