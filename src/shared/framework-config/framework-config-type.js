@@ -1,3 +1,9 @@
+
+export type FrameworkPluginConfig = {
+  plugin: string,
+  config: any,
+};
+
 export type FrameworkConfigStruct = {
   directories: {
     logs: string,
@@ -12,4 +18,6 @@ export type FrameworkConfigStruct = {
   'render-html': ?string,
   'pre-init': ?string,
   'service-worker': ?string,
+
+  plugins: ?Array<FrameworkPluginConfig | string>,
 };

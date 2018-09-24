@@ -5,9 +5,11 @@ import { match, RouterContext } from 'react-router';
 import { renderToString } from 'react-dom/server';
 import { collectInitial, collectContext } from 'node-style-loader/collect';
 import { parse } from 'accept-language-parser';
+import { getDefault } from '../../../shared/util/ModuleUtil';
 import getWebpackSettings from '../../../shared/webpack-settings';
 import { rootRoute } from '../../common/kernel';
 import ReworkRootComponent from '../../app/ReworkRootComponent';
+import ServerHooks from '../server-hooks';
 import { setRequestLocales } from './request-locale';
 import renderPage from './render-page';
 
@@ -43,71 +45,105 @@ export default async function serveReactRoute(req, res, next): ?{ appHtml: strin
       return;
     }
 
-    const matchedRoute = props.routes[props.routes.length - 1];
-    if (matchedRoute.status) {
-      res.status(matchedRoute.status);
-    }
+    // TODO hook SSR wrapMainComponent
+    const serverHooks = ServerHooks.map(hookModule => {
+      const HookClass = getDefault(hookModule);
 
-    setRequestLocales(
-      parse(req.header('Accept-Language'))
-        .map(parsedLocale => {
-          let localeStr = parsedLocale.code;
+      return new HookClass();
+    });
 
-          if (parsedLocale.region) {
-            localeStr += `-${parsedLocale.region}`;
-          }
-
-          return localeStr;
-        }),
-    );
-
-    const renderApp = () => renderToString(
-      <CookiesProvider cookies={req.universalCookies}>
-        <ReworkRootComponent>
-          <RouterContext {...props} />
-        </ReworkRootComponent>
-      </CookiesProvider>,
-    );
-
-    const compilationStats = await getCompilationStats();
-
-    let header = '';
-    let appHtml;
-    if (process.env.NODE_ENV === 'development') {
-      // There is no CSS entry point in dev mode, generate it with collectInitial/collectContext instead.
-      header += collectInitial();
-      const renderedApp = collectContext(renderApp);
-      header += renderedApp[0]; // 0 = collected CSS
-      appHtml = renderedApp[1]; // 1 = rendered HTML
-    } else {
-      header += compilationStats.client.entryPoints.css;
-      appHtml = renderApp();
-    }
-
-    const importedServerChunks: Set = unhookWebpackAsyncRequire();
-    const importableClientChunks = [];
-    for (const importedServerChunk of importedServerChunks) {
-      const chunkFiles: ?Array<string> = getClientFilesFromServerChunkId(importedServerChunk, compilationStats);
-      if (!chunkFiles) {
-        continue;
+    try {
+      const matchedRoute = props.routes[props.routes.length - 1];
+      if (matchedRoute.status) {
+        res.status(matchedRoute.status);
       }
 
-      importableClientChunks.push(...chunkFiles.map(getChunkPrefetchLink));
+      setRequestLocales(
+        parse(req.header('Accept-Language'))
+          .map(parsedLocale => {
+            let localeStr = parsedLocale.code;
+
+            if (parsedLocale.region) {
+              localeStr += `-${parsedLocale.region}`;
+            }
+
+            return localeStr;
+          }),
+      );
+
+      let component = (
+        <CookiesProvider cookies={req.universalCookies}>
+          <ReworkRootComponent>
+            <RouterContext {...props} />
+          </ReworkRootComponent>
+        </CookiesProvider>
+      );
+
+      // allow plugins to add components
+      for (const serverHook of serverHooks) {
+        if (serverHook.wrapRootComponent) {
+          component = serverHook.wrapRootComponent(component);
+        }
+      }
+
+      const renderApp = () => renderToString(component);
+
+      const compilationStats = await getCompilationStats();
+
+      let header = '';
+      let appHtml;
+      if (process.env.NODE_ENV === 'development') {
+        // There is no CSS entry point in dev mode, generate it with collectInitial/collectContext instead.
+        header += collectInitial();
+        const renderedApp = collectContext(renderApp);
+        header += renderedApp[0]; // 0 = collected CSS
+        appHtml = renderedApp[1]; // 1 = rendered HTML
+      } else {
+        header += compilationStats.client.entryPoints.css;
+        appHtml = renderApp();
+      }
+
+      const importedServerChunks: Set = unhookWebpackAsyncRequire();
+      const importableClientChunks = [];
+      for (const importedServerChunk of importedServerChunks) {
+        const chunkFiles: ?Array<string> = getClientFilesFromServerChunkId(importedServerChunk, compilationStats);
+        if (!chunkFiles) {
+          continue;
+        }
+
+        importableClientChunks.push(...chunkFiles.map(getChunkPrefetchLink));
+      }
+
+      header += importableClientChunks.join('');
+
+      let htmlParts = {
+
+        // initial react app
+        body: appHtml,
+
+        // initial style & pre-loaded JS
+        header,
+
+        // inject main webpack bundle
+        footer: `${compilationStats.client.entryPoints.js}`,
+      };
+
+      // allow plugins to edit HTML (add script, etc) before actual render.
+      for (const serverHook of serverHooks) {
+        if (serverHook.preRender) {
+          htmlParts = serverHook.preRender(htmlParts);
+        }
+      }
+
+      res.send(renderPage(htmlParts));
+    } finally {
+      // allow plugins to cleanup
+      for (const serverHook of serverHooks) {
+        if (serverHook.postRequest) {
+          serverHook.postRequest();
+        }
+      }
     }
-
-    header += importableClientChunks.join('');
-
-    res.send(renderPage({
-
-      // initial react app
-      body: appHtml,
-
-      // initial style & pre-loaded JS
-      header,
-
-      // inject main webpack bundle
-      footer: `${compilationStats.client.entryPoints.js}`,
-    }));
   } catch (e) {
     next(e);
   } finally {

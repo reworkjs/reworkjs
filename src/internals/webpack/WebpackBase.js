@@ -16,6 +16,7 @@ import CopyWebpackPlugin from 'copy-webpack-plugin';
 import frameworkConfig from '../../shared/framework-config';
 import projectMetadata from '../../shared/project-metadata';
 import frameworkMetadata from '../../shared/framework-metadata';
+import { getHooks } from '../get-plugins';
 import { resolveFrameworkSource } from '../util/resolve-util';
 import argv from '../rjs-argv';
 import logger from '../../shared/logger';
@@ -400,6 +401,9 @@ export default class WebpackBase {
         FRAMEWORK_METADATA: JSON.stringify(frameworkMetadata),
         PROJECT_METADATA: JSON.stringify(projectMetadata),
         PARSED_ARGV: JSON.stringify(programArgv),
+
+        HOOKS_CLIENT: buildRequireArrayScript(getHooks('client')),
+        HOOKS_SERVER: buildRequireArrayScript(getHooks('server')),
       },
     };
 
@@ -527,4 +531,14 @@ function buildIndexPage() {
   return renderPage({
     body: renderToString(<BaseHelmet />),
   });
+}
+
+function buildRequireArrayScript(uris: string[]): string {
+  let script = 'r; var r = [];\n';
+
+  for (const uri of uris) {
+    script += `r.push(require('${uri}'))`;
+  }
+
+  return script;
 }
