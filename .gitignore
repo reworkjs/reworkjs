@@ -11,3 +11,8 @@ node_modules
 /.build
 /app
 /public
+
+# Auto-generated importable sub-modules
+/logger
+/debug
+/argv
