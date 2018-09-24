@@ -17,7 +17,7 @@
     "lint": "npm run lint:eslint && flow",
     "lint:eslint": "eslint src --report-unused-disable-directives",
     "lint:staged": "lint-staged",
-    "build": "gulp build",
+    "build": "gulp build && ./scripts/generate-public-submodules.js",
     "build:watch": "gulp build:watch",
     "precommit": "npm run lint:staged",
     "prepublishOnly": "npm run build",
