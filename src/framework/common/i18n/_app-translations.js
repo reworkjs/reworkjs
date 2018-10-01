@@ -6,7 +6,6 @@ import { triggerHotReload } from './_hot-reload';
 import { getFileName, getLocaleBestFit, runBundleLoader } from './_locale-utils';
 import { getActiveLocale } from './index';
 
-// TODO update these two when hot reload.
 let messageTranslationsLoaders = loadMessageTranslationList();
 let localeToFileMapping: Map<string, string> = buildMessagesLocaleList(messageTranslationsLoaders);
 

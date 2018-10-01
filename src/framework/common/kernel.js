@@ -6,6 +6,7 @@ import createRoutes from './create-routes';
 import debug from './debug';
 
 // useRouterHistory creates a composable higher-order function
+// TODO createMemoryHistory: Should we create a new one for each Server side render?
 const navigationHistory = process.env.SIDE === 'client' ? browserHistory : createMemoryHistory();
 
 // Set up the router, wrapping all Routes in the App component

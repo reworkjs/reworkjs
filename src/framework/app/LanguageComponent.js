@@ -25,7 +25,7 @@ type State = {
 /**
  * this component synchronizes the internal i18n state with react-intl.
  */
-@withCookies()
+@withCookies
 export default class LanguageComponent extends React.Component<Props, State> {
 
   state = {

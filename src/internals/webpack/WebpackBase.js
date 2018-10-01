@@ -16,7 +16,6 @@ import CopyWebpackPlugin from 'copy-webpack-plugin';
 import frameworkConfig from '../../shared/framework-config';
 import projectMetadata from '../../shared/project-metadata';
 import frameworkMetadata from '../../shared/framework-metadata';
-import { getHooks } from '../get-plugins';
 import { resolveFrameworkSource } from '../util/resolve-util';
 import argv from '../rjs-argv';
 import logger from '../../shared/logger';
@@ -394,27 +393,21 @@ export default class WebpackBase {
     const programArgv = minimist(argv['--'] || []);
 
     const definedVariables: Object = {
-      'process.env.SIDE': SIDE,
-      'process.env.BUILD_ENV': NODE_ENV,
-      'process.env.PROCESS_NAME': JSON.stringify(`${projectMetadata.name} (${this.isServer() ? 'server' : 'client'})`),
+      process: {
+        env: {
+          SIDE,
+          NODE_ENV,
+          PROCESS_NAME: JSON.stringify(`${projectMetadata.name} (${this.isServer() ? 'server' : 'client'})`),
+        },
+      },
       $$RJS_VARS$$: {
         FRAMEWORK_METADATA: JSON.stringify(frameworkMetadata),
         PROJECT_METADATA: JSON.stringify(projectMetadata),
         PARSED_ARGV: JSON.stringify(programArgv),
-
-        HOOKS_CLIENT: buildRequireArrayScript(getHooks('client')),
-        HOOKS_SERVER: buildRequireArrayScript(getHooks('server')),
       },
     };
 
-    if (!this.isServer()) {
-      // define process on the browser
-      definedVariables.process = {
-        env: {
-          NODE_ENV,
-        },
-      };
-    } else {
+    if (this.isServer()) {
       const outputDirectory = getWebpackSettings(this.isServer()).output.path;
 
       // we only pass build & logs to bundled code
@@ -443,7 +436,7 @@ export default class WebpackBase {
       definedVariables.$$RJS_VARS$$.FRAMEWORK_CONFIG = JSON.stringify(FRAMEWORK_CONFIG);
     }
 
-    return definedVariables;
+    return flattenKeys(definedVariables);
   }
 
   /** @private */
@@ -533,12 +526,25 @@ function buildIndexPage() {
   });
 }
 
-function buildRequireArrayScript(uris: string[]): string {
-  let script = 'r; var r = [];\n';
+function buildRequireArrayScript(uris) {
+  const uriList = uris.map(uri => `require(${JSON.stringify(uri)})`).join(',');
 
-  for (const uri of uris) {
-    script += `r.push(require('${uri}'))`;
+  return `[${uriList}]`;
+}
+
+function flattenKeys(obj, out = {}, paths = []) {
+
+  for (const key of Object.getOwnPropertyNames(obj)) {
+    paths.push(key);
+
+    if (typeof obj[key] === 'object') {
+      flattenKeys(obj[key], out, paths);
+    } else {
+      out[paths.join('.')] = obj[key];
+    }
+
+    paths.pop();
   }
 
-  return script;
+  return out;
 }

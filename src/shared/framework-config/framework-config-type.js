@@ -19,5 +19,5 @@ export type FrameworkConfigStruct = {
   'pre-init': ?string,
   'service-worker': ?string,
 
-  plugins: ?Array<FrameworkPluginConfig | string>,
+  plugins: ?{ [string]: any },
 };

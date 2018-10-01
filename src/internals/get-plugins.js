@@ -23,19 +23,33 @@ export default function getPlugins(): FrameworkPlugin[] {
   }
 
   const plugins = [];
-  for (const pluginConfig of pluginConfigs) {
-    const pluginUri = typeof pluginConfig === 'string' ? pluginConfig : pluginConfig.plugin;
-    const config = typeof pluginConfig === 'string' ? null : pluginConfig.config;
+  for (const [pluginModule, pluginConfig] of Object.entries(pluginConfigs)) {
 
-    // $FlowIgnore
-    const Plugin = require(pluginUri);
-    const pluginInstance = new Plugin(config);
+    let Plugin;
+    try {
+      // $FlowIgnore
+      Plugin = require(`${pluginModule}/plugin`);
+    } catch (e) {
+      console.error(`Could not find reworkjs plugin ${pluginModule}. Make sure the package is installed and module ${pluginModule}/plugin exists.`);
+      throw e;
+    }
+
+    if (Plugin.default) {
+      Plugin = Plugin.default;
+    }
+
+    const pluginInstance = new Plugin(pluginConfig);
 
     plugins.push(pluginInstance);
   }
 
   return plugins;
 }
+
+export const HOOK_SIDES = Object.freeze({
+  client: 'client',
+  server: 'server',
+});
 
 export function getHooks(side: string): string[] {
 
