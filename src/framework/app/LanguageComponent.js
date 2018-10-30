@@ -57,7 +57,7 @@ export default class LanguageComponent extends React.Component<Props, State> {
   onActiveLocaleChange(newLocale: string) {
     this.setState({ activeLocale: newLocale });
 
-    storePreferredLocale(newLocale);
+    storePreferredLocale(this.props.cookies, newLocale);
   }
 
   render() {
