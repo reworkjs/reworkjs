@@ -38,7 +38,12 @@ export default function getPlugins(): FrameworkPlugin[] {
       Plugin = Plugin.default;
     }
 
+    if (Plugin.instance && !(Plugin.instance instanceof Plugin)) {
+      throw new Error(`${pluginModule}/plugin: instance static property is reserved to reworkjs.`);
+    }
+
     const pluginInstance = new Plugin(pluginConfig);
+    Plugin.instance = pluginInstance;
 
     plugins.push(pluginInstance);
   }
