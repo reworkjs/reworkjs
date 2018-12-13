@@ -41,7 +41,6 @@
     "react": "^16.3.1",
     "react-dom": "^16.3.1",
     "prop-types": "^15.6.1",
-    "react-router": "^3.0.0",
     "react-helmet": "^5.2.0",
     "react-cookie": "^2.1.4"
   },
@@ -69,7 +68,9 @@
     "find-cache-dir": "^1.0.0",
     "fs-extra": "^5.0.0",
     "get-port": "^3.2.0",
+    "glob": "^7.1.3",
     "global": "^4.3.2",
+    "history": "^4.7.2",
     "html-webpack-plugin": "^3.2.0",
     "http-proxy": "^1.16.2",
     "image-webpack-loader": "^4.2.0",
@@ -89,7 +90,7 @@
     "offline-plugin": "^4.9.0",
     "postcss-loader": "^2.1.3",
     "promise-all-properties": "^0.2.0",
-    "react-router-scroll": "^0.4.3",
+    "react-router-dom": "^4.3.1",
     "recursive-readdir-sync": "^1.0.6",
     "regenerator-runtime": "^0.11.1",
     "require-all": "^2.2.0",
@@ -136,7 +137,6 @@
     "react-dom": "^16.3.1",
     "react-helmet": "^5.2.0",
     "react-intl": "^2.4.0",
-    "react-router": "^4.2.0",
     "standard-version": "^4.3.0"
   }
 }

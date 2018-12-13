@@ -3,10 +3,10 @@
     "logs": "./.build",
     "build": "./.build",
     "resources": "./public",
-    "routes": "./app/routes",
     "translations": "./app/translations"
   },
 
+  "routes": "**/*.route.js",
   "entry-react": "./app/containers/App",
   "render-html": null,
   "pre-init": null,

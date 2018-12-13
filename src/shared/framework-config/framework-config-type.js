@@ -9,10 +9,10 @@ export type FrameworkConfigStruct = {
     logs: string,
     build: string,
     resources: string,
-    routes: string,
     translations: string,
   },
 
+  routes: string,
   'entry-react': string,
   'render-html': ?string,
   'pre-init': ?string,

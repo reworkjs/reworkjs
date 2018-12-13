@@ -1,23 +1,23 @@
 // @flow
 
-import { browserHistory, createMemoryHistory } from 'react-router';
-import mainComponent from '../common/main-component';
-import createRoutes from './create-routes';
+import React from 'react';
+import { Switch } from 'react-router-dom';
+import MainComponent from '../common/main-component';
+import createRoutes from './router/create-routes';
 import debug from './debug';
 
-// useRouterHistory creates a composable higher-order function
-// TODO createMemoryHistory: Should we create a new one for each Server side render?
-const navigationHistory = process.env.SIDE === 'client' ? browserHistory : createMemoryHistory();
-
 // Set up the router, wrapping all Routes in the App component
-const rootRoute = {
-  component: mainComponent,
-  childRoutes: createRoutes(),
-};
 
-debug.rootRoute = rootRoute;
+const topLevelRoutes = createRoutes();
 
-export {
-  rootRoute,
-  navigationHistory as history,
-};
+debug.topLevelRoutes = topLevelRoutes;
+
+const rootRoute = (
+  <MainComponent>
+    <Switch>
+      {topLevelRoutes}
+    </Switch>
+  </MainComponent>
+);
+
+export { rootRoute };

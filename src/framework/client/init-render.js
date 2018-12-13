@@ -1,25 +1,22 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { applyRouterMiddleware, Router } from 'react-router';
+import { createBrowserHistory } from 'history';
+import { Router } from 'react-router-dom';
 import { CookiesProvider } from 'react-cookie';
 import serverStyleCleanup from 'node-style-loader/clientCleanup';
-import { useScroll } from 'react-router-scroll';
 import { getDefault } from '../../shared/util/ModuleUtil';
 import ReworkRootComponent from '../app/ReworkRootComponent';
-import { rootRoute, history } from '../common/kernel';
+import { rootRoute } from '../common/kernel';
 import ClientHooks from './client-hooks';
+
+// TODO: support hashHistory somehow (cli option ?)
 
 let rootComponent = (
   <CookiesProvider>
     <ReworkRootComponent>
-      <Router
-        history={history}
-        routes={rootRoute}
-        render={
-          // Scroll to top when going to a new page, imitating default browser behaviour
-          applyRouterMiddleware(useScroll())
-        }
-      />
+      <Router history={createBrowserHistory()}>
+        {rootRoute}
+      </Router>
     </ReworkRootComponent>
   </CookiesProvider>
 );
