@@ -372,7 +372,6 @@ export default class WebpackBase {
       '@@main-component': frameworkConfig['entry-react'],
       '@@directories.routes': frameworkConfig.directories.routes,
       '@@directories.translations': frameworkConfig.directories.translations,
-      '@@directories.providers': frameworkConfig.directories.providers,
 
       // Support React Native Web
       // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/

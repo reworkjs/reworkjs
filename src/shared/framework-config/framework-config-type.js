@@ -10,7 +10,6 @@ export type FrameworkConfigStruct = {
     build: string,
     resources: string,
     routes: string,
-    providers: ?string,
     translations: string,
   },
 

@@ -4,7 +4,6 @@
     "build": "./.build",
     "resources": "./public",
     "routes": "./app/routes",
-    "providers": "./app/providers",
     "translations": "./app/translations"
   },
 
