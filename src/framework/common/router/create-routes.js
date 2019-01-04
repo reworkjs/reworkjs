@@ -6,6 +6,8 @@ import { getDefault } from '../../../shared/util/ModuleUtil';
 import logger from '../../../shared/logger';
 import routeModules from 'val-loader!./_find-routes';
 
+// TODO: expose @withQueryParams which provides an URLSearchParam instance
+
 const SourceFileName = Symbol('sourceFileName');
 
 export default function createRoutes() {
@@ -48,7 +50,7 @@ export default function createRoutes() {
     .map(route => sanitizeRoute(route, route[SourceFileName]));
 }
 
-function sanitizeRoute(routeData, fileName) {
+function sanitizeRoute(routeData /* , fileName */) {
 
   delete routeData.priority;
 
@@ -58,5 +60,5 @@ function sanitizeRoute(routeData, fileName) {
   // const { getComponent, status, ...passDownRoute } = routeData;
   // let routeElement = <Route {...passDownRoute} />;
 
-  return <Route {...routeData} />;
+  return <Route {...routeData} key={routeData.path} />;
 }
