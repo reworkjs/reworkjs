@@ -9,7 +9,7 @@ type Props = {
   children: any,
 };
 
-export default function ReworkRootComponent(props: Props) {
+function ReworkRootComponent(props: Props) {
 
   return (
     <React.Fragment>
@@ -20,6 +20,15 @@ export default function ReworkRootComponent(props: Props) {
     </React.Fragment>
   );
 }
+
+let ExportedModule = ReworkRootComponent;
+if (module.hot) {
+  const { hot } = require('react-hot-loader');
+
+  ExportedModule = hot(module)(ExportedModule);
+}
+
+export default ExportedModule;
 
 // Install ServiceWorker and AppCache in the end since
 // it's not most important operation and if main code fails,

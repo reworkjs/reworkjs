@@ -4,7 +4,6 @@ import findCacheDir from 'find-cache-dir';
 import findBabelConfig from 'find-babel-config';
 import frameworkMetadata from '../../../shared/framework-metadata';
 import { resolveProject } from '../../util/resolve-util';
-import { getDefault } from '../../../shared/util/ModuleUtil';
 import BaseFeature from '../BaseFeature';
 import type WebpackConfigBuilder from '../WebpackConfigBuilder';
 
@@ -15,30 +14,41 @@ export default class BabelFeature extends BaseFeature {
   }
 
   getDescription() {
-    return 'Transpiles JavaScript into ES5';
+    return 'Transpiles JavaScript based on what you support';
   }
 
   visit(webpack: WebpackConfigBuilder) {
+
+    // this is ran exclusively on the project's source code
     webpack.injectRules({
       test: BaseFeature.FILE_TYPE_JS,
       loader: 'babel-loader',
       exclude: /node_modules/,
-      options: this.getTransformedBabelConfig(),
+      options: this.getProjectBabelConfig(),
+    });
+
+    // this is ran exclusively on node_modules to transpile valid ES features based on browserslistrc.
+    webpack.injectRules({
+      test: BaseFeature.FILE_TYPE_JS,
+      loader: 'babel-loader',
+      include: /node_modules/,
+      options: {
+        presets: ['@reworkjs/reworkjs/lib/internals/babel/global-babel-preset'],
+      },
     });
   }
 
-  getTransformedBabelConfig() {
+  getProjectBabelConfig() {
     const config = this.getBabelConfig();
 
     config.babelrc = false;
 
     if (this.isDev()) {
-      config.presets.push('react-hmre');
+      config.plugins.push('react-hot-loader/babel');
     }
 
-    // This is a feature of `babel-loader` for webpack (not Babel itself).
-    // It enables caching build results in ./node_modules/.cache/reworkjs/babel
-    // directory for faster rebuilds. We use findCacheDir() because of:
+    // Cache build results in ./node_modules/.cache/reworkjs/babel.
+    // We use findCacheDir() because of:
     // https://github.com/facebookincubator/create-react-app/issues/483
     config.cacheDirectory = `${findCacheDir({
       name: frameworkMetadata.name,
@@ -47,12 +57,12 @@ export default class BabelFeature extends BaseFeature {
     return config;
   }
 
-  getBabelConfig() {
-    // FIXME note: might break with Babel 7 due to new support for babelrc.js
+  getBabelConfig(): Object {
+    // FIXME need to find a way to support other kind of babel configs.
     const { config } = findBabelConfig.sync(resolveProject('.'));
 
     if (config == null) {
-      return getDefault(this.getOptionalDependency('@reworkjs/babel-preset-reworkjs'))();
+      return { presets: ['@reworkjs/reworkjs/babel-preset'] };
     }
 
     return config;

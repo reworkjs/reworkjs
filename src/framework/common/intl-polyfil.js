@@ -13,5 +13,5 @@ export function installIntlPolyfill(): Promise<void> {
     return Promise.resolve();
   }
 
-  return import(/* webpackChunkName: "rjs_intl" */ 'intl');
+  return import(/* webpackChunkName: "rjs-intl" */ 'intl');
 }

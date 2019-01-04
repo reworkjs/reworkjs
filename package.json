@@ -33,8 +33,7 @@
     }
   },
   "optionalDependencies": {
-    "webpack-bundle-analyzer": "^2.11.1",
-    "@reworkjs/babel-preset-reworkjs": "^0.3.0"
+    "webpack-bundle-analyzer": "^2.11.1"
   },
   "peerDependencies": {
     "react-intl": "^2.4.0",
@@ -45,9 +44,18 @@
     "react-cookie": "^2.1.4"
   },
   "dependencies": {
+    "@babel/core": "^7.2.2",
+    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
+    "@babel/plugin-transform-react-constant-elements": "^7.2.0",
+    "@babel/plugin-transform-runtime": "^7.2.0",
+    "@babel/preset-env": "^7.2.3",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/runtime": "^7.2.0",
     "accept": "^3.0.2",
-    "babel-core": "^6.26.0",
-    "babel-loader": "^7.1.4",
+    "babel-loader": "^7.1.5",
+    "babel-plugin-lodash": "^3.3.4",
+    "babel-plugin-react-intl-auto": "^1.4.0",
+    "babel-plugin-transform-react-remove-prop-types": "^0.4.21",
     "blessed": "^0.1.81",
     "brotli-webpack-plugin": "^0.5.0",
     "bundle-loader": "^0.5.6",
@@ -90,6 +98,7 @@
     "postcss-loader": "^2.1.3",
     "promise-all-properties": "^0.2.0",
     "react-combine-consumers": "^0.2.1",
+    "react-hot-loader": "^4.6.3",
     "react-router-dom": "^4.3.1",
     "recursive-readdir-sync": "^1.0.6",
     "regenerator-runtime": "^0.11.1",
@@ -114,18 +123,16 @@
     "yargs": "^11.0.0"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.2.3",
+    "@babel/plugin-proposal-decorators": "^7.2.3",
+    "@babel/plugin-transform-flow-strip-types": "^7.2.3",
     "@foobarhq/eslint-config": "^4.0.1",
-    "@reworkjs/babel-preset-reworkjs": "^0.3.0",
-    "babel-plugin-dynamic-import-node": "^1.2.0",
-    "babel-plugin-transform-class-properties": "^6.24.1",
-    "babel-plugin-transform-decorators-legacy": "^1.3.4",
-    "babel-preset-env": "^1.6.1",
-    "babel-preset-react": "^6.24.1",
+    "babel-plugin-dynamic-import-node": "^2.2.0",
     "del": "^3.0.0",
     "eslint": "^4.19.1",
     "flow-bin": "^0.89.0",
     "gulp": "^3.9.1",
-    "gulp-babel": "^7.0.1",
+    "gulp-babel": "^8.0.0",
     "gulp-plumber": "^1.2.0",
     "gulp-watch": "^5.0.0",
     "husky": "^0.14.3",

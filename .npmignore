@@ -1,6 +1,7 @@
 /.gitignore
 /.gitattributes
 /.eslintrc
+/.eslintignore
 /.editorconfig
 /.travis.yml
 /appveyor.yml
@@ -9,6 +10,5 @@
 /.build
 /app
 /public
-/.es.babelrc
-/.eslintignore
 *.log
+/gulpfile.js
