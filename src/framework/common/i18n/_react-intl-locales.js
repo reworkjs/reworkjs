@@ -13,6 +13,8 @@ function installReactIntlLocale(localeName: string): Promise<void> {
     let actualLocale = getIntlLocaleBestFit(localeName);
     if (actualLocale == null) {
       console.error(`Could not fetch React-Intl locale ${localeName}, it does not exist (fallback to english).`);
+
+      // TODO(DEFAULT_LOCALE): use default locale instead of 'en'
       actualLocale = 'en';
     }
 

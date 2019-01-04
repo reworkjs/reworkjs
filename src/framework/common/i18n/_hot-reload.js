@@ -11,6 +11,6 @@ export function offIntlHotReload(callback: HotReloadListener) {
   hotReloadListeners.delete(callback);
 }
 
-export function triggerHotReload() {
+export function triggerI18nHotReload() {
   hotReloadListeners.forEach(callback => callback());
 }

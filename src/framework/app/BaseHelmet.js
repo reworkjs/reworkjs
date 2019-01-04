@@ -2,17 +2,21 @@
 
 import React from 'react';
 import Helmet from 'react-helmet';
-import { withCookies, type ReactCookieProps } from 'react-cookie';
+import { withConsumers } from 'react-combine-consumers';
+import { withCookies, type Cookies } from 'react-cookie';
 import { guessPreferredLocale } from '../common/i18n/get-preferred-locale';
+import { LanguageConsumer } from '../common/accept-language-context';
 
 type Props = {
-  cookies: ReactCookieProps,
+  cookies: Cookies,
+  acceptLanguages: string[],
 };
 
 function BaseHelmet(props: Props) {
 
   // is process.env.SIDE is null, we're the build process. Use default value.
-  const lang = process.env.SIDE == null ? 'en' : getLangFromLocale(guessPreferredLocale(props.cookies));
+  // TODO(DEFAULT_LOCALE): use default locale instead of 'en'
+  const lang = process.env.SIDE == null ? 'en' : getLangFromLocale(guessPreferredLocale(props.cookies, props.acceptLanguages));
 
   return (
     <Helmet>
@@ -30,4 +34,6 @@ function getLangFromLocale(locale) {
 
 // only inject cookies if we're in HTTP server or the browser context
 // not if we're the builder.
-export default process.env.SIDE == null ? BaseHelmet : withCookies(BaseHelmet);
+export default process.env.SIDE == null
+  ? BaseHelmet
+  : withConsumers({ acceptLanguages: LanguageConsumer })(withCookies(BaseHelmet));

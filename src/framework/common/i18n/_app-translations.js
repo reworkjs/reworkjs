@@ -2,12 +2,13 @@
 
 import { loadMessageTranslationList } from '../../../shared/get-translations';
 import { getDefault } from '../../../shared/util/ModuleUtil';
-import { triggerHotReload } from './_hot-reload';
+import { triggerI18nHotReload } from './_hot-reload';
 import { getFileName, getLocaleBestFit, runBundleLoader } from './_locale-utils';
-import { getActiveLocale } from './index';
 
 let messageTranslationsLoaders = loadMessageTranslationList();
 let localeToFileMapping: Map<string, string> = buildMessagesLocaleList(messageTranslationsLoaders);
+
+export type ReactIntlMessages = { [string]: string };
 
 function buildMessagesLocaleList(loaders) {
   const mapping = new Map();
@@ -27,7 +28,7 @@ function buildMessagesLocaleList(loaders) {
   return mapping;
 }
 
-function formatTranslationMessages(messages) {
+function formatTranslationMessages(messages): ReactIntlMessages {
   if (!Array.isArray(messages)) {
     return messages;
   }
@@ -40,20 +41,19 @@ function formatTranslationMessages(messages) {
   return formattedMessages;
 }
 
-let messageTranslations = {};
-function getReactIntlMessages() {
-  return messageTranslations;
-}
+// TODO: move this global state to React Tree.
 
-function installReactIntlMessagesForLocale(locale: string): Promise<void> {
+function installReactIntlMessagesForLocale(locale: string): Promise<ReactIntlMessages> {
   return downloadMessagesTranslationFile(locale)
     .then(translations => {
       if (translations == null || typeof translations !== 'object') {
         throw new TypeError(`Invalid translation file for locale ${JSON.stringify(locale)}, expected it to export an Object or an Array.`);
       }
 
-      messageTranslations = formatTranslationMessages(translations);
+      const messageTranslations = formatTranslationMessages(translations);
       Object.freeze(messageTranslations);
+
+      return messageTranslations;
     });
 }
 
@@ -96,7 +96,6 @@ function isTranslationSupported(localeName: string): boolean {
 
 export {
   installReactIntlMessagesForLocale,
-  getReactIntlMessages,
   isTranslationSupported,
 };
 
@@ -108,9 +107,6 @@ if (module.hot) {
     messageTranslationsLoaders = loadMessageTranslationList();
     localeToFileMapping = buildMessagesLocaleList(messageTranslationsLoaders);
 
-    installReactIntlMessagesForLocale(getActiveLocale())
-      .then(() => {
-        triggerHotReload();
-      });
+    triggerI18nHotReload();
   });
 }

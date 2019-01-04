@@ -7,18 +7,21 @@ import serverStyleCleanup from 'node-style-loader/clientCleanup';
 import { getDefault } from '../../shared/util/ModuleUtil';
 import ReworkRootComponent from '../app/ReworkRootComponent';
 import { rootRoute } from '../common/kernel';
+import BrowserLanguageProvider from './browser-language-provider';
 import ClientHooks from './client-hooks';
 
 // TODO: support hashHistory somehow (cli option ?)
 
 let rootComponent = (
-  <CookiesProvider>
-    <ReworkRootComponent>
-      <Router history={createBrowserHistory()}>
-        {rootRoute}
-      </Router>
-    </ReworkRootComponent>
-  </CookiesProvider>
+  <BrowserLanguageProvider>
+    <CookiesProvider>
+      <ReworkRootComponent>
+        <Router history={createBrowserHistory()}>
+          {rootRoute}
+        </Router>
+      </ReworkRootComponent>
+    </CookiesProvider>
+  </BrowserLanguageProvider>
 );
 
 const clientHooks = ClientHooks.map(hookModule => {

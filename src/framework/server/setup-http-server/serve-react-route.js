@@ -4,13 +4,13 @@ import { CookiesProvider } from 'react-cookie';
 import { StaticRouter } from 'react-router-dom';
 import { renderToString } from 'react-dom/server';
 import { collectInitial, collectContext } from 'node-style-loader/collect';
-import { parse } from 'accept-language-parser';
+import accept from 'accept';
 import { getDefault } from '../../../shared/util/ModuleUtil';
 import getWebpackSettings from '../../../shared/webpack-settings';
 import { rootRoute } from '../../common/kernel';
 import ReworkRootComponent from '../../app/ReworkRootComponent';
+import { LanguageProvider } from '../../common/accept-language-context';
 import ServerHooks from '../server-hooks';
-import { setRequestLocales } from './request-locale';
 import renderPage from './render-page';
 
 export default async function serveReactRoute(req, res, next): ?{ appHtml: string, state: Object, style: string } {
@@ -25,25 +25,16 @@ export default async function serveReactRoute(req, res, next): ?{ appHtml: strin
     });
 
     try {
-      setRequestLocales(
-        parse(req.header('Accept-Language'))
-          .map(parsedLocale => {
-            let localeStr = parsedLocale.code;
-
-            if (parsedLocale.region) {
-              localeStr += `-${parsedLocale.region}`;
-            }
-
-            return localeStr;
-          }),
-      );
+      const acceptedLanguages = accept.languages(req.header('Accept-Language'));
 
       let component = (
-        <CookiesProvider cookies={req.universalCookies}>
-          <ReworkRootComponent>
-            {rootRoute}
-          </ReworkRootComponent>
-        </CookiesProvider>
+        <LanguageProvider value={acceptedLanguages}>
+          <CookiesProvider cookies={req.universalCookies}>
+            <ReworkRootComponent>
+              {rootRoute}
+            </ReworkRootComponent>
+          </CookiesProvider>
+        </LanguageProvider>
       );
 
       // allow plugins to add components
