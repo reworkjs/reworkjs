@@ -19,6 +19,14 @@ module.exports = function buildPreset(api, opts = {}) {
     } : {},
   });
 
+  preset.presets.push(
+    [require('@babel/preset-react'), {
+      development: process.env.BABEL_ENV !== 'production',
+      useBuiltIns: true,
+      ...opts['@babel/preset-react'],
+    }],
+  );
+
   preset.plugins.push(
     require('@babel/plugin-transform-flow-strip-types').default,
     require('@babel/plugin-syntax-dynamic-import').default,

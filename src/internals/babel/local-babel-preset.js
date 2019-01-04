@@ -8,9 +8,17 @@
 
 const buildGlobalPreset = require('./global-babel-preset');
 
-module.exports = function buildPreset() {
+module.exports = function buildPreset(api, opts = {}) {
 
-  const preset = buildGlobalPreset();
+  const preset = buildGlobalPreset(api, opts);
+
+  preset.presets.push(
+    [require('@babel/preset-react'), {
+      development: process.env.BABEL_ENV !== 'production',
+      useBuiltIns: true,
+      ...opts['@babel/preset-react'],
+    }],
+  );
 
   preset.plugins.push(
     require('@babel/plugin-react-intl-auto'),

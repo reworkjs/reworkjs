@@ -16,11 +16,6 @@ module.exports = function buildPreset(api, opts = {}) {
         modules: false,
         ...opts['@babel/preset-env'],
       }],
-      [require('@babel/preset-react'), {
-        development: process.env.BABEL_ENV !== 'production',
-        useBuiltIns: true,
-        ...opts['@babel/preset-react'],
-      }],
     ],
 
     plugins: [
