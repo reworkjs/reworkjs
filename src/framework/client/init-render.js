@@ -37,10 +37,18 @@ for (const clientHook of clientHooks) {
   }
 }
 
-ReactDOM.render(
-  rootComponent,
-  document.getElementById('app'),
-);
+const appContainer = document.getElementById('app');
+if (appContainer.hasChildNodes()) {
+  ReactDOM.hydrate(
+    rootComponent,
+    appContainer,
+  );
+} else {
+  ReactDOM.render(
+    rootComponent,
+    appContainer,
+  );
+}
 
 // remove server-generated CSS
 serverStyleCleanup();
