@@ -1,31 +1,23 @@
 // @flow
 
-import { syncHistoryWithStore } from 'react-router-redux';
-import { browserHistory, createMemoryHistory } from 'react-router';
-import { createSelector } from 'reselect';
-import RouteProvider from '../app/providers/RouteProvider';
-import mainComponent from '../common/main-component';
-import createRoutes from './create-routes';
-import createStore from './create-store';
+import React from 'react';
+import { Switch } from 'react-router-dom';
+import MainComponent from './app-main-component';
+import createRoutes from './router/create-routes';
 import debug from './debug';
 
-// useRouterHistory creates a composable higher-order function
-const navigationHistory = process.env.SIDE === 'client' ? browserHistory : createMemoryHistory();
-const store = createStore(navigationHistory);
-
-const history = syncHistoryWithStore(navigationHistory, store, {
-  selectLocationState: createSelector(
-    RouteProvider.locationBeforeTransitions,
-    locationBeforeTransitions => ({ locationBeforeTransitions }),
-  ),
-});
-
 // Set up the router, wrapping all Routes in the App component
-const rootRoute = {
-  component: mainComponent,
-  childRoutes: createRoutes(store),
-};
 
-debug.rootRoute = rootRoute;
+const topLevelRoutes = createRoutes();
 
-export { rootRoute, history, store };
+debug.topLevelRoutes = topLevelRoutes;
+
+const rootRoute = (
+  <MainComponent>
+    <Switch>
+      {topLevelRoutes}
+    </Switch>
+  </MainComponent>
+);
+
+export { rootRoute };

@@ -9,3 +9,4 @@
 suppress_comment=\\(.\\|\n\\)*\\$FlowBug
 suppress_comment=\\(.\\|\n\\)*\\$FlowIgnore
 suppress_comment=\\(.\\|\n\\)*\\$FlowFixMe
+esproposal.decorators=ignore

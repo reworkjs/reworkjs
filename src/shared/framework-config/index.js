@@ -79,6 +79,8 @@ function isDirectory(dir) {
   }
 }
 
+// TODO some entries should not be "resolved"
+// TODO check pluginConfig is an Array
 const config: FrameworkConfigStruct = resolveEntries(merge(defaultConfig, getUserConfig()));
 
 if (config.directories.logs === null) {

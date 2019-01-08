@@ -1,56 +1,101 @@
-import React from 'react';
+// @flow
+
+import * as React from 'react';
 import { IntlProvider } from 'react-intl';
-import PropTypes from 'prop-types';
-import { Cookies } from 'react-cookie';
-import { guessPreferredLocale } from '../common/get-preferred-locale';
-import { onHotReload } from '../common/i18n';
-import container from '../common/decorators/container';
-import LanguageProvider from './providers/LanguageProvider';
+import { Cookies, withCookies } from 'react-cookie';
+import { withConsumers } from 'react-combine-consumers';
+import { ActiveLocaleProvider } from '../common/active-locale-context';
+import { isTranslationSupported, type ReactIntlMessages } from '../common/i18n/_app-translations';
+import { guessPreferredLocale, storePreferredLocale } from '../common/i18n/get-preferred-locale';
+import {
+  onIntlHotReload,
+  installLocale,
+} from '../common/i18n';
+import { LanguageConsumer } from '../common/accept-language-context';
 
-function Fragment(props) {
-  return props.children;
-}
+type Props = {
+  children: any,
+  cookies: Cookies,
+  acceptLanguages: string[],
+};
 
-/*
- * this component connects the redux state language locale to the
- * IntlProvider component and i18n messages (loaded from `app/translations`)
+type State = {
+  activeLocale: string,
+  messages: ReactIntlMessages,
+};
+
+/**
+ * this component synchronizes the internal i18n state with react-intl.
  */
-@container({
-  state: {
-    locale: LanguageProvider.locale,
-  },
-  actions: {
-    changeLocale: LanguageProvider.changeLocale,
-  },
-  cookies: true,
-})
-export default class LanguageComponent extends React.Component {
-  static propTypes = {
-    messages: PropTypes.object,
-    locale: PropTypes.string.isRequired,
-    changeLocale: PropTypes.func.isRequired,
-    children: PropTypes.node.isRequired,
-    cookies: PropTypes.instanceOf(Cookies).isRequired,
+@withCookies
+@withConsumers({ acceptLanguages: LanguageConsumer })
+export default class LanguageComponent extends React.Component<Props, State> {
+
+  state = {
+    // TODO(DEFAULT_LOCALE): use default locale instead of 'en'
+    activeLocale: 'en',
+    messages: {},
   };
 
-  constructor(props) {
+  constructor(props: Props) {
     super(props);
 
-    props.changeLocale(guessPreferredLocale(props.cookies), false);
+    // $FlowFixMe
+    this.setActiveLocale = this.setActiveLocale.bind(this);
 
+    // $FlowFixMe
     if (module.hot) {
-      onHotReload(() => this.forceUpdate());
+      onIntlHotReload(() => {
+        installLocale(this.state.activeLocale).then(() => this.forceUpdate());
+      });
     }
   }
 
+  componentDidMount() {
+    const activeLocale = guessPreferredLocale(this.props.cookies, this.props.acceptLanguages);
+
+    installLocale(activeLocale).then(data => {
+      this.setState({
+        messages: data.messages,
+        activeLocale,
+      });
+    });
+  }
+
+  setActiveLocale(newLocale: string) {
+    if (!isTranslationSupported(newLocale)) {
+      throw new Error(`Locale ${newLocale} is unsupported`);
+    }
+
+    storePreferredLocale(this.props.cookies, newLocale);
+
+    return installLocale(newLocale).then(data => {
+      this.setState({
+        messages: data.messages,
+        activeLocale: newLocale,
+      });
+    });
+  }
+
+  get activeLocaleContext(): Object {
+
+    return {
+      activeLocale: this.state.activeLocale,
+      setActiveLocale: this.setActiveLocale,
+    };
+  }
+
   render() {
+
     return (
       <IntlProvider
-        locale={this.props.locale}
-        messages={this.props.messages[this.props.locale]}
-        textComponent={Fragment}
+        locale={this.state.activeLocale}
+        messages={this.state.messages}
+        textComponent={React.Fragment}
       >
-        {React.Children.only(this.props.children)}
+        <ActiveLocaleProvider value={this.activeLocaleContext}>
+          {this.props.children}
+        </ActiveLocaleProvider>
       </IntlProvider>
     );
   }

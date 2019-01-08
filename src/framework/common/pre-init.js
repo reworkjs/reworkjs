@@ -1,10 +1,11 @@
-import global from 'global';
 import '../../shared/regenerator';
 import './source-map-support';
 import { getDefault } from '../../shared/util/ModuleUtil';
+import { installIntlPolyfill } from './intl-polyfil';
 
 export default async function loadPreInit() {
-  await loadReworkPolyfills();
+
+  await installIntlPolyfill();
 
   // webpack
   const preInit = getDefault(require('@@pre-init'));
@@ -13,22 +14,4 @@ export default async function loadPreInit() {
   } else {
     await preInit;
   }
-}
-
-/**
- * Load the list of polyfills used by reworkjs
- */
-function loadReworkPolyfills() {
-  const promises = [];
-
-  if (!global.Intl) {
-    promises.push(
-      import('intl'),
-
-      // TODO dynamically load appropriate intl locales
-      import('intl/locale-data/jsonp/en.js'),
-    );
-  }
-
-  return Promise.all(promises);
 }

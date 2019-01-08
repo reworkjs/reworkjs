@@ -1,113 +1,135 @@
 import fs from 'fs';
 import React from 'react';
 import { CookiesProvider } from 'react-cookie';
-import { match, RouterContext } from 'react-router';
+import { StaticRouter } from 'react-router-dom';
 import { renderToString } from 'react-dom/server';
 import { collectInitial, collectContext } from 'node-style-loader/collect';
-import { parse } from 'accept-language-parser';
+import accept from 'accept';
+import { getDefault } from '../../../shared/util/ModuleUtil';
 import getWebpackSettings from '../../../shared/webpack-settings';
-import { rootRoute, store } from '../../common/kernel';
-import ReworkJsWrapper from '../../app/ReworkJsWrapper';
-import { setRequestLocales } from './request-locale';
+import { rootRoute } from '../../common/kernel';
+import ReworkRootComponent from '../../app/ReworkRootComponent';
+import { LanguageProvider } from '../../common/accept-language-context';
+import ServerHooks from '../server-hooks';
 import renderPage from './render-page';
-
-function matchAsync(routes, url) {
-  return new Promise((resolve, reject) => {
-    try {
-      match({ routes, location: url }, (err, redirect, props) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve({ redirect, props });
-        }
-      });
-    } catch (e) {
-      reject(e);
-    }
-  });
-}
 
 export default async function serveReactRoute(req, res, next): ?{ appHtml: string, state: Object, style: string } {
 
   try {
     hookWebpackAsyncRequire();
-    const { redirect, props } = await matchAsync([rootRoute], req.url);
 
-    if (redirect) {
-      res.redirect(redirect.pathname + redirect.search);
-      return;
-    }
+    const serverHooks = ServerHooks.map(hookModule => {
+      const HookClass = getDefault(hookModule);
 
-    if (!props) {
-      res.status(404).send('This is a 404 page. To define the page to actually render when a 404 occurs, please create a new route object and set its "status" property to 404 (int)');
-      return;
-    }
+      return new HookClass();
+    });
 
-    const matchedRoute = props.routes[props.routes.length - 1];
-    if (matchedRoute.status) {
-      res.status(matchedRoute.status);
-    }
+    try {
+      const acceptedLanguages = accept.languages(req.header('Accept-Language'));
 
-    setRequestLocales(
-      parse(req.header('Accept-Language'))
-        .map(parsedLocale => {
-          let localeStr = parsedLocale.code;
+      let component = (
+        <LanguageProvider value={acceptedLanguages}>
+          <CookiesProvider cookies={req.universalCookies}>
+            <ReworkRootComponent>
+              {rootRoute}
+            </ReworkRootComponent>
+          </CookiesProvider>
+        </LanguageProvider>
+      );
 
-          if (parsedLocale.region) {
-            localeStr += `-${parsedLocale.region}`;
-          }
-
-          return localeStr;
-        }),
-    );
-
-    const renderApp = () => renderToString(
-      <CookiesProvider cookies={req.universalCookies}>
-        <ReworkJsWrapper>
-          <RouterContext {...props} />
-        </ReworkJsWrapper>
-      </CookiesProvider>,
-    );
-
-    const compilationStats = await getCompilationStats();
-
-    let header = '';
-    let appHtml;
-    if (process.env.NODE_ENV === 'development') {
-      // There is no CSS entry point in dev mode, generate it with collectInitial/collectContext instead.
-      header += collectInitial();
-      const renderedApp = collectContext(renderApp);
-      header += renderedApp[0]; // 0 = collected CSS
-      appHtml = renderedApp[1]; // 1 = rendered HTML
-    } else {
-      header += compilationStats.client.entryPoints.css;
-      appHtml = renderApp();
-    }
-
-    const importedServerChunks: Set = unhookWebpackAsyncRequire();
-    const importableClientChunks = [];
-    for (const importedServerChunk of importedServerChunks) {
-      const chunkFiles: ?Array<string> = getClientFilesFromServerChunkId(importedServerChunk, compilationStats);
-      if (!chunkFiles) {
-        continue;
+      // allow plugins to add components
+      for (const serverHook of serverHooks) {
+        if (serverHook.wrapRootComponent) {
+          component = serverHook.wrapRootComponent(component);
+        }
       }
 
-      importableClientChunks.push(...chunkFiles.map(getChunkPrefetchLink));
+      // TODO:
+      // renderToNodeStream
+      // -> need support for React-Helmet
+      //  https://github.com/nfl/react-helmet/issues/322
+      //  https://github.com/staylor/react-helmet-async
+      // -> need a way to wrap with surrounding HTML
+      //
+      // TODO:
+      // get http-equiv meta from Helmet, and send them as actual headers
+      const renderApp = () => {
+        const routingContext = {};
+
+        routingContext.markup = renderToString(
+          <StaticRouter location={req.url} context={routingContext}>
+            {component}
+          </StaticRouter>
+        );
+
+        return routingContext;
+      };
+
+      const compilationStats = await getCompilationStats();
+
+      let header = '';
+      let routingContext;
+      if (process.env.NODE_ENV === 'development') {
+        // There is no CSS entry point in dev mode, generate it with collectInitial/collectContext instead.
+        header += collectInitial();
+        const renderedApp = collectContext(renderApp);
+        header += renderedApp[0]; // 0 = collected CSS
+        routingContext = renderedApp[1]; // 1 = rendered HTML
+      } else {
+        header += compilationStats.client.entryPoints.css;
+        routingContext = renderApp();
+      }
+
+      // Somewhere a `<Redirect>` was rendered
+      if (routingContext.url) {
+        return void res.redirect(context.status || 301, routingContext.url);
+      }
+
+      if (routingContext.status) {
+        res.status(routingContext.status);
+      }
+
+      const importedServerChunks: Set = unhookWebpackAsyncRequire();
+      const importableClientChunks = [];
+      for (const importedServerChunk of importedServerChunks) {
+        const chunkFiles: ?Array<string> = getClientFilesFromServerChunkId(importedServerChunk, compilationStats);
+        if (!chunkFiles) {
+          continue;
+        }
+
+        importableClientChunks.push(...chunkFiles.map(getChunkPrefetchLink));
+      }
+
+      header += importableClientChunks.join('');
+
+      let htmlParts = {
+
+        // initial react app
+        body: routingContext.markup,
+
+        // initial style & pre-loaded JS
+        header,
+
+        // inject main webpack bundle
+        footer: `${compilationStats.client.entryPoints.js}`,
+      };
+
+      // allow plugins to edit HTML (add script, etc) before actual render.
+      for (const serverHook of serverHooks) {
+        if (serverHook.preRender) {
+          htmlParts = serverHook.preRender(htmlParts);
+        }
+      }
+
+      res.send(renderPage(htmlParts));
+    } finally {
+      // allow plugins to cleanup
+      for (const serverHook of serverHooks) {
+        if (serverHook.postRequest) {
+          serverHook.postRequest();
+        }
+      }
     }
-
-    header += importableClientChunks.join('');
-
-    res.send(renderPage({
-
-      // initial react app
-      body: appHtml,
-
-      // initial style & pre-loaded JS
-      header,
-
-      // initial redux state + main webpack bundle
-      footer: `<script>window.__PRELOADED_STATE__ = ${JSON.stringify(store.getState())}</script>${compilationStats.client.entryPoints.js}`,
-    }));
   } catch (e) {
     next(e);
   } finally {

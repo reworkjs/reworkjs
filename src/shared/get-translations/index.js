@@ -4,17 +4,20 @@ import libPath from 'path';
 import config from '../framework-config';
 import recursiveReadSync from 'recursive-readdir-sync';
 
-export function loadTranslationList() {
+export function loadMessageTranslationList() {
   return requireContext(config.directories.translations, true, /\.js(on|x|m)$/);
 }
 
-export function loadLocaleList() {
+export function loadReactIntlLocaleList() {
   const directory = libPath.dirname(require.resolve('react-intl/locale-data'));
 
   return requireContext(directory, true, /\.js$/);
 }
 
-function requireContext(path: string, recursive: boolean, filter: RegExp) {
+type BundleModuleLoader = (callback: (any) => any) => void;
+type BundleLoader = (file: string) => BundleModuleLoader;
+
+function requireContext(path: string, recursive: boolean, filter: RegExp): BundleLoader {
   const files = recursiveReadSync(path)
     .filter(file => filter.test(file))
     // replace absolute path with relative path to match webpack behavior
@@ -22,7 +25,12 @@ function requireContext(path: string, recursive: boolean, filter: RegExp) {
     .map(file => `.${file.substr(path.length)}`.replace(/\\/g, '/'));
 
   // mock bundle-loader:
-  const bundle = function getLoader() {};
+  const bundle = function getLoader(fileName: string) {
+    return function bundleModuleLoader(callback) {
+      console.warn(`Loading file using bundle loader mock is not supported (trying to load ${fileName}).`);
+      callback(null);
+    };
+  };
 
   bundle.keys = function keys() {
     return files;

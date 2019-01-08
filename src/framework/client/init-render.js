@@ -1,28 +1,54 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { applyRouterMiddleware, Router } from 'react-router';
+import { createBrowserHistory } from 'history';
+import { Router } from 'react-router-dom';
 import { CookiesProvider } from 'react-cookie';
 import serverStyleCleanup from 'node-style-loader/clientCleanup';
-import { useScroll } from 'react-router-scroll';
-import ReworkJsWrapper from '../app/ReworkJsWrapper';
-import { rootRoute, history } from '../common/kernel';
+import { getDefault } from '../../shared/util/ModuleUtil';
+import ReworkRootComponent from '../app/ReworkRootComponent';
+import { rootRoute } from '../common/kernel';
+import BrowserLanguageProvider from './browser-language-provider';
+import ClientHooks from './client-hooks';
 
-ReactDOM.render(
-  <CookiesProvider>
-    <ReworkJsWrapper>
-      <Router
-        history={history}
-        routes={rootRoute}
-        render={
+// TODO: support hashHistory somehow (cli option ?)
 
-          // Scroll to top when going to a new page, imitating default browser behaviour
-          applyRouterMiddleware(useScroll())
-        }
-      />
-    </ReworkJsWrapper>
-  </CookiesProvider>,
-  document.getElementById('app'),
+let rootComponent = (
+  <BrowserLanguageProvider>
+    <CookiesProvider>
+      <ReworkRootComponent>
+        <Router history={createBrowserHistory()}>
+          {rootRoute}
+        </Router>
+      </ReworkRootComponent>
+    </CookiesProvider>
+  </BrowserLanguageProvider>
 );
+
+const clientHooks = ClientHooks.map(hookModule => {
+  const HookClass = getDefault(hookModule);
+
+  return new HookClass();
+});
+
+// allow plugins to add components
+for (const clientHook of clientHooks) {
+  if (clientHook.wrapRootComponent) {
+    rootComponent = clientHook.wrapRootComponent(rootComponent);
+  }
+}
+
+const appContainer = document.getElementById('app');
+if (appContainer.hasChildNodes()) {
+  ReactDOM.hydrate(
+    rootComponent,
+    appContainer,
+  );
+} else {
+  ReactDOM.render(
+    rootComponent,
+    appContainer,
+  );
+}
 
 // remove server-generated CSS
 serverStyleCleanup();

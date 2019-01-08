@@ -12,7 +12,6 @@ import WebpackCleanupPlugin from 'webpack-cleanup-plugin';
 import nodeExternals from 'webpack-node-externals';
 import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
-// import PolyfillInjectorPlugin from 'webpack-polyfill-injector';
 import frameworkConfig from '../../shared/framework-config';
 import projectMetadata from '../../shared/project-metadata';
 import frameworkMetadata from '../../shared/framework-metadata';
@@ -171,11 +170,6 @@ export default class WebpackBase {
       ];
     } else {
 
-      // https://github.com/SebastianS90/webpack-polyfill-injector
-      // config.entry = `webpack-polyfill-injector?${JSON.stringify({
-      //   modules: [config.entry],
-      // })}!`;
-
       config.resolve.mainFields.unshift('web');
       config.resolve.mainFields.unshift('jsnext:web');
       config.resolve.mainFields.unshift('browser');
@@ -307,14 +301,18 @@ export default class WebpackBase {
           localIdentName: '[local]__[hash:base64:5]',
         });
       }
+
+      // in prod with pre-rendering, we don't generate the CSS. Only the mapping "css class" => "css module class"
+      // the actual CSS is served directly from the client bundle.
+      if (this.isServer() && !this.isDev) {
+        Object.assign(loaderOptions, {
+          exportOnlyLocals: true,
+        });
+      }
     }
 
-    // in prod with pre-rendering, we don't generate the CSS. Only the mapping "css class" => "css module class"
-    // the actual CSS is served directly from the client bundle.
-    const loader = this.isServer() && !this.isDev ? 'css-loader/locals' : 'css-loader';
-
     return {
-      loader,
+      loader: 'css-loader',
       options: loaderOptions,
     };
   }
@@ -369,10 +367,7 @@ export default class WebpackBase {
       // Framework configuration directories
       '@@pre-init': frameworkConfig['pre-init'] || resolveFrameworkSource('dummy/empty-function.js'),
       '@@render-html': frameworkConfig['render-html'] || resolveFrameworkSource('server/setup-http-server/default-render-page.js'),
-      '@@main-component': frameworkConfig['entry-react'],
-      '@@directories.routes': frameworkConfig.directories.routes,
       '@@directories.translations': frameworkConfig.directories.translations,
-      '@@directories.providers': frameworkConfig.directories.providers,
 
       // Support React Native Web
       // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
@@ -393,9 +388,13 @@ export default class WebpackBase {
     const programArgv = minimist(argv['--'] || []);
 
     const definedVariables: Object = {
-      'process.env.SIDE': SIDE,
-      'process.env.BUILD_ENV': NODE_ENV,
-      'process.env.PROCESS_NAME': JSON.stringify(`${projectMetadata.name} (${this.isServer() ? 'server' : 'client'})`),
+      process: {
+        env: {
+          SIDE,
+          NODE_ENV,
+          PROCESS_NAME: JSON.stringify(`${projectMetadata.name} (${this.isServer() ? 'server' : 'client'})`),
+        },
+      },
       $$RJS_VARS$$: {
         FRAMEWORK_METADATA: JSON.stringify(frameworkMetadata),
         PROJECT_METADATA: JSON.stringify(projectMetadata),
@@ -403,14 +402,7 @@ export default class WebpackBase {
       },
     };
 
-    if (!this.isServer()) {
-      // define process on the browser
-      definedVariables.process = {
-        env: {
-          NODE_ENV,
-        },
-      };
-    } else {
+    if (this.isServer()) {
       const outputDirectory = getWebpackSettings(this.isServer()).output.path;
 
       // we only pass build & logs to bundled code
@@ -439,7 +431,7 @@ export default class WebpackBase {
       definedVariables.$$RJS_VARS$$.FRAMEWORK_CONFIG = JSON.stringify(FRAMEWORK_CONFIG);
     }
 
-    return definedVariables;
+    return flattenKeys(definedVariables);
   }
 
   /** @private */
@@ -527,4 +519,21 @@ function buildIndexPage() {
   return renderPage({
     body: renderToString(<BaseHelmet />),
   });
+}
+
+function flattenKeys(obj, out = {}, paths = []) {
+
+  for (const key of Object.getOwnPropertyNames(obj)) {
+    paths.push(key);
+
+    if (typeof obj[key] === 'object') {
+      flattenKeys(obj[key], out, paths);
+    } else {
+      out[paths.join('.')] = obj[key];
+    }
+
+    paths.pop();
+  }
+
+  return out;
 }

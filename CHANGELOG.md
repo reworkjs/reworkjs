@@ -2,6 +2,36 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.15.0"></a>
+# [0.15.0](https://github.com/foobarhq/reworkjs/compare/v0.14.1...v0.15.0) (2019-01-08)
+
+
+### Bug Fixes
+
+* fix crash when persisting locale in cookies ([278abbb](https://github.com/foobarhq/reworkjs/commit/278abbb))
+* Store prefered locale on change ([a348e8d](https://github.com/foobarhq/reworkjs/commit/a348e8d))
+* **babel:** do not run react preset on node_modules ([b912832](https://github.com/foobarhq/reworkjs/commit/b912832))
+* **babel:** fix crashes related to babel update ([deca477](https://github.com/foobarhq/reworkjs/commit/deca477))
+* **locale:** enable react-intl locale after it has been loaded ([5ef4818](https://github.com/foobarhq/reworkjs/commit/5ef4818))
+* **react-intl:** create locale alias when framework finds one that does not exist in react-intl ([0f1e5c8](https://github.com/foobarhq/reworkjs/commit/0f1e5c8))
+* **route:** add key to top level routes ([2d7e693](https://github.com/foobarhq/reworkjs/commit/2d7e693))
+
+
+### Features
+
+* allow plugins to hook client and server rendering ([d6c2eb0](https://github.com/foobarhq/reworkjs/commit/d6c2eb0))
+* completely replace redux with new plugin system ([1170ddf](https://github.com/foobarhq/reworkjs/commit/1170ddf))
+* expose singleton instance on plugins ([5dc23ed](https://github.com/foobarhq/reworkjs/commit/5dc23ed))
+* hydrate react tree if its container has content, render otherwise ([776ef82](https://github.com/foobarhq/reworkjs/commit/776ef82))
+* move public modules from index.js to individual sub-modules ([05d241b](https://github.com/foobarhq/reworkjs/commit/05d241b))
+* Prevent ReworkJsWrapper from generating a new Div ([20231ba](https://github.com/foobarhq/reworkjs/commit/20231ba))
+* Remove all usages of Redux (will add them through plugins) ([2566067](https://github.com/foobarhq/reworkjs/commit/2566067))
+* update to react-router v4 ([61d0860](https://github.com/foobarhq/reworkjs/commit/61d0860))
+* **babel:** update to babel 7, update hot reload system, transpile node_modules (stable only) ([c489349](https://github.com/foobarhq/reworkjs/commit/c489349))
+* **i18n:** make translations local to a single react tree ([921dec8](https://github.com/foobarhq/reworkjs/commit/921dec8))
+
+
+
 <a name="0.14.1"></a>
 ## [0.14.1](https://github.com/foobarhq/reworkjs/compare/v0.14.0...v0.14.1) (2018-08-09)
 
