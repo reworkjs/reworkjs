@@ -13,6 +13,10 @@ node_modules
 /public
 
 # Auto-generated importable sub-modules
+/with-context-consumer
+/babel-preset
+/active-locale-consumer
+/accept-languages-consumer
 /i18n
 /logger
 /debug
