@@ -13,7 +13,7 @@ module.exports = function buildPreset(api, opts = {}) {
   const preset = buildGlobalPreset(api, opts);
 
   preset.presets.push(
-    [require('@babel/preset-react'), {
+    [require('@babel/preset-react').default, {
       development: process.env.BABEL_ENV !== 'production',
       useBuiltIns: true,
       ...opts['@babel/preset-react'],
@@ -21,8 +21,9 @@ module.exports = function buildPreset(api, opts = {}) {
   );
 
   preset.plugins.push(
-    require('@babel/plugin-react-intl-auto'),
-    require('@babel/plugin-syntax-dynamic-import'),
+    [require('babel-plugin-react-intl-auto').default, {
+      ...opts['babel-plugin-react-intl-auto'],
+    }],
     // TODO react-loadable-plugin
   );
 
