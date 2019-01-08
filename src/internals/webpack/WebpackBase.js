@@ -301,14 +301,18 @@ export default class WebpackBase {
           localIdentName: '[local]__[hash:base64:5]',
         });
       }
+
+      // in prod with pre-rendering, we don't generate the CSS. Only the mapping "css class" => "css module class"
+      // the actual CSS is served directly from the client bundle.
+      if (this.isServer() && !this.isDev) {
+        Object.assign(loaderOptions, {
+          exportOnlyLocals: true,
+        });
+      }
     }
 
-    // in prod with pre-rendering, we don't generate the CSS. Only the mapping "css class" => "css module class"
-    // the actual CSS is served directly from the client bundle.
-    const loader = this.isServer() && !this.isDev ? 'css-loader/locals' : 'css-loader';
-
     return {
-      loader,
+      loader: 'css-loader',
       options: loaderOptions,
     };
   }
