@@ -12,7 +12,6 @@ import WebpackCleanupPlugin from 'webpack-cleanup-plugin';
 import nodeExternals from 'webpack-node-externals';
 import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
-// import PolyfillInjectorPlugin from 'webpack-polyfill-injector';
 import frameworkConfig from '../../shared/framework-config';
 import projectMetadata from '../../shared/project-metadata';
 import frameworkMetadata from '../../shared/framework-metadata';
@@ -170,11 +169,6 @@ export default class WebpackBase {
         }),
       ];
     } else {
-
-      // https://github.com/SebastianS90/webpack-polyfill-injector
-      // config.entry = `webpack-polyfill-injector?${JSON.stringify({
-      //   modules: [config.entry],
-      // })}!`;
 
       config.resolve.mainFields.unshift('web');
       config.resolve.mainFields.unshift('jsnext:web');
@@ -521,12 +515,6 @@ function buildIndexPage() {
   return renderPage({
     body: renderToString(<BaseHelmet />),
   });
-}
-
-function buildRequireArrayScript(uris) {
-  const uriList = uris.map(uri => `require(${JSON.stringify(uri)})`).join(',');
-
-  return `[${uriList}]`;
 }
 
 function flattenKeys(obj, out = {}, paths = []) {
