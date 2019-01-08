@@ -24,7 +24,7 @@ module.exports = function getRouteDeclarations() {
 
     return {
       code: `
-        export * from ${JSON.stringify(path)};
+        export { default } from ${JSON.stringify(path)};
       `,
     };
   } catch (e) {
