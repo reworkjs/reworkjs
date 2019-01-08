@@ -5,7 +5,7 @@ import { IntlProvider } from 'react-intl';
 import { Cookies, withCookies } from 'react-cookie';
 import { withConsumers } from 'react-combine-consumers';
 import { ActiveLocaleProvider } from '../common/active-locale-context';
-import type { ReactIntlMessages } from '../common/i18n/_app-translations';
+import { isTranslationSupported, type ReactIntlMessages } from '../common/i18n/_app-translations';
 import { guessPreferredLocale, storePreferredLocale } from '../common/i18n/get-preferred-locale';
 import {
   onIntlHotReload,
@@ -40,8 +40,6 @@ export default class LanguageComponent extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
-    this.state.activeLocale = guessPreferredLocale(this.props.cookies, this.props.acceptLanguages);
-
     // $FlowFixMe
     this.setActiveLocale = this.setActiveLocale.bind(this);
 
@@ -54,18 +52,29 @@ export default class LanguageComponent extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    installLocale(this.state.activeLocale).then(data => {
+    const activeLocale = guessPreferredLocale(this.props.cookies, this.props.acceptLanguages);
+
+    installLocale(activeLocale).then(data => {
       this.setState({
         messages: data.messages,
-        activeLocale: data.locale,
+        activeLocale,
       });
     });
   }
 
   setActiveLocale(newLocale: string) {
-    this.setState({ activeLocale: newLocale });
+    if (!isTranslationSupported(newLocale)) {
+      throw new Error(`Locale ${newLocale} is unsupported`);
+    }
 
     storePreferredLocale(this.props.cookies, newLocale);
+
+    return installLocale(newLocale).then(data => {
+      this.setState({
+        messages: data.messages,
+        activeLocale: newLocale,
+      });
+    });
   }
 
   get activeLocaleContext(): Object {
