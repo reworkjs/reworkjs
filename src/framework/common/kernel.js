@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Switch } from 'react-router-dom';
-import MainComponent from '../common/main-component';
+import MainComponent from './app-main-component';
 import createRoutes from './router/create-routes';
 import debug from './debug';
 

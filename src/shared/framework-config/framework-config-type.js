@@ -13,7 +13,7 @@ export type FrameworkConfigStruct = {
   },
 
   routes: string,
-  'entry-react': string,
+  'entry-react': ?string,
   'render-html': ?string,
   'pre-init': ?string,
   'service-worker': ?string,

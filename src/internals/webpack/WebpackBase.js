@@ -369,7 +369,6 @@ export default class WebpackBase {
       // Framework configuration directories
       '@@pre-init': frameworkConfig['pre-init'] || resolveFrameworkSource('dummy/empty-function.js'),
       '@@render-html': frameworkConfig['render-html'] || resolveFrameworkSource('server/setup-http-server/default-render-page.js'),
-      '@@main-component': frameworkConfig['entry-react'],
       '@@directories.translations': frameworkConfig.directories.translations,
 
       // Support React Native Web
