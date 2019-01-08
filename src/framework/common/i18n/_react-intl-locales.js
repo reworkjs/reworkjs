@@ -21,9 +21,18 @@ function installReactIntlLocale(localeName: string): Promise<void> {
     const loader = reactIntlLocaleLoaders(`./${actualLocale}.js`);
 
     return runBundleLoader(loader).then(module => {
-      const localeData = getDefault(module);
+      const localeDataArray = getDefault(module);
 
-      addLocaleData(localeData);
+      addLocaleData(localeDataArray);
+
+      // for some reason, 'fr-FR' is not in the list of react-intl's locales.
+      // if that happens, we add an alias to the parent locale. (fr-FR -> fr).
+      if (!localeDataArray.find(localeData => localeData.locale === localeName)) {
+        addLocaleData({
+          locale: localeName, // fr-FR
+          parentLocale: actualLocale, // fr
+        });
+      }
     });
   });
 }
