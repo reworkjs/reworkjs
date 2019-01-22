@@ -34,9 +34,10 @@ export default class ReactIntlFeature extends BaseFeature {
 
     logger.debug(`Removing react-intl locales unsupported by app language: ${supportedLocales.join(', ')}`);
 
-    const ignoreRegex = new RegExp(`\\.\\/(?!(?:${supportedLocales.join('|')})(?:[-_].+)?)[a-z]+\\.js`, 'i');
+    const ignoreRegex = new RegExp(`\\.\\/(?!${supportedLocales.join('|')})[a-z0-9-_]+\\.js`, 'i');
 
     webpackConfig.injectPlugins(new webpack.IgnorePlugin(ignoreRegex, /react-intl\/locale-data$/));
+    webpackConfig.injectPlugins(new webpack.IgnorePlugin(ignoreRegex, /intl\/locale-data\/jsonp$/));
   }
 }
 
