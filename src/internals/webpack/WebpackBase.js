@@ -284,10 +284,6 @@ export default class WebpackBase {
       Object.assign(loaderOptions, {
         sourceMap: true,
       });
-    } else {
-      Object.assign(loaderOptions, {
-        minimize: true,
-      });
     }
 
     if (options.modules) {
