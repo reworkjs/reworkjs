@@ -51,11 +51,6 @@ export default function registerCommand(cli) {
           default: 3000,
           describe: 'The port the server will listen to',
         })
-        .option('tunnel', {
-          type: 'number',
-          default: -1,
-          describe: 'The port of the tunnel -- -1 to disable',
-        })
         .option(...featureHelp);
     }, argv => {
       // remove 'start' from extraneous options.

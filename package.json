@@ -1,6 +1,6 @@
 {
   "name": "@reworkjs/reworkjs",
-  "version": "0.15.1",
+  "version": "0.16.0",
   "description": "A react framework that works out of the box",
   "repository": {
     "type": "git",
@@ -90,7 +90,6 @@
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
     "mz": "^2.7.0",
-    "ngrok": "^2.2.25",
     "node-sass": "^4.11.0",
     "node-style-loader": "^0.0.1-alpha",
     "offline-plugin": "^4.9.0",
