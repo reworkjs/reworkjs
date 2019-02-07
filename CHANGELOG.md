@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.16.0"></a>
+# [0.16.0](https://github.com/foobarhq/reworkjs/compare/v0.15.1...v0.16.0) (2019-02-07)
+
+
+### Bug Fixes
+
+* disable css-loader minimize, move to postcss ([c501eed](https://github.com/foobarhq/reworkjs/commit/c501eed))
+
+
+### Features
+
+* remove build-in ngrok support ([3f05ca2](https://github.com/foobarhq/reworkjs/commit/3f05ca2))
+* remove intl locales not matching available translations ([06e1f1a](https://github.com/foobarhq/reworkjs/commit/06e1f1a))
+
+
+### BREAKING CHANGES
+
+* use ngrok externally
+
+
+
 <a name="0.15.1"></a>
 ## [0.15.1](https://github.com/foobarhq/reworkjs/compare/v0.15.0...v0.15.1) (2019-01-08)
 
