@@ -2,7 +2,6 @@
 
 import { promisify } from 'util';
 import express from 'express';
-import ngrok from 'ngrok';
 import chalk from 'chalk';
 import getPort from 'get-port';
 import argv from '../../internals/rjs-argv';
@@ -25,25 +24,15 @@ export default (async function initServer() {
   }
 
   const port = argv.port || process.env.PORT || await getPort();
-  if (!hideHttp) {
-    logger.info(`Server starting on port ${chalk.magenta(port)}.`);
-  }
 
   const app = express();
   setupHttpServer(app);
 
   await promisify(app.listen).call(app, port);
 
-  const enableNgrok = (process.env.NODE_ENV === 'development' && process.env.ENABLE_TUNNEL) || argv.tunnel;
-
-  let tunnelUrl = null;
-  if (enableNgrok) {
-    tunnelUrl = await promisify(ngrok.connect).call(ngrok, port);
-  }
-
   if (hideHttp) {
     logger.info('Server-side rendering ready.');
   } else {
-    printServerStarted(port, tunnelUrl);
+    printServerStarted(port);
   }
 }());
