@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.17.0"></a>
+# [0.17.0](https://github.com/foobarhq/reworkjs/compare/v0.16.0...v0.17.0) (2019-02-11)
+
+
+### Bug Fixes
+
+* expose context for use in react hooks ([a577078](https://github.com/foobarhq/reworkjs/commit/a577078))
+* update usage of old babel plugin ([a2726ee](https://github.com/foobarhq/reworkjs/commit/a2726ee))
+
+
+### Features
+
+* remove eslint-loader ([220423f](https://github.com/foobarhq/reworkjs/commit/220423f))
+
+
+
 <a name="0.16.0"></a>
 # [0.16.0](https://github.com/foobarhq/reworkjs/compare/v0.15.1...v0.16.0) (2019-02-07)
 

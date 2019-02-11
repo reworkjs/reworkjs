@@ -13,3 +13,5 @@ const LanguageContext: React.Context<string[]> = React.createContext([]);
 
 export const LanguageProvider = LanguageContext.Provider;
 export const LanguageConsumer = LanguageContext.Consumer;
+
+export { LanguageContext };

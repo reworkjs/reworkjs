@@ -38,7 +38,7 @@ export default class LodashFeature extends BaseFeature {
       exclude: [getLodashDir()],
       options: {
         babelrc: false,
-        plugins: ['lodash', 'syntax-dynamic-import'],
+        plugins: ['lodash', '@babel/plugin-syntax-dynamic-import'],
       },
     });
   }

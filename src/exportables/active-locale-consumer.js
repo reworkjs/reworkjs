@@ -1,1 +1,1 @@
-export { ActiveLocaleConsumer as default } from '../framework/common/active-locale-context';
+export { ActiveLocaleConsumer as default, ActiveLocaleContext } from '../framework/common/active-locale-context';
