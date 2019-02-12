@@ -1,6 +1,6 @@
 {
   "name": "app-argv",
   "private": true,
-  "main": "./node",
-  "browser": "./browser"
+  "main": "./node.js",
+  "webpack:main": "./browser.js"
 }
