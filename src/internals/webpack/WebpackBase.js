@@ -392,7 +392,7 @@ export default class WebpackBase {
       $$RJS_VARS$$: {
         FRAMEWORK_METADATA: JSON.stringify(frameworkMetadata),
         PROJECT_METADATA: JSON.stringify(projectMetadata),
-        PARSED_ARGV: appArgv,
+        PARSED_ARGV: JSON.stringify(appArgv),
       },
     };
 
