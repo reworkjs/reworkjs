@@ -1,5 +1,4 @@
 import chalk from 'chalk';
-import '../../shared/regenerator';
 import logger from '../../shared/logger';
 import clientWebpackConfig from './webpack.client';
 import compileWebpack from './compile-webpack';
