@@ -1,4 +1,3 @@
-import '../../shared/regenerator';
 import './source-map-support';
 import { getDefault } from '../../shared/util/ModuleUtil';
 import { installIntlPolyfill } from './intl-polyfil';

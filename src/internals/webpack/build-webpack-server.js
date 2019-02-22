@@ -1,6 +1,5 @@
 import path from 'path';
 import chalk from 'chalk';
-import '../../shared/regenerator';
 import logger from '../../shared/logger';
 import config from './webpack.server';
 import compileWebpack, { StatDetails, EntryPoint } from './compile-webpack';
