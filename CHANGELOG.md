@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.17.4"></a>
+## [0.17.4](https://github.com/foobarhq/reworkjs/compare/v0.17.3...v0.17.4) (2019-03-05)
+
+
+### Bug Fixes
+
+* don't resolve main-component so webpack is the one resolving files ([04a33c1](https://github.com/foobarhq/reworkjs/commit/04a33c1))
+* remove .react.js from special file extension (.js is enough) ([798d10a](https://github.com/foobarhq/reworkjs/commit/798d10a))
+
+
+
 <a name="0.17.3"></a>
 ## [0.17.3](https://github.com/foobarhq/reworkjs/compare/v0.17.2...v0.17.3) (2019-02-22)
 
