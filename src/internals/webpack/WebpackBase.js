@@ -135,7 +135,6 @@ export default class WebpackBase {
           '.mjs',
           '.js',
           '.jsx',
-          '.react.js',
         ],
         mainFields: [
           'webpack:main',
