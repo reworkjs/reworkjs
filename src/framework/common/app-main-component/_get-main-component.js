@@ -4,6 +4,8 @@
 
 /* eslint-disable import/no-commonjs */
 
+const path = require('path');
+
 // need to import from /lib (the version in which webpack is running) otherwise it will use /es
 const config = require('../../../../lib/shared/framework-config');
 
@@ -19,16 +21,11 @@ module.exports = function getRouteDeclarations() {
     return { code: DEFAULT_ENTRY };
   }
 
-  try {
-    const path = require.resolve(entryConfig);
+  const filePath = path.resolve(entryConfig);
 
-    return {
-      code: `
-        export { default } from ${JSON.stringify(path)};
-      `,
-    };
-  } catch (e) {
-    console.error(`Could not find react Main Component. Declared as: ${JSON.stringify(entryConfig)}`);
-    throw e;
-  }
+  return {
+    code: `
+      export { default } from ${JSON.stringify(filePath)};
+    `,
+  };
 };
