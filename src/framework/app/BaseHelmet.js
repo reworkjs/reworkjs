@@ -2,10 +2,10 @@
 
 import React from 'react';
 import Helmet from 'react-helmet';
-import { withConsumers } from 'react-combine-consumers';
 import { withCookies, type Cookies } from 'react-cookie';
 import { guessPreferredLocale } from '../common/i18n/get-preferred-locale';
-import { LanguageConsumer } from '../common/accept-language-context';
+import { LanguageContext } from '../common/accept-language-context';
+import withContext from '../common/with-context';
 
 type Props = {
   cookies: Cookies,
@@ -36,4 +36,4 @@ function getLangFromLocale(locale) {
 // not if we're the builder.
 export default process.env.SIDE == null
   ? BaseHelmet
-  : withConsumers({ acceptLanguages: LanguageConsumer })(withCookies(BaseHelmet));
+  : withContext({ acceptLanguages: LanguageContext })(withCookies(BaseHelmet));

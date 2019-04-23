@@ -94,7 +94,6 @@
     "offline-plugin": "^4.9.0",
     "postcss-loader": "^2.1.3",
     "promise-all-properties": "^0.2.0",
-    "react-combine-consumers": "^0.2.1",
     "react-hot-loader": "^4.7.2",
     "react-router-dom": "^4.3.1",
     "recursive-readdir-sync": "^1.0.6",

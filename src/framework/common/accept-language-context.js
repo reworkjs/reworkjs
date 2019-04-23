@@ -9,9 +9,4 @@ import * as React from 'react';
  *
  * @type {React.Context<Array<string>>}
  */
-const LanguageContext: React.Context<string[]> = React.createContext([]);
-
-export const LanguageProvider = LanguageContext.Provider;
-export const LanguageConsumer = LanguageContext.Consumer;
-
-export { LanguageContext };
+export const LanguageContext: React.Context<string[]> = React.createContext([]);
