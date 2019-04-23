@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { LanguageProvider } from '../common/accept-language-context';
+import { LanguageContext } from '../common/accept-language-context';
 
 type Props = {
   children: any,
@@ -39,9 +39,9 @@ export default class BrowserLanguageProvider extends React.Component<Props, Stat
   render() {
 
     return (
-      <LanguageProvider value={this.state.languages}>
+      <LanguageContext.Provider value={this.state.languages}>
         {this.props.children}
-      </LanguageProvider>
+      </LanguageContext.Provider>
     );
   }
 }

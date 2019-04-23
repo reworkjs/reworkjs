@@ -3,15 +3,15 @@
 import * as React from 'react';
 import { IntlProvider } from 'react-intl';
 import { Cookies, withCookies } from 'react-cookie';
-import { withConsumers } from 'react-combine-consumers';
-import { ActiveLocaleProvider } from '../common/active-locale-context';
+import { ActiveLocaleContext } from '../common/active-locale-context';
 import { isTranslationSupported, type ReactIntlMessages } from '../common/i18n/_app-translations';
 import { guessPreferredLocale, storePreferredLocale } from '../common/i18n/get-preferred-locale';
 import {
   onIntlHotReload,
   installLocale,
 } from '../common/i18n';
-import { LanguageConsumer } from '../common/accept-language-context';
+import { LanguageContext } from '../common/accept-language-context';
+import withContext from '../common/with-context';
 
 type Props = {
   children: any,
@@ -28,7 +28,7 @@ type State = {
  * this component synchronizes the internal i18n state with react-intl.
  */
 @withCookies
-@withConsumers({ acceptLanguages: LanguageConsumer })
+@withContext({ acceptLanguages: LanguageContext })
 export default class LanguageComponent extends React.Component<Props, State> {
 
   state = {
@@ -93,9 +93,9 @@ export default class LanguageComponent extends React.Component<Props, State> {
         messages={this.state.messages}
         textComponent={React.Fragment}
       >
-        <ActiveLocaleProvider value={this.activeLocaleContext}>
+        <ActiveLocaleContext.Provider value={this.activeLocaleContext}>
           {this.props.children}
-        </ActiveLocaleProvider>
+        </ActiveLocaleContext.Provider>
       </IntlProvider>
     );
   }
