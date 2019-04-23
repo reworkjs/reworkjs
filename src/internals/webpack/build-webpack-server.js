@@ -7,7 +7,7 @@ import compileWebpack, { StatDetails, EntryPoint } from './compile-webpack';
 chalk.enabled = true;
 logger.info('Building your server-side app, this might take a minute.');
 
-const WATCH = process.env.WATCH === 'true' || process.env.WATCH === true;
+const WATCH = process.env.WATCH === 'true';
 
 compileWebpack(config, WATCH, (stats: StatDetails) => {
   const entryPoints: EntryPoint = stats.entrypoints.main.assets.filter(fileName => {

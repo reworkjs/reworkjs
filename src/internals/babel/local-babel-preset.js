@@ -12,9 +12,11 @@ module.exports = function buildPreset(api, opts = {}) {
 
   const preset = buildGlobalPreset(api, opts);
 
+  const env = process.env.BABEL_ENV || process.env.NODE_ENV;
+
   preset.presets.push(
     [require('@babel/preset-react').default, {
-      development: process.env.BABEL_ENV !== 'production',
+      development: env !== 'production',
       useBuiltIns: true,
       ...opts['@babel/preset-react'],
     }],

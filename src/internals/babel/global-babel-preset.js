@@ -34,7 +34,8 @@ module.exports = function buildPreset(api, opts = {}) {
     ],
   };
 
-  if (process.env.BABEL_ENV === 'production') {
+  const env = process.env.BABEL_ENV || process.env.NODE_ENV;
+  if (env === 'production') {
     preset.plugins.push(
       require('babel-plugin-lodash'),
       require('@babel/plugin-transform-react-constant-elements').default,

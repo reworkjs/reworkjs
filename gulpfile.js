@@ -11,17 +11,18 @@ const FRAMEWORK_BABEL_PRESET = `${__dirname}/src/internals/babel/internal-babel-
 // ====== Lib build ======
 // Transpile to ES5
 
-gulp.task('clean-lib', () => {
+function cleanLib() {
   return del(['./lib']);
-});
+}
 
-gulp.task('copy-lib', ['clean-lib'], () => {
+// ['clean-lib']
+function copyLib() {
   return gulp
     .src('./src/**/*')
     .pipe(gulp.dest('./lib'));
-});
+}
 
-gulp.task('build-lib', ['copy-lib'], () => {
+function compileLib() {
   return gulp.src('./src/**/*.js')
     .pipe(plumber())
     .pipe(babel({
@@ -31,22 +32,24 @@ gulp.task('build-lib', ['copy-lib'], () => {
     }))
     .pipe(plumber.stop())
     .pipe(gulp.dest('./lib'));
-});
+}
+
+const buildLib = gulp.series(cleanLib, copyLib, compileLib);
 
 // ====== ES  build ======
 // Like Lib but doesn't transform import statements.
 
-gulp.task('clean-es', () => {
+function cleanEs() {
   return del(['./es']);
-});
+}
 
-gulp.task('copy-es', ['clean-es'], () => {
+function copyEs() {
   return gulp
     .src('./src/**/*')
     .pipe(gulp.dest('./es'));
-});
+}
 
-gulp.task('build-es', ['copy-es'], () => {
+function compileEs() {
   return gulp.src('./src/**/*.js')
     .pipe(plumber())
     .pipe(babel({
@@ -56,15 +59,16 @@ gulp.task('build-es', ['copy-es'], () => {
     }))
     .pipe(plumber.stop())
     .pipe(gulp.dest('./es'));
-});
+}
+
+const buildEs = gulp.series(cleanEs, copyEs, compileEs);
 
 // ====== Common ======
 
-gulp.task('build', ['build-lib', 'build-es']);
+const buildAll = gulp.parallel([buildEs, buildLib]);
 
-gulp.task('build:watch', ['build'], () => {
-  return watch('./src/**/*', () => {
-    gulp.start('build-es');
-    gulp.start('build-lib');
-  });
-});
+gulp.task('build', buildAll);
+
+gulp.task('build:watch', gulp.series(buildAll, () => {
+  return watch('./src/**/*', buildAll);
+}));

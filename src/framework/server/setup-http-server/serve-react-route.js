@@ -81,8 +81,8 @@ export default async function serveReactRoute(req, res, next): ?{ appHtml: strin
       }
 
       // Somewhere a `<Redirect>` was rendered
-      if (routingContext.url) {
-        return void res.redirect(context.status || 301, routingContext.url);
+      if (routingContext.url && routingContext.url !== req.originalUrl) {
+        return void res.redirect(routingContext.status || 301, routingContext.url);
       }
 
       if (routingContext.status) {

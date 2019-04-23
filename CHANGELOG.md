@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.18.0"></a>
+# [0.18.0](https://github.com/foobarhq/reworkjs/compare/v0.17.4...v0.18.0) (2019-04-23)
+
+
+### Bug Fixes
+
+* babel presets - use NODE_ENV if BABEL_ENV is not set ([2198063](https://github.com/foobarhq/reworkjs/commit/2198063))
+* cancel redirect if same url, fix redirect crashing ([b60b536](https://github.com/foobarhq/reworkjs/commit/b60b536))
+* make "server" build use /lib instead of /es ([adae823](https://github.com/foobarhq/reworkjs/commit/adae823))
+
+
+### Features
+
+* remove "webpack" from build folder name ([33d4c28](https://github.com/foobarhq/reworkjs/commit/33d4c28))
+
+
+
 <a name="0.17.4"></a>
 ## [0.17.4](https://github.com/foobarhq/reworkjs/compare/v0.17.3...v0.17.4) (2019-03-05)
 
