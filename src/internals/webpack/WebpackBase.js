@@ -162,6 +162,7 @@ export default class WebpackBase {
       config.externals = [
         nodeExternals({
           whitelist: [
+            // framework must be processed by webpack as it relies on some webpack processes
             new RegExp(`^${frameworkMetadata.name}`),
             /\.css$/i,
           ],
@@ -183,8 +184,8 @@ export default class WebpackBase {
     // front-end entry point.
     const entry = [
       this.isServer()
-        ? resolveFrameworkSource('server/index')
-        : resolveFrameworkSource('client/index'),
+        ? resolveFrameworkSource('server/index', { esModules: !this.isServer() })
+        : resolveFrameworkSource('client/index', { esModules: !this.isServer() }),
     ];
 
     // front-end dev libs.
@@ -360,8 +361,8 @@ export default class WebpackBase {
     const frameworkAliases = {
 
       // Framework configuration directories
-      '@@pre-init': frameworkConfig['pre-init'] || resolveFrameworkSource('dummy/empty-function.js'),
-      '@@render-html': frameworkConfig['render-html'] || resolveFrameworkSource('server/setup-http-server/default-render-page.js'),
+      '@@pre-init': frameworkConfig['pre-init'] || resolveFrameworkSource('dummy/empty-function.js', { esModules: !this.isServer() }),
+      '@@render-html': frameworkConfig['render-html'] || resolveFrameworkSource('server/setup-http-server/default-render-page.js', { esModules: !this.isServer() }),
       '@@directories.translations': frameworkConfig.directories.translations,
 
       // Support React Native Web
