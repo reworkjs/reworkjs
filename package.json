@@ -1,6 +1,6 @@
 {
   "name": "@reworkjs/reworkjs",
-  "version": "0.17.4",
+  "version": "0.18.0",
   "description": "A react framework that works out of the box",
   "repository": {
     "type": "git",
