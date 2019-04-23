@@ -13,7 +13,7 @@ node_modules
 /public
 
 # Auto-generated importable sub-modules
-/with-context-consumer
+/with-context
 /babel-preset
 /active-locale-consumer
 /accept-languages-consumer
