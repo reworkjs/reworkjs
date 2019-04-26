@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.20.0"></a>
+# [0.20.0](https://github.com/foobarhq/reworkjs/compare/v0.19.0...v0.20.0) (2019-04-26)
+
+
+### Bug Fixes
+
+* don't parse node_modules with remove-prop-types ([9ce4429](https://github.com/foobarhq/reworkjs/commit/9ce4429))
+
+
+### Features
+
+* add ssr ready use-dnt, use-user-agent, use-location ([5c808c2](https://github.com/foobarhq/reworkjs/commit/5c808c2))
+* expose request and response through context when in SSR ([8225d26](https://github.com/foobarhq/reworkjs/commit/8225d26))
+* remove compression ([8a76d19](https://github.com/foobarhq/reworkjs/commit/8a76d19))
+* replace uglify with terser & update deps ([1537111](https://github.com/foobarhq/reworkjs/commit/1537111))
+
+
+
 <a name="0.19.0"></a>
 # [0.19.0](https://github.com/foobarhq/reworkjs/compare/v0.18.0...v0.19.0) (2019-04-23)
 
