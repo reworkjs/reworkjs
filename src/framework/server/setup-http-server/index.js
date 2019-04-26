@@ -1,10 +1,5 @@
-import UrlUtil from 'url';
 import path from 'path';
-import fs from 'mz/fs';
 import express from 'express';
-import mime from 'mime';
-import accept from 'accept';
-import compression from 'compression';
 import cookiesMiddleware from 'universal-cookie-express';
 import getWebpackSettings from '../../../shared/webpack-settings';
 import argv from '../../../internals/rjs-argv';
@@ -18,65 +13,11 @@ const clientEntryPoint = path.join(fsClientOutputPath, 'index.html');
 
 const HAS_PRERENDERING = argv.prerendering === true;
 
-function redirectToPreCompressed(root, encodingTransforms = {}) {
-  root = path.resolve(root);
-  const availableEncodings = Object.keys(encodingTransforms);
-
-  return async function redirect(req, res, next) {
-    // req.acceptsEncoding is not powerful enough, and creates a new instance of Accept AND Negociator
-    // on every single call. negotiator/lib/encoding.getPreferredEncodings is a pure function, I'm going to use that.
-    const encodings = accept.encodings(req.header('Accept-Encoding'), availableEncodings);
-
-    for (const encoding of encodings) {
-      const getCompressedPath = encodingTransforms[encoding];
-
-      // '/test.js' => '/test.js.gz'
-      const newPath = getCompressedPath(req.path);
-
-      // TODO cache result of fs.exists in prod
-      // eslint-disable-next-line no-await-in-loop
-      const exists = await fs.exists(path.join(root, newPath));
-      if (!exists) { // asset is not pre-compressed using this encoding
-        continue;
-      }
-
-      // append compressed suffix to pathname part of url
-      const urlParts = UrlUtil.parse(req.url);
-      const originalPathname = urlParts.pathname;
-      urlParts.pathname = getCompressedPath(originalPathname);
-      req.url = UrlUtil.format(urlParts);
-      // \
-
-      res.set('Content-Encoding', encoding);
-
-      // express would use the redirected url to set the content-type, which would result in octet-stream.
-      setContentType(res, originalPathname);
-      break;
-    }
-
-    next();
-  };
-}
-
 export default function setupHttpServer(expressApp) {
-
-  // serve pre-compressed files if they exist.
-  if (process.env.NODE_ENV === 'production') {
-    // Common Accept-Encoding: gzip, deflate, br
-    expressApp.use(httpStaticPath, redirectToPreCompressed(fsClientOutputPath, {
-      br: fileName => `${fileName}.br`,
-      gzip: fileName => `${fileName}.gz`,
-    }));
-  }
 
   expressApp.use(httpStaticPath, express.static(fsClientOutputPath, {
     index: HAS_PRERENDERING ? false : 'index.html',
   }));
-
-  if (process.env.NODE_ENV === 'production') {
-    // Compress pre-rendered app
-    expressApp.use(compression());
-  }
 
   expressApp.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
     logger.error(`renderApp: Serving "${req.url}" crashed, trying without server-side rendering.`);
@@ -98,20 +39,4 @@ export default function setupHttpServer(expressApp) {
       expressApp.use(serveReactRoute);
     });
   }
-}
-
-function setContentType(res, filePath) {
-  if (res.getHeader('Content-Type')) {
-    return;
-  }
-
-  const type = mime.lookup(filePath);
-
-  if (!type) {
-    return;
-  }
-
-  const charset = mime.charsets.lookup(type);
-
-  res.setHeader('Content-Type', `${type}${charset ? `; charset=${charset}` : ''}`);
 }

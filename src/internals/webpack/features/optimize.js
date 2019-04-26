@@ -1,7 +1,5 @@
 // @flow
 
-import GzipPlugin from 'compression-webpack-plugin';
-import BrotliPlugin from 'brotli-webpack-plugin';
 import TerserPlugin from 'terser-webpack-plugin';
 
 import BaseFeature from '../BaseFeature';
@@ -120,24 +118,5 @@ export default class OptimizeFeature extends BaseFeature {
         ],
       },
     });
-
-    config.injectPlugins([
-
-      new BrotliPlugin({
-        asset: '[path].br[query]',
-        test: /\.(js|css|html|svg)$/,
-        threshold: 0,
-        minRatio: 0.8,
-        quality: 11,
-      }),
-
-      new GzipPlugin([{
-        asset: '[path].gz[query]',
-        algorithm: 'gzip',
-        test: /\.(js|css|html|svg)$/,
-        threshold: 0,
-        minRatio: 0.8,
-      }]),
-    ]);
   }
 }
