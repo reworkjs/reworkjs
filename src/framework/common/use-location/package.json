@@ -1,0 +1,4 @@
+{
+  "main": "./use-location.server.js",
+  "browser": "./use-location.browser.js"
+}
