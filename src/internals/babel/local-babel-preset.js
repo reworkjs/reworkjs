@@ -29,5 +29,17 @@ module.exports = function buildPreset(api, opts = {}) {
     // TODO react-loadable-plugin
   );
 
+  // only remove prop-types locally. Removing on node_modules is known to cause issues
+  // on libraries such as https://github.com/SaraVieira/react-social-sharing/blob/master/src/buttons/factory.js#L30
+  if (env === 'production') {
+    preset.plugins.push(
+      [require('babel-plugin-transform-react-remove-prop-types').default, {
+        mode: 'remove',
+        removeImport: true,
+        ...opts['babel-plugin-transform-react-remove-prop-types'],
+      }],
+    );
+  }
+
   return preset;
 };

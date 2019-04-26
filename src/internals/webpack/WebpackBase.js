@@ -389,6 +389,8 @@ export default class WebpackBase {
           PROCESS_NAME: JSON.stringify(`${projectMetadata.name} (${this.isServer() ? 'server' : 'client'})`),
         },
       },
+
+      // TODO: replace with val-loader
       $$RJS_VARS$$: {
         FRAMEWORK_METADATA: JSON.stringify(frameworkMetadata),
         PROJECT_METADATA: JSON.stringify(projectMetadata),
@@ -422,6 +424,7 @@ export default class WebpackBase {
         },
       };
 
+      // TODO: replace with val-loader (or remove)
       definedVariables.$$RJS_VARS$$.FRAMEWORK_CONFIG = JSON.stringify(FRAMEWORK_CONFIG);
     }
 

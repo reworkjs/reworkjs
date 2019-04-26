@@ -1,8 +1,6 @@
 // @flow
 
-import UglifyJsPlugin from 'uglifyjs-webpack-plugin';
-import GzipPlugin from 'compression-webpack-plugin';
-import BrotliPlugin from 'brotli-webpack-plugin';
+import TerserPlugin from 'terser-webpack-plugin';
 
 import BaseFeature from '../BaseFeature';
 import type WebpackConfigBuilder from '../WebpackConfigBuilder';
@@ -87,7 +85,7 @@ export default class OptimizeFeature extends BaseFeature {
         minimize: true,
         minimizer: [
 
-          new UglifyJsPlugin({
+          new TerserPlugin({
             parallel: true,
             cache: true,
 
@@ -96,9 +94,13 @@ export default class OptimizeFeature extends BaseFeature {
             extractComments: true,
             sourceMap: true,
 
-            uglifyOptions: {
+            terserOptions: {
               compress: {
                 warnings: false,
+
+                // TODO set to 6/7/8 if .browserlistrc supports it
+                // Will use newer features to optimize
+                ecma: 5,
               },
 
               output: {
@@ -106,9 +108,6 @@ export default class OptimizeFeature extends BaseFeature {
                 // Will use newer features to optimize
                 ecma: 5,
               },
-
-              // TODO this should be based on .browserlistrc
-              ecma: 5,
 
               // TODO this should be based on .browserlistrc
               safari10: true,
@@ -119,24 +118,5 @@ export default class OptimizeFeature extends BaseFeature {
         ],
       },
     });
-
-    config.injectPlugins([
-
-      new BrotliPlugin({
-        asset: '[path].br[query]',
-        test: /\.(js|css|html|svg)$/,
-        threshold: 0,
-        minRatio: 0.8,
-        quality: 11,
-      }),
-
-      new GzipPlugin([{
-        asset: '[path].gz[query]',
-        algorithm: 'gzip',
-        test: /\.(js|css|html|svg)$/,
-        threshold: 0,
-        minRatio: 0.8,
-      }]),
-    ]);
   }
 }

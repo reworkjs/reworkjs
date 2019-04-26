@@ -10,6 +10,7 @@ import getWebpackSettings from '../../../shared/webpack-settings';
 import { rootRoute } from '../../common/kernel';
 import ReworkRootComponent from '../../app/ReworkRootComponent';
 import { LanguageContext } from '../../common/accept-language-context';
+import { SsrContext } from '../../common/ssr-context';
 import ServerHooks from '../server-hooks';
 import renderPage from './render-page';
 
@@ -28,13 +29,15 @@ export default async function serveReactRoute(req, res, next): ?{ appHtml: strin
       const acceptedLanguages = accept.languages(req.header('Accept-Language'));
 
       let component = (
-        <LanguageContext.Provider value={acceptedLanguages}>
-          <CookiesProvider cookies={req.universalCookies}>
-            <ReworkRootComponent>
-              {rootRoute}
-            </ReworkRootComponent>
-          </CookiesProvider>
-        </LanguageContext.Provider>
+        <SsrContext.Provider value={Object.freeze({ req, res })}>
+          <LanguageContext.Provider value={acceptedLanguages}>
+            <CookiesProvider cookies={req.universalCookies}>
+              <ReworkRootComponent>
+                {rootRoute}
+              </ReworkRootComponent>
+            </CookiesProvider>
+          </LanguageContext.Provider>
+        </SsrContext.Provider>
       );
 
       // allow plugins to add components

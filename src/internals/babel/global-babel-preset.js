@@ -39,11 +39,6 @@ module.exports = function buildPreset(api, opts = {}) {
     preset.plugins.push(
       require('babel-plugin-lodash'),
       require('@babel/plugin-transform-react-constant-elements').default,
-      [require('babel-plugin-transform-react-remove-prop-types').default, {
-        mode: 'remove',
-        removeImport: true,
-        ...opts['babel-plugin-transform-react-remove-prop-types'],
-      }],
     );
   }
 
