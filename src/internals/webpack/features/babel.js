@@ -29,6 +29,7 @@ export default class BabelFeature extends BaseFeature {
         ...this.getProjectBabelConfig(),
 
         babelrc: false,
+        configFile: false,
 
         // Cache build results in ./node_modules/.cache/reworkjs/babel.
         // We use findCacheDir() because of:
@@ -52,6 +53,10 @@ export default class BabelFeature extends BaseFeature {
         sourceType: 'unambiguous',
         presets: ['@reworkjs/reworkjs/lib/internals/babel/global-babel-preset'],
         babelrc: false,
+
+        // should we allow users to compile node_modules using babel.config.js? That'd require exposing a base preset
+        // (@reworkjs/reworkjs/module-babel-preset?). Need to test performance.
+        configFile: false,
         cacheDirectory: `${findCacheDir({
           name: frameworkMetadata.name,
         })}/babel-on-deps`,
