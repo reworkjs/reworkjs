@@ -1,7 +1,9 @@
 // @flow
 
+import findCacheDir from 'find-cache-dir';
 import fs from 'fs';
 import path from 'path';
+import frameworkMetadata from '../../../shared/framework-metadata';
 import BaseFeature from '../BaseFeature';
 import type WebpackConfigBuilder from '../WebpackConfigBuilder';
 
@@ -38,7 +40,12 @@ export default class LodashFeature extends BaseFeature {
       exclude: [getLodashDir()],
       options: {
         babelrc: false,
+        configFile: false,
         plugins: ['lodash', '@babel/plugin-syntax-dynamic-import'],
+        cacheDirectory: `${findCacheDir({
+          name: frameworkMetadata.name,
+        })}/babel-lodash`,
+        sourceType: 'unambiguous',
       },
     });
   }

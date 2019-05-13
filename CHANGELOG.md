@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.20.2"></a>
+## [0.20.2](https://github.com/foobarhq/reworkjs/compare/v0.20.1...v0.20.2) (2019-05-13)
+
+
+### Bug Fixes
+
+* prevent lodash feature from using babel.config.js when compiling node_modules ([c57cb87](https://github.com/foobarhq/reworkjs/commit/c57cb87))
+
+
+
 <a name="0.20.1"></a>
 ## [0.20.1](https://github.com/foobarhq/reworkjs/compare/v0.20.0...v0.20.1) (2019-05-07)
 
