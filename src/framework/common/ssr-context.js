@@ -2,10 +2,12 @@
 
 import React from 'react';
 import type { $Request, $Response } from 'express';
+import type { ResourceLoader } from './resource-loader';
 
 type Context = {
   req?: $Request,
   res?: $Response,
+  loadableResources?: Map<string, ResourceLoader<any>>,
 };
 
 /**

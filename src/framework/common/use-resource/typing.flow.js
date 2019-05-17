@@ -1,0 +1,9 @@
+// @flow
+
+export type FetchCallback<T> = () => T | Promise<T>;
+
+export type StatusObject<T> = {
+  loading: boolean,
+  value: T | void,
+  error: any,
+};

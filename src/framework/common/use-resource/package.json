@@ -1,0 +1,4 @@
+{
+  "main": "./use-resource.server.js",
+  "browser": "./use-resource.browser.js"
+}

@@ -11,6 +11,7 @@ import { rootRoute } from '../../common/kernel';
 import ReworkRootComponent from '../../app/ReworkRootComponent';
 import { LanguageContext } from '../../common/accept-language-context';
 import { SsrContext } from '../../common/ssr-context';
+import { loadResource } from '../../common/use-resource/load-resource';
 import ServerHooks from '../server-hooks';
 import renderPage from './render-page';
 
@@ -26,10 +27,12 @@ export default async function serveReactRoute(req, res, next): ?{ appHtml: strin
     });
 
     try {
-      const acceptedLanguages = accept.languages(req.header('Accept-Language'));
+      const acceptedLanguages = Object.freeze(accept.languages(req.header('Accept-Language')));
+
+      const loadableResources = new Map();
 
       let component = (
-        <SsrContext.Provider value={Object.freeze({ req, res })}>
+        <SsrContext.Provider value={Object.freeze({ req, res, loadableResources })}>
           <LanguageContext.Provider value={acceptedLanguages}>
             <CookiesProvider cookies={req.universalCookies}>
               <ReworkRootComponent>
@@ -62,7 +65,7 @@ export default async function serveReactRoute(req, res, next): ?{ appHtml: strin
         routingContext.markup = renderToString(
           <StaticRouter location={req.url} context={routingContext}>
             {component}
-          </StaticRouter>
+          </StaticRouter>,
         );
 
         return routingContext;
@@ -70,18 +73,40 @@ export default async function serveReactRoute(req, res, next): ?{ appHtml: strin
 
       const compilationStats = await getCompilationStats();
 
-      let header = '';
+      let hasNewLoadableResources = false;
+      let header;
       let routingContext;
-      if (process.env.NODE_ENV === 'development') {
-        // There is no CSS entry point in dev mode, generate it with collectInitial/collectContext instead.
-        header += collectInitial();
-        const renderedApp = collectContext(renderApp);
-        header += renderedApp[0]; // 0 = collected CSS
-        routingContext = renderedApp[1]; // 1 = rendered HTML
-      } else {
-        header += compilationStats.client.entryPoints.css;
-        routingContext = renderApp();
-      }
+
+      do {
+        header = '';
+
+        if (process.env.NODE_ENV === 'development') {
+          // There is no CSS entry point in dev mode, generate it with collectInitial/collectContext instead.
+          header = collectInitial();
+          const renderedApp = collectContext(renderApp);
+          header += renderedApp[0]; // 0 = collected CSS
+          routingContext = renderedApp[1]; // 1 = rendered HTML
+        } else {
+          header += compilationStats.client.entryPoints.css;
+          routingContext = renderApp();
+        }
+
+        // load all new resources that were collected during this render
+        // eslint-disable-next-line no-await-in-loop
+        await Promise.all(
+          Array.from(loadableResources.values())
+          // eslint-disable-next-line no-loop-func
+            .map(async resource => {
+              if (resource.status) {
+                return;
+              }
+
+              // cause re-render
+              hasNewLoadableResources = true;
+              resource.status = await loadResource(resource.load);
+            }),
+        );
+      } while (hasNewLoadableResources);
 
       // Somewhere a `<Redirect>` was rendered
       if (routingContext.url && routingContext.url !== req.originalUrl) {
@@ -173,6 +198,7 @@ const clientBuildDirectory = webpackClientConfig.output.path;
 const serverBuildDirectory = getWebpackSettings(/* is server */ true).output.path;
 
 let compStatCache;
+
 function getCompilationStats(): CompilationStats {
   if (compStatCache) {
     return compStatCache;
