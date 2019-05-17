@@ -1,6 +1,8 @@
+// @flow
+
 import fs from 'fs';
 import path from 'path';
-import express from 'express';
+import express, { type $Response, type $Request } from 'express';
 import httpProxy from 'http-proxy';
 import webpack from 'webpack';
 import webpackDevMiddleware from 'webpack-dev-middleware';
@@ -24,7 +26,7 @@ if (HAS_PRERENDERING) {
   const proxy = httpProxy.createProxyServer();
   const preRenderingServer = `http://localhost:${PRERENDERING_PORT}`;
 
-  preRenderingHandler = (req, res) => {
+  preRenderingHandler = (req: $Request, res: $Response) => {
     logger.debug(`Got request for ${JSON.stringify(req.url)}. Not a static file - dispatching to server-side rendering.`);
 
     return proxy.web(req, res, {
@@ -46,8 +48,8 @@ const wdmInstance = webpackDevMiddleware(compiler, {
   stats: 'errors-only',
   serverSideRender: HAS_PRERENDERING,
 });
-app.use(wdmInstance);
 
+app.use(wdmInstance);
 app.use(webpackHotMiddleware(compiler, {
   log: logger.info.bind(logger),
 }));
@@ -56,28 +58,23 @@ const indexFileName = path.join(webpackClientConfig.output.path, 'index.html');
 if (HAS_PRERENDERING) {
   // WDM uses an in-memory file system, we need to
   // persist index.html to the real file system because it will be used by the pre-rendering server.
-  compiler.plugin('done', () => {
+  compiler.plugin('done', async () => {
 
     try {
       const memoryFs = wdmInstance.fileSystem;
 
-      memoryFs.readFile(indexFileName, (readError, file) => {
-        if (readError) {
-          fs.unlink(indexFileName);
-        } else {
-          fs.writeFile(indexFileName, file, writeError => {
-            if (writeError) {
-              logger.error('error writing index.html');
-              logger.error(writeError);
-            } else {
-              logger.trace('index.html persisted');
-            }
-          });
-        }
-      });
-    } catch (e) {
-      logger.error('error while persisting index.html:');
-      logger.error(e.message);
+      const indexFile = memoryFs.readFileSync(indexFileName); // memoryFs is always sync
+      await fs.promises.writeFile(indexFileName, indexFile);
+    } catch (postBuildError) {
+      logger.error('Error while persisting index.html for use by SSR server:');
+      logger.error(postBuildError.stack);
+
+      try {
+        fs.promises.writeFile(indexFileName, `<h1>SSR Application Failed to build</h1><pre>${postBuildError.stack}</pre>`);
+      } catch (fallbackError) {
+        logger.error('Error while persisting fallback index.html');
+        logger.error(fallbackError);
+      }
     }
   });
 
@@ -86,7 +83,7 @@ if (HAS_PRERENDERING) {
 
 } else {
   // send index.html for all not found routes.
-  app.use((req, res) => {
+  app.use((req: $Request, res: $Response) => {
     try {
       const readStream = wdmInstance.fileSystem.createReadStream(indexFileName);
       readStream.pipe(res);
