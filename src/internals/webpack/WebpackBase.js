@@ -108,6 +108,12 @@ export default class WebpackBase {
   }
 
   buildConfig() {
+    const EXTENSIONS = [
+      '.mjs',
+      '.js',
+      '.jsx',
+    ];
+
     const config: Object = {
       cache: true,
       name: this.isServer() ? 'Server' : 'Client',
@@ -132,9 +138,12 @@ export default class WebpackBase {
       resolve: {
         modules: ['node_modules'],
         extensions: [
-          '.mjs',
-          '.js',
-          '.jsx',
+          // add .server.js and .browser.js extensions which will have priority over default extension if present
+          ...(this.isServer()
+            ? EXTENSIONS.map(ext => `.server${ext}`)
+            : EXTENSIONS.map(ext => `.browser${ext}`)
+          ),
+          ...EXTENSIONS,
         ],
         mainFields: [
           'webpack:main',
