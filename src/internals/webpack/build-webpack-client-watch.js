@@ -23,15 +23,20 @@ if (HAS_PRERENDERING) {
   // No worries though, this only happens in dev mode with pre-rendering.
   // Only one server is launched in prod mode or without pre-rendering.
 
-  const proxy = httpProxy.createProxyServer();
-  const preRenderingServer = `http://localhost:${PRERENDERING_PORT}`;
+  const proxy = httpProxy.createProxyServer({
+    // target the SSR server (which only outputs HTML in dev as we have the fileSystem)
+    target: `http://localhost:${PRERENDERING_PORT}`,
+  });
+
+  proxy.on('error', (err, req, res) => {
+    res.set('Content-Type', 'text/plain');
+    res.status(500).send('Proxy could not contact SSR server. Either it is booting or it crashed (check console).');
+  });
 
   preRenderingHandler = (req: $Request, res: $Response) => {
     logger.debug(`Got request for ${JSON.stringify(req.url)}. Not a static file - dispatching to server-side rendering.`);
 
-    return proxy.web(req, res, {
-      target: preRenderingServer,
-    });
+    return proxy.web(req, res);
   };
 
   // dispatch root route to pre-rendering rather than distributing index.html
