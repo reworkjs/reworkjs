@@ -4,6 +4,7 @@ import React from 'react';
 import { CookiesProvider } from 'react-cookie';
 import { StaticRouter } from 'react-router-dom';
 import { renderToString } from 'react-dom/server';
+import type { $Request, $Response, NextFunction } from 'express';
 import Helmet from 'react-helmet';
 import { ChunkExtractor } from '@loadable/server';
 import { collectInitial, collectContext } from 'node-style-loader/collect';
@@ -18,7 +19,7 @@ import { loadResource } from '../../common/use-async-resource/load-resource';
 import ServerHooks from '../server-hooks';
 import renderPage from './render-page';
 
-export default async function serveReactRoute(req, res, next): ?{ appHtml: string, state: Object, style: string } {
+export default async function serveReactRoute(req: $Request, res: $Response, next: NextFunction): Promise<void> {
 
   try {
     const serverHooks = ServerHooks.map(hookModule => {
@@ -30,10 +31,13 @@ export default async function serveReactRoute(req, res, next): ?{ appHtml: strin
     try {
       const acceptedLanguages = Object.freeze(accept.languages(req.header('Accept-Language')));
       const loadableResources = new Map();
+      const persistentValues = new Map();
 
       let component = (
-        <SsrContext.Provider value={Object.freeze({ req, res, loadableResources })}>
+        <SsrContext.Provider value={Object.freeze({ req, res, loadableResources, persistentValues })}>
           <LanguageContext.Provider value={acceptedLanguages}>
+            {/* custom prop injected by universal-cookies */}
+            {/* $FlowFixMe */}
             <CookiesProvider cookies={req.universalCookies}>
               <ReworkRootComponent>
                 {rootRoute}

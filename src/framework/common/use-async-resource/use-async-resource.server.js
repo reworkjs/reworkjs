@@ -4,11 +4,6 @@ import { useContext } from 'react';
 import { SsrContext } from '../ssr-context';
 import type { FetchCallback, StatusObject } from './typing.flow';
 
-export type ResourceLoader<T> = {
-  load: FetchCallback<T>,
-  status?: StatusObject<T>,
-};
-
 /**
  * Loads a resource in a SSR compatible way.
  * Calling this will cause a re-render of react if there are new resources to load after a render. Avoid

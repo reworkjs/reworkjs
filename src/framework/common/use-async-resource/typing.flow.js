@@ -7,3 +7,8 @@ export type StatusObject<T> = {
   value: T | void,
   error: any,
 };
+
+export type ResourceLoader<T> = {
+  load: FetchCallback<T>,
+  status?: StatusObject<T>,
+};
