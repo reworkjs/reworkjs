@@ -1,0 +1,4 @@
+{
+  "main": "./use-persistent-value.server.js",
+  "browser": "./use-persistent-value.browser.js"
+}

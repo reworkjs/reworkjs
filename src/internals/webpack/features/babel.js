@@ -67,11 +67,14 @@ export default class BabelFeature extends BaseFeature {
   getProjectBabelConfig() {
     const config = this.getBabelConfig();
 
-    if (this.isDev()) {
-      config.plugins = config.plugins || [];
+    config.plugins = config.plugins || [];
 
+    if (this.isDev()) {
       config.plugins.push('react-hot-loader/babel');
     }
+
+    // support Loadable Components
+    config.plugins.push('@loadable/babel-plugin');
 
     return config;
   }

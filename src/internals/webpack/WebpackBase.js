@@ -4,6 +4,7 @@ import path from 'path';
 import React from 'react';
 import chalk from 'chalk';
 import { renderToString } from 'react-dom/server';
+import Helmet from 'react-helmet';
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import ExtractCssPlugin from 'mini-css-extract-plugin';
@@ -11,6 +12,7 @@ import WebpackCleanupPlugin from 'webpack-cleanup-plugin';
 import nodeExternals from 'webpack-node-externals';
 import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
+import LoadablePlugin from '@loadable/webpack-plugin';
 import frameworkConfig from '../../shared/framework-config';
 import projectMetadata from '../../shared/project-metadata';
 import frameworkMetadata from '../../shared/framework-metadata';
@@ -21,8 +23,6 @@ import logger from '../../shared/logger';
 import getWebpackSettings from '../../shared/webpack-settings';
 import BaseHelmet from '../../framework/app/BaseHelmet';
 import renderPage from '../../framework/server/setup-http-server/render-page';
-import RjsDumpStatsPlugin from './DumpEntryPointsPlugin';
-import RequireEnsureHookPlugin from './RequireEnsureHookPlugin';
 import BaseFeature from './BaseFeature';
 import WebpackConfigBuilder, * as wcbUtils from './WebpackConfigBuilder';
 import sortDependencies from './sort-dependencies';
@@ -108,6 +108,12 @@ export default class WebpackBase {
   }
 
   buildConfig() {
+    const EXTENSIONS = [
+      '.mjs',
+      '.js',
+      '.jsx',
+    ];
+
     const config: Object = {
       cache: true,
       name: this.isServer() ? 'Server' : 'Client',
@@ -132,9 +138,12 @@ export default class WebpackBase {
       resolve: {
         modules: ['node_modules'],
         extensions: [
-          '.mjs',
-          '.js',
-          '.jsx',
+          // add .server.js and .browser.js extensions which will have priority over default extension if present
+          ...(this.isServer()
+            ? EXTENSIONS.map(ext => `.server${ext}`)
+            : EXTENSIONS.map(ext => `.browser${ext}`)
+          ),
+          ...EXTENSIONS,
         ],
         mainFields: [
           'webpack:main',
@@ -468,16 +477,10 @@ export default class WebpackBase {
 
       // Dump chunk mapping and entryPoints so we can determine which client chunks to send depending on which
       // chunks were imported during server-side rendering
-      new RjsDumpStatsPlugin(),
+      new LoadablePlugin({
+        writeToDisk: true,
+      }),
     ];
-
-    if (this.isServer()) {
-      plugins.push(
-        // Hook import() directives on the server-side so we can know which
-        // chunks are loaded for which routes and give them along with the HTTP response.
-        new RequireEnsureHookPlugin(),
-      );
-    }
 
     // if (!this.isServer()) {
     //   plugins.push(
@@ -513,8 +516,11 @@ export default class WebpackBase {
 }
 
 function buildIndexPage() {
+  const body = renderToString(<BaseHelmet />);
+
   return renderPage({
-    body: renderToString(<BaseHelmet />),
+    body,
+    helmet: Helmet.renderStatic(),
   });
 }
 

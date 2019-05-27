@@ -30,9 +30,13 @@ fs.writeFileSync(GITIGNORE_FILE, gitignore);
 function generatePackageJson(exportable) {
   return JSON.stringify({
     private: true,
+
+    // server & CLI use lib for commonjs (migrate server to `es` once supported by browser. Currently server must use commonjs because
+    // they don't support esm inside node_modules)
     main: `../lib/exportables/${exportable}`,
-    module: `../es/exportables/${exportable}`,
-    'es:next': `../es/exportables/${exportable}`,
+
+    // browser supports esm (through webpack)
+    browser: `../es/exportables/${exportable}`,
   });
 }
 

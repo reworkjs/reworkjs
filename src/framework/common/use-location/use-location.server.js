@@ -3,7 +3,7 @@
 import { useContext } from 'react';
 import { SsrContext } from '../ssr-context';
 
-export function useLocation(): string {
+export function useLocation(): URL {
 
   const { req } = useContext(SsrContext);
 
@@ -17,5 +17,5 @@ export function useLocation(): string {
     throw new Error('Could not determine host');
   }
 
-  return `${req.protocol}://${host}${req.originalUrl}`;
+  return new URL(`${req.protocol}://${host}${req.originalUrl}`);
 }

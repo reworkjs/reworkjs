@@ -25,7 +25,7 @@ If you choose to do so, you should use `@reworkjs/reworkjs/babel-preset` as the 
 // .babelrc
 
 {
-  "presets": ["@reworkjs/reworkjs/babel-preset"]
+  "presets": ["@reworkjs/reworkjs/babel-preset"],
   "plugins": [
     "@babel/plugin-transform-flow-strip-types",
     "@babel/plugin-proposal-class-properties",

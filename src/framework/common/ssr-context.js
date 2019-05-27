@@ -2,10 +2,13 @@
 
 import React from 'react';
 import type { $Request, $Response } from 'express';
+import type { ResourceLoader } from './use-async-resource/typing.flow';
 
 type Context = {
   req?: $Request,
   res?: $Response,
+  loadableResources?: Map<string, ResourceLoader<any>>,
+  persistentValues?: Map<string, any>,
 };
 
 /**

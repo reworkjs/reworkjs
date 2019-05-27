@@ -13,6 +13,8 @@ node_modules
 /public
 
 # Auto-generated importable sub-modules
+/use-persistent-value
+/use-async-resource
 /use-user-agent
 /use-location
 /use-dnt
