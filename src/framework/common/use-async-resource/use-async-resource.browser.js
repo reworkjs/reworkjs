@@ -4,7 +4,7 @@ import { useRef, useState } from 'react';
 import { loadResource } from './load-resource';
 import type { FetchCallback, StatusObject } from './typing.flow';
 
-export function useResource<T>(key: string, fetchCallback: FetchCallback<T>): StatusObject<T> {
+export function useAsyncResource<T>(key: string, fetchCallback: FetchCallback<T>): StatusObject<T> {
   const fetchCalled = useRef(false);
   const [status, setStatus] = useState<StatusObject<T>>({
     loading: true,

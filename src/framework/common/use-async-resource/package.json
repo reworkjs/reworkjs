@@ -1,0 +1,4 @@
+{
+  "main": "./use-async-resource.server.js",
+  "browser": "./use-async-resource.browser.js"
+}

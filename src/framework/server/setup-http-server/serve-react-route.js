@@ -14,7 +14,7 @@ import { rootRoute } from '../../common/kernel';
 import ReworkRootComponent from '../../app/ReworkRootComponent';
 import { LanguageContext } from '../../common/accept-language-context';
 import { SsrContext } from '../../common/ssr-context';
-import { loadResource } from '../../common/use-resource/load-resource';
+import { loadResource } from '../../common/use-async-resource/load-resource';
 import ServerHooks from '../server-hooks';
 import renderPage from './render-page';
 

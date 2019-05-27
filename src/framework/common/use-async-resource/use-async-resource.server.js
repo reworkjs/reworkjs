@@ -23,7 +23,7 @@ export type ResourceLoader<T> = {
  * @param {!Function} fetchCallback - The function used to load the resource. Must return a Promise that resolves a JSON-serializable value.
  * @returns {!StatusObject} The loading status of the resource.
  */
-export function useResource<T>(key: string, fetchCallback: FetchCallback<T>): StatusObject<T> {
+export function useAsyncResource<T>(key: string, fetchCallback: FetchCallback<T>): StatusObject<T> {
   const { loadableResources } = useContext(SsrContext);
 
   if (!loadableResources) {
