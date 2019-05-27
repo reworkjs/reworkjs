@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.21.0"></a>
+# [0.21.0](https://github.com/foobarhq/reworkjs/compare/v0.20.2...v0.21.0) (2019-05-27)
+
+
+### Bug Fixes
+
+* make server-side use /lib to avoid esm in modules ([4f607e3](https://github.com/foobarhq/reworkjs/commit/4f607e3))
+* prevent dev SSR server from crashing if front is ready before back-end ([ebed78c](https://github.com/foobarhq/reworkjs/commit/ebed78c))
+* prevent server from crashing in dev mode if an exception occurs during build ([48a64c2](https://github.com/foobarhq/reworkjs/commit/48a64c2))
+
+
+### Features
+
+* add experimental SSR resource loading ([bb34439](https://github.com/foobarhq/reworkjs/commit/bb34439))
+* add support for [@loadable](https://github.com/loadable) ([6b2cbcb](https://github.com/foobarhq/reworkjs/commit/6b2cbcb))
+* add usePersistentValue ([472813c](https://github.com/foobarhq/reworkjs/commit/472813c))
+* load .browser.ext over .ext on browser, .server.ext on server if present ([422af5e](https://github.com/foobarhq/reworkjs/commit/422af5e))
+* make use-location return URL & cause re-render on change ([40b23c8](https://github.com/foobarhq/reworkjs/commit/40b23c8))
+
+
+
 <a name="0.20.2"></a>
 ## [0.20.2](https://github.com/foobarhq/reworkjs/compare/v0.20.1...v0.20.2) (2019-05-13)
 
