@@ -13,6 +13,7 @@ node_modules
 /public
 
 # Auto-generated importable sub-modules
+/use-resource
 /use-user-agent
 /use-location
 /use-dnt

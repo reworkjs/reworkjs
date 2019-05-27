@@ -4,6 +4,7 @@ import { createBrowserHistory } from 'history';
 import { Router } from 'react-router-dom';
 import { CookiesProvider } from 'react-cookie';
 import serverStyleCleanup from 'node-style-loader/clientCleanup';
+import { loadableReady } from '@loadable/component';
 import { getDefault } from '../../shared/util/ModuleUtil';
 import ReworkRootComponent from '../app/ReworkRootComponent';
 import { rootRoute } from '../common/kernel';
@@ -39,10 +40,13 @@ for (const clientHook of clientHooks) {
 
 const appContainer = document.getElementById('app');
 if (appContainer.hasChildNodes()) {
-  ReactDOM.hydrate(
-    rootComponent,
-    appContainer,
-  );
+  // ensure all needed chunks are loaded before hydrating to prevent flicker
+  loadableReady(() => {
+    ReactDOM.hydrate(
+      rootComponent,
+      appContainer,
+    );
+  });
 } else {
   ReactDOM.render(
     rootComponent,

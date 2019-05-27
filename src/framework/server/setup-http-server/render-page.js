@@ -1,6 +1,5 @@
 // @flow
 
-import Helmet from 'react-helmet';
 import loadRenderPage from '../../../shared/render-html';
 
 type HelmetItem = {
@@ -66,8 +65,14 @@ export type RenderPageFunction = (PageHtml) => string;
 
 const renderPageDelegate = loadRenderPage();
 
-export default function renderPage(data: { body?: string, header?: string, footer?: string } = {}) {
-  const helmet: RenderedHelmet = Helmet.renderStatic();
+export default function renderPage(data: {
+  body?: string,
+  header?: string,
+  footer?: string,
+  helmet: RenderedHelmet,
+} = {}) {
+
+  const { helmet } = data;
 
   const pageHtml: PageHtml = {
     head: new Head({

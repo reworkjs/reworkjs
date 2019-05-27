@@ -1,8 +1,11 @@
-import fs from 'fs';
+// @flow
+
 import React from 'react';
 import { CookiesProvider } from 'react-cookie';
 import { StaticRouter } from 'react-router-dom';
 import { renderToString } from 'react-dom/server';
+import Helmet from 'react-helmet';
+import { ChunkExtractor } from '@loadable/server';
 import { collectInitial, collectContext } from 'node-style-loader/collect';
 import accept from 'accept';
 import { getDefault } from '../../../shared/util/ModuleUtil';
@@ -18,8 +21,6 @@ import renderPage from './render-page';
 export default async function serveReactRoute(req, res, next): ?{ appHtml: string, state: Object, style: string } {
 
   try {
-    hookWebpackAsyncRequire();
-
     const serverHooks = ServerHooks.map(hookModule => {
       const HookClass = getDefault(hookModule);
 
@@ -28,7 +29,6 @@ export default async function serveReactRoute(req, res, next): ?{ appHtml: strin
 
     try {
       const acceptedLanguages = Object.freeze(accept.languages(req.header('Accept-Language')));
-
       const loadableResources = new Map();
 
       let component = (
@@ -50,63 +50,47 @@ export default async function serveReactRoute(req, res, next): ?{ appHtml: strin
         }
       }
 
-      // TODO:
-      // renderToNodeStream
-      // -> need support for React-Helmet
-      //  https://github.com/nfl/react-helmet/issues/322
-      //  https://github.com/staylor/react-helmet-async
-      // -> need a way to wrap with surrounding HTML
-      //
-      // TODO:
-      // get http-equiv meta from Helmet, and send them as actual headers
-      const renderApp = () => {
+      const [
+        appHtml, routingContext,
+        chunkExtractor, inlineStyles,
+        helmet,
+      ] = await renderWithResources(loadableResources, () => {
+        /* eslint-disable no-shadow */
+
+        // will be populated by staticRouter
         const routingContext = {};
 
-        routingContext.markup = renderToString(
+        // will be populated by collectChunks
+        const chunkExtractor = new ChunkExtractor({ statsFile: getLoadableStatFile() });
+
+        const finalJsx = chunkExtractor.collectChunks(
           <StaticRouter location={req.url} context={routingContext}>
             {component}
           </StaticRouter>,
         );
 
-        return routingContext;
-      };
-
-      const compilationStats = await getCompilationStats();
-
-      let hasNewLoadableResources = false;
-      let header;
-      let routingContext;
-
-      do {
-        header = '';
-
-        if (process.env.NODE_ENV === 'development') {
-          // There is no CSS entry point in dev mode, generate it with collectInitial/collectContext instead.
-          header = collectInitial();
-          const renderedApp = collectContext(renderApp);
-          header += renderedApp[0]; // 0 = collected CSS
-          routingContext = renderedApp[1]; // 1 = rendered HTML
-        } else {
-          header += compilationStats.client.entryPoints.css;
-          routingContext = renderApp();
+        // a bit of a hack: if this is a redirect, don't bother loading resources. (need better way of passing this info)
+        if (routingContext.url && routingContext.url !== req.originalUrl) {
+          loadableResources.clear();
         }
 
-        // load all new resources that were collected during this render
-        // eslint-disable-next-line no-await-in-loop
-        await Promise.all(
-          Array.from(loadableResources.values())
-          // eslint-disable-next-line no-loop-func
-            .map(async resource => {
-              if (resource.status) {
-                return;
-              }
+        // There is no CSS entry point in dev mode
+        // so we collect inline CSS and return it
+        if (process.env.NODE_ENV === 'development') {
+          const initialInlineCss = collectInitial();
+          const [contextInlineCss, appHtml] = collectContext(() => renderToString(finalJsx));
 
-              // cause re-render
-              hasNewLoadableResources = true;
-              resource.status = await loadResource(resource.load);
-            }),
-        );
-      } while (hasNewLoadableResources);
+          return [appHtml, routingContext, chunkExtractor, initialInlineCss + contextInlineCss, Helmet.renderStatic()];
+        }
+
+        const appHtml = renderToString(finalJsx);
+
+        // there is no inline CSS in production
+        // important: Helmet must always be called after a render or it will cause a memory leak
+        return [appHtml, routingContext, chunkExtractor, '', Helmet.renderStatic()];
+
+        /* eslint-enable no-shadow */
+      });
 
       // Somewhere a `<Redirect>` was rendered
       if (routingContext.url && routingContext.url !== req.originalUrl) {
@@ -117,37 +101,38 @@ export default async function serveReactRoute(req, res, next): ?{ appHtml: strin
         res.status(routingContext.status);
       }
 
-      const importedServerChunks: Set = unhookWebpackAsyncRequire();
-      const importableClientChunks = [];
-      for (const importedServerChunk of importedServerChunks) {
-        const chunkFiles: ?Array<string> = getClientFilesFromServerChunkId(importedServerChunk, compilationStats);
-        if (!chunkFiles) {
-          continue;
-        }
-
-        importableClientChunks.push(...chunkFiles.map(getChunkPrefetchLink));
-      }
-
-      header += importableClientChunks.join('');
-
       let htmlParts = {
 
-        // initial react app
-        body: routingContext.markup,
-
         // initial style & pre-loaded JS
-        header,
+        header: `
+          ${chunkExtractor.getLinkTags()}
+          ${chunkExtractor.getStyleTags()}
+          ${inlineStyles}
+        `,
+
+        // initial react app
+        body: appHtml,
 
         // inject main webpack bundle
-        footer: `${compilationStats.client.entryPoints.js}`,
+        footer: chunkExtractor.getScriptTags(),
+
+        helmet,
       };
 
       // allow plugins to edit HTML (add script, etc) before actual render.
       for (const serverHook of serverHooks) {
         if (serverHook.preRender) {
-          htmlParts = serverHook.preRender(htmlParts);
+          htmlParts = serverHook.preRender(htmlParts) || htmlParts;
         }
       }
+
+      // TODO:
+      // - get http-equiv meta from Helmet, and send them as actual headers.
+      // - add Link preload headers so our reverse proxy can use them for server push.
+
+      // TODO: collect chunks
+      // TODO: test if mapping front-back is correct
+      // TODO: check if @loadable/babel-plugin needs to be on both ends
 
       res.send(renderPage(htmlParts));
     } finally {
@@ -160,131 +145,40 @@ export default async function serveReactRoute(req, res, next): ?{ appHtml: strin
     }
   } catch (e) {
     next(e);
-  } finally {
-    unhookWebpackAsyncRequire();
   }
 }
 
-type CompilationStats = {
-  client: {
-    entryPoints: {
-      js: string,
-      css: string,
-    },
-    chunkFileNames: { [key: string]: string },
-  },
-  server: {
-    chunkNames: { [key: string]: string },
-  },
-};
+async function renderWithResources(loadableResources, renderApp) {
 
-/**
- * Return the list of files a chunk has in the client build, using the id of a chunk from the server build.
- * This is done using uniquely named chunks.
- */
-function getClientFilesFromServerChunkId(serverChunkId: number, stats: CompilationStats): ?Array<string> {
-  // Get the name of a chunk using its server build ID.
-  const chunkName = stats.server.chunkNames[serverChunkId];
-  if (!chunkName) {
-    return null;
-  }
+  let hasNewLoadableResources;
+  let lastOutput;
 
-  // Get list of files that compose the Chunk in the client build.
-  return stats.client.chunkFileNames[chunkName] || null;
+  do {
+    hasNewLoadableResources = false;
+    lastOutput = renderApp();
+
+    // load all new resources that were collected during this render
+    // eslint-disable-next-line no-await-in-loop
+    await Promise.all(
+      Array.from(loadableResources.values())
+      // eslint-disable-next-line no-loop-func
+        .map(async resource => {
+          if (resource.status) {
+            return;
+          }
+
+          // cause re-render
+          hasNewLoadableResources = true;
+          resource.status = await loadResource(resource.load);
+        }),
+    );
+  } while (hasNewLoadableResources);
+
+  return lastOutput;
 }
 
-const webpackClientConfig = getWebpackSettings(/* is server */ false);
-const clientBuildDirectory = webpackClientConfig.output.path;
-const serverBuildDirectory = getWebpackSettings(/* is server */ true).output.path;
+const clientBuildDirectory = getWebpackSettings(/* is server */ false).output.path;
 
-let compStatCache;
-
-function getCompilationStats(): CompilationStats {
-  if (compStatCache) {
-    return compStatCache;
-  }
-
-  return Promise.all([
-    readFileAsync(`${serverBuildDirectory}-entrypoints.json`),
-    readFileAsync(`${clientBuildDirectory}-entrypoints.json`),
-  ]).then(([serverStats, clientStats]) => {
-
-    serverStats = JSON.parse(serverStats);
-    clientStats = JSON.parse(clientStats);
-
-    clientStats.entryPoints = buildEntryPointTags(clientStats.entryPoints);
-    delete serverStats.entryPoints;
-
-    const compStats = {
-      server: serverStats,
-      client: clientStats,
-    };
-
-    if (process.env.NODE_ENV === 'production') {
-      compStatCache = compStats;
-    }
-
-    return compStats;
-  });
-}
-
-const httpStaticPath = webpackClientConfig.output.publicPath;
-
-function getChunkPrefetchLink(fileName: string) {
-  const path = httpStaticPath + fileName;
-
-  if (fileName.endsWith('.css')) {
-    return `<link rel="stylesheet" href="${path}" />`;
-  }
-
-  if (fileName.endsWith('.js')) {
-    return `<link rel="prefetch" href="${path}" as="script" pr="1.0" />`;
-  }
-
-  throw new Error(`Trying to load unsupported file ${fileName}.`);
-}
-
-function buildEntryPointTags(entryPoints) {
-  entryPoints.js = entryPoints.js.map(entryPoint => `<script src="${httpStaticPath + entryPoint}"></script>`).join('');
-  entryPoints.css = entryPoints.css.map(entryPoint => `<link rel="stylesheet" href="${httpStaticPath + entryPoint}" />`).join('');
-
-  return entryPoints;
-}
-
-// __webpack_require__.e = webpack's chunk ensure function.
-// .hook and .unhook are methods added by a custom webpack plugin.
-let requiredChunks: ?Set = null;
-const rjsHook = __webpack_require__.rjs; // eslint-disable-line
-function hookWebpackAsyncRequire() {
-  requiredChunks = new Set();
-
-  if (!rjsHook) {
-    return;
-  }
-
-  rjsHook.hook(onRequiredModule);
-}
-
-function onRequiredModule(chunkId) {
-  requiredChunks.add(chunkId);
-}
-
-function unhookWebpackAsyncRequire() {
-  if (rjsHook) {
-    rjsHook.unhook(onRequiredModule);
-  }
-
-  return requiredChunks;
-}
-
-function readFileAsync(path) {
-  return new Promise((resolve, reject) => {
-    fs.readFile(path, 'utf8', (err, data) => {
-      if (err) {
-        return void reject(err);
-      }
-
-      resolve(data);
-    });
-  });
+function getLoadableStatFile() {
+  return `${clientBuildDirectory}/loadable-stats.json`;
 }
