@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.22.0"></a>
+# [0.22.0](https://github.com/foobarhq/reworkjs/compare/v0.21.0...v0.22.0) (2019-05-28)
+
+
+### Bug Fixes
+
+* make exported hooks use non-ssr version by default ([79ededf](https://github.com/foobarhq/reworkjs/commit/79ededf))
+
+
+
 <a name="0.21.0"></a>
 # [0.21.0](https://github.com/foobarhq/reworkjs/compare/v0.20.2...v0.21.0) (2019-05-27)
 
