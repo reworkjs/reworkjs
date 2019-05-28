@@ -1,4 +1,0 @@
-{
-  "main": "./use-user-agent.server.js",
-  "browser": "./use-user-agent.browser.js"
-}

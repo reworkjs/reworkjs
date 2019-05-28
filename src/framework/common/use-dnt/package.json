@@ -1,4 +1,0 @@
-{
-  "main": "./use-dnt.server.js",
-  "browser": "./use-dnt.browser.js"
-}
