@@ -5,6 +5,9 @@ export type FrameworkPluginConfig = {
 };
 
 export type FrameworkConfigStruct = {
+
+  routingType: 'browser' | 'hash',
+
   directories: {
     logs: string,
     build: string,

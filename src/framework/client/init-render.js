@@ -1,23 +1,22 @@
+// @flow
+
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { createBrowserHistory } from 'history';
-import { Router } from 'react-router-dom';
 import { CookiesProvider } from 'react-cookie';
 import serverStyleCleanup from 'node-style-loader/clientCleanup';
 import { loadableReady } from '@loadable/component';
+import { Router } from 'val-loader!./_react-router';
 import { getDefault } from '../../shared/util/ModuleUtil';
 import ReworkRootComponent from '../app/ReworkRootComponent';
 import { rootRoute } from '../common/kernel';
 import BrowserLanguageProvider from './browser-language-provider';
 import ClientHooks from './client-hooks';
 
-// TODO: support hashHistory somehow (cli option ?)
-
 let rootComponent = (
   <BrowserLanguageProvider>
     <CookiesProvider>
       <ReworkRootComponent>
-        <Router history={createBrowserHistory()}>
+        <Router>
           {rootRoute}
         </Router>
       </ReworkRootComponent>
