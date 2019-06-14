@@ -8,7 +8,7 @@ import Helmet from 'react-helmet';
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import ExtractCssPlugin from 'mini-css-extract-plugin';
-import WebpackCleanupPlugin from 'webpack-cleanup-plugin';
+import { CleanWebpackPlugin } from 'clean-webpack-plugin';
 import nodeExternals from 'webpack-node-externals';
 import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
@@ -446,7 +446,7 @@ export default class WebpackBase {
     // TODO https://github.com/diurnalist/chunk-manifest-webpack-plugin
     const plugins = [
       // remove outdated assets from previous builds.
-      new WebpackCleanupPlugin({ quiet: true }),
+      new CleanWebpackPlugin(),
       new webpack.DefinePlugin(this.getDefinedVars()),
       new CopyWebpackPlugin([{
         from: { glob: `${frameworkConfig.directories.resources}/**/**/*` },
