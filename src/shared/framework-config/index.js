@@ -13,11 +13,13 @@ import path from 'path';
 import mkdirp from 'mkdirp';
 import { get, set } from 'lodash';
 import Joi from '@hapi/joi';
+import argv from '../../internals/rjs-argv';
 import { resolveProject } from '../../internals/util/resolve-util';
 import logger from '../../shared/logger';
 import { FrameworkConfigStruct } from './framework-config-type';
 
-const frameworkConfigFile = resolveProject('.framework-config');
+const isCustomConfigFile = Boolean(argv.reworkrc);
+const frameworkConfigFile = (argv.reworkrc && path.resolve(argv.reworkrc)) || resolveProject('.reworkrc');
 
 /**
  * Loads the .framework-config file and returns the config merged with defaults.
@@ -25,8 +27,11 @@ const frameworkConfigFile = resolveProject('.framework-config');
 function getUserConfig() {
 
   if (!fs.existsSync(frameworkConfigFile)) {
-    logger.debug('No ".framework-config" found in app directory, creating.');
-    fs.writeFileSync(frameworkConfigFile, JSON.stringify(defaultConfig));
+
+    if (isCustomConfigFile) {
+      logger.warn(`Configuration File ${frameworkConfigFile} does not exist`);
+    }
+
     return {};
   }
 
