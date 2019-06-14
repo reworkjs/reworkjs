@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.23.0"></a>
+# [0.23.0](https://github.com/foobarhq/reworkjs/compare/v0.22.0...v0.23.0) (2019-06-14)
+
+
+### Bug Fixes
+
+* don't inject babel-runtime inside of core-js ([833b3c7](https://github.com/foobarhq/reworkjs/commit/833b3c7))
+* replace WebpackClean with CleanWebpack ([d9021f5](https://github.com/foobarhq/reworkjs/commit/d9021f5)), closes [#55](https://github.com/foobarhq/reworkjs/issues/55)
+
+
+### Features
+
+* add config option to use the react-router HashRouter ([840a185](https://github.com/foobarhq/reworkjs/commit/840a185))
+* allow people to define a custom path to the configuration file ([5f5b98f](https://github.com/foobarhq/reworkjs/commit/5f5b98f))
+* validate configuration using Joi ([9eb9c65](https://github.com/foobarhq/reworkjs/commit/9eb9c65))
+
+
+### BREAKING CHANGES
+
+* default config file is now <project_dir>/.reworkrc
+* relative files & directories specified in config file are now relative to folder containing the config file.
+
+
+
 <a name="0.22.0"></a>
 # [0.22.0](https://github.com/foobarhq/reworkjs/compare/v0.21.0...v0.22.0) (2019-05-28)
 
