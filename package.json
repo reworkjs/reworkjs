@@ -50,6 +50,7 @@
     "@babel/preset-env": "^7.4.5",
     "@babel/preset-react": "^7.0.0",
     "@babel/runtime": "^7.4.5",
+    "@hapi/joi": "^15.0.3",
     "@loadable/babel-plugin": "^5.10.0",
     "@loadable/component": "^5.10.1",
     "@loadable/server": "^5.9.0",
