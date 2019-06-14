@@ -5,6 +5,9 @@ export type FrameworkPluginConfig = {
 };
 
 export type FrameworkConfigStruct = {
+
+  routingType: 'browser' | 'hash',
+
   directories: {
     logs: string,
     build: string,
@@ -13,10 +16,12 @@ export type FrameworkConfigStruct = {
   },
 
   routes: string,
-  'entry-react': ?string,
-  'render-html': ?string,
-  'pre-init': ?string,
-  'service-worker': ?string,
+  'entry-react': string | null,
+  'render-html': string | null,
+  'pre-init': string | null,
+  'service-worker': string | null,
 
-  plugins: ?{ [string]: any },
+  plugins: { [string]: any },
+
+  filePath: string,
 };

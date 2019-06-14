@@ -46,8 +46,8 @@ export default class BabelFeature extends BaseFeature {
       loader: 'babel-loader',
       include: /node_modules/,
 
-      // do not transpile @babel/runtime as it will try to inject @babel/runtime inside itself.
-      exclude: /@babel\/runtime/,
+      // do not transpile @babel/runtime or core-js as babel-runtime-plugin will try to inject @babel/runtime inside it. Same for core-js.
+      exclude: /(@babel\/runtime)|(core-js)/,
 
       options: {
         sourceType: 'unambiguous',
