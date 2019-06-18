@@ -21,6 +21,10 @@ export type FrameworkConfigStruct = {
   'pre-init': string | null,
   'service-worker': string | null,
 
+  hooks: {
+    client: string | null,
+    server: string | null,
+  },
   plugins: { [string]: any },
 
   filePath: string,

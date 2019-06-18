@@ -54,6 +54,10 @@ function normalizeConfig(config: Object) {
       translations: Joi.string().default('./src/translations'),
     }).default(),
 
+    hooks: Joi.object({
+      client: Joi.string().allow(null).default(null),
+      server: Joi.string().allow(null).default(null),
+    }).default(),
     plugins: Joi.object().unknown(true).default(),
   }).default();
 
