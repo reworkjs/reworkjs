@@ -1,3 +1,5 @@
+// @flow
+
 import path from 'path';
 import express from 'express';
 import cookiesMiddleware from 'universal-cookie-express';
@@ -5,6 +7,7 @@ import getWebpackSettings from '../../../shared/webpack-settings';
 import argv from '../../../internals/rjs-argv';
 import logger from '../../../shared/logger';
 import { getDefault } from '../../../shared/util/ModuleUtil';
+import ServerHooks from '../server-hooks';
 
 const webpackClientConfig = getWebpackSettings(/* is server */ false);
 const httpStaticPath = webpackClientConfig.output.publicPath;
@@ -32,6 +35,14 @@ export default function setupHttpServer(expressApp) {
       res.sendFile(clientEntryPoint);
     });
   } else {
+    const serverHookClasses = ServerHooks.map(hookModule => getDefault(hookModule));
+
+    for (const serverHookClass of serverHookClasses) {
+      if (serverHookClass.configureServerApp) {
+        serverHookClass.configureServerApp(expressApp);
+      }
+    }
+
     import('./serve-react-route').then(module => {
       const serveReactRoute = getDefault(module);
 
