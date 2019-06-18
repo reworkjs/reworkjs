@@ -96,9 +96,13 @@ Default: none
 
 If specified, the file will be loaded inside of the service worker.
 
+## `hooks`
+
+See [The first section of Plugins](./plugins.md#hook-system)
+
 ## `plugins`
 
-TBD
+See [The second section of Plugins](./plugins.md#plugin-system)
 
 ## Specifying the path to the configuration file
 

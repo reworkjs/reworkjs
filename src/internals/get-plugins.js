@@ -1,5 +1,6 @@
 // @flow
 
+import path from 'path';
 import frameworkConfig from '../shared/framework-config';
 
 type PluginHooks = {
@@ -59,6 +60,11 @@ export const HOOK_SIDES = Object.freeze({
 export function getHooks(side: string): string[] {
 
   const hooks = [];
+
+  const adHocHooks = frameworkConfig.hooks;
+  if (adHocHooks[side]) {
+    hooks.push(path.resolve(path.dirname(frameworkConfig.filePath), adHocHooks[side]));
+  }
 
   for (const plugin of getPlugins()) {
     if (!plugin.getHooks) {

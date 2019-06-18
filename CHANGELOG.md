@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.24.0"></a>
+# [0.24.0](https://github.com/foobarhq/reworkjs/compare/v0.23.0...v0.24.0) (2019-06-18)
+
+
+### Bug Fixes
+
+* resolve adhoc hook based on config file *directory* ([4bd941a](https://github.com/foobarhq/reworkjs/commit/4bd941a))
+
+
+### Features
+
+* allow providing ad-hoc hooks ([8cb50bc](https://github.com/foobarhq/reworkjs/commit/8cb50bc))
+* provide hook to configure express ([a66100c](https://github.com/foobarhq/reworkjs/commit/a66100c))
+
+
+
 <a name="0.23.0"></a>
 # [0.23.0](https://github.com/foobarhq/reworkjs/compare/v0.22.0...v0.23.0) (2019-06-14)
 
