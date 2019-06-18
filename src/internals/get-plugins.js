@@ -63,7 +63,7 @@ export function getHooks(side: string): string[] {
 
   const adHocHooks = frameworkConfig.hooks;
   if (adHocHooks[side]) {
-    hooks.push(path.resolve(frameworkConfig.filePath, adHocHooks[side]));
+    hooks.push(path.resolve(path.dirname(frameworkConfig.filePath), adHocHooks[side]));
   }
 
   for (const plugin of getPlugins()) {
