@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.24.1"></a>
+## [0.24.1](https://github.com/foobarhq/reworkjs/compare/v0.24.0...v0.24.1) (2019-07-03)
+
+
+### Bug Fixes
+
+* fix useLocation having undefined in its url ([9084cd5](https://github.com/foobarhq/reworkjs/commit/9084cd5))
+
+
+
 <a name="0.24.0"></a>
 # [0.24.0](https://github.com/foobarhq/reworkjs/compare/v0.23.0...v0.24.0) (2019-06-18)
 
