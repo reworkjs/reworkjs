@@ -8,9 +8,9 @@ export function useLocation(): URL {
   const router = useRouter();
 
   const url = new URL(window.location.href); // get origin from `location`
-  url.pathname = router.pathname;
-  url.search = router.search;
-  url.hash = router.hash;
+  url.pathname = router.location.pathname;
+  url.search = router.location.search;
+  url.hash = router.location.hash;
 
   const urlObjectRef = useRef(url);
 
