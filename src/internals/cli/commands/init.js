@@ -116,7 +116,7 @@ const scripts = {
 
       execSync(`npm install --save-dev eslint ${preset}`);
 
-      return void fs.writeFile(
+      await fs.writeFile(
         resolveProject('.eslintrc'),
         `{
   "extends": "${preset}"
@@ -152,7 +152,7 @@ const scripts = {
 
       execSync(`npm install --save-dev stylelint ${preset}`);
 
-      return void fs.writeFile(
+      await fs.writeFile(
         resolveProject('.stylelintrc'),
         `{
   "extends": "${preset}"
@@ -206,10 +206,10 @@ const scripts = {
       return fs.exists(resolveProject('postcss.config.js'));
     },
 
-    run() {
+    async run() {
       execSync('npm install --save-dev @reworkjs/postcss-preset-reworkjs');
 
-      return fsExtra.copy(
+      await fsExtra.copy(
         resolveRoot('resources/postcss.config.js.raw'),
         resolveProject('postcss.config.js')
       );
