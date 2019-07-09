@@ -2,7 +2,6 @@
 
 import path from 'path';
 import React from 'react';
-import chalk from 'chalk';
 import { renderToString } from 'react-dom/server';
 import Helmet from 'react-helmet';
 import webpack from 'webpack';
@@ -13,6 +12,7 @@ import nodeExternals from 'webpack-node-externals';
 import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import LoadablePlugin from '@loadable/webpack-plugin';
+import { chalkNok, chalkOk } from '../../shared/chalk';
 import frameworkConfig from '../../shared/framework-config';
 import projectMetadata from '../../shared/project-metadata';
 import frameworkMetadata from '../../shared/framework-metadata';
@@ -96,7 +96,7 @@ export default class WebpackBase {
     const name = feature.getFeatureName();
     const enabled = requestedFeatures[name] != null ? requestedFeatures[name] : feature.isDefaultEnabled();
 
-    logger.debug(`${enabled ? chalk.green('✓') : chalk.red('✘')} Feature ${name}`);
+    logger.debug(`${enabled ? chalkOk('✓') : chalkNok('✘')} Feature ${name}`);
 
     if (!enabled) {
       return false;
@@ -253,9 +253,6 @@ export default class WebpackBase {
 
   /** @private */
   buildRules() {
-
-    // TODO consider using url-loader rather than file-loader maybe ?
-    // Need to test perf gain.
 
     return [{
       test: /\.(eot|ttf|woff|woff2)(\?.*$|$)/i,

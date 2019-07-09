@@ -1,8 +1,8 @@
 // @flow
 
 import childProcess from 'child_process';
-import chalk from 'chalk';
 import getPort from 'get-port';
+import { chalkEnvVar } from '../../../shared/chalk';
 import framework from '../../../shared/framework-metadata';
 import logger from '../../../shared/logger';
 import builders from '../../webpack/builders';
@@ -56,7 +56,7 @@ export default function registerCommand(cli) {
       // remove 'start' from extraneous options.
       argv._.shift();
 
-      logger.info(`Launching app in ${chalk.magenta(process.env.NODE_ENV)} mode...`);
+      logger.info(`Launching app in ${chalkEnvVar(process.env.NODE_ENV)} mode...`);
 
       process.env.WATCH = String(process.env.NODE_ENV === 'development');
 

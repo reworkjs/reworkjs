@@ -1,10 +1,9 @@
 import path from 'path';
-import chalk from 'chalk';
+import { chalkUrl } from '../../shared/chalk';
 import logger from '../../shared/logger';
 import config from './webpack.server';
 import compileWebpack, { StatDetails, EntryPoint } from './compile-webpack';
 
-chalk.enabled = true;
 logger.info('Building your server-side app, this might take a minute.');
 
 const WATCH = process.env.WATCH === 'true';
@@ -30,7 +29,7 @@ compileWebpack(config, WATCH, (stats: StatDetails) => {
   // don't need to know about the entry point if it is handled by another process automatically.
   const method = process.send ? 'debug' : 'info';
 
-  logger[method](`Server entry point: ${chalk.blue(entryPoint)}`);
+  logger[method](`Server entry point: ${chalkUrl(entryPoint)}`);
 
   // tell manager CLI to launch server
   if (process.send) {

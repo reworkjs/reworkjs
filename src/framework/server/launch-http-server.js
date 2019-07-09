@@ -2,14 +2,12 @@
 
 import { promisify } from 'util';
 import express from 'express';
-import chalk from 'chalk';
 import getPort from 'get-port';
+import { chalkArgvParam } from '../../shared/chalk';
 import argv from '../../internals/rjs-argv';
 import logger from '../../shared/logger';
 import setupHttpServer from './setup-http-server';
 import printServerStarted from './print-server-started';
-
-chalk.enabled = true;
 
 /**
  * This server does two things:
@@ -20,7 +18,7 @@ export default (async function initServer() {
   const hideHttp = Boolean(argv['hide-http']);
 
   if (!argv.port && !hideHttp) {
-    logger.info(`Use ${chalk.blue('--port <number>')} to set the port to use.`);
+    logger.info(`Use ${chalkArgvParam('--port <number>')} to set the port to use.`);
   }
 
   const port = argv.port || process.env.PORT || await getPort();
