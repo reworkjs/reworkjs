@@ -1,6 +1,6 @@
 import * as Chalk from 'chalk';
 
-export const chalk = new Chalk.Instance({ enabled: true });
+export const chalk = new Chalk.constructor({ enabled: true });
 
 // Chalk Theme
 
