@@ -298,12 +298,14 @@ export default class WebpackBase {
     if (options.modules) {
       Object.assign(loaderOptions, {
         modules: true,
-        camelCase: true,
+        localsConvention: 'camelCase',
       });
 
       if (isDev) {
         Object.assign(loaderOptions, {
-          localIdentName: '[local]__[hash:base64:5]',
+          modules: {
+            localIdentName: '[path][name]__[local]--[hash:base64:5]',
+          },
         });
       }
 
@@ -311,7 +313,7 @@ export default class WebpackBase {
       // the actual CSS is served directly from the client bundle.
       if (this.isServer() && !this.isDev) {
         Object.assign(loaderOptions, {
-          exportOnlyLocals: true,
+          onlyLocals: true,
         });
       }
     }
