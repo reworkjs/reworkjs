@@ -32,7 +32,10 @@ export default class ServiceWorkerFeature extends BaseFeature {
     const serviceWorkerEntry = frameworkConfig['service-worker'];
 
     const options: Object = {
+      appShell: '/index.html',
       relativePaths: false,
+
+      // TODO: autoUpdate option?
 
       // this is applied before any match in `caches` section
       excludes: [
@@ -47,10 +50,6 @@ export default class ServiceWorkerFeature extends BaseFeature {
 
       AppCache: false,
       ServiceWorker: {
-        navigateFallbackURL: '/',
-
-        // FIXME remove this once OfflinePlugin 5 releases
-        minify: false,
       },
     };
 
@@ -62,8 +61,6 @@ export default class ServiceWorkerFeature extends BaseFeature {
 
       // only enable cache in prod
       Object.assign(options, {
-        appShell: '/index.html',
-
         caches: {
           main: [':rest:'],
 

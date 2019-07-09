@@ -1,12 +1,10 @@
 // @flow
 
 import childProcess from 'child_process';
-import chalk from 'chalk';
+import { chalk, chalkEnvVar } from '../../../shared/chalk';
 import logger from '../../../shared/logger';
 import builders from '../../webpack/builders';
 import featureHelp from '../get-webpack-features-help';
-
-chalk.enabled = true;
 
 export default function registerCommand(commander) {
 
@@ -24,7 +22,7 @@ export default function registerCommand(commander) {
 
       logger.info(`Building ${parts.map(
         str => chalk.blue(str)
-      ).join(', ')} in ${chalk.magenta(process.env.NODE_ENV)} mode...`);
+      ).join(', ')} in ${chalkEnvVar(process.env.NODE_ENV)} mode...`);
 
       process.env.WATCH = 'false';
 

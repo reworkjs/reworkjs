@@ -3,9 +3,9 @@
 import fs from 'mz/fs';
 import fsExtra from 'fs-extra';
 import { noop } from 'lodash';
-import chalk from 'chalk';
 import inquirer from 'inquirer';
 import semver from 'semver';
+import { chalkNok, chalkNpmDep, chalkOk } from '../../../shared/chalk';
 import { resolveProject, resolveRoot } from '../../util/resolve-util';
 import logger from '../../../shared/logger';
 import { execSync } from '../../util/process-util';
@@ -45,7 +45,7 @@ const scripts = {
       }
 
       if (toInstall.length > 0) {
-        logger.info(`Installing peer dependencies ${toInstall.map(dep => chalk.blue(dep)).join(', ')}`);
+        logger.info(`Installing peer dependencies ${toInstall.map(dep => chalkNpmDep(dep)).join(', ')}`);
         execSync(`npm install --save ${toInstall.join(' ')}`);
       }
     },
@@ -116,7 +116,7 @@ const scripts = {
 
       execSync(`npm install --save-dev eslint ${preset}`);
 
-      return void fs.writeFile(
+      await fs.writeFile(
         resolveProject('.eslintrc'),
         `{
   "extends": "${preset}"
@@ -152,7 +152,7 @@ const scripts = {
 
       execSync(`npm install --save-dev stylelint ${preset}`);
 
-      return void fs.writeFile(
+      await fs.writeFile(
         resolveProject('.stylelintrc'),
         `{
   "extends": "${preset}"
@@ -206,10 +206,10 @@ const scripts = {
       return fs.exists(resolveProject('postcss.config.js'));
     },
 
-    run() {
+    async run() {
       execSync('npm install --save-dev @reworkjs/postcss-preset-reworkjs');
 
-      return fsExtra.copy(
+      await fsExtra.copy(
         resolveRoot('resources/postcss.config.js.raw'),
         resolveProject('postcss.config.js')
       );
@@ -250,21 +250,21 @@ async function runScript(scriptName, script) {
     if (typeof script.isReady === 'function') {
       const isReady = await script.isReady();
       if (typeof isReady !== 'boolean') {
-        logger.info(`${chalk.red('✘')} ${scriptName} - Script has a bug.`);
+        logger.info(`${chalkNok('✘')} ${scriptName} - Script has a bug.`);
         return;
       }
 
       if (isReady) {
-        logger.info(`${chalk.green('✓')} ${scriptName}`);
+        logger.info(`${chalkOk('✓')} ${scriptName}`);
         return;
       }
     }
 
     await script.run();
 
-    logger.info(`${chalk.green('✓')} ${scriptName}`);
+    logger.info(`${chalkOk('✓')} ${scriptName}`);
   } catch (e) {
-    logger.info(`${chalk.red('✘')} ${scriptName} - Script crashed.`);
+    logger.info(`${chalkNok('✘')} ${scriptName} - Script crashed.`);
     throw e;
   }
 }

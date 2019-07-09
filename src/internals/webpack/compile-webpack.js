@@ -3,7 +3,7 @@
 import fs from 'fs';
 import mkdirp from 'mkdirp';
 import webpack from 'webpack';
-import chalk from 'chalk';
+import { chalkUrl } from '../../shared/chalk';
 import logger from '../../shared/logger';
 import frameworkConfig from '../../shared/framework-config';
 
@@ -117,7 +117,7 @@ function printErrors(stats: Stats) {
 
 const DEBUG_LOCATION = `${frameworkConfig.directories.build}/webpack-debug.log`;
 function writeDebug(stats) {
-  logger.warn(`Debug log outputed at ${chalk.green(DEBUG_LOCATION)}`);
+  logger.warn(`Debug log outputed at ${chalkUrl(DEBUG_LOCATION)}`);
   mkdirp.sync(frameworkConfig.directories.build);
   fs.writeFileSync(DEBUG_LOCATION, stats.toString());
 }

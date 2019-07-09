@@ -64,10 +64,6 @@ Build DLLs
 
 `babel-node -- ./framework/internals/scripts/extract-intl.js`
 
-## `generate`
-
-`plop --plopfile internals/generators/index.js`
-
 ## `pagespeed`
 
 `node ./internals/scripts/pagespeed.js`

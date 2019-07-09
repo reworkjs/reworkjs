@@ -7,7 +7,6 @@ import getWebpackSettings from '../../../shared/webpack-settings';
 import argv from '../../../internals/rjs-argv';
 import logger from '../../../shared/logger';
 import { getDefault } from '../../../shared/util/ModuleUtil';
-import ServerHooks from '../server-hooks';
 
 const webpackClientConfig = getWebpackSettings(/* is server */ false);
 const httpStaticPath = webpackClientConfig.output.publicPath;
@@ -35,19 +34,24 @@ export default function setupHttpServer(expressApp) {
       res.sendFile(clientEntryPoint);
     });
   } else {
-    const serverHookClasses = ServerHooks.map(hookModule => getDefault(hookModule));
 
-    for (const serverHookClass of serverHookClasses) {
-      if (serverHookClass.configureServerApp) {
-        serverHookClass.configureServerApp(expressApp);
+    // lazy-imported because these can only run on the built server
+    import('../server-hooks').then(module => {
+      const ServerHooks = module.default;
+      const serverHookClasses = ServerHooks.map(hookModule => getDefault(hookModule));
+
+      for (const serverHookClass of serverHookClasses) {
+        if (serverHookClass.configureServerApp) {
+          serverHookClass.configureServerApp(expressApp);
+        }
       }
-    }
+    }).then(() => {
+      import('./serve-react-route').then(module => {
+        const serveReactRoute = getDefault(module);
 
-    import('./serve-react-route').then(module => {
-      const serveReactRoute = getDefault(module);
-
-      expressApp.use(cookiesMiddleware());
-      expressApp.use(serveReactRoute);
+        expressApp.use(cookiesMiddleware());
+        expressApp.use(serveReactRoute);
+      });
     });
   }
 }

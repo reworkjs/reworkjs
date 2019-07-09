@@ -1,7 +1,7 @@
-import chalk from 'chalk';
+import { chalkWebpackFeature } from '../../shared/chalk';
 import features from '../webpack/features';
 
-const featureList = features.map(feature => `\t${chalk.blue(feature.prototype.getFeatureName())} - ${feature.prototype.getDescription()}`).join('\n');
+const featureList = features.map(feature => `\t${chalkWebpackFeature(feature.prototype.getFeatureName())} - ${feature.prototype.getDescription()}`).join('\n');
 
 export default [
   'features',

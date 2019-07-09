@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.25.0"></a>
+# [0.25.0](https://github.com/foobarhq/reworkjs/compare/v0.24.1...v0.25.0) (2019-07-09)
+
+
+### Bug Fixes
+
+* create new Chalk instance using Chalk.constructor ([4815551](https://github.com/foobarhq/reworkjs/commit/4815551))
+* fix init ignoring errors ([5e2f06b](https://github.com/foobarhq/reworkjs/commit/5e2f06b))
+* lazy load server-hooks ([30036ce](https://github.com/foobarhq/reworkjs/commit/30036ce))
+* make babel cache env & side aware ([b5e1b3e](https://github.com/foobarhq/reworkjs/commit/b5e1b3e))
+
+
+
 <a name="0.24.1"></a>
 ## [0.24.1](https://github.com/foobarhq/reworkjs/compare/v0.24.0...v0.24.1) (2019-07-03)
 

@@ -1,6 +1,6 @@
 // @flow
 
-import chalk from 'chalk';
+import { chalkCommand, chalkWebpackFeature, chalkNpmDep } from '../../shared/chalk';
 import logger from '../../shared/logger';
 import WebpackConfigBuilder from './WebpackConfigBuilder';
 
@@ -42,8 +42,16 @@ export default class BaseFeature {
     return !this.isProd();
   }
 
+  getEnv() {
+    return this._env || 'production';
+  }
+
+  getSideName() {
+    return this.isServer() ? 'SSR' : 'Client';
+  }
+
   isProd(): boolean {
-    return this._env === 'production';
+    return this.getEnv() === 'production';
   }
 
   isServer(): boolean {
@@ -67,7 +75,7 @@ export default class BaseFeature {
         throw e;
       }
 
-      logger.error(`Feature ${chalk.blue(this.getFeatureName())} is missing the dependency ${chalk.magenta(dependencyName)}. run ${chalk.magenta(`npm install ${dependencyName}`)}`);
+      logger.error(`Feature ${chalkWebpackFeature(this.getFeatureName())} is missing the dependency ${chalkNpmDep(dependencyName)}. run ${chalkCommand(`npm install ${dependencyName}`)}`);
       throw e;
     }
   }
