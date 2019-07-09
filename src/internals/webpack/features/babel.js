@@ -34,9 +34,9 @@ export default class BabelFeature extends BaseFeature {
         // Cache build results in ./node_modules/.cache/reworkjs/babel.
         // We use findCacheDir() because of:
         // https://github.com/facebookincubator/create-react-app/issues/483
-        cacheDirectory: `${findCacheDir({
-          name: frameworkMetadata.name,
-        })}/babel`,
+        cacheDirectory: findCacheDir({
+          name: `${frameworkMetadata.name}-babel-${this.getEnv()}-${this.getSideName()}`,
+        }),
       },
     });
 
@@ -57,9 +57,9 @@ export default class BabelFeature extends BaseFeature {
         // should we allow users to compile node_modules using babel.config.js? That'd require exposing a base preset
         // (@reworkjs/reworkjs/module-babel-preset?). Need to test performance.
         configFile: false,
-        cacheDirectory: `${findCacheDir({
-          name: frameworkMetadata.name,
-        })}/babel-on-deps`,
+        cacheDirectory: findCacheDir({
+          name: `${frameworkMetadata.name}-babel_nm-${this.getEnv()}-${this.getSideName()}`,
+        }),
       },
     });
   }

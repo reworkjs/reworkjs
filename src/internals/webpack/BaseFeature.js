@@ -42,8 +42,16 @@ export default class BaseFeature {
     return !this.isProd();
   }
 
+  getEnv() {
+    return this._env || 'production';
+  }
+
+  getSideName() {
+    return this.isServer() ? 'SSR' : 'Client';
+  }
+
   isProd(): boolean {
-    return this._env === 'production';
+    return this.getEnv() === 'production';
   }
 
   isServer(): boolean {
