@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.25.1"></a>
+## [0.25.1](https://github.com/foobarhq/reworkjs/compare/v0.25.0...v0.25.1) (2019-07-12)
+
+
+### Bug Fixes
+
+* force app refresh after intl change ([24c15f2](https://github.com/foobarhq/reworkjs/commit/24c15f2))
+* minify css in production ([c298003](https://github.com/foobarhq/reworkjs/commit/c298003))
+* resolve webpack deprecation warnings ([29f1908](https://github.com/foobarhq/reworkjs/commit/29f1908))
+
+
+### Features
+
+* enable "removeAvailableModules" webpack opti ([31b30b2](https://github.com/foobarhq/reworkjs/commit/31b30b2))
+
+
+
 <a name="0.25.0"></a>
 # [0.25.0](https://github.com/foobarhq/reworkjs/compare/v0.24.1...v0.25.0) (2019-07-09)
 

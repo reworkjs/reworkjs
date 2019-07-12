@@ -63,7 +63,7 @@ const indexFileName = path.join(webpackClientConfig.output.path, 'index.html');
 if (HAS_PRERENDERING) {
   // WDM uses an in-memory file system, we need to
   // persist index.html to the real file system because it will be used by the pre-rendering server.
-  compiler.plugin('done', async () => {
+  compiler.hooks.afterEmit.tap('@reworkjs/core ssr index.html copy', async () => {
 
     try {
       const memoryFs = wdmInstance.fileSystem;

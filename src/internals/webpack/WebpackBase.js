@@ -378,6 +378,14 @@ export default class WebpackBase {
       'react-native': 'react-native-web',
     };
 
+    // if (this.isServer()) {
+    //   // TODO:
+    //   // force babel-runtime to load as commonjs on server because
+    //   // node cannot load esm itself (babel-runtime is external)
+    //   // --> If this doesn't work, exclude @babel/runtime/helpers/esm from externals
+    //   frameworkAliases['@babel/runtime/helpers/esm'] = '@babel/runtime/helpers';
+    // }
+
     const customAliases = wcbUtils.getAliases(this.webpackConfigBuilder);
     Object.assign(frameworkAliases, customAliases);
 

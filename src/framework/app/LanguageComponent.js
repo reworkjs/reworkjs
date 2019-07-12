@@ -89,6 +89,12 @@ export default class LanguageComponent extends React.Component<Props, State> {
 
     return (
       <IntlProvider
+        // FIXME: Remove this when react-intl 3.0.0 releases
+        //  react-intl 2.x.x uses old context which is blocked by PureComponents.
+        //  Until react-intl 3 comes out with the new Context API, we force a re-render of the whole
+        //  tree by changing the `key` prop.
+        key={this.state.activeLocale}
+
         locale={this.state.activeLocale}
         messages={this.state.messages}
         textComponent={React.Fragment}
