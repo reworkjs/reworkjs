@@ -32,7 +32,7 @@ export default function compileWebpack(config: Object, watch: boolean, callback:
     ? cb => compiler.watch({}, cb)
     : cb => compiler.run(cb);
 
-  compiler.plugin('compile', () => {
+  compiler.hooks.watchRun.tap('@reworkjs/core building notifier', () => {
     logger.info('Building...');
   });
 
