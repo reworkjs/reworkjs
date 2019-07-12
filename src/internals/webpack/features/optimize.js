@@ -1,6 +1,7 @@
 // @flow
 
 import TerserPlugin from 'terser-webpack-plugin';
+import OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin';
 
 import BaseFeature from '../BaseFeature';
 import type WebpackConfigBuilder from '../WebpackConfigBuilder';
@@ -84,7 +85,10 @@ export default class OptimizeFeature extends BaseFeature {
         },
         minimize: true,
         minimizer: [
+          // minimize CSS
+          new OptimizeCSSAssetsPlugin({}),
 
+          // minimize JS
           new TerserPlugin({
             parallel: true,
             cache: true,
