@@ -173,6 +173,8 @@ export default class WebpackBase {
           whitelist: [
             // framework must be processed by webpack as it relies on some webpack processes
             new RegExp(`^${frameworkMetadata.name}`),
+            // TODO: should we mark all plugins as non-externals?
+            /^@reworkjs\/redux/,
             /\.css$/i,
           ],
         }),
