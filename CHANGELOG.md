@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.25.2"></a>
+## [0.25.2](https://github.com/foobarhq/reworkjs/compare/v0.25.1...v0.25.2) (2019-08-02)
+
+
+### Bug Fixes
+
+* remove [@rework](https://github.com/rework)/redux from externals ([08e5f40](https://github.com/foobarhq/reworkjs/commit/08e5f40))
+
+
+
 <a name="0.25.1"></a>
 ## [0.25.1](https://github.com/foobarhq/reworkjs/compare/v0.25.0...v0.25.1) (2019-07-12)
 
