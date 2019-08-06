@@ -8,7 +8,6 @@
 
 import { installReactIntlMessagesForLocale, isTranslationSupported, type ReactIntlMessages } from './_app-translations';
 import { installIntlLocale } from './_native-intl';
-import { installReactIntlLocale } from './_react-intl-locales';
 
 /*
  * What needs to be available:
@@ -38,7 +37,6 @@ function installLocale(newLocale: string): Promise<{ messages: ReactIntlMessages
 
     return Promise.all([
       installReactIntlMessagesForLocale(newLocale),
-      installReactIntlLocale(newLocale),
       installIntlLocale(newLocale),
     ]).then(([translations]) => {
       return { messages: translations, locale: newLocale };

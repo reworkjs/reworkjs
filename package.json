@@ -1,6 +1,6 @@
 {
   "name": "@reworkjs/reworkjs",
-  "version": "0.25.2",
+  "version": "0.26.0",
   "description": "A react framework that works out of the box",
   "repository": {
     "type": "git",
@@ -36,7 +36,7 @@
     "webpack-bundle-analyzer": "^3.3.2"
   },
   "peerDependencies": {
-    "react-intl": "^2.9.0",
+    "react-intl": "^3.0.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-helmet": "^5.2.1",
@@ -50,6 +50,7 @@
     "@babel/preset-env": "^7.5.2",
     "@babel/preset-react": "^7.0.0",
     "@babel/runtime": "^7.5.2",
+    "@formatjs/intl-relativetimeformat": "^2.5.0",
     "@hapi/joi": "^15.1.0",
     "@loadable/babel-plugin": "^5.10.0",
     "@loadable/component": "^5.10.1",
@@ -85,6 +86,7 @@
     "image-webpack-loader": "^4.6.0",
     "inquirer": "^6.4.1",
     "intl": "^1.2.5",
+    "intl-pluralrules": "^1.0.3",
     "ip": "^1.1.5",
     "json-loader": "^0.5.7",
     "lodash": "^4.17.11",
@@ -137,7 +139,7 @@
     "react-cookie": "^4.0.1",
     "react-dom": "^16.8.6",
     "react-helmet": "^5.2.1",
-    "react-intl": "^2.9.0",
+    "react-intl": "^3.0.0",
     "standard-version": "^4.3.0"
   }
 }
