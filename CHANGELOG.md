@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.26.0"></a>
+# [0.26.0](https://github.com/foobarhq/reworkjs/compare/v0.25.2...v0.26.0) (2019-08-06)
+
+
+### Features
+
+* update react-intl to 3.x.x & remove react-intl workaround ([d870528](https://github.com/foobarhq/reworkjs/commit/d870528))
+
+
+
 <a name="0.25.2"></a>
 ## [0.25.2](https://github.com/foobarhq/reworkjs/compare/v0.25.1...v0.25.2) (2019-08-02)
 
