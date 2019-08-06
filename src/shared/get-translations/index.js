@@ -1,17 +1,10 @@
 // @flow
 
-import libPath from 'path';
 import config from '../framework-config';
 import recursiveReadSync from 'recursive-readdir-sync';
 
 export function loadMessageTranslationList() {
   return requireContext(config.directories.translations, true, /\.js(on|x|m)$/);
-}
-
-export function loadReactIntlLocaleList() {
-  const directory = libPath.dirname(require.resolve('react-intl/locale-data'));
-
-  return requireContext(directory, true, /\.js$/);
 }
 
 type BundleModuleLoader = (callback: (any) => any) => void;
