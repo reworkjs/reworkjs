@@ -111,7 +111,6 @@
     "sass-loader": "^8.0.0",
     "semver": "^6.3.0",
     "source-map-support": "^0.5.13",
-    "srcset-loader": "^2.3.0",
     "style-loader": "^1.0.0",
     "terser-webpack-plugin": "^2.2.1",
     "toposort-class": "^1.0.1",

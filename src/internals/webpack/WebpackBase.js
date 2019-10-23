@@ -261,15 +261,7 @@ export default class WebpackBase {
       loader: 'file-loader',
     }, {
       test: wcbUtils.getFileTypeRegExp(this.webpackConfigBuilder, WebpackConfigBuilder.FILE_TYPE_IMG),
-      use: [
-        {
-          loader: 'srcset-loader',
-          options: {
-            lightweight: true,
-          },
-        },
-        'file-loader',
-      ],
+      use: 'file-loader',
     }, {
       test: /\.(mp4|webm)/i,
       loader: 'file-loader',
