@@ -15,31 +15,44 @@ if (typeof argv.verbose === 'string') {
 
 const actualLevel = Object.keys(levels).includes(requestedLevel) ? requestedLevel : 'info';
 
-const logger = new (winston.Logger)({
-  levels,
-  colors: {
-    trace: 'magenta',
-    input: 'grey',
-    verbose: 'cyan',
-    prompt: 'grey',
-    debug: 'blue',
-    info: 'green',
-    data: 'grey',
-    help: 'cyan',
-    warn: 'yellow',
-    error: 'red',
-  },
-});
+const logger = winston.createLogger({ levels });
 
-logger.add(winston.transports.Console, {
+logger.add(new winston.transports.Console({
   level: actualLevel,
-  prettyPrint: true,
-  colorize: true,
-  stderrLevels: ['warn', 'error'],
+  name: process.env.PROCESS_NAME || 'FrameworkCli',
+  stderrLevels: ['error'],
+  consoleWarnLevels: ['warn'],
   silent: false,
-  timestamp: false,
-  label: process.env.PROCESS_NAME || 'FrameworkCli',
-});
+  format: winston.format.combine(
+    winston.format(info => {
+      info.level = info.level.toUpperCase();
+
+      return info;
+    })(),
+    winston.format.colorize({
+      colors: {
+        trace: 'magenta',
+        input: 'grey',
+        verbose: 'cyan',
+        prompt: 'grey',
+        debug: 'blue',
+        info: 'green',
+        data: 'grey',
+        help: 'cyan',
+        warn: 'yellow',
+        error: 'red',
+      },
+    }),
+    winston.format.splat(),
+    winston.format.errors(),
+    winston.format.printf(({ level, message, ...rest }) => {
+      let restString = JSON.stringify(rest, void 0, 2);
+      restString = restString === '{}' ? '' : restString;
+
+      return `${level} - ${message} ${restString}`;
+    }),
+  ),
+}));
 
 if (actualLevel !== requestedLevel) {
   logger.warn(`Invalid --verbose value ${JSON.stringify(requestedLevel)}, must be one of "${Object.keys(levels).join('", "')}". Using "${actualLevel}" instead.`);
@@ -51,15 +64,11 @@ export default logger;
 import('../framework-config').then(config => {
   config = getDefault(config);
 
-  logger.add(winston.transports.File, {
-    prettyPrint: false,
+  logger.add(new winston.transports.File({
     level: actualLevel,
     silent: false,
-    colorize: true,
-    timestamp: true,
     filename: `${config.directories.log}/${framework.name}.log`,
     maxsize: 40000,
     maxFiles: 10,
-    json: false,
-  });
+  }));
 });
