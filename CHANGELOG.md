@@ -1,6 +1,13 @@
-# Change Log
+# Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+## [0.27.0](https://github.com/foobarhq/reworkjs/compare/v0.26.0...v0.27.0) (2019-10-24)
+
+
+### Features
+
+* drop srcset-loader as it is dead ([ab4e1ea](https://github.com/foobarhq/reworkjs/commit/ab4e1ea8cb94a814a3225bb3533197727c0786cd))
 
 <a name="0.26.0"></a>
 # [0.26.0](https://github.com/foobarhq/reworkjs/compare/v0.25.2...v0.26.0) (2019-08-06)
