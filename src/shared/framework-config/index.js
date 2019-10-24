@@ -40,7 +40,7 @@ function getUserConfig() {
 
 function normalizeConfig(config: Object) {
   const schema = Joi.object().keys({
-    routingType: Joi.string().valid(['browser', 'hash']).default('browser'),
+    routingType: Joi.string().valid('browser', 'hash').default('browser'),
     routes: Joi.string().default('src/**/*.route.js'),
     'entry-react': Joi.string().allow(null).default(null),
     'render-html': Joi.string().allow(null).default(null),

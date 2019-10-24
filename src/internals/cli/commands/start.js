@@ -51,10 +51,10 @@ export default function registerCommand(cli) {
           default: 3000,
           describe: 'The port the server will listen to',
         })
-        .option(...featureHelp);
+        .option(...featureHelp)
+        .parserConfiguration({ 'populate--': true });
     }, argv => {
-      // remove 'start' from extraneous options.
-      argv._.shift();
+      argv['--'] = argv['--'] || [];
 
       logger.info(`Launching app in ${chalkEnvVar(process.env.NODE_ENV)} mode...`);
 
@@ -115,8 +115,9 @@ async function runServerWithPrerendering(options) {
     clientBuilderArgv.push('--port', options.port, '--prerendering-port', preRenderingPort);
   }
 
-  if (options._.length > 0) {
-    clientBuilderArgv.push('--', ...options._);
+  // pass all CLI arguments after `--` as-is. Builder will parse them and provide them as globals
+  if (options['--'].length > 0) {
+    clientBuilderArgv.push('--', ...options['--']);
   }
 
   children.clientBuilder = childProcess.fork(builders.client, clientBuilderArgv, {

@@ -8,7 +8,7 @@ import type { $Request, $Response, NextFunction } from 'express';
 import Helmet from 'react-helmet';
 import { ChunkExtractor } from '@loadable/server';
 import { collectInitial, collectContext } from 'node-style-loader/collect';
-import accept from 'accept';
+import accept from '@hapi/accept';
 import { getDefault } from '../../../shared/util/ModuleUtil';
 import getWebpackSettings from '../../../shared/webpack-settings';
 import { rootRoute } from '../../common/kernel';
