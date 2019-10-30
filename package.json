@@ -1,5 +1,5 @@
 {
-  "name": "@reworkjs/reworkjs",
+  "name": "@reworkjs/core",
   "version": "0.27.0",
   "description": "A react framework that works out of the box",
   "repository": {
@@ -138,6 +138,7 @@
     "gulp-plumber": "^1.2.1",
     "gulp-watch": "^5.0.1",
     "husky": "^3.0.9",
+    "json": "^9.0.6",
     "lint-staged": "^9.4.2",
     "react": "^16.11.0",
     "react-cookie": "^4.0.1",
