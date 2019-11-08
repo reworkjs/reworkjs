@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.28.1](https://github.com/foobarhq/reworkjs/compare/v0.28.0...v0.28.1) (2019-11-08)
+
+
+### Bug Fixes
+
+* fix husky init crash ([3cc6744](https://github.com/foobarhq/reworkjs/commit/3cc6744850abfc2a5d0f9e7e84e33d447743efca))
+
 ## [0.28.0](https://github.com/foobarhq/reworkjs/compare/v0.27.0...v0.28.0) (2019-11-08)
 
 
