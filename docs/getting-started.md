@@ -18,7 +18,7 @@ root of your project directory.
 
 If you do not wish to install the cli globally, you will need to manually install the framework. No worries though, it is a three-liner:
 - Init the NPM project: `npm init`
-- Install the framework: `npm install --save @reworkjs/reworkjs`
+- Install the framework: `npm install --save @reworkjs/core`
 - Configure the framework: `./node_modules/.bin/rjs init`
 
 Even though the second method does not install the global CLI, you can still use 

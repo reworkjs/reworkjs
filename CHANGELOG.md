@@ -228,7 +228,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Bug Fixes
 
-* make @reworkjs/reworkjs/argv work on node processes ([018cfc1](https://github.com/foobarhq/reworkjs/commit/018cfc1))
+* make @reworkjs/core/argv work on node processes ([018cfc1](https://github.com/foobarhq/reworkjs/commit/018cfc1))
 
 
 

@@ -51,11 +51,11 @@ export default class BabelFeature extends BaseFeature {
 
       options: {
         sourceType: 'unambiguous',
-        presets: ['@reworkjs/reworkjs/lib/internals/babel/global-babel-preset'],
+        presets: ['@reworkjs/core/lib/internals/babel/global-babel-preset'],
         babelrc: false,
 
         // should we allow users to compile node_modules using babel.config.js? That'd require exposing a base preset
-        // (@reworkjs/reworkjs/module-babel-preset?). Need to test performance.
+        // (@reworkjs/core/module-babel-preset?). Need to test performance.
         configFile: false,
         cacheDirectory: findCacheDir({
           name: `${frameworkMetadata.name}-babel_nm-${this.getEnv()}-${this.getSideName()}`,
@@ -84,7 +84,7 @@ export default class BabelFeature extends BaseFeature {
     const { config } = findBabelConfig.sync(resolveProject('.'));
 
     if (config == null) {
-      return { presets: ['@reworkjs/reworkjs/babel-preset'] };
+      return { presets: ['@reworkjs/core/babel-preset'] };
     }
 
     return config;
