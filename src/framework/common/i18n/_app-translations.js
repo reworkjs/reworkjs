@@ -69,7 +69,7 @@ function downloadMessagesTranslationFile(localeName: string): Promise<any> {
 
     const file = localeToFileMapping.get(actualLocale);
     if (file == null) {
-      throw new Error('ReworkJs: Internal Error while loading locale');
+      throw new Error('rework.js: Internal Error while loading locale');
     }
 
     const loader = messageTranslationsLoaders(file);

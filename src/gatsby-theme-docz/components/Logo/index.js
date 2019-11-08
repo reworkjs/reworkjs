@@ -13,7 +13,8 @@ const css = {
     letterSpacing: '-0.02em',
     fontWeight: 600,
     fontSize: 4,
-    maxHeight: '100%',
+    height: '64px',
+    width: '64px',
   },
   link: {
     fontWeight: 600,

@@ -134,7 +134,7 @@
     "@foobarhq/eslint-config": "^7.0.0",
     "babel-plugin-dynamic-import-node": "^2.3.0",
     "del": "^5.1.0",
-    "docz": "^2.0.0-rc.66",
+    "docz": "^2.0.0-rc.71",
     "eslint": "^6.5.1",
     "flow-bin": "^0.110.1",
     "gh-pages": "^2.1.1",
