@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.28.0](https://github.com/foobarhq/reworkjs/compare/v0.27.0...v0.28.0) (2019-11-08)
+
+
+### Features
+
+* improve & update rjs init ([0474666](https://github.com/foobarhq/reworkjs/commit/0474666610bf7124c2b5ec0936135f563c301cba))
+
+
+### Bug Fixes
+
+* fix logs being persisted to "undefined" dir ([9cae513](https://github.com/foobarhq/reworkjs/commit/9cae513dfde37e1fb46c1f10a1ce0e9f88e13d0e))
+* require proper version of react-dom ([c0edf3f](https://github.com/foobarhq/reworkjs/commit/c0edf3fe56b06ccedbca09bf8a6fbf3ad1ba9b6c))
+
 ## [0.27.0](https://github.com/foobarhq/reworkjs/compare/v0.26.0...v0.27.0) (2019-10-24)
 
 
