@@ -1,6 +1,6 @@
 {
-  "name": "@reworkjs/reworkjs",
-  "version": "0.27.0",
+  "name": "@reworkjs/core",
+  "version": "0.28.0",
   "description": "A react framework that works out of the box",
   "repository": {
     "type": "git",
@@ -20,7 +20,10 @@
     "build": "gulp build && ./scripts/generate-public-submodules.js",
     "build:watch": "gulp build:watch",
     "prepublishOnly": "npm run build",
-    "release": "standard-version --release-as $RELEASE_TYPE"
+    "release": "standard-version --release-as $RELEASE_TYPE",
+    "docz:dev": "docz dev",
+    "docz:build": "docz build",
+    "docz:publish": "npm run docz:build && cp CNAME .docz/dist/CNAME && gh-pages -d .docz/dist --message \"[skip ci] Publish docz\""
   },
   "bin": {
     "rjs": "bin/framework.bin.js"
@@ -42,7 +45,7 @@
   "peerDependencies": {
     "react-intl": "^3.4.0",
     "react": "^16.11.0",
-    "react-dom": "^16.11.6",
+    "react-dom": "^16.11.0",
     "react-helmet": "^5.2.1",
     "react-cookie": "^4.0.1",
     "react-router-dom": "^5.1.2"
@@ -131,13 +134,16 @@
     "@foobarhq/eslint-config": "^7.0.0",
     "babel-plugin-dynamic-import-node": "^2.3.0",
     "del": "^5.1.0",
+    "docz": "^2.0.0-rc.71",
     "eslint": "^6.5.1",
     "flow-bin": "^0.110.1",
+    "gh-pages": "^2.1.1",
     "gulp": "^4.0.2",
     "gulp-babel": "^8.0.0",
     "gulp-plumber": "^1.2.1",
     "gulp-watch": "^5.0.1",
     "husky": "^3.0.9",
+    "json": "^9.0.6",
     "lint-staged": "^9.4.2",
     "react": "^16.11.0",
     "react-cookie": "^4.0.1",

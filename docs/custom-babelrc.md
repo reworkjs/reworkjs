@@ -19,13 +19,13 @@ Following is the list of babel plugins ran by default:
 If you need to specify which EcmaScript features should be transpiled, we recommend you do so by creating a `.browserlistsrc` file in the root directory of your project. This will affect both your dependencies and your source code.
 
 If you need to configure it further, you can create your own .babelrc. Keep in mind that this configuration will only be used for the source code of your project, not your dependencies. \
-If you choose to do so, you should use `@reworkjs/reworkjs/babel-preset` as the preset:
+If you choose to do so, you should use `@reworkjs/core/babel-preset` as the preset:
 
 ```json5
 // .babelrc
 
 {
-  "presets": ["@reworkjs/reworkjs/babel-preset"],
+  "presets": ["@reworkjs/core/babel-preset"],
   "plugins": [
     "@babel/plugin-transform-flow-strip-types",
     "@babel/plugin-proposal-class-properties",
@@ -40,7 +40,7 @@ Note: all default plugins can be configured by passing an option object to the b
 // .babelrc
 
 {
-  "presets": ["@reworkjs/reworkjs/babel-preset", {
+  "presets": ["@reworkjs/core/babel-preset", {
     "@babel/plugin-transform-runtime": {
       "corejs": true
     }

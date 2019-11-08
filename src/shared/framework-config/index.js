@@ -11,11 +11,12 @@
 import fs from 'fs';
 import path from 'path';
 import mkdirp from 'mkdirp';
-import { get, set } from 'lodash';
+import get from 'lodash/get';
+import set from 'lodash/set';
 import Joi from '@hapi/joi';
 import argv from '../../internals/rjs-argv';
 import { resolveProject } from '../../internals/util/resolve-util';
-import logger from '../../shared/logger';
+import logger from '../logger';
 import { FrameworkConfigStruct } from './framework-config-type';
 
 const isCustomConfigFile = Boolean(argv.reworkrc);
@@ -48,7 +49,12 @@ function normalizeConfig(config: Object) {
     'service-worker': Joi.string().allow(null).default(null),
 
     directories: Joi.object().keys({
-      logs: Joi.string().default(Joi.ref('build')),
+      logs: Joi.alternatives().try(
+        Joi.string().default('./.build'),
+
+        // disable log
+        Joi.boolean().valid(false),
+      ),
       build: Joi.string().default('./.build'),
       resources: Joi.string().default('./src/public'),
       translations: Joi.string().default('./src/translations'),
@@ -104,6 +110,7 @@ function ensureDirectories(config: FrameworkConfigStruct) {
 function isDirectory(dir) {
   try {
     const stat = fs.statSync(dir);
+
     return stat.isDirectory();
   } catch (e) {
     return false;

@@ -1,0 +1,26 @@
+version: 2.0
+
+jobs:
+  publish-docz:
+    docker:
+      - image: circleci/node:10.15.1
+    steps:
+      - checkout
+      - run: npm ci
+      - run:
+          name: Publish
+          command: |
+            git config --global user.email "bot@ephys.be"
+            git config --global user.name "EPHYS THE HUMAN TOTALLY NOT A ROBOT"
+            npm run docz:publish
+
+workflows:
+  version: 2
+  publish-docz-workflow:
+    jobs:
+      - deploy-docz
+#      - deploy-docz:
+#          filters:
+#            branches:
+#              only:
+#                - master

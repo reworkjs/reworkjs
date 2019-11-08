@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.28.0](https://github.com/foobarhq/reworkjs/compare/v0.27.0...v0.28.0) (2019-11-08)
+
+
+### Features
+
+* improve & update rjs init ([0474666](https://github.com/foobarhq/reworkjs/commit/0474666610bf7124c2b5ec0936135f563c301cba))
+
+
+### Bug Fixes
+
+* fix logs being persisted to "undefined" dir ([9cae513](https://github.com/foobarhq/reworkjs/commit/9cae513dfde37e1fb46c1f10a1ce0e9f88e13d0e))
+* require proper version of react-dom ([c0edf3f](https://github.com/foobarhq/reworkjs/commit/c0edf3fe56b06ccedbca09bf8a6fbf3ad1ba9b6c))
+
 ## [0.27.0](https://github.com/foobarhq/reworkjs/compare/v0.26.0...v0.27.0) (2019-10-24)
 
 
@@ -9,8 +22,11 @@ All notable changes to this project will be documented in this file. See [standa
 
 * drop srcset-loader as it is dead ([ab4e1ea](https://github.com/foobarhq/reworkjs/commit/ab4e1ea8cb94a814a3225bb3533197727c0786cd))
 
-<a name="0.26.0"></a>
-# [0.26.0](https://github.com/foobarhq/reworkjs/compare/v0.25.2...v0.26.0) (2019-08-06)
+### BREAKING CHANGES
+
+* Any usage of srcset-loader will need to be updated
+
+## [0.26.0](https://github.com/foobarhq/reworkjs/compare/v0.25.2...v0.26.0) (2019-08-06)
 
 
 ### Features
@@ -19,17 +35,15 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-<a name="0.25.2"></a>
 ## [0.25.2](https://github.com/foobarhq/reworkjs/compare/v0.25.1...v0.25.2) (2019-08-02)
 
 
 ### Bug Fixes
 
-* remove [@rework](https://github.com/rework)/redux from externals ([08e5f40](https://github.com/foobarhq/reworkjs/commit/08e5f40))
+* remove [@reworkjs/redux](https://github.com/reworkjs/redux) from externals ([08e5f40](https://github.com/foobarhq/reworkjs/commit/08e5f40))
 
 
 
-<a name="0.25.1"></a>
 ## [0.25.1](https://github.com/foobarhq/reworkjs/compare/v0.25.0...v0.25.1) (2019-07-12)
 
 
@@ -46,7 +60,6 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-<a name="0.25.0"></a>
 # [0.25.0](https://github.com/foobarhq/reworkjs/compare/v0.24.1...v0.25.0) (2019-07-09)
 
 
@@ -59,7 +72,6 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-<a name="0.24.1"></a>
 ## [0.24.1](https://github.com/foobarhq/reworkjs/compare/v0.24.0...v0.24.1) (2019-07-03)
 
 
@@ -69,8 +81,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-<a name="0.24.0"></a>
-# [0.24.0](https://github.com/foobarhq/reworkjs/compare/v0.23.0...v0.24.0) (2019-06-18)
+## [0.24.0](https://github.com/foobarhq/reworkjs/compare/v0.23.0...v0.24.0) (2019-06-18)
 
 
 ### Bug Fixes
@@ -85,7 +96,6 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-<a name="0.23.0"></a>
 # [0.23.0](https://github.com/foobarhq/reworkjs/compare/v0.22.0...v0.23.0) (2019-06-14)
 
 
@@ -109,8 +119,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-<a name="0.22.0"></a>
-# [0.22.0](https://github.com/foobarhq/reworkjs/compare/v0.21.0...v0.22.0) (2019-05-28)
+## [0.22.0](https://github.com/foobarhq/reworkjs/compare/v0.21.0...v0.22.0) (2019-05-28)
 
 
 ### Bug Fixes
@@ -119,8 +128,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-<a name="0.21.0"></a>
-# [0.21.0](https://github.com/foobarhq/reworkjs/compare/v0.20.2...v0.21.0) (2019-05-27)
+## [0.21.0](https://github.com/foobarhq/reworkjs/compare/v0.20.2...v0.21.0) (2019-05-27)
 
 
 ### Bug Fixes
@@ -140,7 +148,6 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-<a name="0.20.2"></a>
 ## [0.20.2](https://github.com/foobarhq/reworkjs/compare/v0.20.1...v0.20.2) (2019-05-13)
 
 
@@ -150,7 +157,6 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-<a name="0.20.1"></a>
 ## [0.20.1](https://github.com/foobarhq/reworkjs/compare/v0.20.0...v0.20.1) (2019-05-07)
 
 
@@ -160,8 +166,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-<a name="0.20.0"></a>
-# [0.20.0](https://github.com/foobarhq/reworkjs/compare/v0.19.0...v0.20.0) (2019-04-26)
+## [0.20.0](https://github.com/foobarhq/reworkjs/compare/v0.19.0...v0.20.0) (2019-04-26)
 
 
 ### Bug Fixes
@@ -178,8 +183,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-<a name="0.19.0"></a>
-# [0.19.0](https://github.com/foobarhq/reworkjs/compare/v0.18.0...v0.19.0) (2019-04-23)
+## [0.19.0](https://github.com/foobarhq/reworkjs/compare/v0.18.0...v0.19.0) (2019-04-23)
 
 
 ### Features
@@ -188,8 +192,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-<a name="0.18.0"></a>
-# [0.18.0](https://github.com/foobarhq/reworkjs/compare/v0.17.4...v0.18.0) (2019-04-23)
+## [0.18.0](https://github.com/foobarhq/reworkjs/compare/v0.17.4...v0.18.0) (2019-04-23)
 
 
 ### Bug Fixes
@@ -205,7 +208,6 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-<a name="0.17.4"></a>
 ## [0.17.4](https://github.com/foobarhq/reworkjs/compare/v0.17.3...v0.17.4) (2019-03-05)
 
 
@@ -216,7 +218,6 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-<a name="0.17.3"></a>
 ## [0.17.3](https://github.com/foobarhq/reworkjs/compare/v0.17.2...v0.17.3) (2019-02-22)
 
 
@@ -226,7 +227,6 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-<a name="0.17.2"></a>
 ## [0.17.2](https://github.com/foobarhq/reworkjs/compare/v0.17.1...v0.17.2) (2019-02-12)
 
 
@@ -236,18 +236,16 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-<a name="0.17.1"></a>
 ## [0.17.1](https://github.com/foobarhq/reworkjs/compare/v0.17.0...v0.17.1) (2019-02-12)
 
 
 ### Bug Fixes
 
-* make [@reworkjs](https://github.com/reworkjs)/reworkjs/argv work on node processes ([018cfc1](https://github.com/foobarhq/reworkjs/commit/018cfc1))
+* make @reworkjs/core/argv work on node processes ([018cfc1](https://github.com/foobarhq/reworkjs/commit/018cfc1))
 
 
 
-<a name="0.17.0"></a>
-# [0.17.0](https://github.com/foobarhq/reworkjs/compare/v0.16.0...v0.17.0) (2019-02-11)
+## [0.17.0](https://github.com/foobarhq/reworkjs/compare/v0.16.0...v0.17.0) (2019-02-11)
 
 
 ### Bug Fixes
@@ -262,8 +260,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-<a name="0.16.0"></a>
-# [0.16.0](https://github.com/foobarhq/reworkjs/compare/v0.15.1...v0.16.0) (2019-02-07)
+## [0.16.0](https://github.com/foobarhq/reworkjs/compare/v0.15.1...v0.16.0) (2019-02-07)
 
 
 ### Bug Fixes
@@ -283,7 +280,6 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-<a name="0.15.1"></a>
 ## [0.15.1](https://github.com/foobarhq/reworkjs/compare/v0.15.0...v0.15.1) (2019-01-08)
 
 
@@ -293,8 +289,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-<a name="0.15.0"></a>
-# [0.15.0](https://github.com/foobarhq/reworkjs/compare/v0.14.1...v0.15.0) (2019-01-08)
+## [0.15.0](https://github.com/foobarhq/reworkjs/compare/v0.14.1...v0.15.0) (2019-01-08)
 
 
 ### Bug Fixes
@@ -323,7 +318,6 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-<a name="0.14.1"></a>
 ## [0.14.1](https://github.com/foobarhq/reworkjs/compare/v0.14.0...v0.14.1) (2018-08-09)
 
 
@@ -333,8 +327,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-<a name="0.14.0"></a>
-# [0.14.0](https://github.com/foobarhq/reworkjs/compare/v0.13.0...v0.14.0) (2018-06-12)
+## [0.14.0](https://github.com/foobarhq/reworkjs/compare/v0.13.0...v0.14.0) (2018-06-12)
 
 
 ### Bug Fixes
@@ -349,8 +342,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-<a name="0.13.0"></a>
-# [0.13.0](https://github.com/foobarhq/reworkjs/compare/v0.12.0...v0.13.0) (2018-05-09)
+## [0.13.0](https://github.com/foobarhq/reworkjs/compare/v0.12.0...v0.13.0) (2018-05-09)
 
 
 ### Bug Fixes
@@ -369,8 +361,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-<a name="0.12.0"></a>
-# [0.12.0](https://github.com/foobarhq/reworkjs/compare/v0.11.0...v0.12.0) (2018-04-18)
+## [0.12.0](https://github.com/foobarhq/reworkjs/compare/v0.11.0...v0.12.0) (2018-04-18)
 
 
 ### Bug Fixes
@@ -391,8 +382,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-<a name="0.11.0"></a>
-# 0.11.0 (2018-04-11)
+## 0.11.0 (2018-04-11)
 
 
 ### Bug Fixes
@@ -405,7 +395,7 @@ All notable changes to this project will be documented in this file. See [standa
 * Launch pre-rendering server on correct port in prod ([38003c3](https://github.com/foobarhq/reworkjs/commit/38003c3))
 * Make render-html config entry work with SSR ([d9c5a73](https://github.com/foobarhq/reworkjs/commit/d9c5a73))
 * Migrate optimization plugins to webpack.optimization ([bd8152d](https://github.com/foobarhq/reworkjs/commit/bd8152d))
-* Only pre-render CSS as <style> tags in development ([71ce71b](https://github.com/foobarhq/reworkjs/commit/71ce71b))
+* Only pre-render CSS as `<style>` tags in development ([71ce71b](https://github.com/foobarhq/reworkjs/commit/71ce71b))
 * Only pre-serve named bundles for reliability ([7d4f6ae](https://github.com/foobarhq/reworkjs/commit/7d4f6ae))
 * Optimize images on the server too so their hash is identical to the front-end ([8a6af49](https://github.com/foobarhq/reworkjs/commit/8a6af49))
 * Prevent passing webp files to file-loader twice ([c072796](https://github.com/foobarhq/reworkjs/commit/c072796))
@@ -427,4 +417,4 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Breaking Changes
 
-* Drop support for node < latest LTS (= 8) ([80b76be](https://github.com/foobarhq/reworkjs/commit/80b76be))
+* Drop support for node &lt; latest LTS (= 8) ([80b76be](https://github.com/foobarhq/reworkjs/commit/80b76be))

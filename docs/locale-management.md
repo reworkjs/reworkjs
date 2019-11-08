@@ -1,4 +1,0 @@
-- automatic locale selection.
-- defining new locales.
-- being notified of a locale change.
-- selecting the preferred locale (guessPreferredLocale() hook)

@@ -2,7 +2,7 @@
 
 import fs from 'mz/fs';
 import fsExtra from 'fs-extra';
-import { noop } from 'lodash';
+import noop from 'lodash/noop';
 import inquirer from 'inquirer';
 import semver from 'semver';
 import { chalkNok, chalkNpmDep, chalkOk } from '../../../shared/chalk';
@@ -51,6 +51,41 @@ const scripts = {
     },
   },
 
+  'Add npm scripts': {
+    async isReady() {
+      const projectPkg = await fsExtra.readJson(resolveProject('package.json'));
+
+      if (projectPkg.scripts) {
+        return false;
+      }
+
+      if (!projectPkg.scripts.build && projectPkg.scripts['start:dev']) {
+        return false;
+      }
+
+      if (!projectPkg.devDependencies['check-engines']) {
+        return false;
+      }
+
+      return true;
+    },
+
+    async run() {
+      const pkgPath = resolveProject('package.json');
+
+      const projectPkg = await fsExtra.readJson(pkgPath);
+
+      projectPkg.scripts = projectPkg.scripts || {};
+      const pkgScripts = projectPkg.scripts;
+
+      pkgScripts['start:dev'] = pkgScripts['start:dev'] || 'check-engines && NODE_ENV=development rjs start --port 3000';
+      pkgScripts.build = pkgScripts.build || 'NODE_ENV=production rjs build client server';
+
+      await fsExtra.writeJson(pkgPath, projectPkg);
+      execSync(`npm install --save-dev check-engines`);
+    },
+  },
+
   'Install .gitignore': {
 
     /**
@@ -65,7 +100,7 @@ const scripts = {
     run() {
       return fsExtra.copy(
         resolveRoot('resources/.gitignore.raw'),
-        resolveProject('.gitignore')
+        resolveProject('.gitignore'),
       );
     },
   },
@@ -84,7 +119,7 @@ const scripts = {
     run() {
       return fsExtra.copy(
         resolveRoot('resources/.browserslistrc.raw'),
-        resolveProject('.browserslistrc')
+        resolveProject('.browserslistrc'),
       );
     },
   },
@@ -120,7 +155,7 @@ const scripts = {
         resolveProject('.eslintrc'),
         `{
   "extends": "${preset}"
-}`
+}`,
       );
     },
   },
@@ -156,12 +191,12 @@ const scripts = {
         resolveProject('.stylelintrc'),
         `{
   "extends": "${preset}"
-}`
+}`,
       );
     },
   },
 
-  'Install stage-lint': {
+  'Install lint-staged': {
     async isReady() {
 
       const pck = await fsExtra.readJson(resolveProject('package.json'));
@@ -181,21 +216,20 @@ const scripts = {
     async run() {
       execSync('npm install --save-dev husky lint-staged');
 
-      const pckFile = resolveProject('package.json');
-
-      const pkg = await fsExtra.readJson(pckFile);
-
-      // NPM script to run
-      pkg.scripts = pkg.scripts || {};
-      pkg.scripts.precommit = pkg.scripts.precommit || 'lint-staged';
-
-      await fsExtra.writeJson(pckFile, pkg);
-
       // lint-staged config
-      if (!await fs.exists('.lintstagedrc')) {
+      const lintStagedRc = resolveProject('.lintstagedrc');
+      if (!await fs.exists(lintStagedRc)) {
         await fsExtra.copy(
           resolveRoot('resources/.lintstagedrc.raw'),
-          resolveProject('.lintstagedrc')
+          lintStagedRc,
+        );
+      }
+
+      const huskyJson = resolveProject('.huskyrc.json');
+      if (!await fs.exists(huskyJson)) {
+        await fsExtra.copy(
+          resolveRoot('resources/.huskyrc.json'),
+          huskyJson,
         );
       }
     },
@@ -211,7 +245,7 @@ const scripts = {
 
       await fsExtra.copy(
         resolveRoot('resources/postcss.config.js.raw'),
-        resolveProject('postcss.config.js')
+        resolveProject('postcss.config.js'),
       );
     },
   },
@@ -230,6 +264,7 @@ const scripts = {
 };
 
 const emptyPromise = Promise.resolve();
+
 function runInitScripts() {
 
   let promise = emptyPromise;
@@ -251,11 +286,13 @@ async function runScript(scriptName, script) {
       const isReady = await script.isReady();
       if (typeof isReady !== 'boolean') {
         logger.info(`${chalkNok('✘')} ${scriptName} - Script has a bug.`);
+
         return;
       }
 
       if (isReady) {
         logger.info(`${chalkOk('✓')} ${scriptName}`);
+
         return;
       }
     }

@@ -11,6 +11,7 @@ node_modules
 /.build
 /app
 /public
+/.docz
 
 # Auto-generated importable sub-modules
 /use-persistent-value

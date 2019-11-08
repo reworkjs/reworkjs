@@ -1,2 +1,2 @@
 // TODO: list available submodules.
-throw new Error('Do not import @reworkjs/reworkjs directly. Import one of its submodules.');
+throw new Error('Do not import @reworkjs/core directly. Import one of its submodules.');
