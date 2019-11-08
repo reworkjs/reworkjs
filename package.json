@@ -20,7 +20,9 @@
     "build": "gulp build && ./scripts/generate-public-submodules.js",
     "build:watch": "gulp build:watch",
     "prepublishOnly": "npm run build",
-    "release": "standard-version --release-as $RELEASE_TYPE"
+    "release": "standard-version --release-as $RELEASE_TYPE",
+    "docz:dev": "docz dev",
+    "docz:build": "docz build"
   },
   "bin": {
     "rjs": "bin/framework.bin.js"
@@ -131,8 +133,10 @@
     "@foobarhq/eslint-config": "^7.0.0",
     "babel-plugin-dynamic-import-node": "^2.3.0",
     "del": "^5.1.0",
+    "docz": "^2.0.0-rc.66",
     "eslint": "^6.5.1",
     "flow-bin": "^0.110.1",
+    "gh-pages": "^2.1.1",
     "gulp": "^4.0.2",
     "gulp-babel": "^8.0.0",
     "gulp-plumber": "^1.2.1",

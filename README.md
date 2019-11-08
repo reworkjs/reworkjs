@@ -1,4 +1,11 @@
-# ReworkJs
+---
+name: Home
+route: /
+---
+
+# rework.js
+
+*Opinionated React Framework*
 
 ReworkJs (rjs) is an opinionated Framework designed for Progressive Web Apps and based on the familiar React-Redux stack.
 

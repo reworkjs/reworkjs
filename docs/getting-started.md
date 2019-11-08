@@ -1,3 +1,7 @@
+---
+name: Getting Started
+---
+
 # Getting Started
 
 The main objective of this framework is to make creating React-based apps as fast as possible. Most of the React stack
