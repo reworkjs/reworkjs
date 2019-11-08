@@ -64,6 +64,10 @@ export default logger;
 import('../framework-config').then(config => {
   config = getDefault(config);
 
+  if (config.directories.log === false) {
+    return;
+  }
+
   logger.add(new winston.transports.File({
     level: actualLevel,
     silent: false,
