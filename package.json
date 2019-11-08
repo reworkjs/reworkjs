@@ -22,7 +22,8 @@
     "prepublishOnly": "npm run build",
     "release": "standard-version --release-as $RELEASE_TYPE",
     "docz:dev": "docz dev",
-    "docz:build": "docz build"
+    "docz:build": "docz build",
+    "docz:publish": "npm run docz:build && gh-pages -d .docz/dist --message \"[skip ci] Publish docz\""
   },
   "bin": {
     "rjs": "bin/framework.bin.js"

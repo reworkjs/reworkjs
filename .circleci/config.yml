@@ -10,11 +10,9 @@ jobs:
       - run:
           name: Publish
           command: |
-            npm run docz:build
-
             git config --global user.email "bot@ephys.be"
             git config --global user.name "EPHYS THE HUMAN TOTALLY NOT A ROBOT"
-            ./node_modules/.bin/gh-pages -d .docz/dist --message "[skip ci] Publish docz"
+            npm run docz:publish
 
 workflows:
   version: 2
