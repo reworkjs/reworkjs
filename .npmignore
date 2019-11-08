@@ -12,3 +12,9 @@
 /public
 *.log
 /gulpfile.js
+/.docz
+/.idea
+/.circleci
+/scripts
+/es/gatsby-theme-docz
+/lib/gatsby-theme-docz
