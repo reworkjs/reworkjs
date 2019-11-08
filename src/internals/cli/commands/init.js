@@ -228,7 +228,7 @@ const scripts = {
       const huskyJson = resolveProject('.huskyrc.json');
       if (!await fs.exists(huskyJson)) {
         await fsExtra.copy(
-          resolveRoot('resources/.huskyrc.json'),
+          resolveRoot('resources/.huskyrc.json.raw'),
           huskyJson,
         );
       }
