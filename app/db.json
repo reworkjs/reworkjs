@@ -1,0 +1,1470 @@
+{
+  "config": {
+    "title": "Core",
+    "description": "A react framework that works out of the box",
+    "menu": [
+      "Getting Started",
+      {
+        "name": "Components",
+        "menu": [
+          "Alert",
+          "Button"
+        ]
+      }
+    ],
+    "version": "0.27.0",
+    "repository": "https://github.com/foobarhq/reworkjs",
+    "native": false,
+    "themeConfig": {},
+    "separator": "-"
+  },
+  "entries": [
+    {
+      "key": "CHANGELOG.md",
+      "value": {
+        "id": "4ac32a78649ca5bdd8e0ba38b7006a1e",
+        "filepath": "CHANGELOG.md",
+        "fullpath": "/Users/ephys/Documents/dev/reworkjs/reworkjs/CHANGELOG.md",
+        "link": "https://github.com/foobarhq/reworkjs/edit/master/CHANGELOG.md",
+        "slug": "changelog",
+        "route": "/changelog",
+        "name": "Changelog",
+        "menu": "",
+        "headings": [
+          {
+            "slug": "changelog",
+            "depth": 1,
+            "value": "Changelog"
+          },
+          {
+            "slug": "0270-2019-10-24",
+            "depth": 2,
+            "value": "0.27.0  (2019-10-24)"
+          },
+          {
+            "slug": "features",
+            "depth": 3,
+            "value": "Features"
+          },
+          {
+            "slug": "breaking-changes",
+            "depth": 3,
+            "value": "BREAKING CHANGES"
+          },
+          {
+            "slug": "0260-2019-08-06",
+            "depth": 2,
+            "value": "0.26.0  (2019-08-06)"
+          },
+          {
+            "slug": "features-1",
+            "depth": 3,
+            "value": "Features"
+          },
+          {
+            "slug": "0252-2019-08-02",
+            "depth": 2,
+            "value": "0.25.2  (2019-08-02)"
+          },
+          {
+            "slug": "bug-fixes",
+            "depth": 3,
+            "value": "Bug Fixes"
+          },
+          {
+            "slug": "0251-2019-07-12",
+            "depth": 2,
+            "value": "0.25.1  (2019-07-12)"
+          },
+          {
+            "slug": "bug-fixes-1",
+            "depth": 3,
+            "value": "Bug Fixes"
+          },
+          {
+            "slug": "features-2",
+            "depth": 3,
+            "value": "Features"
+          },
+          {
+            "slug": "0250-2019-07-09",
+            "depth": 1,
+            "value": "0.25.0  (2019-07-09)"
+          },
+          {
+            "slug": "bug-fixes-2",
+            "depth": 3,
+            "value": "Bug Fixes"
+          },
+          {
+            "slug": "0241-2019-07-03",
+            "depth": 2,
+            "value": "0.24.1  (2019-07-03)"
+          },
+          {
+            "slug": "bug-fixes-3",
+            "depth": 3,
+            "value": "Bug Fixes"
+          },
+          {
+            "slug": "0240-2019-06-18",
+            "depth": 2,
+            "value": "0.24.0  (2019-06-18)"
+          },
+          {
+            "slug": "bug-fixes-4",
+            "depth": 3,
+            "value": "Bug Fixes"
+          },
+          {
+            "slug": "features-3",
+            "depth": 3,
+            "value": "Features"
+          },
+          {
+            "slug": "0230-2019-06-14",
+            "depth": 1,
+            "value": "0.23.0  (2019-06-14)"
+          },
+          {
+            "slug": "bug-fixes-5",
+            "depth": 3,
+            "value": "Bug Fixes"
+          },
+          {
+            "slug": "features-4",
+            "depth": 3,
+            "value": "Features"
+          },
+          {
+            "slug": "breaking-changes-1",
+            "depth": 3,
+            "value": "BREAKING CHANGES"
+          },
+          {
+            "slug": "0220-2019-05-28",
+            "depth": 2,
+            "value": "0.22.0  (2019-05-28)"
+          },
+          {
+            "slug": "bug-fixes-6",
+            "depth": 3,
+            "value": "Bug Fixes"
+          },
+          {
+            "slug": "0210-2019-05-27",
+            "depth": 2,
+            "value": "0.21.0  (2019-05-27)"
+          },
+          {
+            "slug": "bug-fixes-7",
+            "depth": 3,
+            "value": "Bug Fixes"
+          },
+          {
+            "slug": "features-5",
+            "depth": 3,
+            "value": "Features"
+          },
+          {
+            "slug": "0202-2019-05-13",
+            "depth": 2,
+            "value": "0.20.2  (2019-05-13)"
+          },
+          {
+            "slug": "bug-fixes-8",
+            "depth": 3,
+            "value": "Bug Fixes"
+          },
+          {
+            "slug": "0201-2019-05-07",
+            "depth": 2,
+            "value": "0.20.1  (2019-05-07)"
+          },
+          {
+            "slug": "bug-fixes-9",
+            "depth": 3,
+            "value": "Bug Fixes"
+          },
+          {
+            "slug": "0200-2019-04-26",
+            "depth": 2,
+            "value": "0.20.0  (2019-04-26)"
+          },
+          {
+            "slug": "bug-fixes-10",
+            "depth": 3,
+            "value": "Bug Fixes"
+          },
+          {
+            "slug": "features-6",
+            "depth": 3,
+            "value": "Features"
+          },
+          {
+            "slug": "0190-2019-04-23",
+            "depth": 2,
+            "value": "0.19.0  (2019-04-23)"
+          },
+          {
+            "slug": "features-7",
+            "depth": 3,
+            "value": "Features"
+          },
+          {
+            "slug": "0180-2019-04-23",
+            "depth": 2,
+            "value": "0.18.0  (2019-04-23)"
+          },
+          {
+            "slug": "bug-fixes-11",
+            "depth": 3,
+            "value": "Bug Fixes"
+          },
+          {
+            "slug": "features-8",
+            "depth": 3,
+            "value": "Features"
+          },
+          {
+            "slug": "0174-2019-03-05",
+            "depth": 2,
+            "value": "0.17.4  (2019-03-05)"
+          },
+          {
+            "slug": "bug-fixes-12",
+            "depth": 3,
+            "value": "Bug Fixes"
+          },
+          {
+            "slug": "0173-2019-02-22",
+            "depth": 2,
+            "value": "0.17.3  (2019-02-22)"
+          },
+          {
+            "slug": "bug-fixes-13",
+            "depth": 3,
+            "value": "Bug Fixes"
+          },
+          {
+            "slug": "0172-2019-02-12",
+            "depth": 2,
+            "value": "0.17.2  (2019-02-12)"
+          },
+          {
+            "slug": "bug-fixes-14",
+            "depth": 3,
+            "value": "Bug Fixes"
+          },
+          {
+            "slug": "0171-2019-02-12",
+            "depth": 2,
+            "value": "0.17.1  (2019-02-12)"
+          },
+          {
+            "slug": "bug-fixes-15",
+            "depth": 3,
+            "value": "Bug Fixes"
+          },
+          {
+            "slug": "0170-2019-02-11",
+            "depth": 2,
+            "value": "0.17.0  (2019-02-11)"
+          },
+          {
+            "slug": "bug-fixes-16",
+            "depth": 3,
+            "value": "Bug Fixes"
+          },
+          {
+            "slug": "features-9",
+            "depth": 3,
+            "value": "Features"
+          },
+          {
+            "slug": "0160-2019-02-07",
+            "depth": 2,
+            "value": "0.16.0  (2019-02-07)"
+          },
+          {
+            "slug": "bug-fixes-17",
+            "depth": 3,
+            "value": "Bug Fixes"
+          },
+          {
+            "slug": "features-10",
+            "depth": 3,
+            "value": "Features"
+          },
+          {
+            "slug": "breaking-changes-2",
+            "depth": 3,
+            "value": "BREAKING CHANGES"
+          },
+          {
+            "slug": "0151-2019-01-08",
+            "depth": 2,
+            "value": "0.15.1  (2019-01-08)"
+          },
+          {
+            "slug": "bug-fixes-18",
+            "depth": 3,
+            "value": "Bug Fixes"
+          },
+          {
+            "slug": "0150-2019-01-08",
+            "depth": 2,
+            "value": "0.15.0  (2019-01-08)"
+          },
+          {
+            "slug": "bug-fixes-19",
+            "depth": 3,
+            "value": "Bug Fixes"
+          },
+          {
+            "slug": "features-11",
+            "depth": 3,
+            "value": "Features"
+          },
+          {
+            "slug": "0141-2018-08-09",
+            "depth": 2,
+            "value": "0.14.1  (2018-08-09)"
+          },
+          {
+            "slug": "bug-fixes-20",
+            "depth": 3,
+            "value": "Bug Fixes"
+          },
+          {
+            "slug": "0140-2018-06-12",
+            "depth": 2,
+            "value": "0.14.0  (2018-06-12)"
+          },
+          {
+            "slug": "bug-fixes-21",
+            "depth": 3,
+            "value": "Bug Fixes"
+          },
+          {
+            "slug": "features-12",
+            "depth": 3,
+            "value": "Features"
+          },
+          {
+            "slug": "0130-2018-05-09",
+            "depth": 2,
+            "value": "0.13.0  (2018-05-09)"
+          },
+          {
+            "slug": "bug-fixes-22",
+            "depth": 3,
+            "value": "Bug Fixes"
+          },
+          {
+            "slug": "features-13",
+            "depth": 3,
+            "value": "Features"
+          },
+          {
+            "slug": "0120-2018-04-18",
+            "depth": 2,
+            "value": "0.12.0  (2018-04-18)"
+          },
+          {
+            "slug": "bug-fixes-23",
+            "depth": 3,
+            "value": "Bug Fixes"
+          },
+          {
+            "slug": "features-14",
+            "depth": 3,
+            "value": "Features"
+          },
+          {
+            "slug": "breaking-changes-3",
+            "depth": 3,
+            "value": "BREAKING CHANGES"
+          },
+          {
+            "slug": "0110-2018-04-11",
+            "depth": 2,
+            "value": "0.11.0 (2018-04-11)"
+          },
+          {
+            "slug": "bug-fixes-24",
+            "depth": 3,
+            "value": "Bug Fixes"
+          },
+          {
+            "slug": "features-15",
+            "depth": 3,
+            "value": "Features"
+          },
+          {
+            "slug": "breaking-changes-4",
+            "depth": 3,
+            "value": "Breaking Changes"
+          }
+        ]
+      }
+    },
+    {
+      "key": "CODE_OF_CONDUCT.md",
+      "value": {
+        "id": "a1ee87dafebc22cbd96979f1b2b7e837",
+        "filepath": "CODE_OF_CONDUCT.md",
+        "fullpath": "/Users/ephys/Documents/dev/reworkjs/reworkjs/CODE_OF_CONDUCT.md",
+        "link": "https://github.com/foobarhq/reworkjs/edit/master/CODE_OF_CONDUCT.md",
+        "slug": "code-of-conduct",
+        "route": "/code-of-conduct",
+        "name": "Code of conduct",
+        "menu": "",
+        "headings": [
+          {
+            "slug": "contributor-code-of-conduct",
+            "depth": 1,
+            "value": "Contributor Code of Conduct"
+          }
+        ]
+      }
+    },
+    {
+      "key": "LICENSE.md",
+      "value": {
+        "id": "37854d19817c792316d481f5beb93cc7",
+        "filepath": "LICENSE.md",
+        "fullpath": "/Users/ephys/Documents/dev/reworkjs/reworkjs/LICENSE.md",
+        "link": "https://github.com/foobarhq/reworkjs/edit/master/LICENSE.md",
+        "slug": "license",
+        "route": "/license",
+        "name": "License",
+        "menu": "",
+        "headings": []
+      }
+    },
+    {
+      "key": "README.md",
+      "value": {
+        "name": "Home",
+        "route": "/",
+        "id": "04c6e90faac2675aa89e2176d2eec7d8",
+        "filepath": "README.md",
+        "fullpath": "/Users/ephys/Documents/dev/reworkjs/reworkjs/README.md",
+        "link": "https://github.com/foobarhq/reworkjs/edit/master/README.md",
+        "slug": "readme",
+        "menu": "",
+        "headings": [
+          {
+            "slug": "reworkjs",
+            "depth": 1,
+            "value": "rework.js"
+          },
+          {
+            "slug": "objectives",
+            "depth": 2,
+            "value": "Objectives"
+          },
+          {
+            "slug": "main-features",
+            "depth": 2,
+            "value": "Main Features"
+          }
+        ]
+      }
+    },
+    {
+      "key": "ROADMAP.md",
+      "value": {
+        "id": "38574c080d4e2eb38c49b86e6588ad98",
+        "filepath": "ROADMAP.md",
+        "fullpath": "/Users/ephys/Documents/dev/reworkjs/reworkjs/ROADMAP.md",
+        "link": "https://github.com/foobarhq/reworkjs/edit/master/ROADMAP.md",
+        "slug": "roadmap",
+        "route": "/roadmap",
+        "name": "Roadmap",
+        "menu": "",
+        "headings": [
+          {
+            "slug": "roadmap",
+            "depth": 1,
+            "value": "Roadmap"
+          },
+          {
+            "slug": "parallel-builds",
+            "depth": 2,
+            "value": "Parallel Builds"
+          },
+          {
+            "slug": "dev-life-quality",
+            "depth": 2,
+            "value": "Dev Life Quality"
+          },
+          {
+            "slug": "optimize",
+            "depth": 2,
+            "value": "Optimize"
+          },
+          {
+            "slug": "future-versions",
+            "depth": 2,
+            "value": "Future versions"
+          },
+          {
+            "slug": "potential-future-versions",
+            "depth": 2,
+            "value": "Potential future versions"
+          }
+        ]
+      }
+    },
+    {
+      "key": "START.md",
+      "value": {
+        "id": "a8bdd3ee260c0faa1f9f4d9fda94d220",
+        "filepath": "START.md",
+        "fullpath": "/Users/ephys/Documents/dev/reworkjs/reworkjs/START.md",
+        "link": "https://github.com/foobarhq/reworkjs/edit/master/START.md",
+        "slug": "start",
+        "route": "/start",
+        "name": "Start",
+        "menu": "",
+        "headings": [
+          {
+            "slug": "rjs-start",
+            "depth": 1,
+            "value": "rjs start"
+          },
+          {
+            "slug": "prod--ssr",
+            "depth": 2,
+            "value": "prod + ssr"
+          },
+          {
+            "slug": "prod-no-ssr",
+            "depth": 2,
+            "value": "prod NO SSR"
+          },
+          {
+            "slug": "dev--ssr",
+            "depth": 2,
+            "value": "dev + ssr"
+          },
+          {
+            "slug": "dev-no-ssr",
+            "depth": 2,
+            "value": "dev NO ssr"
+          },
+          {
+            "slug": "organisation",
+            "depth": 3,
+            "value": "Organisation"
+          },
+          {
+            "slug": "parallelism",
+            "depth": 3,
+            "value": "Parallelism"
+          },
+          {
+            "slug": "reporting",
+            "depth": 3,
+            "value": "Reporting"
+          },
+          {
+            "slug": "unification",
+            "depth": 3,
+            "value": "Unification"
+          },
+          {
+            "slug": "rjs-build",
+            "depth": 1,
+            "value": "rjs build"
+          },
+          {
+            "slug": "rjs-serve",
+            "depth": 1,
+            "value": "rjs serve"
+          }
+        ]
+      }
+    },
+    {
+      "key": "STRUCTURE.md",
+      "value": {
+        "id": "417b5e1388680a85aff27cd6ce27cef0",
+        "filepath": "STRUCTURE.md",
+        "fullpath": "/Users/ephys/Documents/dev/reworkjs/reworkjs/STRUCTURE.md",
+        "link": "https://github.com/foobarhq/reworkjs/edit/master/STRUCTURE.md",
+        "slug": "structure",
+        "route": "/structure",
+        "name": "Structure",
+        "menu": "",
+        "headings": [
+          {
+            "slug": "reworkjs-project-structure",
+            "depth": 1,
+            "value": "ReworkJS Project Structure"
+          },
+          {
+            "slug": "platforms-the-code-can-run-on",
+            "depth": 2,
+            "value": "Platforms the code can run on"
+          },
+          {
+            "slug": "project-structure",
+            "depth": 2,
+            "value": "Project Structure"
+          }
+        ]
+      }
+    },
+    {
+      "key": "docs/bundle-splitting.md",
+      "value": {
+        "id": "458f30fba5615b3ed1799783c1d9d1db",
+        "filepath": "docs/bundle-splitting.md",
+        "fullpath": "/Users/ephys/Documents/dev/reworkjs/reworkjs/docs/bundle-splitting.md",
+        "link": "https://github.com/foobarhq/reworkjs/edit/master/docs/bundle-splitting.md",
+        "slug": "docs-bundle-splitting",
+        "route": "/docs-bundle-splitting",
+        "name": "Bundle splitting",
+        "menu": "",
+        "headings": []
+      }
+    },
+    {
+      "key": "docs/cli.md",
+      "value": {
+        "id": "9bd77a22cd0e16427fed26b788d25194",
+        "filepath": "docs/cli.md",
+        "fullpath": "/Users/ephys/Documents/dev/reworkjs/reworkjs/docs/cli.md",
+        "link": "https://github.com/foobarhq/reworkjs/edit/master/docs/cli.md",
+        "slug": "docs-cli",
+        "route": "/docs-cli",
+        "name": "Cli",
+        "menu": "",
+        "headings": [
+          {
+            "slug": "rjs-command-line-interface",
+            "depth": 1,
+            "value": "RJS Command Line Interface"
+          },
+          {
+            "slug": "list-of-available-commands",
+            "depth": 2,
+            "value": "List of available commands"
+          },
+          {
+            "slug": "rjs-init",
+            "depth": 3,
+            "value": "rjs init"
+          },
+          {
+            "slug": "rjs-start",
+            "depth": 3,
+            "value": "rjs start"
+          },
+          {
+            "slug": "rjs-build",
+            "depth": 3,
+            "value": "rjs build"
+          },
+          {
+            "slug": "rjs-print-config",
+            "depth": 3,
+            "value": "rjs print-config"
+          }
+        ]
+      }
+    },
+    {
+      "key": "docs/configuration.md",
+      "value": {
+        "id": "76e731333fb756df3bff5ddb3b731c46",
+        "filepath": "docs/configuration.md",
+        "fullpath": "/Users/ephys/Documents/dev/reworkjs/reworkjs/docs/configuration.md",
+        "link": "https://github.com/foobarhq/reworkjs/edit/master/docs/configuration.md",
+        "slug": "docs-configuration",
+        "route": "/docs-configuration",
+        "name": "Configuration",
+        "menu": "",
+        "headings": [
+          {
+            "slug": "rjs-configuration",
+            "depth": 1,
+            "value": "RJS Configuration"
+          },
+          {
+            "slug": "contents",
+            "depth": 2,
+            "value": "Contents"
+          },
+          {
+            "slug": "routingtype",
+            "depth": 3,
+            "value": "routingType"
+          },
+          {
+            "slug": "directoriesbuild",
+            "depth": 3,
+            "value": "directories.build"
+          },
+          {
+            "slug": "directorieslogs",
+            "depth": 3,
+            "value": "directories.logs"
+          },
+          {
+            "slug": "directoriesresources",
+            "depth": 3,
+            "value": "directories.resources"
+          },
+          {
+            "slug": "directoriestranslations",
+            "depth": 3,
+            "value": "directories.translations"
+          },
+          {
+            "slug": "routes",
+            "depth": 3,
+            "value": "routes"
+          },
+          {
+            "slug": "pre-init",
+            "depth": 3,
+            "value": "pre-init"
+          },
+          {
+            "slug": "render-html",
+            "depth": 3,
+            "value": "render-html"
+          },
+          {
+            "slug": "service-worker",
+            "depth": 3,
+            "value": "service-worker"
+          },
+          {
+            "slug": "hooks",
+            "depth": 2,
+            "value": "hooks"
+          },
+          {
+            "slug": "plugins",
+            "depth": 2,
+            "value": "plugins"
+          },
+          {
+            "slug": "specifying-the-path-to-the-configuration-file",
+            "depth": 2,
+            "value": "Specifying the path to the configuration file"
+          }
+        ]
+      }
+    },
+    {
+      "key": "docs/cookies.md",
+      "value": {
+        "id": "7db2805200e11ba4546542c84fe3aab5",
+        "filepath": "docs/cookies.md",
+        "fullpath": "/Users/ephys/Documents/dev/reworkjs/reworkjs/docs/cookies.md",
+        "link": "https://github.com/foobarhq/reworkjs/edit/master/docs/cookies.md",
+        "slug": "docs-cookies",
+        "route": "/docs-cookies",
+        "name": "Cookies",
+        "menu": "",
+        "headings": []
+      }
+    },
+    {
+      "key": "docs/custom-babelrc.md",
+      "value": {
+        "id": "69ba8bf950a2974bd8e267aeb0cc0fbb",
+        "filepath": "docs/custom-babelrc.md",
+        "fullpath": "/Users/ephys/Documents/dev/reworkjs/reworkjs/docs/custom-babelrc.md",
+        "link": "https://github.com/foobarhq/reworkjs/edit/master/docs/custom-babelrc.md",
+        "slug": "docs-custom-babelrc",
+        "route": "/docs-custom-babelrc",
+        "name": "Custom babelrc",
+        "menu": "",
+        "headings": [
+          {
+            "slug": "custom-babelrc",
+            "depth": 1,
+            "value": "Custom  .babelrc"
+          }
+        ]
+      }
+    },
+    {
+      "key": "docs/getting-started.md",
+      "value": {
+        "name": "Getting Started",
+        "id": "a39c9f7aa728d5fa3b973bc6ba49228a",
+        "filepath": "docs/getting-started.md",
+        "fullpath": "/Users/ephys/Documents/dev/reworkjs/reworkjs/docs/getting-started.md",
+        "link": "https://github.com/foobarhq/reworkjs/edit/master/docs/getting-started.md",
+        "slug": "docs-getting-started",
+        "route": "/docs-getting-started",
+        "menu": "",
+        "headings": [
+          {
+            "slug": "getting-started",
+            "depth": 1,
+            "value": "Getting Started"
+          },
+          {
+            "slug": "1-project-setup",
+            "depth": 2,
+            "value": "1. Project Setup"
+          }
+        ]
+      }
+    },
+    {
+      "key": "docs/i18n.md",
+      "value": {
+        "id": "21da386b74f2b21d52053f159bfda5a3",
+        "filepath": "docs/i18n.md",
+        "fullpath": "/Users/ephys/Documents/dev/reworkjs/reworkjs/docs/i18n.md",
+        "link": "https://github.com/foobarhq/reworkjs/edit/master/docs/i18n.md",
+        "slug": "docs-i18n",
+        "route": "/docs-i18n",
+        "name": "I18n",
+        "menu": "",
+        "headings": [
+          {
+            "slug": "i18n",
+            "depth": 1,
+            "value": "i18n"
+          }
+        ]
+      }
+    },
+    {
+      "key": "docs/locale-management.md",
+      "value": {
+        "id": "52e32d27d93c3bac72112e18084a26b1",
+        "filepath": "docs/locale-management.md",
+        "fullpath": "/Users/ephys/Documents/dev/reworkjs/reworkjs/docs/locale-management.md",
+        "link": "https://github.com/foobarhq/reworkjs/edit/master/docs/locale-management.md",
+        "slug": "docs-locale-management",
+        "route": "/docs-locale-management",
+        "name": "Locale management",
+        "menu": "",
+        "headings": []
+      }
+    },
+    {
+      "key": "docs/plugins.md",
+      "value": {
+        "id": "0916b758c148ca9d7bbfb241d34d747e",
+        "filepath": "docs/plugins.md",
+        "fullpath": "/Users/ephys/Documents/dev/reworkjs/reworkjs/docs/plugins.md",
+        "link": "https://github.com/foobarhq/reworkjs/edit/master/docs/plugins.md",
+        "slug": "docs-plugins",
+        "route": "/docs-plugins",
+        "name": "Plugins",
+        "menu": "",
+        "headings": [
+          {
+            "slug": "customizing-the-framework",
+            "depth": 1,
+            "value": "Customizing the framework"
+          },
+          {
+            "slug": "hook-system",
+            "depth": 2,
+            "value": "Hook System"
+          },
+          {
+            "slug": "common-hooks",
+            "depth": 3,
+            "value": "Common hooks"
+          },
+          {
+            "slug": "client-side-hooks",
+            "depth": 3,
+            "value": "Client-side hooks"
+          },
+          {
+            "slug": "server-side-hooks-ssr-only",
+            "depth": 3,
+            "value": "Server-side hooks (SSR only)"
+          },
+          {
+            "slug": "plugin-system",
+            "depth": 2,
+            "value": "Plugin system"
+          },
+          {
+            "slug": "enabling-a-plugin",
+            "depth": 3,
+            "value": "Enabling a plugin"
+          },
+          {
+            "slug": "plugin-definition-resolution",
+            "depth": 3,
+            "value": "Plugin definition resolution"
+          },
+          {
+            "slug": "creating-a-plugin-definition",
+            "depth": 3,
+            "value": "Creating a plugin definition"
+          }
+        ]
+      }
+    },
+    {
+      "key": "docs/public-resources.md",
+      "value": {
+        "id": "f3e9e2e316e7f7d91eb7231609e39d65",
+        "filepath": "docs/public-resources.md",
+        "fullpath": "/Users/ephys/Documents/dev/reworkjs/reworkjs/docs/public-resources.md",
+        "link": "https://github.com/foobarhq/reworkjs/edit/master/docs/public-resources.md",
+        "slug": "docs-public-resources",
+        "route": "/docs-public-resources",
+        "name": "Public resources",
+        "menu": "",
+        "headings": [
+          {
+            "slug": "public-resources",
+            "depth": 1,
+            "value": "Public Resources"
+          }
+        ]
+      }
+    },
+    {
+      "key": "docs/server-side-rendering.md",
+      "value": {
+        "id": "715cdac1de2b7173dbc3306d117a775a",
+        "filepath": "docs/server-side-rendering.md",
+        "fullpath": "/Users/ephys/Documents/dev/reworkjs/reworkjs/docs/server-side-rendering.md",
+        "link": "https://github.com/foobarhq/reworkjs/edit/master/docs/server-side-rendering.md",
+        "slug": "docs-server-side-rendering",
+        "route": "/docs-server-side-rendering",
+        "name": "Server side rendering",
+        "menu": "",
+        "headings": [
+          {
+            "slug": "server-side-rendering",
+            "depth": 1,
+            "value": "Server Side Rendering"
+          }
+        ]
+      }
+    },
+    {
+      "key": "docs/typescript-and-flow.md",
+      "value": {
+        "id": "22f05ff12f427a9524f5f75a352501bc",
+        "filepath": "docs/typescript-and-flow.md",
+        "fullpath": "/Users/ephys/Documents/dev/reworkjs/reworkjs/docs/typescript-and-flow.md",
+        "link": "https://github.com/foobarhq/reworkjs/edit/master/docs/typescript-and-flow.md",
+        "slug": "docs-typescript-and-flow",
+        "route": "/docs-typescript-and-flow",
+        "name": "Typescript and flow",
+        "menu": "",
+        "headings": [
+          {
+            "slug": "typescript--flow",
+            "depth": 1,
+            "value": "TypeScript & Flow"
+          }
+        ]
+      }
+    },
+    {
+      "key": "es/shared/README.md",
+      "value": {
+        "id": "70a09de5fdbeee2666b471d30079a5fb",
+        "filepath": "es/shared/README.md",
+        "fullpath": "/Users/ephys/Documents/dev/reworkjs/reworkjs/es/shared/README.md",
+        "link": "https://github.com/foobarhq/reworkjs/edit/master/es/shared/README.md",
+        "slug": "es-shared-readme",
+        "route": "/es-shared-readme",
+        "name": "Readme",
+        "menu": "",
+        "headings": []
+      }
+    },
+    {
+      "key": "lib/shared/README.md",
+      "value": {
+        "id": "a66c4b4fd3a394e92319123e26d3d501",
+        "filepath": "lib/shared/README.md",
+        "fullpath": "/Users/ephys/Documents/dev/reworkjs/reworkjs/lib/shared/README.md",
+        "link": "https://github.com/foobarhq/reworkjs/edit/master/lib/shared/README.md",
+        "slug": "lib-shared-readme",
+        "route": "/lib-shared-readme",
+        "name": "Readme",
+        "menu": "",
+        "headings": []
+      }
+    },
+    {
+      "key": "src/shared/README.md",
+      "value": {
+        "id": "dfba74dc88f9eb6b55aed174374ddf2f",
+        "filepath": "src/shared/README.md",
+        "fullpath": "/Users/ephys/Documents/dev/reworkjs/reworkjs/src/shared/README.md",
+        "link": "https://github.com/foobarhq/reworkjs/edit/master/src/shared/README.md",
+        "slug": "src-shared-readme",
+        "route": "/src-shared-readme",
+        "name": "Readme",
+        "menu": "",
+        "headings": []
+      }
+    },
+    {
+      "key": "es/framework/dummy/README.md",
+      "value": {
+        "id": "a057eb2add46ad9c1ac2905bf7e3df8b",
+        "filepath": "es/framework/dummy/README.md",
+        "fullpath": "/Users/ephys/Documents/dev/reworkjs/reworkjs/es/framework/dummy/README.md",
+        "link": "https://github.com/foobarhq/reworkjs/edit/master/es/framework/dummy/README.md",
+        "slug": "es-framework-dummy-readme",
+        "route": "/es-framework-dummy-readme",
+        "name": "Readme",
+        "menu": "",
+        "headings": [
+          {
+            "slug": "frameworkdummy",
+            "depth": 1,
+            "value": "framework/dummy"
+          }
+        ]
+      }
+    },
+    {
+      "key": "es/internals/cli/TODO.md",
+      "value": {
+        "id": "bd5fac8ec2e7142fcf1d435b621a6069",
+        "filepath": "es/internals/cli/TODO.md",
+        "fullpath": "/Users/ephys/Documents/dev/reworkjs/reworkjs/es/internals/cli/TODO.md",
+        "link": "https://github.com/foobarhq/reworkjs/edit/master/es/internals/cli/TODO.md",
+        "slug": "es-internals-cli-todo",
+        "route": "/es-internals-cli-todo",
+        "name": "Todo",
+        "menu": "",
+        "headings": [
+          {
+            "slug": "binary-methods",
+            "depth": 1,
+            "value": "binary methods:"
+          },
+          {
+            "slug": "install",
+            "depth": 2,
+            "value": "install"
+          },
+          {
+            "slug": "lint-staged",
+            "depth": 2,
+            "value": "lint staged"
+          },
+          {
+            "slug": "lint-script",
+            "depth": 2,
+            "value": "lint script"
+          },
+          {
+            "slug": "lint-style",
+            "depth": 2,
+            "value": "lint style"
+          },
+          {
+            "slug": "start-dev",
+            "depth": 2,
+            "value": "start dev"
+          },
+          {
+            "slug": "start-tunnel",
+            "depth": 2,
+            "value": "start tunnel"
+          },
+          {
+            "slug": "start-production",
+            "depth": 2,
+            "value": "start prod(uction)?"
+          },
+          {
+            "slug": "clean",
+            "depth": 2,
+            "value": "clean"
+          },
+          {
+            "slug": "build",
+            "depth": 2,
+            "value": "build"
+          },
+          {
+            "slug": "build-dll",
+            "depth": 2,
+            "value": "build dll"
+          },
+          {
+            "slug": "build-server",
+            "depth": 2,
+            "value": "build server"
+          },
+          {
+            "slug": "extract-intl",
+            "depth": 2,
+            "value": "extract-intl"
+          },
+          {
+            "slug": "pagespeed",
+            "depth": 2,
+            "value": "pagespeed"
+          },
+          {
+            "slug": "test",
+            "depth": 2,
+            "value": "test"
+          },
+          {
+            "slug": "test---coverage",
+            "depth": 2,
+            "value": "test --coverage"
+          }
+        ]
+      }
+    },
+    {
+      "key": "lib/framework/dummy/README.md",
+      "value": {
+        "id": "406e9b03b9ade4c987df55130895dcd9",
+        "filepath": "lib/framework/dummy/README.md",
+        "fullpath": "/Users/ephys/Documents/dev/reworkjs/reworkjs/lib/framework/dummy/README.md",
+        "link": "https://github.com/foobarhq/reworkjs/edit/master/lib/framework/dummy/README.md",
+        "slug": "lib-framework-dummy-readme",
+        "route": "/lib-framework-dummy-readme",
+        "name": "Readme",
+        "menu": "",
+        "headings": [
+          {
+            "slug": "frameworkdummy",
+            "depth": 1,
+            "value": "framework/dummy"
+          }
+        ]
+      }
+    },
+    {
+      "key": "lib/internals/cli/TODO.md",
+      "value": {
+        "id": "52fb74e0232065f23889b98db8211518",
+        "filepath": "lib/internals/cli/TODO.md",
+        "fullpath": "/Users/ephys/Documents/dev/reworkjs/reworkjs/lib/internals/cli/TODO.md",
+        "link": "https://github.com/foobarhq/reworkjs/edit/master/lib/internals/cli/TODO.md",
+        "slug": "lib-internals-cli-todo",
+        "route": "/lib-internals-cli-todo",
+        "name": "Todo",
+        "menu": "",
+        "headings": [
+          {
+            "slug": "binary-methods",
+            "depth": 1,
+            "value": "binary methods:"
+          },
+          {
+            "slug": "install",
+            "depth": 2,
+            "value": "install"
+          },
+          {
+            "slug": "lint-staged",
+            "depth": 2,
+            "value": "lint staged"
+          },
+          {
+            "slug": "lint-script",
+            "depth": 2,
+            "value": "lint script"
+          },
+          {
+            "slug": "lint-style",
+            "depth": 2,
+            "value": "lint style"
+          },
+          {
+            "slug": "start-dev",
+            "depth": 2,
+            "value": "start dev"
+          },
+          {
+            "slug": "start-tunnel",
+            "depth": 2,
+            "value": "start tunnel"
+          },
+          {
+            "slug": "start-production",
+            "depth": 2,
+            "value": "start prod(uction)?"
+          },
+          {
+            "slug": "clean",
+            "depth": 2,
+            "value": "clean"
+          },
+          {
+            "slug": "build",
+            "depth": 2,
+            "value": "build"
+          },
+          {
+            "slug": "build-dll",
+            "depth": 2,
+            "value": "build dll"
+          },
+          {
+            "slug": "build-server",
+            "depth": 2,
+            "value": "build server"
+          },
+          {
+            "slug": "extract-intl",
+            "depth": 2,
+            "value": "extract-intl"
+          },
+          {
+            "slug": "pagespeed",
+            "depth": 2,
+            "value": "pagespeed"
+          },
+          {
+            "slug": "test",
+            "depth": 2,
+            "value": "test"
+          },
+          {
+            "slug": "test---coverage",
+            "depth": 2,
+            "value": "test --coverage"
+          }
+        ]
+      }
+    },
+    {
+      "key": "src/framework/dummy/README.md",
+      "value": {
+        "id": "e7e545cf667fdd9ea103a065f1ecfb68",
+        "filepath": "src/framework/dummy/README.md",
+        "fullpath": "/Users/ephys/Documents/dev/reworkjs/reworkjs/src/framework/dummy/README.md",
+        "link": "https://github.com/foobarhq/reworkjs/edit/master/src/framework/dummy/README.md",
+        "slug": "src-framework-dummy-readme",
+        "route": "/src-framework-dummy-readme",
+        "name": "Readme",
+        "menu": "",
+        "headings": [
+          {
+            "slug": "frameworkdummy",
+            "depth": 1,
+            "value": "framework/dummy"
+          }
+        ]
+      }
+    },
+    {
+      "key": "src/internals/cli/TODO.md",
+      "value": {
+        "id": "b83dd7bd829b27ab073ecdfb1befa7e3",
+        "filepath": "src/internals/cli/TODO.md",
+        "fullpath": "/Users/ephys/Documents/dev/reworkjs/reworkjs/src/internals/cli/TODO.md",
+        "link": "https://github.com/foobarhq/reworkjs/edit/master/src/internals/cli/TODO.md",
+        "slug": "src-internals-cli-todo",
+        "route": "/src-internals-cli-todo",
+        "name": "Todo",
+        "menu": "",
+        "headings": [
+          {
+            "slug": "binary-methods",
+            "depth": 1,
+            "value": "binary methods:"
+          },
+          {
+            "slug": "install",
+            "depth": 2,
+            "value": "install"
+          },
+          {
+            "slug": "lint-staged",
+            "depth": 2,
+            "value": "lint staged"
+          },
+          {
+            "slug": "lint-script",
+            "depth": 2,
+            "value": "lint script"
+          },
+          {
+            "slug": "lint-style",
+            "depth": 2,
+            "value": "lint style"
+          },
+          {
+            "slug": "start-dev",
+            "depth": 2,
+            "value": "start dev"
+          },
+          {
+            "slug": "start-tunnel",
+            "depth": 2,
+            "value": "start tunnel"
+          },
+          {
+            "slug": "start-production",
+            "depth": 2,
+            "value": "start prod(uction)?"
+          },
+          {
+            "slug": "clean",
+            "depth": 2,
+            "value": "clean"
+          },
+          {
+            "slug": "build",
+            "depth": 2,
+            "value": "build"
+          },
+          {
+            "slug": "build-dll",
+            "depth": 2,
+            "value": "build dll"
+          },
+          {
+            "slug": "build-server",
+            "depth": 2,
+            "value": "build server"
+          },
+          {
+            "slug": "extract-intl",
+            "depth": 2,
+            "value": "extract-intl"
+          },
+          {
+            "slug": "pagespeed",
+            "depth": 2,
+            "value": "pagespeed"
+          },
+          {
+            "slug": "test",
+            "depth": 2,
+            "value": "test"
+          },
+          {
+            "slug": "test---coverage",
+            "depth": 2,
+            "value": "test --coverage"
+          }
+        ]
+      }
+    },
+    {
+      "key": "es/internals/webpack/features/README.md",
+      "value": {
+        "id": "b18959ac4343c50835bcce9d12b7e326",
+        "filepath": "es/internals/webpack/features/README.md",
+        "fullpath": "/Users/ephys/Documents/dev/reworkjs/reworkjs/es/internals/webpack/features/README.md",
+        "link": "https://github.com/foobarhq/reworkjs/edit/master/es/internals/webpack/features/README.md",
+        "slug": "es-internals-webpack-features-readme",
+        "route": "/es-internals-webpack-features-readme",
+        "name": "Readme",
+        "menu": "",
+        "headings": [
+          {
+            "slug": "features",
+            "depth": 1,
+            "value": "Features"
+          }
+        ]
+      }
+    },
+    {
+      "key": "lib/internals/webpack/features/README.md",
+      "value": {
+        "id": "e8b22f99a423db5f2826504a103af17a",
+        "filepath": "lib/internals/webpack/features/README.md",
+        "fullpath": "/Users/ephys/Documents/dev/reworkjs/reworkjs/lib/internals/webpack/features/README.md",
+        "link": "https://github.com/foobarhq/reworkjs/edit/master/lib/internals/webpack/features/README.md",
+        "slug": "lib-internals-webpack-features-readme",
+        "route": "/lib-internals-webpack-features-readme",
+        "name": "Readme",
+        "menu": "",
+        "headings": [
+          {
+            "slug": "features",
+            "depth": 1,
+            "value": "Features"
+          }
+        ]
+      }
+    },
+    {
+      "key": "src/internals/webpack/features/README.md",
+      "value": {
+        "id": "50bc743f8c1687c024a985961dcb2148",
+        "filepath": "src/internals/webpack/features/README.md",
+        "fullpath": "/Users/ephys/Documents/dev/reworkjs/reworkjs/src/internals/webpack/features/README.md",
+        "link": "https://github.com/foobarhq/reworkjs/edit/master/src/internals/webpack/features/README.md",
+        "slug": "src-internals-webpack-features-readme",
+        "route": "/src-internals-webpack-features-readme",
+        "name": "Readme",
+        "menu": "",
+        "headings": [
+          {
+            "slug": "features",
+            "depth": 1,
+            "value": "Features"
+          }
+        ]
+      }
+    }
+  ],
+  "props": [
+    {
+      "key": "es/framework/app/ReworkRootComponent.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "ReworkRootComponent",
+          "methods": [],
+          "actualName": "ReworkRootComponent"
+        }
+      ]
+    },
+    {
+      "key": "src/framework/app/ReworkRootComponent.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "ReworkRootComponent",
+          "methods": [],
+          "actualName": "ReworkRootComponent",
+          "props": {
+            "children": {
+              "required": true,
+              "flowType": {
+                "name": "any"
+              },
+              "description": ""
+            }
+          }
+        }
+      ]
+    },
+    {
+      "key": "src/gatsby-theme-docz/components/Logo/index.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "Logo",
+          "methods": [],
+          "actualName": "Logo"
+        }
+      ]
+    }
+  ]
+}
