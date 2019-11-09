@@ -108,11 +108,10 @@ export default class WebpackBase {
   }
 
   buildConfig() {
-    const EXTENSIONS = [
-      '.mjs',
-      '.js',
-      '.jsx',
-    ];
+    const EXTENSIONS = wcbUtils.getFileTypeExtensions(
+      this.webpackConfigBuilder,
+      WebpackConfigBuilder.FILE_TYPE_JS,
+    ).map(ext => `.${ext}`);
 
     const config: Object = {
       cache: true,
