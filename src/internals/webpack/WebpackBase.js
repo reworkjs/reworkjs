@@ -449,7 +449,7 @@ export default class WebpackBase {
       new CleanWebpackPlugin(),
       new webpack.DefinePlugin(this.getDefinedVars()),
       new CopyWebpackPlugin([{
-        from: { glob: `${frameworkConfig.directories.resources}/**/**/*` },
+        from: frameworkConfig.directories.resources,
         to: './',
         toType: 'dir',
       }]),
