@@ -21,6 +21,6 @@ The main motivation for this project is to separate the boilerplate from the pro
 
 ## Main Features
 
-- Built-in support for [CSS Modules, SCSS & PostCSS](./docs/styling.md)
+- Built-in support for [CSS Modules, SCSS & PostCSS](docs/3-styling.md)
 - [Server-Side Rendering](./docs/server-side-rendering.md) ready
-- [Automatic Locale Management](./docs/i18n.md)
+- [Automatic Locale Management](docs/5-i18n.md)

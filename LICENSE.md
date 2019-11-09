@@ -1,6 +1,7 @@
 MIT License
 
-Copyright (c) 2017 madkings.com
+Copyright (c) 2019 madkings.com  
+Copyright (c) 2019 Guylian Cox <guyliancox@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

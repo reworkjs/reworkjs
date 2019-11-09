@@ -1,3 +1,8 @@
+---
+name: Command Line Interface
+route: /cli
+---
+
 # RJS Command Line Interface
 
 ReworkJS comes bundled with a command line interface which handles tasks such as 

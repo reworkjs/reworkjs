@@ -1,3 +1,9 @@
+---
+name: Configuration
+menu: Advanced Topics
+route: /configuration
+---
+
 # RJS Configuration
 
 ## Contents
@@ -59,13 +65,13 @@ This directory contains assets that should not be transformed and will merely be
 The files located inside of `resources` will be copied inside of the `public` directory in the output files.  
 Be careful not to use the name of a built resource (such as `index.html` or `main.js`).
 
-See the chapter on [Public Resources](./public-resources.md) for more information
+See the chapter on [Public Resources](../4-public-resources.md) for more information
 
 ### `directories.translations`
 
 Default: `./src/translations`
 
-This directory contains the translation files used by `react-intl`. See the chapter about [i18n](./i18n.md)
+This directory contains the translation files used by `react-intl`. See the chapter about [i18n](../5-i18n.md)
 
 ### `routes`
 
@@ -98,11 +104,11 @@ If specified, the file will be loaded inside of the service worker.
 
 ## `hooks`
 
-See [The first section of Plugins](./plugins.md#hook-system)
+See [The first section of Plugins](plugins.md#hook-system)
 
 ## `plugins`
 
-See [The second section of Plugins](./plugins.md#plugin-system)
+See [The second section of Plugins](plugins.md#plugin-system)
 
 ## Specifying the path to the configuration file
 

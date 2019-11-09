@@ -1,3 +1,8 @@
+---
+name: Public Resources
+route: /public-resources
+---
+
 # Public Resources
 
 TODO: link to .reworkrc documentation

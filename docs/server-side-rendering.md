@@ -1,3 +1,8 @@
+---
+name: Server Side Rendering
+route: /server-side-rendering
+---
+
 # Server Side Rendering
 
 TODO
