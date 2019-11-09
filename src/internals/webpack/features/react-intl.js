@@ -3,7 +3,7 @@
 import fs from 'fs';
 import path from 'path';
 import webpack from 'webpack';
-import { uniq } from 'lodash';
+import uniq from 'lodash/uniq';
 import BaseFeature from '../BaseFeature';
 import logger from '../../../shared/logger';
 import config from '../../../shared/framework-config';
@@ -20,7 +20,7 @@ export default class ReactIntlFeature extends BaseFeature {
   }
 
   isDefaultEnabled() {
-    return this.isProd();
+    return true;
   }
 
   visit(webpackConfig: WebpackConfigBuilder) {
@@ -38,6 +38,7 @@ export default class ReactIntlFeature extends BaseFeature {
 
     webpackConfig.injectPlugins(new webpack.IgnorePlugin(ignoreRegex, /react-intl\/locale-data$/));
     webpackConfig.injectPlugins(new webpack.IgnorePlugin(ignoreRegex, /intl\/locale-data\/jsonp$/));
+    webpackConfig.injectPlugins(new webpack.IgnorePlugin(ignoreRegex, /@formatjs\/intl-relativetimeformat\/dist\/locale-data$/));
   }
 }
 
@@ -49,5 +50,6 @@ function removeExtension(fileName: string): string {
 
 function extractLanguage(locale: string): string {
   const parts = locale.split(/[_-]/);
+
   return parts[0];
 }
