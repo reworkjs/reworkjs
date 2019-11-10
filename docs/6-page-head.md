@@ -11,6 +11,9 @@ There is no need to setup it, simply start using it!
 ```typescript jsx
 // pages/home/home.view.tsx
 
+import * as React from 'react';
+import { Helmet } from 'react-helmet-async';
+
 export default function HomeView() {
   return (
     <>
