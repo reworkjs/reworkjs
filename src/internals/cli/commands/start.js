@@ -36,7 +36,7 @@ export default function registerCommand(cli) {
   cli
     .command('start', 'Launches the application', yargs => {
       yargs
-        .option('prerendering', {
+        .option('ssr', {
           type: 'boolean',
           default: false,
           describe: 'Enable server-side rendering',
@@ -60,7 +60,7 @@ export default function registerCommand(cli) {
 
       process.env.WATCH = String(process.env.NODE_ENV === 'development');
 
-      if (!argv.prerendering) {
+      if (!argv.ssr) {
         return runServerWithoutPrerendering(argv);
       }
 
@@ -110,9 +110,9 @@ async function runServerWithPrerendering(options) {
 
   if (process.env.NODE_ENV === 'development') {
     // in WATCH (dev) mode, the front-end server is handled by the ClientBuilder process
-    // running on --port, and dispatching to --prerendering-port for routes that need to be pre-rendered.
+    // running on --port, and dispatching to --ssr-port for routes that need to be pre-rendered.
 
-    clientBuilderArgv.push('--port', options.port, '--prerendering-port', preRenderingPort);
+    clientBuilderArgv.push('--port', options.port, '--ssr-port', preRenderingPort);
   }
 
   // pass all CLI arguments after `--` as-is. Builder will parse them and provide them as globals
@@ -166,7 +166,7 @@ function startPreRenderingServer(args) {
   // Launch pre-rendering server that was just built (exe)
   const serverArgs = [
     '--verbose', options.verbose,
-    '--prerendering',
+    '--ssr',
   ];
 
   if (process.env.NODE_ENV === 'development') {
@@ -174,7 +174,7 @@ function startPreRenderingServer(args) {
     // which dispatches to the pre-rendering server for non-asset routes.
     serverArgs.push(
       '--hide-http',
-      '--port', preRenderingPort
+      '--port', preRenderingPort,
     );
   } else {
     serverArgs.push('--port', options.port);

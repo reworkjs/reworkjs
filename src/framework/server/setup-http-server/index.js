@@ -13,7 +13,7 @@ const httpStaticPath = webpackClientConfig.output.publicPath;
 const fsClientOutputPath = webpackClientConfig.output.path;
 const clientEntryPoint = path.join(fsClientOutputPath, 'index.html');
 
-const HAS_PRERENDERING = argv.prerendering === true;
+const HAS_PRERENDERING = argv.ssr === true;
 
 export default function setupHttpServer(expressApp) {
 
@@ -26,6 +26,7 @@ export default function setupHttpServer(expressApp) {
     logger.error(err);
 
     res.status(err.status || 500);
+
     return res.sendFile(clientEntryPoint);
   });
 

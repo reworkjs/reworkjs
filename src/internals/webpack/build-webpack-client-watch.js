@@ -12,7 +12,7 @@ import logger from '../../shared/logger';
 import argv from '../rjs-argv';
 import webpackClientConfig from './webpack.client';
 
-const PRERENDERING_PORT = argv['prerendering-port'];
+const PRERENDERING_PORT = argv['ssr-port'];
 const HAS_PRERENDERING = Boolean(PRERENDERING_PORT);
 
 const app = express();
