@@ -3,7 +3,7 @@ name: Introduction
 route: /
 ---
 
-# rework.js
+# [rework.js](https://www.reworkjs.com/)
 
 *Opinionated React Framework*
 
