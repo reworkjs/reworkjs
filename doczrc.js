@@ -2,6 +2,7 @@ export default {
   ignore: [
     '.docz/**/*',
     '.idea/**/*',
+    '.git/**/*',
     'src/shared/README.md',
     'src/framework/dummy/README.md',
     'CODE_OF_CONDUCT.md',
