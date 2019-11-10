@@ -22,9 +22,15 @@ The main motivation for this project is to separate the boilerplate from the pro
 
 ## Main Features
 
-- Built-in support for [CSS Modules, SCSS & PostCSS](docs/3-styling.md)
-- [Server-Side Rendering](./docs/server-side-rendering.md) ready
-- [Automatic Locale Management](docs/5-i18n.md)
+- Hot Reloading
+- [Code Splitting](https://www.reworkjs.com/routing#code-splitting--lazy-loading)
+- Built-in support for `.browserslistrc`
+- Supports [TypeScript](https://www.reworkjs.com/typescript)
+- Built-in support for [CSS Modules, SCSS & PostCSS](https://www.reworkjs.com/styling)
+- [Server-Side Rendering](https://www.reworkjs.com/server-side-rendering) ready
+- [Automatic Locale Management](https://www.reworkjs.com/i18n)
+- [Static and dynamic assets](https://www.reworkjs.com/public-resources)
+- And much more!
 
 ## Projects built with rework
 

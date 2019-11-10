@@ -30,6 +30,7 @@ export default {
     --- drawback: @import will duplicate, use compose with isolated files. alternative does not work well at all
      */
     'Public Resources',
+    'Page Metadata (head)',
     'Internationalization (i18n)',
     /*
     -- how to add language
