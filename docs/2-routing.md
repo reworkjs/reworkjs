@@ -5,6 +5,8 @@ route: /routing
 
 # Routing
 
+Routing in rework.js is handled by [React Router DOM](https://reacttraining.com/react-router/web), with sprinkles added on top.
+
 ## Creating a new Route
 
 The default router treats all files named `*.route.js`* as route definitions.
@@ -22,8 +24,6 @@ export default {
   component: MyLazyLoadedComponent,
 }
 ```
-
-rework.js uses [React Router DOM](https://reacttraining.com/react-router/web) behind the scenes
 
 * The actual default pattern is `src/**/*.route.{js,jsx,mjs,ts,tsx}`
 
@@ -80,7 +80,6 @@ export default {
     fallback: CircularProgress,
   }),
 };
-
 ```
 
 ## HTTP status codes
@@ -92,6 +91,8 @@ The react-router way is a bit cumbersome so rework.js exposes two utilities you 
 
 ```typescript jsx
 // HttpStatus component
+
+// src/pages/404/404.view.tsx
 import * as React from 'react';
 import { HttpStatus } from '@reworkjs/core/router';
 
@@ -107,8 +108,10 @@ function My404Page() {
 
 ```typescript jsx
 // useHttpStatus hook
+
+// src/pages/404/404.view.tsx
 import * as React from 'react';
-import { useHttpStatus } from '@reworkjs/core/http';
+import { useHttpStatus } from '@reworkjs/core/router';
 
 function My404Page() {
 
@@ -123,3 +126,28 @@ function My404Page() {
 ```
 
 ## Advanced Routing
+
+While this route-loading system, it also limits what can be done with React-Router.
+
+If you wish to bypass it and come back to React-Router, you can create a single route file that will act as your router:
+
+```typescript jsx
+// src/pages/router.route.tsx
+
+import * as React from 'react';
+import { Switch } from 'react-router-dom';
+
+export default {
+  // match all urls
+  path: '*',
+  component: MyRouter,
+};
+
+function MyRouter() {
+  return (
+    <Switch>
+      {/* check out react-router for documentation on their routing! */}
+    </Switch>
+  );
+}
+```

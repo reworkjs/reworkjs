@@ -1,14 +1,15 @@
 export default {
   ignore: [
-    '.docz',
+    '.docz/**/*',
+    '.idea/**/*',
     'src/shared/README.md',
     'src/framework/dummy/README.md',
     'CODE_OF_CONDUCT.md',
     'ROADMAP.md',
     'STRUCTURE.md',
     'START.md',
-    'lib',
-    'es',
+    'lib/**/*',
+    'es/**/*',
   ],
   title: 'rework.js',
   menu: [
