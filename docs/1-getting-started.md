@@ -35,3 +35,4 @@ Alternatively you can use the [rjs cli](./cli.md) directly by running `NODE_ENV=
 
 ## 3. Creating your first page
 
+You app is up, but it doesn't do much currently. It's time to [create your first page](./2-routing.md)!

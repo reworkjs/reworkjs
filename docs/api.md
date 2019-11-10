@@ -17,12 +17,15 @@ route: /api
 --> ActiveLocaleContext
 -> argv
 -> babel-preset
+- useReactRouter
 
 ## SSR
 
--> usePersistentValue
--> useAsyncResource
--> useRes, useReq, SsrContext
+- usePersistentValue
+- useAsyncResource
+- useRes, useReq, SsrContext
+- useHttpStatus(404)
+- HttpStatus
 
 ## Utils
 

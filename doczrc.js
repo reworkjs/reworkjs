@@ -2,6 +2,7 @@ export default {
   ignore: [
     '.docz',
     'src/shared/README.md',
+    'src/framework/dummy/README.md',
     'CODE_OF_CONDUCT.md',
     'ROADMAP.md',
     'STRUCTURE.md',
@@ -62,8 +63,8 @@ export default {
     {
       name: 'Advanced Topics',
       menu: [
+        'Configuration',
         'Plugins',
-        'rework.js configuration',
         // TODO: add "flags" in configuration
         'Preact',
       ],
