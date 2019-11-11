@@ -32,7 +32,7 @@ export default class WebpackConfigBuilder {
   constructor() {
     const state: WcbState = {
       fileTypes: {
-        [FILE_TYPE_JS]: ['js', 'jsx', 'mjs'],
+        [FILE_TYPE_JS]: ['js', 'jsx', 'mjs', 'ts', 'tsx'],
         [FILE_TYPE_CSS]: ['css'],
         [FILE_TYPE_IMG]: ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'],
       },
