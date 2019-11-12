@@ -11,3 +11,4 @@ TODO
 -> How to fetch data on server (hooks)
 -> Multi-render pass system
 -> how to use HTTP/2 server push
+-> how to send headers (automatically sent & manually sent through useRes)

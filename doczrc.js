@@ -76,3 +76,5 @@ export default {
     'Command Line Interface',
   ],
 };
+
+// TODO: building for standalone/cordova
