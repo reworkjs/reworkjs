@@ -16,12 +16,15 @@ export default function registerCommand(commander) {
           type: 'string',
           choices: Object.keys(builders),
         })
-        .option(...featureHelp);
+        .option(...featureHelp)
+        .parserConfiguration({
+          'populate--': true,
+        });
     }, argv => {
       const parts = argv.parts;
 
       logger.info(`Building ${parts.map(
-        str => chalk.blue(str)
+        str => chalk.blue(str),
       ).join(', ')} in ${chalkEnvVar(process.env.NODE_ENV)} mode...`);
 
       process.env.WATCH = 'false';
