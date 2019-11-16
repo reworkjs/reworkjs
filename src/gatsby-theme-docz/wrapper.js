@@ -7,7 +7,6 @@ const Wrapper = ({ children }) => (
   <>
     <Helmet>
       <meta charSet="utf-8" />
-      <title>rework.js</title>
       <link
         rel="icon"
         type="image/png"

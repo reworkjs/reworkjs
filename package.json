@@ -1,7 +1,8 @@
 {
   "name": "@reworkjs/core",
-  "version": "0.28.1",
+  "version": "0.29.0",
   "description": "A react framework that works out of the box",
+  "homepage": "https://www.reworkjs.com/",
   "repository": {
     "type": "git",
     "url": "git@github.com:foobarhq/reworkjs.git"
@@ -23,7 +24,7 @@
     "release": "standard-version --release-as $RELEASE_TYPE",
     "docz:dev": "docz dev",
     "docz:build": "docz build",
-    "docz:publish": "npm run docz:build && cp CNAME .docz/dist/CNAME && gh-pages -d .docz/dist --message \"[skip ci] Publish docz\""
+    "docz:publish": "rm -rf es && rm -rf lib && npm run docz:build && cp CNAME .docz/dist/CNAME && gh-pages -d .docz/dist --message \"[skip ci] Publish docz\""
   },
   "bin": {
     "rjs": "bin/framework.bin.js"

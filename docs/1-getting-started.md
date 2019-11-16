@@ -1,6 +1,6 @@
 ---
 name: Getting Started
-route: getting-started
+route: /getting-started
 ---
 
 # Getting Started
@@ -25,3 +25,14 @@ If you do not wish to install the cli globally, you will need to manually instal
 Even though the second method does not install the global CLI, you can still use 
 the local, project-specific, one available under `./node_modules/.bin/rjs`. The rest of the documentation will assume the
 global cli is available, but all used commands are fully compatible with the local cli.
+
+## 2. Starting your application
+
+If you followed the first part of this tutorial, your package.json will contain a `start:dev` script.
+
+You can from now on run `npm run start:dev` to start the application in development mode.  
+Alternatively you can use the [rjs cli](./cli.md) directly by running `NODE_ENV=development rjs start --port 3000`
+
+## 3. Creating your first page
+
+You app is up, but it doesn't do much currently. It's time to [create your first page](./2-routing.md)!

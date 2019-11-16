@@ -1,5 +1,5 @@
 {
-  "*.js": "eslint --report-unused-disable-directives",
-  "*.css": "stylelint",
-  "*.scss": "stylelint --syntax=scss"
+  "*.{js,jsx,jsm}": ["eslint --report-unused-disable-directives --fix", "git add"],
+  "*.css": ["stylelint --fix", "git add"],
+  "*.scss": ["stylelint --syntax=scss --fix", "git add"]
 }

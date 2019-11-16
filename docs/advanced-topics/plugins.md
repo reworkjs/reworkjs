@@ -1,10 +1,16 @@
+---
+name: Plugins
+menu: Advanced Topics
+route: /plugins
+---
+
 # Customizing the framework
 
 ## Hook System
 
 Hooks allow you to change the behavior of parts of the framework.
 
-In order to enable hooks, you will want to provide the path to your hook files inside of your [configuration file](./configuration.md#hooks).
+In order to enable hooks, you will want to provide the path to your hook files inside of your [configuration file](configuration.md#hooks).
 
 - `hooks.client` will accept the hook the framework will run in the browser version of the application
 - `hooks.server` will accept the hook the framework will run during server-side rendering
@@ -110,7 +116,7 @@ Plugins are a layer on top of hook.
 ### Enabling a plugin
 
 In order to enable a plugin, you need to specify the name of the plugin as a key in the `plugins` object of
-your [configuration file](./configuration.md#plugins). The value of that entry is the configuration of the plugin.
+your [configuration file](configuration.md#plugins). The value of that entry is the configuration of the plugin.
 
 *Example:*
 

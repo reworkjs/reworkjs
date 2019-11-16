@@ -108,11 +108,10 @@ export default class WebpackBase {
   }
 
   buildConfig() {
-    const EXTENSIONS = [
-      '.mjs',
-      '.js',
-      '.jsx',
-    ];
+    const EXTENSIONS = wcbUtils.getFileTypeExtensions(
+      this.webpackConfigBuilder,
+      WebpackConfigBuilder.FILE_TYPE_JS,
+    ).map(ext => `.${ext}`);
 
     const config: Object = {
       cache: true,
@@ -450,7 +449,7 @@ export default class WebpackBase {
       new CleanWebpackPlugin(),
       new webpack.DefinePlugin(this.getDefinedVars()),
       new CopyWebpackPlugin([{
-        from: { glob: `${frameworkConfig.directories.resources}/**/**/*` },
+        from: frameworkConfig.directories.resources,
         to: './',
         toType: 'dir',
       }]),

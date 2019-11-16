@@ -1,3 +1,9 @@
+---
+menu: JavaScript flavors
+name: Babel Config
+route: /custom-babel-config
+---
+
 # Custom `.babelrc`
 
 Rework pre-configures babel to transpile stable ES and React features.

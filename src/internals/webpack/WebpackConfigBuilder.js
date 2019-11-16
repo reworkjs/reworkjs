@@ -1,4 +1,4 @@
-import { merge } from 'lodash';
+import merge from 'lodash/merge';
 import escapeRegExp from 'escape-string-regexp';
 import pushAll from '../../shared/util/push-all';
 
@@ -32,7 +32,7 @@ export default class WebpackConfigBuilder {
   constructor() {
     const state: WcbState = {
       fileTypes: {
-        [FILE_TYPE_JS]: ['js', 'jsx'],
+        [FILE_TYPE_JS]: ['js', 'jsx', 'mjs', 'ts', 'tsx'],
         [FILE_TYPE_CSS]: ['css'],
         [FILE_TYPE_IMG]: ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'],
       },
@@ -102,17 +102,21 @@ export function getCssLoaders(instance) {
   return getState(instance).cssLoaders;
 }
 
-export function getFileTypeRegExp(instance, fileType) {
-  if (fileType instanceof RegExp) {
-    return fileType;
-  }
-
+export function getFileTypeExtensions(instance, fileType) {
   const state = getState(instance);
   if (!state.fileTypes[fileType]) {
     throw new TypeError('Invalid filetype');
   }
 
-  return toRegExp(state.fileTypes[fileType]);
+  return state.fileTypes[fileType];
+}
+
+export function getFileTypeRegExp(instance, fileType) {
+  if (fileType instanceof RegExp) {
+    return fileType;
+  }
+
+  return toRegExp(getFileTypeExtensions(instance, fileType));
 }
 
 function toRegExp(fileExt: Array) {

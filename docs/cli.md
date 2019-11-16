@@ -1,3 +1,8 @@
+---
+name: Command Line Interface
+route: /cli
+---
+
 # RJS Command Line Interface
 
 ReworkJS comes bundled with a command line interface which handles tasks such as 
@@ -26,8 +31,7 @@ The compiler will launch in watch mode if the `NODE_ENV` variable is set to `dev
 
 Options:
 - `--port`: The port on which the static and pre-rendering server will respond to HTTP requests.
-- `--no-prerendering`: By default, `rjs start` will launch a pre-rendering server along with the static delivery of the
-  built assets. You can disable this behavior using this option.
+- `--ssr`: By default, `rjs start` will launch without Server-Side Rendering to reduce compilation time. Use `--ssr` to enable Server Side Rendering.
 - `--no-split`: By default, starting the app with pre-rendering will create a split view in the terminal with the output of
   the pre-rendering server builder, the client bundle builder, and the pre-rendering server itself. You can revert back
   to a regular CLI display using this option.
