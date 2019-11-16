@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.29.0](https://github.com/foobarhq/reworkjs/compare/v0.28.1...v0.29.0) (2019-11-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* usage of `--prerendering` flag must be changed to `--ssr`
+* you will now need either move the files to a subfolder or adapt references to public resources
+
+### Features
+
+* allow js webpack type to be extended by plugins ([6af9698](https://github.com/foobarhq/reworkjs/commit/6af969838bc381981365f27f89e7f4f52e928def))
+* always purge unused react-intl polyfills & add relativetime ([9c226bc](https://github.com/foobarhq/reworkjs/commit/9c226bc93060580d3d0fa5eb415a9fc529b29855))
+* copy files from resource directory to root of dist ([6cab5b7](https://github.com/foobarhq/reworkjs/commit/6cab5b75d629fe792fb063877dc089924182557f))
+* default lint-staged now autofixes ([d0fd508](https://github.com/foobarhq/reworkjs/commit/d0fd5087cfa779a6065f31753087f41b72948312))
+* expose APIs to access react-router context & set http status ([f154214](https://github.com/foobarhq/reworkjs/commit/f1542145bb85eaad1ba7eb33da026a05bb671bd0))
+* parse typescript as javascript files ([78ef8b9](https://github.com/foobarhq/reworkjs/commit/78ef8b99811233e3b0ca820720e1d20e6d4a274e))
+* rename prerendering -> ssr ([7ead843](https://github.com/foobarhq/reworkjs/commit/7ead843d02297f495885484d8ee4b016e4752b31))
+
+
+### Bug Fixes
+
+* accept extra args in build ([e78e0f8](https://github.com/foobarhq/reworkjs/commit/e78e0f85b69b94dbb0fc2399df71d2e613d8841f))
+
 ### [0.28.1](https://github.com/foobarhq/reworkjs/compare/v0.28.0...v0.28.1) (2019-11-08)
 
 
