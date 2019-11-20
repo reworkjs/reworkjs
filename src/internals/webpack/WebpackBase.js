@@ -3,7 +3,7 @@
 import path from 'path';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
-import Helmet from 'react-helmet';
+import { HelmetProvider } from 'react-helmet-async';
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import ExtractCssPlugin from 'mini-css-extract-plugin';
@@ -11,6 +11,7 @@ import { CleanWebpackPlugin } from 'clean-webpack-plugin';
 import nodeExternals from 'webpack-node-externals';
 import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
+import WebpackBar from 'webpackbar';
 import LoadablePlugin from '@loadable/webpack-plugin';
 import { chalkNok, chalkOk } from '../../shared/chalk';
 import frameworkConfig from '../../shared/framework-config';
@@ -204,6 +205,7 @@ export default class WebpackBase {
         // Necessary for hot reloading with IE
         'eventsource-polyfill',
         'webpack-hot-middleware/client',
+        'react-hot-loader/patch',
         require.resolve('./dev-preamble'),
       );
     } else if (this.isDev && this.isServer()) {
@@ -369,7 +371,12 @@ export default class WebpackBase {
       // Support React Native Web
       // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
       'react-native': 'react-native-web',
+      'react-helmet': resolveFrameworkSource('dummy/react-helmet.js', { esModules: !this.isServer() }),
     };
+
+    if (this.isDev && !this.isServer()) {
+      frameworkAliases['react-dom'] = '@hot-loader/react-dom';
+    }
 
     // if (this.isServer()) {
     //   // TODO:
@@ -445,6 +452,7 @@ export default class WebpackBase {
     // TODO inject DLLs <script data-dll='true' src='/${dllName}.dll.js'></script>`
     // TODO https://github.com/diurnalist/chunk-manifest-webpack-plugin
     const plugins = [
+      new WebpackBar(),
       // remove outdated assets from previous builds.
       new CleanWebpackPlugin(),
       new webpack.DefinePlugin(this.getDefinedVars()),
@@ -516,11 +524,17 @@ export default class WebpackBase {
 }
 
 function buildIndexPage() {
-  const body = renderToString(<BaseHelmet />);
+  const helmetContext = {};
+
+  const body = renderToString(
+    <HelmetProvider context={helmetContext}>
+      <BaseHelmet />
+    </HelmetProvider>,
+  );
 
   return renderPage({
     body,
-    helmet: Helmet.renderStatic(),
+    helmet: helmetContext,
   });
 }
 

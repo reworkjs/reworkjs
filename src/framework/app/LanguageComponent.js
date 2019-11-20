@@ -29,7 +29,7 @@ type State = {
  */
 @withCookies
 @withContext({ acceptLanguages: LanguageContext })
-export default class LanguageComponent extends React.Component<Props, State> {
+class LanguageComponent extends React.Component<Props, State> {
 
   state = {
     // TODO(DEFAULT_LOCALE): use default locale instead of 'en'
@@ -99,3 +99,5 @@ export default class LanguageComponent extends React.Component<Props, State> {
     );
   }
 }
+
+export default LanguageComponent;

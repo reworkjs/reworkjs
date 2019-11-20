@@ -1,6 +1,6 @@
 {
   "name": "@reworkjs/core",
-  "version": "0.29.0",
+  "version": "0.29.1",
   "description": "A react framework that works out of the box",
   "homepage": "https://www.reworkjs.com/",
   "repository": {
@@ -47,7 +47,6 @@
     "react-intl": "^3.4.0",
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
-    "react-helmet": "^5.2.1",
     "react-cookie": "^4.0.1",
     "react-router-dom": "^5.1.2"
   },
@@ -62,6 +61,7 @@
     "@formatjs/intl-relativetimeformat": "^4.2.1",
     "@hapi/accept": "^4.0.0",
     "@hapi/joi": "^16.1.7",
+    "@hot-loader/react-dom": "^16.11.0",
     "@loadable/babel-plugin": "^5.10.3",
     "@loadable/component": "^5.10.3",
     "@loadable/server": "^5.10.3",
@@ -108,7 +108,8 @@
     "offline-plugin": "^5.0.7",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
     "postcss-loader": "^3.0.0",
-    "react-hot-loader": "^4.12.15",
+    "react-helmet-async": "^1.0.4",
+    "react-hot-loader": "^4.12.18",
     "react-router-dom": "^5.1.2",
     "recursive-readdir-sync": "^1.0.6",
     "require-all": "^3.0.0",
@@ -125,6 +126,7 @@
     "webpack-dev-middleware": "^3.7.2",
     "webpack-hot-middleware": "^2.25.0",
     "webpack-node-externals": "^1.7.2",
+    "webpackbar": "^4.0.0",
     "winston": "^3.2.1",
     "yargs": "^14.2.0"
   },
@@ -149,7 +151,6 @@
     "react": "^16.11.0",
     "react-cookie": "^4.0.1",
     "react-dom": "^16.11.0",
-    "react-helmet": "^5.2.1",
     "react-intl": "^3.4.0",
     "standard-version": "^7.0.0"
   }

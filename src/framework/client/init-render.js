@@ -2,56 +2,38 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { CookiesProvider } from 'react-cookie';
 import serverStyleCleanup from 'node-style-loader/clientCleanup';
 import { loadableReady } from '@loadable/component';
-import { Router } from 'val-loader!./_react-router';
-import { getDefault } from '../../shared/util/ModuleUtil';
-import ReworkRootComponent from '../app/ReworkRootComponent';
-import { rootRoute } from '../common/kernel';
-import BrowserLanguageProvider from './browser-language-provider';
-import ClientHooks from './client-hooks';
-
-let rootComponent = (
-  <BrowserLanguageProvider>
-    <CookiesProvider>
-      <ReworkRootComponent>
-        <Router>
-          {rootRoute}
-        </Router>
-      </ReworkRootComponent>
-    </CookiesProvider>
-  </BrowserLanguageProvider>
-);
-
-const clientHooks = ClientHooks.map(hookModule => {
-  const HookClass = getDefault(hookModule);
-
-  return new HookClass();
-});
-
-// allow plugins to add components
-for (const clientHook of clientHooks) {
-  if (clientHook.wrapRootComponent) {
-    rootComponent = clientHook.wrapRootComponent(rootComponent);
-  }
-}
+import logger from '../../shared/logger';
+import RootComponent from './root-component';
 
 const appContainer = document.getElementById('app');
 if (appContainer.hasChildNodes()) {
   // ensure all needed chunks are loaded before hydrating to prevent flicker
   loadableReady(() => {
     ReactDOM.hydrate(
-      rootComponent,
+      <RootComponent />,
       appContainer,
     );
   });
 } else {
   ReactDOM.render(
-    rootComponent,
+    <RootComponent />,
     appContainer,
   );
 }
 
 // remove server-generated CSS
 serverStyleCleanup();
+
+// Install ServiceWorker and AppCache in the end since
+// it's not most important operation and if main code fails,
+// we do not want it installed
+if (process.env.SIDE === 'client') {
+  try {
+    require('offline-plugin/runtime').install();
+  } catch (e) {
+    logger.error('Service Worker could not be installed');
+    logger.error(e);
+  }
+}

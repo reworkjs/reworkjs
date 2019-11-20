@@ -34,6 +34,7 @@ export default class ServiceWorkerFeature extends BaseFeature {
     const options: Object = {
       appShell: '/index.html',
       relativePaths: false,
+      events: true,
 
       // TODO: autoUpdate option?
 

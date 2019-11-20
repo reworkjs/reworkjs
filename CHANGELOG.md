@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.29.1](https://github.com/foobarhq/reworkjs/compare/v0.29.0...v0.29.1) (2019-11-20)
+
+
+### Features
+
+* add new getPluginInstance API ([22db85e](https://github.com/foobarhq/reworkjs/commit/22db85e33a1c557f1a17a4857e9bd59db0633d97))
+* expose service worker events ([28ad2fd](https://github.com/foobarhq/reworkjs/commit/28ad2fd9342db7f482bb5ae6067ea0d360bba5d7))
+* reduce logging spam, add webpackbar ([b697d12](https://github.com/foobarhq/reworkjs/commit/b697d12a9b064c71678d7da2ce1458a4f5fe1c7c))
+* replace react-helmet with react-helmet-async ([161bee1](https://github.com/foobarhq/reworkjs/commit/161bee12c7fe8203c6c751b9dd9c9b75c8f4218a))
+* update react-hot-loader ([9839f2e](https://github.com/foobarhq/reworkjs/commit/9839f2e200964e6fefa3aeb059a151c2fdd5b8a3))
+
 ## [0.29.0](https://github.com/foobarhq/reworkjs/compare/v0.28.1...v0.29.0) (2019-11-16)
 
 

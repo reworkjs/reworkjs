@@ -32,9 +32,6 @@ export default function compileWebpack(config: Object, watch: boolean, callback:
     ? cb => compiler.watch({}, cb)
     : cb => compiler.run(cb);
 
-  compiler.hooks.watchRun.tap('@reworkjs/core building notifier', () => {
-    logger.info('Building...');
-  });
 
   try {
     compile((err: Error, stats: Stats) => {
@@ -116,6 +113,7 @@ function printErrors(stats: Stats) {
 }
 
 const DEBUG_LOCATION = `${frameworkConfig.directories.build}/webpack-debug.log`;
+
 function writeDebug(stats) {
   logger.warn(`Debug log outputed at ${chalkUrl(DEBUG_LOCATION)}`);
   mkdirp.sync(frameworkConfig.directories.build);

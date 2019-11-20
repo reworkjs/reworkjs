@@ -50,6 +50,7 @@ export default class BabelFeature extends BaseFeature {
       exclude: /(@babel\/runtime)|(core-js)/,
 
       options: {
+        compact: true,
         sourceType: 'unambiguous',
         presets: ['@reworkjs/core/lib/internals/babel/global-babel-preset'],
         babelrc: false,
