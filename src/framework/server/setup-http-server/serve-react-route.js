@@ -88,14 +88,14 @@ export default async function serveReactRoute(req: $Request, res: $Response, nex
           const initialInlineCss = collectInitial();
           const [contextInlineCss, appHtml] = collectContext(() => renderToString(finalJsx));
 
-          return [appHtml, routingContext, chunkExtractor, initialInlineCss + contextInlineCss, helmetContext];
+          return [appHtml, routingContext, chunkExtractor, initialInlineCss + contextInlineCss, helmetContext.helmet];
         }
 
         const appHtml = renderToString(finalJsx);
 
         // there is no inline CSS in production
         // important: Helmet must always be called after a render or it will cause a memory leak
-        return [appHtml, routingContext, chunkExtractor, '', helmetContext];
+        return [appHtml, routingContext, chunkExtractor, '', helmetContext.helmet];
 
         /* eslint-enable no-shadow */
       });
