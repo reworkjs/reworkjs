@@ -534,7 +534,7 @@ function buildIndexPage() {
 
   return renderPage({
     body,
-    helmet: helmetContext,
+    helmet: helmetContext.helmet,
   });
 }
 
