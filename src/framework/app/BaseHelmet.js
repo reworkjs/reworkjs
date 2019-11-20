@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { withCookies, type Cookies } from 'react-cookie';
 import { guessPreferredLocale } from '../common/i18n/get-preferred-locale';
 import { LanguageContext } from '../common/accept-language-context';

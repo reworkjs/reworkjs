@@ -47,7 +47,6 @@
     "react-intl": "^3.4.0",
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
-    "react-helmet": "^5.2.1",
     "react-cookie": "^4.0.1",
     "react-router-dom": "^5.1.2"
   },
@@ -109,6 +108,7 @@
     "optimize-css-assets-webpack-plugin": "^5.0.3",
     "postcss-loader": "^3.0.0",
     "react-hot-loader": "^4.12.15",
+    "react-helmet-async": "^1.0.4",
     "react-router-dom": "^5.1.2",
     "recursive-readdir-sync": "^1.0.6",
     "require-all": "^3.0.0",
@@ -150,7 +150,6 @@
     "react": "^16.11.0",
     "react-cookie": "^4.0.1",
     "react-dom": "^16.11.0",
-    "react-helmet": "^5.2.1",
     "react-intl": "^3.4.0",
     "standard-version": "^7.0.0"
   }

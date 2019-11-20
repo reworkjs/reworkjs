@@ -3,7 +3,7 @@
 import path from 'path';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
-import Helmet from 'react-helmet';
+import { HelmetProvider } from 'react-helmet-async';
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import ExtractCssPlugin from 'mini-css-extract-plugin';
@@ -370,6 +370,7 @@ export default class WebpackBase {
       // Support React Native Web
       // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
       'react-native': 'react-native-web',
+      'react-helmet': resolveFrameworkSource('dummy/react-helmet.js', { esModules: !this.isServer() }),
     };
 
     // if (this.isServer()) {
@@ -518,11 +519,17 @@ export default class WebpackBase {
 }
 
 function buildIndexPage() {
-  const body = renderToString(<BaseHelmet />);
+  const helmetContext = {};
+
+  const body = renderToString(
+    <HelmetProvider context={helmetContext}>
+      <BaseHelmet />
+    </HelmetProvider>,
+  );
 
   return renderPage({
     body,
-    helmet: Helmet.renderStatic(),
+    helmet: helmetContext,
   });
 }
 

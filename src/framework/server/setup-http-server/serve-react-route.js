@@ -5,7 +5,7 @@ import { CookiesProvider } from 'react-cookie';
 import { StaticRouter } from 'react-router-dom';
 import { renderToString } from 'react-dom/server';
 import type { $Request, $Response, NextFunction } from 'express';
-import Helmet from 'react-helmet';
+import { HelmetProvider } from 'react-helmet-async';
 import { ChunkExtractor } from '@loadable/server';
 import { collectInitial, collectContext } from 'node-style-loader/collect';
 import accept from '@hapi/accept';
@@ -64,13 +64,17 @@ export default async function serveReactRoute(req: $Request, res: $Response, nex
         // will be populated by staticRouter
         const routingContext = {};
 
+        const helmetContext = {};
+
         // will be populated by collectChunks
         const chunkExtractor = new ChunkExtractor({ statsFile: getLoadableStatFile() });
 
         const finalJsx = chunkExtractor.collectChunks(
-          <StaticRouter location={req.url} context={routingContext}>
-            {component}
-          </StaticRouter>,
+          <HelmetProvider context={helmetContext}>
+            <StaticRouter location={req.url} context={routingContext}>
+              {component}
+            </StaticRouter>
+          </HelmetProvider>,
         );
 
         // a bit of a hack: if this is a redirect, don't bother loading resources. (need better way of passing this info)
@@ -84,14 +88,14 @@ export default async function serveReactRoute(req: $Request, res: $Response, nex
           const initialInlineCss = collectInitial();
           const [contextInlineCss, appHtml] = collectContext(() => renderToString(finalJsx));
 
-          return [appHtml, routingContext, chunkExtractor, initialInlineCss + contextInlineCss, Helmet.renderStatic()];
+          return [appHtml, routingContext, chunkExtractor, initialInlineCss + contextInlineCss, helmetContext];
         }
 
         const appHtml = renderToString(finalJsx);
 
         // there is no inline CSS in production
         // important: Helmet must always be called after a render or it will cause a memory leak
-        return [appHtml, routingContext, chunkExtractor, '', Helmet.renderStatic()];
+        return [appHtml, routingContext, chunkExtractor, '', helmetContext];
 
         /* eslint-enable no-shadow */
       });

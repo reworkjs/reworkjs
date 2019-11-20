@@ -2,6 +2,7 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import { CookiesProvider } from 'react-cookie';
 import serverStyleCleanup from 'node-style-loader/clientCleanup';
 import { loadableReady } from '@loadable/component';
@@ -12,16 +13,19 @@ import { rootRoute } from '../common/kernel';
 import BrowserLanguageProvider from './browser-language-provider';
 import ClientHooks from './client-hooks';
 
+const helmetContext = {};
 let rootComponent = (
-  <BrowserLanguageProvider>
-    <CookiesProvider>
-      <ReworkRootComponent>
-        <Router>
-          {rootRoute}
-        </Router>
-      </ReworkRootComponent>
-    </CookiesProvider>
-  </BrowserLanguageProvider>
+  <HelmetProvider context={helmetContext}>
+    <BrowserLanguageProvider>
+      <CookiesProvider>
+        <ReworkRootComponent>
+          <Router>
+            {rootRoute}
+          </Router>
+        </ReworkRootComponent>
+      </CookiesProvider>
+    </BrowserLanguageProvider>
+  </HelmetProvider>
 );
 
 const clientHooks = ClientHooks.map(hookModule => {
