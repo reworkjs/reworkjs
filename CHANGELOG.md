@@ -63,7 +63,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 * drop srcset-loader as it is dead ([ab4e1ea](https://github.com/foobarhq/reworkjs/commit/ab4e1ea8cb94a814a3225bb3533197727c0786cd))
 
-### BREAKING CHANGES
+### ⚠ BREAKING CHANGES
 
 * Any usage of srcset-loader will need to be updated
 
@@ -76,7 +76,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-## [0.25.2](https://github.com/foobarhq/reworkjs/compare/v0.25.1...v0.25.2) (2019-08-02)
+### [0.25.2](https://github.com/foobarhq/reworkjs/compare/v0.25.1...v0.25.2) (2019-08-02)
 
 
 ### Bug Fixes
@@ -85,7 +85,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-## [0.25.1](https://github.com/foobarhq/reworkjs/compare/v0.25.0...v0.25.1) (2019-07-12)
+### [0.25.1](https://github.com/foobarhq/reworkjs/compare/v0.25.0...v0.25.1) (2019-07-12)
 
 
 ### Bug Fixes
@@ -101,7 +101,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-# [0.25.0](https://github.com/foobarhq/reworkjs/compare/v0.24.1...v0.25.0) (2019-07-09)
+## [0.25.0](https://github.com/foobarhq/reworkjs/compare/v0.24.1...v0.25.0) (2019-07-09)
 
 
 ### Bug Fixes
@@ -113,7 +113,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-## [0.24.1](https://github.com/foobarhq/reworkjs/compare/v0.24.0...v0.24.1) (2019-07-03)
+### [0.24.1](https://github.com/foobarhq/reworkjs/compare/v0.24.0...v0.24.1) (2019-07-03)
 
 
 ### Bug Fixes
@@ -137,7 +137,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-# [0.23.0](https://github.com/foobarhq/reworkjs/compare/v0.22.0...v0.23.0) (2019-06-14)
+## [0.23.0](https://github.com/foobarhq/reworkjs/compare/v0.22.0...v0.23.0) (2019-06-14)
 
 
 ### Bug Fixes
@@ -153,7 +153,7 @@ All notable changes to this project will be documented in this file. See [standa
 * validate configuration using Joi ([9eb9c65](https://github.com/foobarhq/reworkjs/commit/9eb9c65))
 
 
-### BREAKING CHANGES
+### ⚠ BREAKING CHANGES
 
 * default config file is now <project_dir>/.reworkrc
 * relative files & directories specified in config file are now relative to folder containing the config file.
@@ -189,7 +189,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-## [0.20.2](https://github.com/foobarhq/reworkjs/compare/v0.20.1...v0.20.2) (2019-05-13)
+### [0.20.2](https://github.com/foobarhq/reworkjs/compare/v0.20.1...v0.20.2) (2019-05-13)
 
 
 ### Bug Fixes
@@ -198,7 +198,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-## [0.20.1](https://github.com/foobarhq/reworkjs/compare/v0.20.0...v0.20.1) (2019-05-07)
+### [0.20.1](https://github.com/foobarhq/reworkjs/compare/v0.20.0...v0.20.1) (2019-05-07)
 
 
 ### Bug Fixes
@@ -249,7 +249,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-## [0.17.4](https://github.com/foobarhq/reworkjs/compare/v0.17.3...v0.17.4) (2019-03-05)
+### [0.17.4](https://github.com/foobarhq/reworkjs/compare/v0.17.3...v0.17.4) (2019-03-05)
 
 
 ### Bug Fixes
@@ -259,7 +259,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-## [0.17.3](https://github.com/foobarhq/reworkjs/compare/v0.17.2...v0.17.3) (2019-02-22)
+### [0.17.3](https://github.com/foobarhq/reworkjs/compare/v0.17.2...v0.17.3) (2019-02-22)
 
 
 ### Bug Fixes
@@ -268,7 +268,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-## [0.17.2](https://github.com/foobarhq/reworkjs/compare/v0.17.1...v0.17.2) (2019-02-12)
+### [0.17.2](https://github.com/foobarhq/reworkjs/compare/v0.17.1...v0.17.2) (2019-02-12)
 
 
 ### Bug Fixes
@@ -277,7 +277,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-## [0.17.1](https://github.com/foobarhq/reworkjs/compare/v0.17.0...v0.17.1) (2019-02-12)
+### [0.17.1](https://github.com/foobarhq/reworkjs/compare/v0.17.0...v0.17.1) (2019-02-12)
 
 
 ### Bug Fixes
@@ -315,13 +315,13 @@ All notable changes to this project will be documented in this file. See [standa
 * remove intl locales not matching available translations ([06e1f1a](https://github.com/foobarhq/reworkjs/commit/06e1f1a))
 
 
-### BREAKING CHANGES
+### ⚠ BREAKING CHANGES
 
 * use ngrok externally
 
 
 
-## [0.15.1](https://github.com/foobarhq/reworkjs/compare/v0.15.0...v0.15.1) (2019-01-08)
+### [0.15.1](https://github.com/foobarhq/reworkjs/compare/v0.15.0...v0.15.1) (2019-01-08)
 
 
 ### Bug Fixes
@@ -359,7 +359,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 
-## [0.14.1](https://github.com/foobarhq/reworkjs/compare/v0.14.0...v0.14.1) (2018-08-09)
+### [0.14.1](https://github.com/foobarhq/reworkjs/compare/v0.14.0...v0.14.1) (2018-08-09)
 
 
 ### Bug Fixes
@@ -417,7 +417,7 @@ All notable changes to this project will be documented in this file. See [standa
 * Disable eslint by default ([f1f9e4b](https://github.com/foobarhq/reworkjs/commit/f1f9e4b))
 
 
-### BREAKING CHANGES
+### ⚠ BREAKING CHANGES
 
 * Enable eslint using --features=eslint
 
@@ -456,6 +456,6 @@ All notable changes to this project will be documented in this file. See [standa
 * Update peer dependencies ([32646bb](https://github.com/foobarhq/reworkjs/commit/32646bb))
 * Migrate to React 16.3.1
 
-### Breaking Changes
+### ⚠ Breaking Changes
 
 * Drop support for node &lt; latest LTS (= 8) ([80b76be](https://github.com/foobarhq/reworkjs/commit/80b76be))
