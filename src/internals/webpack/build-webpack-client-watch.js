@@ -49,14 +49,14 @@ const compiler = webpack(webpackClientConfig);
 const wdmInstance = webpackDevMiddleware(compiler, {
   noInfo: true,
   publicPath: webpackClientConfig.output.publicPath,
-  silent: true,
+  logLevel: 'warn',
   stats: 'errors-only',
   serverSideRender: HAS_PRERENDERING,
 });
 
 app.use(wdmInstance);
 app.use(webpackHotMiddleware(compiler, {
-  log: logger.info.bind(logger),
+  log: false,
 }));
 
 const indexFileName = path.join(webpackClientConfig.output.path, 'index.html');

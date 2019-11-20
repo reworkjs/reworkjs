@@ -11,6 +11,7 @@ import { CleanWebpackPlugin } from 'clean-webpack-plugin';
 import nodeExternals from 'webpack-node-externals';
 import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
+import WebpackBar from 'webpackbar';
 import LoadablePlugin from '@loadable/webpack-plugin';
 import { chalkNok, chalkOk } from '../../shared/chalk';
 import frameworkConfig from '../../shared/framework-config';
@@ -445,6 +446,7 @@ export default class WebpackBase {
     // TODO inject DLLs <script data-dll='true' src='/${dllName}.dll.js'></script>`
     // TODO https://github.com/diurnalist/chunk-manifest-webpack-plugin
     const plugins = [
+      new WebpackBar(),
       // remove outdated assets from previous builds.
       new CleanWebpackPlugin(),
       new webpack.DefinePlugin(this.getDefinedVars()),
