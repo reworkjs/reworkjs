@@ -13,10 +13,16 @@ type FrameworkPlugin = {
   getHooks: ?(() => PluginHooks),
 };
 
+export function getPluginInstance(PluginClass: Function): FrameworkPlugin | null {
+  getPlugins();
+
+  return PluginClass.instance || null;
+}
+
 /**
  * Loads and returns ReworkJS plugin instances (eg. @reworkjs/redux)
  */
-export default function getPlugins(): FrameworkPlugin[] {
+export function getPlugins(): FrameworkPlugin[] {
   const pluginConfigs = frameworkConfig.plugins;
 
   if (!pluginConfigs) {
@@ -43,7 +49,7 @@ export default function getPlugins(): FrameworkPlugin[] {
       throw new Error(`${pluginModule}/plugin: instance static property is reserved to reworkjs.`);
     }
 
-    const pluginInstance = new Plugin({ pluginConfig, configFile: frameworkConfig.filePath });
+    const pluginInstance = Plugin.instance || new Plugin({ pluginConfig, configFile: frameworkConfig.filePath });
     Plugin.instance = pluginInstance;
 
     plugins.push(pluginInstance);
