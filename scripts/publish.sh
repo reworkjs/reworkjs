@@ -13,3 +13,8 @@ echo "Publishing old alias @reworkjs/reworkjs"
 npm publish --access public
 
 ./node_modules/.bin/json -I -f package.json -e "this.name='$PROPER_NAME'"
+
+echo "Deprecating old alias"
+
+npm deprecate @reworkjs/reworkjs "This package has been renamed to @reworkjs/core"
+
