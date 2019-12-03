@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.29.3](https://github.com/foobarhq/reworkjs/compare/v0.29.2...v0.29.3) (2019-12-03)
+
+
+### Bug Fixes
+
+* properly dispatch service-worker lifecycle events ([8a91712](https://github.com/foobarhq/reworkjs/commit/8a9171265a258fb6f1d9317e42031f063fcbe9bc))
+* replace intl-pluralrules with formatjs as the former is buggy ([dae6b40](https://github.com/foobarhq/reworkjs/commit/dae6b406adcb3e12199b06791bd6c29b18d947ff))
+
 ### [0.29.2](https://github.com/foobarhq/reworkjs/compare/v0.29.1...v0.29.2) (2019-11-20)
 
 

@@ -34,9 +34,6 @@ export default class ServiceWorkerFeature extends BaseFeature {
     const options: Object = {
       appShell: '/index.html',
       relativePaths: false,
-      events: true,
-
-      // TODO: autoUpdate option?
 
       // this is applied before any match in `caches` section
       excludes: [
@@ -44,6 +41,7 @@ export default class ServiceWorkerFeature extends BaseFeature {
         '**/*.br',
         '**/*.map',
         '**/*.LICENSE',
+        'loadable-stats.json',
       ],
 
       // Removes warning for about `additional` section usage
@@ -51,6 +49,7 @@ export default class ServiceWorkerFeature extends BaseFeature {
 
       AppCache: false,
       ServiceWorker: {
+        events: true,
       },
     };
 

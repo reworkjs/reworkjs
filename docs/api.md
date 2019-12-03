@@ -18,6 +18,7 @@ route: /api
 -> argv
 -> babel-preset
 - useReactRouter
+- `process.env.SIDE`, `process.env.NODE_ENV`
 
 ## SSR
 
