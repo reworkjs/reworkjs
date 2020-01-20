@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.29.4](https://github.com/foobarhq/reworkjs/compare/v0.29.3...v0.29.4) (2020-01-20)
+
+
+### Features
+
+* expose API to know if a new SW has been installed ([c5b47c5](https://github.com/foobarhq/reworkjs/commit/c5b47c549694680d3885e681ba60eb746749425f))
+
 ### [0.29.3](https://github.com/foobarhq/reworkjs/compare/v0.29.2...v0.29.3) (2019-12-03)
 
 
