@@ -28,6 +28,10 @@ route: /api
 - useHttpStatus(404)
 - HttpStatus
 
+## Service Worker
+
+- `useRestartRequired`
+
 ## Utils
 
 -> withContext
