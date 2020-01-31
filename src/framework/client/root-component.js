@@ -3,11 +3,12 @@
 import React from 'react';
 import { CookiesProvider } from 'react-cookie';
 import { HelmetProvider } from 'react-helmet-async';
+import { BrowserRouter } from 'react-router-dom';
 import { getDefault } from '../../shared/util/ModuleUtil';
 import ReworkRootComponent from '../app/ReworkRootComponent';
 import { rootRoute } from '../common/kernel';
 // eslint-disable-next-line import/no-unresolved
-import { Router } from 'val-loader!./_react-router';
+import { basename } from 'val-loader!./_react-router';
 import BrowserLanguageProvider from './browser-language-provider';
 import ClientHooks from './client-hooks';
 
@@ -24,9 +25,9 @@ let RootComponent = () => {
       <HelmetProvider>
         <CookiesProvider>
           <ReworkRootComponent>
-            <Router>
+            <BrowserRouter basename={basename}>
               {rootRoute}
-            </Router>
+            </BrowserRouter>
           </ReworkRootComponent>
         </CookiesProvider>
       </HelmetProvider>
