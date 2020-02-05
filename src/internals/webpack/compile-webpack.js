@@ -1,7 +1,6 @@
 // @flow
 
 import fs from 'fs';
-import mkdirp from 'mkdirp';
 import webpack from 'webpack';
 import { chalkUrl } from '../../shared/chalk';
 import logger from '../../shared/logger';
@@ -31,7 +30,6 @@ export default function compileWebpack(config: Object, watch: boolean, callback:
   const compile = watch
     ? cb => compiler.watch({}, cb)
     : cb => compiler.run(cb);
-
 
   try {
     compile((err: Error, stats: Stats) => {
@@ -116,7 +114,7 @@ const DEBUG_LOCATION = `${frameworkConfig.directories.build}/webpack-debug.log`;
 
 function writeDebug(stats) {
   logger.warn(`Debug log outputed at ${chalkUrl(DEBUG_LOCATION)}`);
-  mkdirp.sync(frameworkConfig.directories.build);
+  fs.mkdirSync(frameworkConfig.directories.build, { recursive: true });
   fs.writeFileSync(DEBUG_LOCATION, stats.toString());
 }
 

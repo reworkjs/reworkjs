@@ -10,7 +10,6 @@
 
 import fs from 'fs';
 import path from 'path';
-import mkdirp from 'mkdirp';
 import get from 'lodash/get';
 import set from 'lodash/set';
 import Joi from '@hapi/joi';
@@ -102,7 +101,7 @@ function ensureDirectories(config: FrameworkConfigStruct) {
 
     if (!isDirectory(directory)) {
       logger.debug(`framework configuration: directories.${directoryName} value ${JSON.stringify(directory)} is not a directory. Creating it.`);
-      mkdirp.sync(config.directories[directoryName]);
+      fs.mkdirSync(config.directories[directoryName], { recursive: true });
     }
   }
 }
