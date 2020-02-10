@@ -12,6 +12,6 @@ module.exports = function getRouteDeclarations() {
   const isHash = config.default.routingType === 'hash';
 
   return {
-    code: `export const basename = "${isHash ? '/#' : ''}";`,
+    code: `export const isHash = ${isHash}`,
   };
 };

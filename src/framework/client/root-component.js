@@ -8,7 +8,7 @@ import { getDefault } from '../../shared/util/ModuleUtil';
 import ReworkRootComponent from '../app/ReworkRootComponent';
 import { rootRoute } from '../common/kernel';
 // eslint-disable-next-line import/no-unresolved
-import { basename } from 'val-loader!./_react-router';
+import { isHash } from 'val-loader!./_react-router';
 import BrowserLanguageProvider from './browser-language-provider';
 import ClientHooks from './client-hooks';
 
@@ -19,6 +19,12 @@ const clientHooks = ClientHooks.map(hookModule => {
 });
 
 let RootComponent = () => {
+
+  const basename = isHash ? `${location.pathname}#` : '';
+
+  if (!location.hash.startsWith('#')) {
+    location.hash = '#';
+  }
 
   let rootElement = (
     <BrowserLanguageProvider>
