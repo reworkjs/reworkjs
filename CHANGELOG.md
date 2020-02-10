@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.29.5](https://github.com/reworkjs/reworkjs/compare/v0.29.4...v0.29.5) (2020-02-10)
+
+
+### Features
+
+* replace style-loader with extract-css-plugin in development ([6009bcd](https://github.com/reworkjs/reworkjs/commit/6009bcd24288b94b2d730ef99e5a86946cbdb6bc))
+
 ### [0.29.4](https://github.com/foobarhq/reworkjs/compare/v0.29.3...v0.29.4) (2020-01-20)
 
 

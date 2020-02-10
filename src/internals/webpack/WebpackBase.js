@@ -279,6 +279,7 @@ export default class WebpackBase {
   getCssLoader(options: Object = {}) {
     const loaderOptions: Object = {
       importLoaders: options.importLoaders || 0,
+      esModule: true,
     };
 
     if (isDev) {
@@ -337,17 +338,18 @@ export default class WebpackBase {
     }];
 
     const styleLoader = (() => {
-      // in prod, extract CSS to separate .css files.
-      // Note: The server ignores the file because it simply sends the ones built for the Client
-      //       that match used bundle names.
-      if (this.isDev) {
-        // in dev, use <style> tags
-        return this.isServer() ? 'node-style-loader' : 'style-loader';
+      // server ignores built css, it sends the one built by the client
+      if (this.isServer()) {
+        return null;
       }
 
-      // in prod, extract CSS to separate .css files
-      // on the server, don't generate the CSS -- load client version
-      return this.isServer() ? null : ExtractCssPlugin.loader;
+      return {
+        loader: ExtractCssPlugin.loader,
+        options: {
+          hmr: this.isDev,
+          esModule: true,
+        },
+      };
     })();
 
     if (styleLoader != null) {
@@ -510,11 +512,12 @@ export default class WebpackBase {
       );
     }
 
-    if (!this.isDev && !this.isServer()) {
-      // Extract the CSS into a seperate file (only prod, and plugin is not compatible with SSR).
+    if (!this.isServer()) {
+      // Extract the CSS into a separate file.
       plugins.push(
         new ExtractCssPlugin({
-          filename: '[name].[contenthash].css',
+          filename: this.isDev ? '[name].css' : '[name].[contenthash].css',
+          chunkFilename: this.isDev ? '[id].css' : '[id].[contenthash].css',
         }),
       );
     }
