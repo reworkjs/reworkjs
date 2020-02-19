@@ -22,8 +22,22 @@ let RootComponent = () => {
 
   const basename = isHash ? `${location.pathname}#` : '';
 
-  if (!location.hash.startsWith('#')) {
-    location.hash = '#';
+  if (isHash) {
+    // URL format must be "pathname[?search][#fragment]"
+    // because we use #fragment for routing, we cannot have a search query
+    //  BEFORE the fragment or router will break.
+    // We instead move it after the #fragment. Technically it's part of the
+    //  fragment but react-router will treat it as the query
+    // don't use window.location.search, use react-router's useLocation() instead
+    // OBVIOUSLY don't use fragments at all as it stores the routing state
+    const oldSearch = location.search;
+    location.search = '';
+
+    if (!location.hash.startsWith('#/')) {
+      location.hash = `#/${oldSearch}`;
+    } else {
+      location.hash += oldSearch;
+    }
   }
 
   let rootElement = (
