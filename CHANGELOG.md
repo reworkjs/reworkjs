@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.30.0](https://github.com/reworkjs/reworkjs/compare/v0.29.5...v0.30.0) (2020-02-19)
+
+
+### Features
+
+* replace HashHistory with BrowserHistory with hash prefix ([7be8b00](https://github.com/reworkjs/reworkjs/commit/7be8b00cd2401fec005c015c82d8687d5e7bcf00))
+
+
+### Bug Fixes
+
+* attempt correcting location in hash routing ([3c8e766](https://github.com/reworkjs/reworkjs/commit/3c8e7662792fff66e869591e21c8bccaec9715fb))
+* hash - fix hash router breaking if there is a search query ([41ad219](https://github.com/reworkjs/reworkjs/commit/41ad219656e9173d22dc56856b61b11464c7a97c))
+* hash routing - clean url through `history` ([e35a9a6](https://github.com/reworkjs/reworkjs/commit/e35a9a67e26c47ed20bbf67f39d645860c4e2277))
+
 ### [0.29.5](https://github.com/reworkjs/reworkjs/compare/v0.29.4...v0.29.5) (2020-02-10)
 
 
