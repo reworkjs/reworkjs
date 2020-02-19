@@ -9,11 +9,9 @@ const config = require('../../../lib/shared/framework-config');
 
 module.exports = function getRouteDeclarations() {
 
-  const routerKey = config.default.routingType === 'hash' ? 'HashRouter' : 'BrowserRouter';
+  const isHash = config.default.routingType === 'hash';
 
   return {
-    code: `
-      export { ${routerKey} as Router } from 'react-router-dom';
-    `,
+    code: `export const isHash = ${isHash}`,
   };
 };
