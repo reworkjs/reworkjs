@@ -20,9 +20,14 @@ const clientHooks = ClientHooks.map(hookModule => {
 
 let RootComponent = () => {
 
+  const didCleanUrl = React.useRef(!isHash);
+
   const basename = isHash ? `${location.pathname}#` : '';
 
-  if (isHash) {
+  if (!didCleanUrl.current && isHash) {
+    // avoid resetting the url
+    didCleanUrl.current = true;
+
     // URL format must be "pathname[?search][#fragment]"
     // because we use #fragment for routing, we cannot have a search query
     //  BEFORE the fragment or router will break.
@@ -30,14 +35,18 @@ let RootComponent = () => {
     //  fragment but react-router will treat it as the query
     // don't use window.location.search, use react-router's useLocation() instead
     // OBVIOUSLY don't use fragments at all as it stores the routing state
-    const oldSearch = location.search;
-    location.search = '';
+    const url = new URL(location.href);
+    const oldSearch = url.search;
+    url.search = '';
 
-    if (!location.hash.startsWith('#/')) {
-      location.hash = `#/${oldSearch}`;
+    if (!url.hash.startsWith('#/')) {
+      url.hash = `#/${oldSearch}`;
     } else {
-      location.hash += oldSearch;
+      url.hash += oldSearch;
     }
+
+    // using history.replace instead of window.location to avoid relaunching the app
+    history.replaceState('', document.title, url.toString());
   }
 
   let rootElement = (
