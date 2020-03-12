@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.31.0](https://github.com/reworkjs/reworkjs/compare/v0.30.0...v0.31.0) (2020-03-12)
+
+
+### ⚠ BREAKING CHANGES
+
+* Framework now requires a minimum of Safari 10.3, as the base "Intl" object is no longer polyfilled
+
+### Features
+
+* drop `Intl` polyfill, polyfill ListFormat & Unit Number Format ([344742e](https://github.com/reworkjs/reworkjs/commit/344742e8a8e04332ab0f8d30cb7cbc1134d0b360))
+
 ## [0.30.0](https://github.com/reworkjs/reworkjs/compare/v0.29.5...v0.30.0) (2020-02-19)
 
 
