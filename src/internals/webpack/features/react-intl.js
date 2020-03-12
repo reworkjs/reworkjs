@@ -36,9 +36,12 @@ export default class ReactIntlFeature extends BaseFeature {
 
     const ignoreRegex = new RegExp(`\\.\\/(?!${supportedLocales.join('|')})[a-z0-9-_]+\\.js`, 'i');
 
-    webpackConfig.injectPlugins(new webpack.IgnorePlugin(ignoreRegex, /react-intl\/locale-data$/));
-    webpackConfig.injectPlugins(new webpack.IgnorePlugin(ignoreRegex, /intl\/locale-data\/jsonp$/));
+    // webpackConfig.injectPlugins(new webpack.IgnorePlugin(ignoreRegex, /react-intl\/locale-data$/));
+    // webpackConfig.injectPlugins(new webpack.IgnorePlugin(ignoreRegex, /intl\/locale-data\/jsonp$/));
     webpackConfig.injectPlugins(new webpack.IgnorePlugin(ignoreRegex, /@formatjs\/intl-relativetimeformat\/dist\/locale-data$/));
+    webpackConfig.injectPlugins(new webpack.IgnorePlugin(ignoreRegex, /@formatjs\/intl-unified-numberformat\/dist\/locale-data$/));
+    webpackConfig.injectPlugins(new webpack.IgnorePlugin(ignoreRegex, /@formatjs\/intl-listformat\/dist\/locale-data$/));
+    webpackConfig.injectPlugins(new webpack.IgnorePlugin(ignoreRegex, /@formatjs\/intl-pluralrules\/dist\/locale-data$/));
   }
 }
 

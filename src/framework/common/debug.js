@@ -1,6 +1,6 @@
-import global from 'global';
+import globalThis from '../../shared/globalThis';
 
 const debug = {};
-global.rjsDebug = debug;
+globalThis.rjsDebug = debug;
 
 export default debug;
