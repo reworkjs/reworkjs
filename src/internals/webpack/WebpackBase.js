@@ -13,6 +13,7 @@ import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import WebpackBar from 'webpackbar';
 import LoadablePlugin from '@loadable/webpack-plugin';
+import minifiedCssIdents from 'mini-css-class-name/css-loader';
 import { chalkNok, chalkOk } from '../../shared/chalk';
 import frameworkConfig from '../../shared/framework-config';
 import projectMetadata from '../../shared/project-metadata';
@@ -298,6 +299,12 @@ export default class WebpackBase {
         Object.assign(loaderOptions, {
           modules: {
             localIdentName: '[path][name]__[local]--[hash:base64:5]',
+          },
+        });
+      } else {
+        Object.assign(loaderOptions, {
+          modules: {
+            getLocalIdent: minifiedCssIdents(),
           },
         });
       }
