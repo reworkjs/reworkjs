@@ -1,6 +1,6 @@
 {
   "name": "@reworkjs/core",
-  "version": "0.31.0",
+  "version": "0.31.1",
   "description": "A react framework that works out of the box",
   "homepage": "https://www.reworkjs.com/",
   "repository": {
@@ -98,6 +98,7 @@
     "ip": "^1.1.5",
     "json-loader": "^0.5.7",
     "lodash": "^4.17.15",
+    "mini-css-class-name": "^0.9.1",
     "mini-css-extract-plugin": "^0.9.0",
     "minimist": "^1.2.0",
     "mz": "^2.7.0",

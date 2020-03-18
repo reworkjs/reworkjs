@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.31.1](https://github.com/reworkjs/reworkjs/compare/v0.31.0...v0.31.1) (2020-03-18)
+
+
+### Features
+
+* css classes are now minified instead of hashed in production ([b82c9c4](https://github.com/reworkjs/reworkjs/commit/b82c9c4e672c634dc16edd55388ace6ba7728ef1))
+
 ## [0.31.0](https://github.com/reworkjs/reworkjs/compare/v0.30.0...v0.31.0) (2020-03-12)
 
 
