@@ -53,7 +53,7 @@ export default function createRoutes() {
       path: '*',
       priority: Number.MIN_SAFE_INTEGER,
       status: 404,
-      component: require('./dev-404.js'),
+      component: require('./dev-404.js').default,
     });
   }
 
