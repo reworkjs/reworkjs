@@ -4,6 +4,7 @@ import React from 'react';
 import { Route } from 'react-router-dom';
 import { getDefault } from '../../../shared/util/ModuleUtil';
 import logger from '../../../shared/logger';
+// eslint-disable-next-line import/no-unresolved
 import routeModules from 'val-loader!./_find-routes';
 
 // TODO: expose @withQueryParams which provides an URLSearchParam instance
@@ -18,7 +19,7 @@ export default function createRoutes() {
     logger.warn('Your framework does not contain any route. Create a file matching your "route" glob as defined in your configuration file.');
   }
 
-  return routeModules
+  const routes = routeModules
     .map((routeModule, i) => {
       let route = getDefault(routeModule);
 
@@ -34,17 +35,29 @@ export default function createRoutes() {
       route[SourceFileName] = fileNames[i];
 
       if (route.status === 404) {
-        route.priority = route.priority || Number.MIN_SAFE_INTEGER + 1;
+        route.priority = route.priority || Number.MIN_SAFE_INTEGER + 2;
         route.path = route.path || '*';
       }
 
       if (route.status && Math.floor(route.status / 100) !== 2) {
-        route.priority = route.priority || Number.MIN_SAFE_INTEGER;
+        route.priority = route.priority || Number.MIN_SAFE_INTEGER + 1;
         route.path = route.path || '*';
       }
 
       return route;
-    })
+    });
+
+  if (process.env.NODE_ENV === 'development') {
+    // dev 404 route
+    routes.push({
+      path: '*',
+      priority: Number.MIN_SAFE_INTEGER,
+      status: 404,
+      component: require('./dev-404.js'),
+    });
+  }
+
+  return routes
     .filter(route => route !== null)
     .sort((a, b) => (b.priority || 0) - (a.priority || 0))
     .map(route => sanitizeRoute(route, route[SourceFileName]));
