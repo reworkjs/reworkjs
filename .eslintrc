@@ -1,5 +1,9 @@
 {
-  "extends": "@foobarhq/eslint-config",
+  "extends": [
+    "@foobarhq/eslint-config",
+    "@foobarhq/eslint-config/browser",
+    "@foobarhq/eslint-config/flow"
+  ],
   "env": {
     "browser": true,
     "node": true,
