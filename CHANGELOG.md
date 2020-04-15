@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.32.0](https://github.com/reworkjs/reworkjs/compare/v0.31.1...v0.32.0) (2020-04-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* react-intl has been upgraded to v4, you might have to update your messages
+
+### Features
+
+* add dev 404 route ([a07a742](https://github.com/reworkjs/reworkjs/commit/a07a742eef0a8aacdbdb4b6b852c222e1bd10084))
+* include wrapped comp name in withContext name ([91e2e13](https://github.com/reworkjs/reworkjs/commit/91e2e1304cade4116863c799f6aaef17f58737d9))
+* load ts route files by default ([ada189f](https://github.com/reworkjs/reworkjs/commit/ada189fbb6724be7ef1963a73b8ae08ed45cb6e5))
+
+
+### Bug Fixes
+
+* fix how dev 404 route is loaded ([1457794](https://github.com/reworkjs/reworkjs/commit/14577946991cced69e115fb946b451d9d8b9a8ce))
+
+
+* update dependencies ([d8ed1aa](https://github.com/reworkjs/reworkjs/commit/d8ed1aaf5837d670205efc6f2de577c9a0bd08e9))
+
 ### [0.31.1](https://github.com/reworkjs/reworkjs/compare/v0.31.0...v0.31.1) (2020-03-18)
 
 
