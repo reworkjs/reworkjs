@@ -6,6 +6,15 @@ const globalObject = (function () {
     return globalThis;
   }
 
+  if (typeof window === 'object') {
+    return window;
+  }
+
+  if (typeof self === 'object') {
+    return self;
+  }
+
+  // Note: safari 11 doesn't actually support this. Hence the typeof window/self as a workaround
   Object.defineProperty(Object.prototype, '__magic__', {
     get() {
       return this;
