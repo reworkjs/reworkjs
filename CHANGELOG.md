@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.32.1](https://github.com/reworkjs/reworkjs/compare/v0.32.0...v0.32.1) (2020-04-23)
+
+
+### Bug Fixes
+
+* make globalThis ponyfill work in safari ([f3f6854](https://github.com/reworkjs/reworkjs/commit/f3f685442817b3ec4d89d8d7498d98a5883382ab))
+
 ## [0.32.0](https://github.com/reworkjs/reworkjs/compare/v0.31.1...v0.32.0) (2020-04-15)
 
 
