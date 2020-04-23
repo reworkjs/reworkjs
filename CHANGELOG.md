@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.32.2](https://github.com/reworkjs/reworkjs/compare/v0.32.1...v0.32.2) (2020-04-23)
+
+
+### Bug Fixes
+
+* fix intl-plural-rules polyfill not loading locales ([446177b](https://github.com/reworkjs/reworkjs/commit/446177b53dd1e52bd8b3ad931f9fc62caa047ac3))
+
 ### [0.32.1](https://github.com/reworkjs/reworkjs/compare/v0.32.0...v0.32.1) (2020-04-23)
 
 
