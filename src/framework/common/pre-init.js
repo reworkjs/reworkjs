@@ -1,4 +1,5 @@
-import './source-map-support';
+// @flow
+
 import { getDefault } from '../../shared/util/ModuleUtil';
 
 export default async function loadPreInit() {

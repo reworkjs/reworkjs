@@ -171,7 +171,7 @@ export default class WebpackBase {
 
       config.externals = [
         nodeExternals({
-          whitelist: [
+          allowlist: [
             // framework must be processed by webpack as it relies on some webpack processes
             new RegExp(`^${frameworkMetadata.name}`),
             // TODO: should we mark all plugins as non-externals?
@@ -465,11 +465,13 @@ export default class WebpackBase {
       // remove outdated assets from previous builds.
       new CleanWebpackPlugin(),
       new webpack.DefinePlugin(this.getDefinedVars()),
-      new CopyWebpackPlugin([{
-        from: frameworkConfig.directories.resources,
-        to: './',
-        toType: 'dir',
-      }]),
+      new CopyWebpackPlugin({
+        patterns: [{
+          from: frameworkConfig.directories.resources,
+          to: './',
+          toType: 'dir',
+        }],
+      }),
 
       // Inject webpack bundle into HTML.
       new HtmlWebpackPlugin({

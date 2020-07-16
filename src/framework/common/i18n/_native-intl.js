@@ -7,17 +7,17 @@ import { getFileName, getLocaleBestFit, runBundleLoader } from './_locale-utils'
 
 function getUnitLocaleLoaders() {
   // $FlowIgnore
-  return require.context('bundle-loader?lazy&name=p-intlunit-[name]!@formatjs/intl-unified-numberformat/dist/locale-data', true, /\.json$/);
+  return require.context('bundle-loader?lazy&name=p-intlunit-[name]!@formatjs/intl-numberformat/locale-data', true, /\.json$/);
 }
 
 function getRelativeTimeLocaleLoaders() {
   // $FlowIgnore
-  return require.context('bundle-loader?lazy&name=p-intlrelative-[name]!@formatjs/intl-relativetimeformat/dist/locale-data', true, /\.json$/);
+  return require.context('bundle-loader?lazy&name=p-intlrelative-[name]!@formatjs/intl-relativetimeformat/locale-data', true, /\.json$/);
 }
 
 function getListFormatLoaders() {
   // $FlowIgnore
-  return require.context('bundle-loader?lazy&name=p-intllist-[name]!@formatjs/intl-listformat/dist/locale-data', true, /\.js$/);
+  return require.context('bundle-loader?lazy&name=p-intllist-[name]!@formatjs/intl-listformat/locale-data', true, /\.js$/);
 }
 
 function isUnifiedNumberFormatSupported(locale: string): boolean {
@@ -40,7 +40,7 @@ async function installUnifiedNumberFormat(localeName: string) {
     return;
   }
 
-  await import(/* webpackChunkName: "p-intlunit" */'@formatjs/intl-unified-numberformat/polyfill');
+  await import(/* webpackChunkName: "p-intlunit" */'@formatjs/intl-numberformat/polyfill');
 
   // load locale data
   if (isUnifiedNumberFormatSupported(localeName)) {
