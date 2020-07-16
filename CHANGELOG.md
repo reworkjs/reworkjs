@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.33.0](https://github.com/reworkjs/reworkjs/compare/v0.32.2...v0.33.0) (2020-07-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* sass is now using dart-sass
+
+### Features
+
+* update dependencies ([171a5c0](https://github.com/reworkjs/reworkjs/commit/171a5c05e9935236507a6b767e002858862d63c1))
+
+
+### Bug Fixes
+
+* install sass instead of dart-sass ([4eb97ab](https://github.com/reworkjs/reworkjs/commit/4eb97ab6ad6751493d4a964a422652f6de37fa30))
+
 ### [0.32.2](https://github.com/reworkjs/reworkjs/compare/v0.32.1...v0.32.2) (2020-04-23)
 
 
