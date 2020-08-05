@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.33.1](https://github.com/reworkjs/reworkjs/compare/v0.33.0...v0.33.1) (2020-08-05)
+
+
+### Features
+
+* replace react-hot with react-refresh 🎉 ([b2f1b5f](https://github.com/reworkjs/reworkjs/commit/b2f1b5f2897bf43b82910f880b90669ab4f94bc5))
+
 ## [0.33.0](https://github.com/reworkjs/reworkjs/compare/v0.32.2...v0.33.0) (2020-07-16)
 
 
