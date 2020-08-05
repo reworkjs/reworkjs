@@ -133,6 +133,7 @@
     "@babel/plugin-proposal-decorators": "^7.10.5",
     "@babel/plugin-transform-flow-strip-types": "^7.10.4",
     "@foobarhq/eslint-config": "^8.0.1",
+    "@foobarhq/eslint-config-flow": "^8.0.1",
     "babel-plugin-dynamic-import-node": "^2.3.3",
     "del": "^5.1.0",
     "docz": "^2.3.1",
