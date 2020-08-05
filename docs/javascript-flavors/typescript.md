@@ -27,8 +27,8 @@ module.exports = {
 
 ## Typechecking
 
-Babel will not check whether the typing is correct when building, but you can use tsc to typecheck 
-with this command: `tsc --noEmit --project tsconfig.json --skipLibCheck`.  
+Babel will not check whether the typing is correct when building, but you can use tsc to typecheck
+with this command: `tsc --noEmit --project tsconfig.json --skipLibCheck`.
 You will need to install TypeScript (`npm i -D typescript`)
 
 You will also need to configure tsc through tsconfig:
@@ -70,7 +70,7 @@ Because we import css files as if it were JavaScript, we need to tell TypeScript
 Simply adding the following file in your project will do it:
 
 ```typescript
-// style.d.ts 
+// style.d.ts
 
 // css & css modules
 declare module '*.css' {
@@ -83,4 +83,7 @@ declare module '*.scss' {
   const classes: { [key: string]: string };
   export default classes;
 }
-``` 
+```
+
+TODO or https://github.com/skovy/typed-scss-modules
+Or https://www.npmjs.com/package/typescript-plugin-css-modules
