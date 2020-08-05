@@ -73,10 +73,4 @@ let RootComponent = () => {
   return rootElement;
 };
 
-if (module.hot) {
-  const { hot } = require('react-hot-loader/root');
-
-  RootComponent = hot(RootComponent);
-}
-
 export default RootComponent;

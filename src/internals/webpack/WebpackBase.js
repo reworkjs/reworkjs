@@ -14,6 +14,7 @@ import CopyWebpackPlugin from 'copy-webpack-plugin';
 import WebpackBar from 'webpackbar';
 import LoadablePlugin from '@loadable/webpack-plugin';
 import minifiedCssIdents from 'mini-css-class-name/css-loader';
+import ReactRefreshPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 import { chalkNok, chalkOk } from '../../shared/chalk';
 import frameworkConfig from '../../shared/framework-config';
 import projectMetadata from '../../shared/project-metadata';
@@ -206,7 +207,6 @@ export default class WebpackBase {
         // Necessary for hot reloading with IE
         'eventsource-polyfill',
         'webpack-hot-middleware/client',
-        'react-hot-loader/patch',
         require.resolve('./dev-preamble'),
       );
     } else if (this.isDev && this.isServer()) {
@@ -383,10 +383,6 @@ export default class WebpackBase {
       'react-helmet': resolveFrameworkSource('dummy/react-helmet.js', { esModules: !this.isServer() }),
     };
 
-    if (this.isDev && !this.isServer()) {
-      frameworkAliases['react-dom'] = '@hot-loader/react-dom';
-    }
-
     // if (this.isServer()) {
     //   // TODO:
     //   // force babel-runtime to load as commonjs on server because
@@ -513,6 +509,7 @@ export default class WebpackBase {
       plugins.push(
         // enable hot reloading.
         new webpack.HotModuleReplacementPlugin(),
+        new ReactRefreshPlugin(),
 
         // Watcher doesn't work well if you mistype casing in a path so we use
         // a plugin that prints an error when you attempt to do this.
