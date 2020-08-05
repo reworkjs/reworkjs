@@ -2,7 +2,7 @@
   "extends": [
     "@foobarhq/eslint-config",
     "@foobarhq/eslint-config/browser",
-    "@foobarhq/eslint-config/flow"
+    "@foobarhq/eslint-config-flow"
   ],
   "env": {
     "browser": true,
