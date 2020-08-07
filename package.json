@@ -80,7 +80,7 @@
     "clean-webpack-plugin": "^3.0.0",
     "compression": "^1.7.4",
     "copy-webpack-plugin": "^6.0.3",
-    "css-loader": "^3.6.0",
+    "css-loader": "^4.2.1",
     "escape-string-regexp": "^4.0.0",
     "eventsource-polyfill": "^0.9.6",
     "express": "^4.17.1",

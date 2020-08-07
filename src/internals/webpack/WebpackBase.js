@@ -281,40 +281,27 @@ export default class WebpackBase {
     const loaderOptions: Object = {
       importLoaders: options.importLoaders || 0,
       esModule: true,
+      // sourceMap: depends on webpack's `devtool` config
+      // module.auto is true by default
     };
-
-    if (isDev) {
-      Object.assign(loaderOptions, {
-        sourceMap: true,
-      });
-    }
 
     if (options.modules) {
       Object.assign(loaderOptions, {
-        modules: true,
-        localsConvention: 'camelCase',
+        modules: {
+          exportLocalsConvention: 'camelCase',
+        },
       });
 
       if (isDev) {
-        Object.assign(loaderOptions, {
-          modules: {
-            localIdentName: '[path][name]__[local]--[hash:base64:5]',
-          },
-        });
+        loaderOptions.modules.localIdentName = '[path][name]__[local]--[hash:base64:5]';
       } else {
-        Object.assign(loaderOptions, {
-          modules: {
-            getLocalIdent: minifiedCssIdents(),
-          },
-        });
+        loaderOptions.modules.getLocalIdent = minifiedCssIdents();
       }
 
       // in prod with pre-rendering, we don't generate the CSS. Only the mapping "css class" => "css module class"
       // the actual CSS is served directly from the client bundle.
       if (this.isServer() && !this.isDev) {
-        Object.assign(loaderOptions, {
-          onlyLocals: true,
-        });
+        loaderOptions.modules.exportOnlyLocals = true;
       }
     }
 
