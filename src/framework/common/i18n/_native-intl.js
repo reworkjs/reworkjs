@@ -3,8 +3,6 @@
 import globalThis from '../../../shared/globalThis';
 import { getFileName, getLocaleBestFit, runBundleLoader } from './_locale-utils';
 
-// TODO: listFormat
-
 function getUnitLocaleLoaders() {
   // $FlowIgnore
   return require.context('bundle-loader?lazy&name=p-intlunit-[name]!@formatjs/intl-numberformat/locale-data', true, /\.json$/);
