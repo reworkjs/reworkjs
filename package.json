@@ -62,7 +62,7 @@
     "@formatjs/intl-numberformat": "^5.3.3",
     "@formatjs/intl-pluralrules": "^3.2.5",
     "@formatjs/intl-relativetimeformat": "^7.0.0",
-    "@hapi/accept": "^4.0.0",
+    "@hapi/accept": "^5.0.1",
     "@hapi/joi": "^17.1.1",
     "@loadable/babel-plugin": "^5.13.0",
     "@loadable/component": "^5.13.1",
