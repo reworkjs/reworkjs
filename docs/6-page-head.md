@@ -29,11 +29,13 @@ export default function HomeView() {
 }
 ```
 
+We recommend you place the default Helmet configuration inside of [the Root component](advanced-topics/root-component.md)
+
 ## Static metadata
 
 Sometimes, you need to send metadata even if JavaScript is disabled, or before any JavaScript executes.
 
-If you use Server-Side-Rendering, the HTML sent by the server will contain all the metadata provided by Helmet.  
+If you use Server-Side-Rendering, the HTML sent by the server will contain all the metadata provided by Helmet.
 If you don't use SSR, you can still send some metadata by modifying the base `index.html` file.
 
 *Note*: Without SSR, `index.html` is built only once and used for all pages. With SSR, it is rebuilt for each page.
@@ -83,7 +85,7 @@ module.exports = function renderHtml(data) {
     ></iframe>
   </noscript>
   <!-- End Google Tag Manager (noscript) -->
-  
+
   ${data.body}
 </body>
 </html>

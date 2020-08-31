@@ -85,5 +85,9 @@ declare module '*.scss' {
 }
 ```
 
-TODO or https://github.com/skovy/typed-scss-modules
-Or https://www.npmjs.com/package/typescript-plugin-css-modules
+Alternatively tools exist to generate these typings for you, such as [typed-scss-modules](https://github.com/skovy/typed-scss-modules)
+
+## Linting
+
+You will need to adapt your eslint config to support typescript.
+Don't forget to update `.lintstagedrc` to lint typescript files during commit.

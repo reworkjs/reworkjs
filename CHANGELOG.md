@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.33.2](https://github.com/reworkjs/reworkjs/compare/v0.33.1...v0.33.2) (2020-08-31)
+
+
+### ⚠ BREAKING CHANGES
+
+* server-side rendering requires node 12+
+
+### Features
+
+* html - add integrity hashes in production ([adaea1e](https://github.com/reworkjs/reworkjs/commit/adaea1e04f70842c97e41fa5c5144cede95931cf))
+* rjs init - print message hinting at next step ([1d4faa7](https://github.com/reworkjs/reworkjs/commit/1d4faa7075bcbaab101c1269b099af13cf5f42bc))
+* update default lintstaged to include ts & remove git add ([784eec8](https://github.com/reworkjs/reworkjs/commit/784eec8212269b97d025504472c0289b7c9ca6da))
+* update intl polyfills ([2229ac7](https://github.com/reworkjs/reworkjs/commit/2229ac7599c38eb96a4ae0031136a17a6e6636e3))
+
+
+### Bug Fixes
+
+* fix how intl polyfills are imported ([33ac3cb](https://github.com/reworkjs/reworkjs/commit/33ac3cb175d902f5b7080ef41a8a1ba735122c2a))
+* send error page if initial build failed instead of crashing ([da6af5b](https://github.com/reworkjs/reworkjs/commit/da6af5b2c0e410ad6ba1a3391054186eff2db1ba))
+
+
+* update hapi/accept ([c8410a3](https://github.com/reworkjs/reworkjs/commit/c8410a374da502c1a722fcb4f80b222130d915d1))
+
 ### [0.33.1](https://github.com/reworkjs/reworkjs/compare/v0.33.0...v0.33.1) (2020-08-05)
 
 

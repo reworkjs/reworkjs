@@ -36,6 +36,7 @@ If we take the example above and expand it to lazy-load the homepage, we would e
 ```typescript
 // src/pages/home/home.route.ts
 
+import * as React from 'react';
 import loadable from '@loadable/component';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
@@ -44,14 +45,14 @@ export default {
 
   // lazy-load the homepage
   component: loadable(() => import('./home.view'), {
-    fallback: CircularProgress,
+    fallback: <CircularProgress />,
   }),
 }
 ```
 
 N.B.: You can lazy-load components anywhere using loadable, this is *not* strictly limited to route definitions.
 
-That library is fully integrated with the framework, including server-side rendering.  
+That library is fully integrated with the framework, including server-side rendering.
 Please refer to [their documentation](https://www.smooth-code.com/open-source/loadable-components/) for more information on code splitting.
 
 ## Catch-all routes (404)
@@ -65,6 +66,7 @@ Creating a catch-all route works pretty much the same. It is your standard route
 ```typescript
 // src/pages/404/404.route.ts
 
+import * as React from 'react';
 import loadable from '@loadable/component';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
@@ -77,7 +79,7 @@ export default {
   status: 404,
 
   component: loadable(() => import('./404.view'), {
-    fallback: CircularProgress,
+    fallback: <CircularProgress />,
   }),
 };
 ```

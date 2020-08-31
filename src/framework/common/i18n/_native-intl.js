@@ -3,16 +3,14 @@
 import globalThis from '../../../shared/globalThis';
 import { getFileName, getLocaleBestFit, runBundleLoader } from './_locale-utils';
 
-// TODO: listFormat
-
 function getUnitLocaleLoaders() {
   // $FlowIgnore
-  return require.context('bundle-loader?lazy&name=p-intlunit-[name]!@formatjs/intl-numberformat/locale-data', true, /\.json$/);
+  return require.context('bundle-loader?lazy&name=p-intlunit-[name]!@formatjs/intl-numberformat/locale-data', true, /\.js$/);
 }
 
 function getRelativeTimeLocaleLoaders() {
   // $FlowIgnore
-  return require.context('bundle-loader?lazy&name=p-intlrelative-[name]!@formatjs/intl-relativetimeformat/locale-data', true, /\.json$/);
+  return require.context('bundle-loader?lazy&name=p-intlrelative-[name]!@formatjs/intl-relativetimeformat/locale-data', true, /\.js$/);
 }
 
 function getListFormatLoaders() {
@@ -60,10 +58,8 @@ async function installUnifiedNumberFormat(localeName: string) {
     actualLocale = 'en';
   }
 
-  const loader = intlLocaleLoaders(`./${actualLocale}.json`);
-  const localeModule = await runBundleLoader(loader);
-
-  Intl.NumberFormat.__addLocaleData(localeModule);
+  const loader = intlLocaleLoaders(`./${actualLocale}.js`);
+  await runBundleLoader(loader);
 }
 
 async function installPluralRules(localeName: string) {
@@ -106,10 +102,9 @@ async function installRelativeTime(localeName: string) {
     actualLocale = 'en';
   }
 
-  const loader = localeLoaders(`./${actualLocale}.json`);
+  const loader = localeLoaders(`./${actualLocale}.js`);
 
-  const localeModule = await runBundleLoader(loader);
-  Intl.RelativeTimeFormat.__addLocaleData(localeModule);
+  await runBundleLoader(loader);
 }
 
 async function installListFormat(localeName: string) {
@@ -139,7 +134,6 @@ async function installListFormat(localeName: string) {
 
   const loader = localeLoaders(`./${actualLocale}.js`);
 
-  // js version as json version is not supported
   await runBundleLoader(loader);
 }
 
