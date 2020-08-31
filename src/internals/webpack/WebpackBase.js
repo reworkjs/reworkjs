@@ -12,6 +12,7 @@ import nodeExternals from 'webpack-node-externals';
 import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import WebpackBar from 'webpackbar';
+import SriPlugin from 'webpack-subresource-integrity';
 import LoadablePlugin from '@loadable/webpack-plugin';
 import minifiedCssIdents from 'mini-css-class-name/css-loader';
 import ReactRefreshPlugin from '@pmmmwh/react-refresh-webpack-plugin';
@@ -224,14 +225,13 @@ export default class WebpackBase {
     // Output to build directory.
     const output = getWebpackSettings(this.isServer()).output;
 
+    // This allow error boundaries to display errors in non-main chunks
+    // https://reactjs.org/docs/cross-origin-errors.html
+    // It's also necessary for subresource-integrity
+    output.crossOriginLoading = 'anonymous';
+
     if (this.isServer()) {
       output.libraryTarget = 'commonjs2';
-    }
-
-    if (this.isDev && !this.isServer()) {
-      // Allow error boundaries to display errors in non-main chunks
-      // https://reactjs.org/docs/cross-origin-errors.html
-      output.crossOriginLoading = 'anonymous';
     }
 
     if (this.isDev || this.isServer()) {
@@ -454,6 +454,12 @@ export default class WebpackBase {
           to: './',
           toType: 'dir',
         }],
+      }),
+
+      // subresource-integrity
+      new SriPlugin({
+        hashFuncNames: ['sha384'],
+        enabled: !this.isDev,
       }),
 
       // Inject webpack bundle into HTML.
