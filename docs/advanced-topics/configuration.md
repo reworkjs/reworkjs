@@ -4,7 +4,12 @@ menu: Advanced Topics
 route: /configuration
 ---
 
-# RJS Configuration
+# rework Configuration
+
+The rework configuration gives you the ability to customise the framework to your liking, and to enable plugins.
+
+By default, the configuration file should be named `.reworkrc` and
+be placed at the root of your project. (see also: [How to specifify the configiguration file path](#specifying-the-path-to-the-configuration-file))
 
 ## Contents
 
@@ -30,8 +35,10 @@ Example configuration file with all entries:
 }
 ```
 
-All entries are optional  
+All entries are optional
 Paths are resolved from the location of your configuration file
+
+**Important note:** Changes to the configuration files will only take effect after the app has been restarted.
 
 ### `routingType`
 
@@ -47,7 +54,7 @@ Default: `./.build`
 
 The directory in which compiled files will be outputted.
 
-server files will be located in `{directories.build}/server`  
+server files will be located in `{directories.build}/server`
 client files will be located in `{directories.build}/client`
 
 ### `directories.logs`
@@ -62,7 +69,7 @@ Default: `./src/public`
 
 This directory contains assets that should not be transformed and will merely be copied over. (default: `./src/public`)
 
-The files located inside of `resources` will be copied inside of the `public` directory in the output files.  
+The files located inside of `resources` will be copied inside of the `public` directory in the output files.
 Be careful not to use the name of a built resource (such as `index.html` or `main.js`).
 
 See the chapter on [Public Resources](../4-public-resources.md) for more information
@@ -92,6 +99,10 @@ If exporting a Promise, your application will be loaded after the promise resolv
 
 If exporting a Function, your application will be loaded after the execution of the function and after the Promise the function returns (if any) resolves.
 
+## `entry-react`
+
+See [The Root Component](root-component.md)
+
 ### `render-html`
 
 TBD
@@ -112,4 +123,4 @@ See [The second section of Plugins](plugins.md#plugin-system)
 
 ## Specifying the path to the configuration file
 
-`--reworkrc=./app/.reworkrc`
+Specify the `--reworkrc` argument in the `rjs` cli to change the used configuration file: `rjs start --reworkrc=./app/.reworkrc`
