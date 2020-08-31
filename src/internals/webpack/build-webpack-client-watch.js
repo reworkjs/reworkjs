@@ -87,13 +87,39 @@ if (HAS_PRERENDERING) {
   app.use(preRenderingHandler);
 
 } else {
+
+  const errorMessage = `
+  <style>
+    body {
+      background: #b2102f;
+      color: white;
+      font-family: 'monospace';
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    div {
+      max-width: 400px;
+      margin: 16px;
+    }
+  </style>
+  <div>
+    <h1>Initial Compilation Failed</h1>
+    <p>The initial compilation of this application encountered an error.
+    See your terminal for more information.</p>
+    <p>Refresh this page once the error has been resolved.</p>
+  </div>
+  `;
+
   // send index.html for all not found routes.
   app.use((req: $Request, res: $Response) => {
     try {
-      const readStream = wdmInstance.fileSystem.createReadStream(indexFileName);
+      const readStream = wdmInstance.fileSystem.createReadStream(indexFileName).on('error', () => {
+        res.status(500).end(errorMessage);
+      });
       readStream.pipe(res);
     } catch (e) {
-      res.end('Application failed to build');
+      res.status(500).end(errorMessage);
     }
   });
 }
