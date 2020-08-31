@@ -5,7 +5,7 @@ import fsExtra from 'fs-extra';
 import noop from 'lodash/noop';
 import inquirer from 'inquirer';
 import semver from 'semver';
-import { chalkNok, chalkNpmDep, chalkOk } from '../../../shared/chalk';
+import { chalkCommand, chalkNok, chalkNpmDep, chalkOk } from '../../../shared/chalk';
 import { resolveProject, resolveRoot } from '../../util/resolve-util';
 import logger from '../../../shared/logger';
 import { execSync } from '../../util/process-util';
@@ -18,8 +18,11 @@ import { execSync } from '../../util/process-util';
 export default function registerCommand(commander) {
 
   commander
-    .command('init', 'Setups your project', noop, () => {
-      runInitScripts();
+    .command('init', 'Setups your project', noop, async () => {
+      await runInitScripts();
+
+      logger.info();
+      logger.info(`All done! Run '${chalkCommand('npm run start:dev')}' to launch your project`);
     });
 }
 
@@ -263,16 +266,12 @@ const scripts = {
   // },
 };
 
-const emptyPromise = Promise.resolve();
+async function runInitScripts() {
 
-function runInitScripts() {
-
-  let promise = emptyPromise;
   for (const scriptName of Object.keys(scripts)) {
     // run sequentially, don't Promise.all this.
-    promise = promise.then(() => {
-      return runScript(scriptName, scripts[scriptName]);
-    });
+    // eslint-disable-next-line no-await-in-loop
+    await runScript(scriptName, scripts[scriptName]);
   }
 
   /*
