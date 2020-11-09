@@ -304,7 +304,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### ⚠ BREAKING CHANGES
 
-* default config file is now <project_dir>/.reworkrc
+* default config file is now `<project_dir>/.reworkrc`
 * relative files & directories specified in config file are now relative to folder containing the config file.
 
 
