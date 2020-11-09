@@ -159,7 +159,6 @@ export default class WebpackBase {
       },
       mode: this.isDev ? 'development' : 'production',
       optimization: {
-        noEmitOnErrors: true,
         minimize: false,
         removeAvailableModules: false,
       },
@@ -280,7 +279,6 @@ export default class WebpackBase {
   getCssLoader(options: Object = {}) {
     const loaderOptions: Object = {
       importLoaders: options.importLoaders || 0,
-      esModule: true,
       // sourceMap: depends on webpack's `devtool` config
       // module.auto is true by default
     };
@@ -339,10 +337,6 @@ export default class WebpackBase {
 
       return {
         loader: ExtractCssPlugin.loader,
-        options: {
-          hmr: this.isDev,
-          esModule: true,
-        },
       };
     })();
 

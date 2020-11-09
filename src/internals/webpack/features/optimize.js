@@ -78,11 +78,6 @@ export default class OptimizeFeature extends BaseFeature {
       },
       optimization: {
         removeAvailableModules: true,
-        splitChunks: {
-          // don't generate names for long term caching
-          // https://medium.com/webpack/webpack-4-code-splitting-chunk-graph-and-the-splitchunks-optimization-be739a861366
-          name: false,
-        },
         minimize: true,
         minimizer: [
           // minimize CSS
