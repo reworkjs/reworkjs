@@ -46,6 +46,7 @@ function normalizeConfig(config: Object) {
     'render-html': Joi.string().allow(null).default(null),
     'pre-init': Joi.string().allow(null).default(null),
     'service-worker': Joi.string().allow(null).default(null),
+    'emit-integrity': Joi.boolean().default(true),
 
     directories: Joi.object().keys({
       logs: Joi.alternatives().try(

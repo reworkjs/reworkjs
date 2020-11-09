@@ -48,6 +48,15 @@ The type of router to use, see [React-Router](https://reacttraining.com/react-ro
 
 Possible values: `browser` for [BrowserRouter](https://reacttraining.com/react-router/web/api/BrowserRouter), `hash` for [HashRouter](https://reacttraining.com/react-router/web/api/HashRouter)
 
+### 'emit-integrity'
+
+Default: `true`
+
+Emit [subresource integrity](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity) on generated assets.
+This might cause issues when loading using the `file://` protocol on some platforms, such as Cordova iOS.
+
+Note: Subresource integrity is always disabled in development mode.
+
 ### `directories.build`
 
 Default: `./.build`
