@@ -2,6 +2,7 @@
 
 import { isReactComponent } from '../../util/ReactUtil';
 
+// eslint-disable-next-line import/no-unresolved
 import mainComponent from 'val-loader!./_get-main-component';
 
 if (process.env.NODE_ENV === 'development') {
