@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.33.3](https://github.com/reworkjs/reworkjs/compare/v0.33.2...v0.33.3) (2020-11-09)
+
+
+### Features
+
+* add option to disable subresource integrity ([5b74257](https://github.com/reworkjs/reworkjs/commit/5b74257ec1e192d89b20cc408b9195e755988ca4))
+
 ### [0.33.2](https://github.com/reworkjs/reworkjs/compare/v0.33.1...v0.33.2) (2020-08-31)
 
 
@@ -297,7 +304,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### ⚠ BREAKING CHANGES
 
-* default config file is now <project_dir>/.reworkrc
+* default config file is now `<project_dir>/.reworkrc`
 * relative files & directories specified in config file are now relative to folder containing the config file.
 
 

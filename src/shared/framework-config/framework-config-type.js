@@ -20,6 +20,7 @@ export type FrameworkConfigStruct = {
   'render-html': string | null,
   'pre-init': string | null,
   'service-worker': string | null,
+  'emit-integrity': boolean,
 
   hooks: {
     client: string | null,

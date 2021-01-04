@@ -453,7 +453,7 @@ export default class WebpackBase {
       // subresource-integrity
       new SriPlugin({
         hashFuncNames: ['sha384'],
-        enabled: !this.isDev,
+        enabled: frameworkConfig['emit-integrity'] && !this.isDev,
       }),
 
       // Inject webpack bundle into HTML.
