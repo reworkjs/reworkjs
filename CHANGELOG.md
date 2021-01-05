@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.34.0](https://github.com/reworkjs/reworkjs/compare/v0.33.3...v0.34.0) (2021-01-05)
+
+
+### Features
+
+* add new CSS class ident generator (dev) ([51317ba](https://github.com/reworkjs/reworkjs/commit/51317bacc006ee878430a090e392b8f502496cb4))
+* replace offline-plugin with workbox ([f88f864](https://github.com/reworkjs/reworkjs/commit/f88f8642f674f5ec7a46ba91dbe2ce3dc0310fe9))
+* update dependencies ([2619157](https://github.com/reworkjs/reworkjs/commit/261915706ed63005d6e2de597b0f5f5b42e48055))
+* update to webpack 5 ([93a384a](https://github.com/reworkjs/reworkjs/commit/93a384aa610ce8abf450fd7ad9a81a0b1e9ddfcb))
+
 ### [0.33.3](https://github.com/reworkjs/reworkjs/compare/v0.33.2...v0.33.3) (2020-11-09)
 
 
@@ -304,7 +314,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### ⚠ BREAKING CHANGES
 
-* default config file is now <project_dir>/.reworkrc
+* default config file is now `<project_dir>/.reworkrc`
 * relative files & directories specified in config file are now relative to folder containing the config file.
 
 

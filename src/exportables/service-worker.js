@@ -1,3 +1,3 @@
 // @flow
 
-export { useRestartRequired } from '../framework/common/service-worker-updater';
+export { useRestartRequired, updateSwAndRestart } from '../framework/common/service-worker-updater';

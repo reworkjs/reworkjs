@@ -47,10 +47,7 @@ if (HAS_PRERENDERING) {
 const compiler = webpack(webpackClientConfig);
 
 const wdmInstance = webpackDevMiddleware(compiler, {
-  noInfo: true,
   publicPath: webpackClientConfig.output.publicPath,
-  logLevel: 'warn',
-  stats: 'errors-only',
   serverSideRender: HAS_PRERENDERING,
 });
 
@@ -66,7 +63,7 @@ if (HAS_PRERENDERING) {
   compiler.hooks.afterEmit.tap('@reworkjs/core ssr index.html copy', async () => {
 
     try {
-      const memoryFs = wdmInstance.fileSystem;
+      const memoryFs = wdmInstance.context.compiler.outputFileSystem;
 
       const indexFile = memoryFs.readFileSync(indexFileName); // memoryFs is always sync
       await fs.promises.writeFile(indexFileName, indexFile);
@@ -114,11 +111,14 @@ if (HAS_PRERENDERING) {
   // send index.html for all not found routes.
   app.use((req: $Request, res: $Response) => {
     try {
-      const readStream = wdmInstance.fileSystem.createReadStream(indexFileName).on('error', () => {
+      const { devMiddleware } = res.locals.webpack;
+
+      const readStream = devMiddleware.outputFileSystem.createReadStream(indexFileName).on('error', () => {
         res.status(500).end(errorMessage);
       });
       readStream.pipe(res);
     } catch (e) {
+      console.error(e);
       res.status(500).end(errorMessage);
     }
   });

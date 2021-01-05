@@ -18,7 +18,7 @@ const clientHooks = ClientHooks.map(hookModule => {
   return new HookClass();
 });
 
-let RootComponent = () => {
+const RootComponent = () => {
 
   const didCleanUrl = React.useRef(!isHash);
 

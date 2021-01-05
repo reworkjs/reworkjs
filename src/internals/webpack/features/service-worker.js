@@ -1,9 +1,9 @@
 // @flow
 
-import OfflinePlugin from 'offline-plugin';
+import WorkboxPlugin from 'workbox-webpack-plugin';
+import { resolveFrameworkSource } from '../../util/resolve-util';
 import BaseFeature from '../BaseFeature';
 import type WebpackConfigBuilder from '../WebpackConfigBuilder';
-import frameworkConfig from '../../../shared/framework-config';
 
 export default class ServiceWorkerFeature extends BaseFeature {
 
@@ -29,55 +29,12 @@ export default class ServiceWorkerFeature extends BaseFeature {
       return;
     }
 
-    const serviceWorkerEntry = frameworkConfig['service-worker'];
-
-    const options: Object = {
-      appShell: '/index.html',
-      relativePaths: false,
-
-      // this is applied before any match in `caches` section
-      excludes: [
-        '**/*.gz',
-        '**/*.br',
-        '**/*.map',
-        '**/*.LICENSE',
-        'loadable-stats.json',
-      ],
-
-      // Removes warning for about `additional` section usage
-      safeToUseOptionalCaches: true,
-
-      AppCache: false,
-      ServiceWorker: {
-        events: true,
-      },
-    };
-
-    if (serviceWorkerEntry) {
-      options.ServiceWorker.entry = serviceWorkerEntry;
-    }
-
-    if (this.isProd()) {
-
-      // only enable cache in prod
-      Object.assign(options, {
-        caches: {
-          main: [':rest:'],
-
-          // All chunks marked as `additional`, loaded after main section
-          // and do not prevent SW to install. Change to `optional` if
-          // do not want them to be preloaded at all (cached only when first loaded)
-          additional: ['*.chunk.js', ':externals:'],
-        },
-      });
-    } else {
-      Object.assign(options, {
-        caches: {},
-      });
-    }
-
     config.injectPlugins([
-      new OfflinePlugin(options),
+      new WorkboxPlugin.InjectManifest({
+        swSrc: resolveFrameworkSource('client/service-worker/index.js', { esModules: true }),
+        compileSrc: true,
+        swDest: 'service-worker.js',
+      }),
     ]);
   }
 }
