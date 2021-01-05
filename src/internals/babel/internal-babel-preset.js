@@ -4,6 +4,8 @@
  * Babel preset that can be only run on the framework files.
  */
 
+// @flow
+
 const buildGlobalPreset = require('./global-babel-preset');
 
 module.exports = function buildPreset(api, opts = {}) {
@@ -38,6 +40,7 @@ module.exports = function buildPreset(api, opts = {}) {
     [require('@babel/preset-react').default, {
       development: process.env.BABEL_ENV !== 'production',
       useBuiltIns: true,
+      runtime: 'automatic',
       ...opts['@babel/preset-react'],
     }],
   );

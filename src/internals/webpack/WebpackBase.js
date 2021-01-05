@@ -138,6 +138,10 @@ export default class WebpackBase {
         // don't transform __dirname when running inside Node.
         __dirname: !this.isServer(),
       },
+      infrastructureLogging: {
+        level: this.isDev ? 'warn' : 'info',
+      },
+      stats: this.isDev ? 'errors-warnings' : 'normal',
       resolve: {
         modules: ['node_modules'],
         extensions: [

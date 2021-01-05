@@ -6,6 +6,8 @@
  * Same as global preset with a few more features or optimisations specific to how the framework is used.
  */
 
+// @flow
+
 const buildGlobalPreset = require('./global-babel-preset');
 
 module.exports = function buildPreset(api, opts = {}) {
@@ -18,6 +20,7 @@ module.exports = function buildPreset(api, opts = {}) {
     [require('@babel/preset-react').default, {
       development: env !== 'production',
       useBuiltIns: true,
+      runtime: 'automatic',
       ...opts['@babel/preset-react'],
     }],
   );
