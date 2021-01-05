@@ -295,7 +295,7 @@ export default class WebpackBase {
       });
 
       if (isDev) {
-        loaderOptions.modules.localIdentName = '[path][name]__[local]--[hash:base64:5]';
+        loaderOptions.modules.getLocalIdent = buildLocalIdentGenerator();
       } else {
         loaderOptions.modules.getLocalIdent = minifiedCssIdents();
       }
@@ -553,4 +553,50 @@ function flattenKeys(obj, out = {}, paths = []) {
   }
 
   return out;
+}
+
+/**
+ *
+ * @returns {function(*, *, *)}
+ */
+function buildLocalIdentGenerator() {
+  const prefixMap = new Map();
+  const existingPrefixes = new Set();
+
+  // alternative solution for prefix gen: take file path and remove common junk (src, style, etc...)
+  //  eg. src/components/Button/style.module.scss -> components-Button
+  // ignore fileName if it is the same as its parent folder
+  //  eg. src/views/home/home.module.scss -> views-home (not views-home-home)
+  // remove extension from fileNames
+  //  eg. src/global.module.scss -> global
+  // but keep fileName if there is no folder, even if junk
+  //  eg. src/styles.scss -> styles
+
+  // const junkPrefixes = new Set(['src', 'lib', 'app', 'component', 'components']);
+  // const junkFileNames = new Set(['styles', 'style', 'css', 'index']); // fileNames ignore everything after first dot
+
+  function getPrefix(filePath) {
+    if (!prefixMap.has(filePath)) {
+      const folderMatch = filePath.match(/\/([^/]+)\/[^/]+$/);
+      const prefixBase = folderMatch[1];
+      let uniquePrefix = prefixBase;
+
+      let i = 1;
+      while (existingPrefixes.has(uniquePrefix)) {
+        uniquePrefix = prefixBase + i;
+        i++;
+      }
+
+      existingPrefixes.add(uniquePrefix);
+      prefixMap.set(filePath, uniquePrefix);
+    }
+
+    return prefixMap.get(filePath);
+  }
+
+  return (context, _, localName) => {
+    const prefix = getPrefix(context.resourcePath);
+
+    return `${prefix}__${localName}`;
+  };
 }
