@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.34.5](https://github.com/reworkjs/reworkjs/compare/v0.34.0...v0.34.5) (2021-01-08)
+
+
+### Features
+
+* disable workbox cache in development ([39433c9](https://github.com/reworkjs/reworkjs/commit/39433c9f44f499501d35fa28400200ddacf3c512))
+
+
+### Bug Fixes
+
+* copy dotfiles from /public ([9a42454](https://github.com/reworkjs/reworkjs/commit/9a42454b0707e900d848e7234ccd7aa413ff69a6))
+* prevent watch mode crash when accessing path other than / ([c1f0f5c](https://github.com/reworkjs/reworkjs/commit/c1f0f5cb9b273f211d171b858215304eb0b0ec16))
+
 ## [0.34.0](https://github.com/reworkjs/reworkjs/compare/v0.33.3...v0.34.0) (2021-01-05)
 
 
