@@ -48,7 +48,7 @@ const compiler = webpack(webpackClientConfig);
 
 const wdmInstance = webpackDevMiddleware(compiler, {
   publicPath: webpackClientConfig.output.publicPath,
-  serverSideRender: HAS_PRERENDERING,
+  serverSideRender: true,
 });
 
 app.use(wdmInstance);

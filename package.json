@@ -1,6 +1,6 @@
 {
   "name": "@reworkjs/core",
-  "version": "0.34.0",
+  "version": "0.34.5",
   "description": "A react framework that works out of the box",
   "homepage": "https://www.reworkjs.com/",
   "repository": {
@@ -44,11 +44,11 @@
     "webpack-bundle-analyzer": "^3.3.2"
   },
   "peerDependencies": {
-    "react-intl": "^4.4.0",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
+    "react-intl": "^5.10.12",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
     "react-cookie": "^4.0.3",
-    "react-router-dom": "^5.1.2"
+    "react-router-dom": "^5.2.0"
   },
   "dependencies": {
     "@babel/core": "^7.12.10",
@@ -138,8 +138,8 @@
     "@babel/plugin-proposal-class-properties": "^7.12.1",
     "@babel/plugin-proposal-decorators": "^7.12.12",
     "@babel/plugin-transform-flow-strip-types": "^7.12.10",
-    "@foobarhq/eslint-config": "^10.0.0",
-    "@foobarhq/eslint-config-flow": "^10.0.0",
+    "@foobarhq/eslint-config": "^10.1.0",
+    "@foobarhq/eslint-config-flow": "^10.1.0",
     "babel-plugin-dynamic-import-node": "^2.3.3",
     "del": "^6.0.0",
     "docz": "^2.3.1",

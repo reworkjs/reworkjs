@@ -1,5 +1,7 @@
 /* eslint-disable import/no-commonjs */
 
+// @flow
+
 const gulp = require('gulp');
 const watch = require('gulp-watch');
 const plumber = require('gulp-plumber');
@@ -18,12 +20,12 @@ function cleanLib() {
 // ['clean-lib']
 function copyLib() {
   return gulp
-    .src('./src/**/*')
+    .src('./src/!(gatsby-theme-docz)/**/*')
     .pipe(gulp.dest('./lib'));
 }
 
 function compileLib() {
-  return gulp.src('./src/**/*.js')
+  return gulp.src('./src/!(gatsby-theme-docz)/**/*.js')
     .pipe(plumber())
     .pipe(babel({
       presets: [
@@ -45,12 +47,12 @@ function cleanEs() {
 
 function copyEs() {
   return gulp
-    .src('./src/**/*')
+    .src('./src/!(gatsby-theme-docz)/**/*')
     .pipe(gulp.dest('./es'));
 }
 
 function compileEs() {
-  return gulp.src('./src/**/*.js')
+  return gulp.src('./src/!(gatsby-theme-docz)/**/*.js')
     .pipe(plumber())
     .pipe(babel({
       presets: [
