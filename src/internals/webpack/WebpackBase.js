@@ -1,7 +1,6 @@
 // @flow
 
 import path from 'path';
-import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { HelmetProvider } from 'react-helmet-async';
 import webpack from 'webpack';
@@ -451,6 +450,9 @@ export default class WebpackBase {
           from: frameworkConfig.directories.resources,
           to: './',
           toType: 'dir',
+          globOptions: {
+            dot: true,
+          },
         }],
       }),
 
