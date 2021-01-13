@@ -517,6 +517,12 @@ export default class WebpackBase {
         new ExtractCssPlugin({
           filename: this.isDev ? '[name].css' : '[name].[contenthash].css',
           chunkFilename: this.isDev ? '[id].css' : '[id].[contenthash].css',
+
+          // in order to generate the CSS files properly, import order must
+          // be the same across the project. It is very hard / impossible to
+          // do that by hand currently. Until an automated solution arrives,
+          // this warning is useless.
+          ignoreOrder: this.isDev,
         }),
       );
     }
