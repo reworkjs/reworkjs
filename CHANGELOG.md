@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.34.6](https://github.com/reworkjs/reworkjs/compare/v0.34.5...v0.34.6) (2021-01-13)
+
+
+### Features
+
+* disable warning spam from mini-css-extract-plugin ([df68928](https://github.com/reworkjs/reworkjs/commit/df68928122941897fd6d2550cb1b8c11258d6c6c))
+
 ### [0.34.5](https://github.com/reworkjs/reworkjs/compare/v0.34.0...v0.34.5) (2021-01-08)
 
 

@@ -5,7 +5,7 @@ import { IntlProvider } from 'react-intl';
 import { Cookies, withCookies } from 'react-cookie';
 import { ActiveLocaleContext } from '../common/active-locale-context';
 import { isTranslationSupported, type ReactIntlMessages } from '../common/i18n/_app-translations';
-import { guessPreferredLocale, storePreferredLocale } from '../common/i18n/get-preferred-locale';
+import { guessPreferredLocale, LOCALE_COOKIE_NAME, storePreferredLocale } from '../common/i18n/get-preferred-locale';
 import {
   onIntlHotReload,
   installLocale,
@@ -52,7 +52,7 @@ class LanguageComponent extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const activeLocale = guessPreferredLocale(this.props.cookies, this.props.acceptLanguages);
+    const activeLocale = guessPreferredLocale(this.props.cookies.get(LOCALE_COOKIE_NAME), this.props.acceptLanguages);
 
     installLocale(activeLocale).then(data => {
       this.setState({

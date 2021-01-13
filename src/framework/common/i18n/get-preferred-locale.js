@@ -1,7 +1,7 @@
 // @flow
 
 import type { Cookies } from 'react-cookie';
-import { isTranslationSupported } from './index';
+import { isTranslationSupported } from '.';
 
 export const LOCALE_COOKIE_NAME = 'rjs-locale';
 
@@ -11,10 +11,9 @@ export function storePreferredLocale(cookie: Cookies, locale: string) {
   }
 }
 
-export function guessPreferredLocale(cookies: Cookies, acceptLanguages: string[]) {
+export function guessPreferredLocale(cookieLocale: string | null, acceptLanguages: string[]) {
   // TODO add hook ?
 
-  const cookieLocale = cookies.get(LOCALE_COOKIE_NAME);
   if (cookieLocale && isTranslationSupported(cookieLocale)) {
     return cookieLocale;
   }
