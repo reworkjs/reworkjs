@@ -91,7 +91,7 @@ function getMessageLocaleBestFit(localeName: string) {
  * @returns Whether the translation is available.
  */
 function isTranslationSupported(localeName: string): boolean {
-  return getMessageLocaleBestFit(localeName) !== null;
+  return getMessageLocaleBestFit(localeName) != null;
 }
 
 export {
