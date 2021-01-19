@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.34.7](https://github.com/reworkjs/reworkjs/compare/v0.34.6...v0.34.7) (2021-01-19)
+
+
+### Bug Fixes
+
+* don't register serviceWorker if not supported ([763f3ca](https://github.com/reworkjs/reworkjs/commit/763f3ca51ea00e3970160742cda70cc2a5aa5b0f))
+
 ### [0.34.6](https://github.com/reworkjs/reworkjs/compare/v0.34.5...v0.34.6) (2021-01-13)
 
 
