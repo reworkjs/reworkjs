@@ -19,7 +19,7 @@ export function updateServiceWorker() {
     return;
   }
 
-  navigator.serviceWorker.register('/service-worker.js')
+  navigator.serviceWorker.register('/sw.js')
     .then(registration => {
       console.info('[SW] Registered');
 

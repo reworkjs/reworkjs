@@ -39,7 +39,7 @@ export default class ServiceWorkerFeature extends BaseFeature {
 
         swSrc: resolveFrameworkSource('client/service-worker/index.js', { esModules: true }),
         compileSrc: true,
-        swDest: 'service-worker.js',
+        swDest: 'sw.js',
       }),
     ]);
   }
