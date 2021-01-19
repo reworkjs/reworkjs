@@ -15,7 +15,7 @@ export function updateServiceWorker() {
     return;
   }
 
-  if (!('serviceWorker' in navigator)) {
+  if (!('serviceWorker' in navigator) || !navigator.serviceWorker.register) {
     return;
   }
 
