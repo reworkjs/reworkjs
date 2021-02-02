@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.34.9](https://github.com/reworkjs/reworkjs/compare/v0.34.8...v0.34.9) (2021-02-02)
+
+
+### Features
+
+* mute InjectManifest in watch ([4dda53c](https://github.com/reworkjs/reworkjs/commit/4dda53ce3b224f6ca8fb8c1b2edca7873924d1e4))
+
 ### [0.34.8](https://github.com/reworkjs/reworkjs/compare/v0.34.7...v0.34.8) (2021-01-19)
 
 
