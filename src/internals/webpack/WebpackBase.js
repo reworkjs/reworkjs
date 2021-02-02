@@ -141,6 +141,9 @@ export default class WebpackBase {
         level: this.isDev ? 'warn' : 'info',
       },
       stats: this.isDev ? 'errors-warnings' : 'normal',
+      ignoreWarnings: [{
+        message: /InjectManifest has been called multiple times/,
+      }],
       resolve: {
         modules: ['node_modules'],
         extensions: [
