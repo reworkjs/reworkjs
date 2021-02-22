@@ -342,7 +342,8 @@ export default class WebpackBase {
       }
 
       return {
-        loader: ExtractCssPlugin.loader,
+        // mini-css-extract-plugin is *very* slow and a no-go for watch mode
+        loader: this.isDev ? 'style-loader' : ExtractCssPlugin.loader,
       };
     })();
 
@@ -462,7 +463,8 @@ export default class WebpackBase {
       // subresource-integrity
       new SriPlugin({
         hashFuncNames: ['sha384'],
-        enabled: frameworkConfig['emit-integrity'] && !this.isDev,
+        // FIXME SRI disabled due to it outputting the wrong values
+        enabled: false, // frameworkConfig['emit-integrity'] && !this.isDev,
       }),
 
       // Inject webpack bundle into HTML.
@@ -514,7 +516,7 @@ export default class WebpackBase {
       );
     }
 
-    if (!this.isServer()) {
+    if (!this.isServer() && !this.isDev) {
       // Extract the CSS into a separate file.
       plugins.push(
         new ExtractCssPlugin({
