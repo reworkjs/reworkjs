@@ -70,9 +70,10 @@ export default class BabelFeature extends BaseFeature {
 
     config.plugins = config.plugins || [];
 
-    if (this.isDev()) {
-      config.plugins.push('react-refresh/babel');
-    }
+    // react-refresh is disabled because of how incredibly slow it is since webpack 5
+    // if (this.isDev()) {
+    //   config.plugins.push('react-refresh/babel');
+    // }
 
     // support Loadable Components
     config.plugins.push('@loadable/babel-plugin');

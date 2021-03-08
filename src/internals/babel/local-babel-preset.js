@@ -25,12 +25,10 @@ module.exports = function buildPreset(api, opts = {}) {
     }],
   );
 
-  preset.plugins.push(
-    [require('babel-plugin-react-intl-auto').default, {
-      ...opts['babel-plugin-react-intl-auto'],
-    }],
-    // TODO react-loadable-plugin
-  );
+  preset.plugins.push(['babel-plugin-formatjs', {
+    removeDefaultMessage: env === 'production',
+    ...opts['babel-plugin-formatjs'],
+  }]);
 
   // only remove prop-types locally. Removing on node_modules is known to cause issues
   // on libraries such as https://github.com/SaraVieira/react-social-sharing/blob/master/src/buttons/factory.js#L30

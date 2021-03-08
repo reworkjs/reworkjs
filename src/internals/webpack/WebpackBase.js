@@ -14,7 +14,6 @@ import WebpackBar from 'webpackbar';
 import SriPlugin from 'webpack-subresource-integrity';
 import LoadablePlugin from '@loadable/webpack-plugin';
 import minifiedCssIdents from 'mini-css-class-name/css-loader';
-import ReactRefreshPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 import { chalkNok, chalkOk } from '../../shared/chalk';
 import frameworkConfig from '../../shared/framework-config';
 import projectMetadata from '../../shared/project-metadata';
@@ -342,7 +341,8 @@ export default class WebpackBase {
       }
 
       return {
-        loader: ExtractCssPlugin.loader,
+        // mini-css-extract-plugin is *very* slow and a no-go for watch mode
+        loader: this.isDev ? 'style-loader' : ExtractCssPlugin.loader,
       };
     })();
 
@@ -462,7 +462,8 @@ export default class WebpackBase {
       // subresource-integrity
       new SriPlugin({
         hashFuncNames: ['sha384'],
-        enabled: frameworkConfig['emit-integrity'] && !this.isDev,
+        // FIXME SRI disabled due to it outputting the wrong values
+        enabled: false, // frameworkConfig['emit-integrity'] && !this.isDev,
       }),
 
       // Inject webpack bundle into HTML.
@@ -505,7 +506,9 @@ export default class WebpackBase {
       plugins.push(
         // enable hot reloading.
         new webpack.HotModuleReplacementPlugin(),
-        new ReactRefreshPlugin(),
+        // react-refresh is disabled because of how incredibly slow it is since webpack 5
+        // import ReactRefreshPlugin from '@pmmmwh/react-refresh-webpack-plugin';
+        // new ReactRefreshPlugin(),
 
         // Watcher doesn't work well if you mistype casing in a path so we use
         // a plugin that prints an error when you attempt to do this.
@@ -514,7 +517,7 @@ export default class WebpackBase {
       );
     }
 
-    if (!this.isServer()) {
+    if (!this.isServer() && !this.isDev) {
       // Extract the CSS into a separate file.
       plugins.push(
         new ExtractCssPlugin({
