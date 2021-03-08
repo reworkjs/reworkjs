@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.35.0](https://github.com/reworkjs/reworkjs/compare/v0.34.9...v0.35.0) (2021-03-08)
+
+
+### ⚠ BREAKING CHANGES
+
+* Due to moving away from babel-plugin-react-intl-auto, using strings in defineMessages instead of an object is not supported. You can add babel-plugin-react-intl-auto back to your local babel config to restore previous behavior.
+
+### Features
+
+* disable hot reloading until issues have been resolved ([527d4b1](https://github.com/reworkjs/reworkjs/commit/527d4b1290ac6492c24a00632f2a22f3b765f5a7))
+* replace babel-plugin-react-intl-auto with babel-plugin-formatjs ([64ff650](https://github.com/reworkjs/reworkjs/commit/64ff6504a1af1189d56bdfcbadbdd7b35e3f6f71))
+
+
+### Bug Fixes
+
+* return to style-loader during dev & disable sri ([fad902a](https://github.com/reworkjs/reworkjs/commit/fad902a90186501b0556bdd80e5e27a23939547c))
+
 ### [0.34.9](https://github.com/reworkjs/reworkjs/compare/v0.34.8...v0.34.9) (2021-02-02)
 
 
