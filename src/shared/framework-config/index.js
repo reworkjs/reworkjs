@@ -12,7 +12,7 @@ import fs from 'fs';
 import path from 'path';
 import get from 'lodash/get';
 import set from 'lodash/set';
-import Joi from '@hapi/joi';
+import Joi from 'joi';
 import argv from '../../internals/rjs-argv';
 import { resolveProject } from '../../internals/util/resolve-util';
 import logger from '../logger';
