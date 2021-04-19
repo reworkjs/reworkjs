@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.35.1](https://github.com/reworkjs/reworkjs/compare/v0.35.0...v0.35.1) (2021-04-19)
+
+
+### Features
+
+* update asset loading & allow loading .md files ([431877b](https://github.com/reworkjs/reworkjs/commit/431877b24f161ff4ae59290ac5a1e2b51e08228a))
+
 ## [0.35.0](https://github.com/reworkjs/reworkjs/compare/v0.34.9...v0.35.0) (2021-03-08)
 
 
