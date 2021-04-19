@@ -1,34 +1,34 @@
 // @flow
 
+import LoadablePlugin from '@loadable/webpack-plugin';
+import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin';
+import { CleanWebpackPlugin } from 'clean-webpack-plugin';
+import CopyWebpackPlugin from 'copy-webpack-plugin';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import minifiedCssIdents from 'mini-css-class-name/css-loader';
+import ExtractCssPlugin from 'mini-css-extract-plugin';
 import path from 'path';
 import { renderToString } from 'react-dom/server';
 import { HelmetProvider } from 'react-helmet-async';
 import webpack from 'webpack';
-import HtmlWebpackPlugin from 'html-webpack-plugin';
-import ExtractCssPlugin from 'mini-css-extract-plugin';
-import { CleanWebpackPlugin } from 'clean-webpack-plugin';
 import nodeExternals from 'webpack-node-externals';
-import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin';
-import CopyWebpackPlugin from 'copy-webpack-plugin';
-import WebpackBar from 'webpackbar';
 import SriPlugin from 'webpack-subresource-integrity';
-import LoadablePlugin from '@loadable/webpack-plugin';
-import minifiedCssIdents from 'mini-css-class-name/css-loader';
+import WebpackBar from 'webpackbar';
+import BaseHelmet from '../../framework/app/BaseHelmet';
+import appArgv from '../../framework/common/app-argv/node';
+import renderPage from '../../framework/server/setup-http-server/render-page';
 import { chalkNok, chalkOk } from '../../shared/chalk';
 import frameworkConfig from '../../shared/framework-config';
-import projectMetadata from '../../shared/project-metadata';
 import frameworkMetadata from '../../shared/framework-metadata';
-import { resolveFrameworkSource } from '../util/resolve-util';
-import argv from '../rjs-argv';
-import appArgv from '../../framework/common/app-argv/node';
 import logger from '../../shared/logger';
+import projectMetadata from '../../shared/project-metadata';
 import getWebpackSettings from '../../shared/webpack-settings';
-import BaseHelmet from '../../framework/app/BaseHelmet';
-import renderPage from '../../framework/server/setup-http-server/render-page';
+import argv from '../rjs-argv';
+import { resolveFrameworkSource } from '../util/resolve-util';
 import BaseFeature from './BaseFeature';
-import WebpackConfigBuilder, * as wcbUtils from './WebpackConfigBuilder';
-import sortDependencies from './sort-dependencies';
 import featureClasses from './features';
+import sortDependencies from './sort-dependencies';
+import WebpackConfigBuilder, * as wcbUtils from './WebpackConfigBuilder';
 
 const isDev = process.env.NODE_ENV === 'development';
 const isTest = process.env.NODE_ENV === 'test';
@@ -262,21 +262,29 @@ export default class WebpackBase {
   /** @private */
   buildRules() {
 
-    return [{
-      test: /\.(eot|ttf|woff|woff2)(\?.*$|$)/i,
-      loader: 'file-loader',
-    }, {
-      test: wcbUtils.getFileTypeRegExp(this.webpackConfigBuilder, WebpackConfigBuilder.FILE_TYPE_IMG),
-      use: 'file-loader',
-    }, {
-      test: /\.(mp4|webm)/i,
-      loader: 'file-loader',
-    }, {
-      // FIXME temporary fix for webpack 4 https://github.com/webpack-contrib/bundle-loader/issues/74
-      test: /\.json$/i,
-      type: 'javascript/auto',
-      loader: 'json-loader',
-    }]
+    const resources = [
+      /\.(eot|ttf|woff|woff2)(\?.*$|$)/i,
+      /\.(mp4|webm|md)/i,
+      wcbUtils.getFileTypeRegExp(this.webpackConfigBuilder, WebpackConfigBuilder.FILE_TYPE_IMG),
+    ];
+
+    return [
+      ...resources.map(resourceRegex => {
+        return {
+          oneOf: [
+            // adding ?raw will include the source as string
+            { type: 'asset/source', test: resourceRegex, resourceQuery: /raw/ },
+            { type: 'asset/resource', test: resourceRegex },
+          ],
+        };
+      }),
+      {
+        // FIXME temporary fix for webpack 4 https://github.com/webpack-contrib/bundle-loader/issues/74
+        test: /\.json$/i,
+        type: 'javascript/auto',
+        loader: 'json-loader',
+      },
+    ]
       .concat(this.buildCssLoaders())
       .concat(wcbUtils.buildRules(this.webpackConfigBuilder));
   }
