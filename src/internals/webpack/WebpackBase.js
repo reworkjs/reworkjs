@@ -273,7 +273,8 @@ export default class WebpackBase {
         return {
           oneOf: [
             // adding ?raw will include the source as string
-            { type: 'asset/source', test: resourceRegex, resourceQuery: /raw/ },
+            { type: 'asset/source', resourceQuery: /raw/ },
+            { type: 'asset/resource', resourceQuery: /url/ },
             { type: 'asset/resource', test: resourceRegex },
           ],
         };
