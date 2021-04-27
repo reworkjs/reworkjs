@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.35.2](https://github.com/reworkjs/reworkjs/compare/v0.35.1...v0.35.2) (2021-04-27)
+
+
+### Features
+
+* allow loading any file with 'import' as url or raw by adding ?raw or ?url ([b82d22d](https://github.com/reworkjs/reworkjs/commit/b82d22d43912c5d74e117159ff5687a56d348ed1))
+
 ### [0.35.1](https://github.com/reworkjs/reworkjs/compare/v0.35.0...v0.35.1) (2021-04-19)
 
 
