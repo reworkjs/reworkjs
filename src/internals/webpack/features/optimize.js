@@ -31,6 +31,7 @@ export default class OptimizeFeature extends BaseFeature {
 
     config.injectRules({
       test: BaseFeature.FILE_TYPE_IMG,
+      resourceQuery: { not: [/url/] },
       loader: 'image-webpack-loader',
       options: {
         bypassOnDebug: true,
