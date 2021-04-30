@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.35.3](https://github.com/reworkjs/reworkjs/compare/v0.35.2...v0.35.3) (2021-04-30)
+
+
+### Bug Fixes
+
+* disable warning about loose private methods ([a2daa1d](https://github.com/reworkjs/reworkjs/commit/a2daa1d76f2ff4013ee49000fbcd4efa446de9a0))
+* don't pass images loaded with ?url to image-webpack-loader ([ce345f1](https://github.com/reworkjs/reworkjs/commit/ce345f14c85b1f667fc8fb555b6a372f230af398))
+
 ### [0.35.2](https://github.com/reworkjs/reworkjs/compare/v0.35.1...v0.35.2) (2021-04-27)
 
 
