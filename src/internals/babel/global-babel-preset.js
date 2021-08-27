@@ -19,6 +19,9 @@ module.exports = function buildPreset(api, opts = {}) {
     ],
 
     plugins: [
+      [require('@babel/plugin-proposal-private-methods').default, {
+        loose: true,
+      }],
       require('@babel/plugin-syntax-dynamic-import').default,
       [require('@babel/plugin-transform-runtime').default, {
         corejs: false,
