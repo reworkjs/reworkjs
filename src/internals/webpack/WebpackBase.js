@@ -1,6 +1,7 @@
 // @flow
 
 import LoadablePlugin from '@loadable/webpack-plugin';
+import ResolveTypescriptPlugin from 'resolve-typescript-plugin';
 import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin';
 import { CleanWebpackPlugin } from 'clean-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
@@ -161,6 +162,7 @@ export default class WebpackBase {
           'main',
         ],
         alias: this.getAliases(),
+        plugins: [new ResolveTypescriptPlugin()],
       },
       mode: this.isDev ? 'development' : 'production',
       optimization: {

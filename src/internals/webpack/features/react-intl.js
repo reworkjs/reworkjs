@@ -2,11 +2,11 @@
 
 import fs from 'fs';
 import path from 'path';
-import webpack from 'webpack';
 import uniq from 'lodash/uniq';
-import BaseFeature from '../BaseFeature';
-import logger from '../../../shared/logger';
+import webpack from 'webpack';
 import config from '../../../shared/framework-config';
+import logger from '../../../shared/logger';
+import BaseFeature from '../BaseFeature';
 import type WebpackConfigBuilder from '../WebpackConfigBuilder';
 
 export default class ReactIntlFeature extends BaseFeature {

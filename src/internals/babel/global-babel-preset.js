@@ -8,12 +8,15 @@
  * - optimisations
  */
 
+// @flow
+
 module.exports = function buildPreset(api, opts = {}) {
 
   const preset = {
     presets: [
       [require('@babel/preset-env').default, {
         modules: false,
+        loose: true,
         ...opts['@babel/preset-env'],
       }],
     ],

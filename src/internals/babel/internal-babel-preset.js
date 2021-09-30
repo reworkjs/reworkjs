@@ -36,6 +36,22 @@ module.exports = function buildPreset(api, opts = {}) {
     },
   });
 
+  preset.overrides = [{
+    include: /\.(ts|tsx)$/,
+    plugins: [
+      [require('@babel/plugin-transform-typescript').default, {
+        isTSX: true,
+        onlyRemoveTypeImports: true,
+        allowDeclareFields: true,
+      }],
+    ],
+  }, {
+    include: /\.(js|jsx)$/,
+    plugins: [
+      require('@babel/plugin-transform-flow-strip-types').default,
+    ],
+  }];
+
   preset.presets.push(
     [require('@babel/preset-react').default, {
       development: process.env.BABEL_ENV !== 'production',
@@ -46,17 +62,10 @@ module.exports = function buildPreset(api, opts = {}) {
   );
 
   preset.plugins.push(
-    require('@babel/plugin-transform-flow-strip-types').default,
     [require('@babel/plugin-proposal-decorators').default, {
       // TODO: migrate to non-legacy decorators
       legacy: true,
       // decoratorsBeforeExport: true,
-    }],
-    [require('@babel/plugin-proposal-private-methods').default, {
-      loose: true,
-    }],
-    [require('@babel/plugin-proposal-class-properties').default, {
-      loose: true,
     }],
   );
 

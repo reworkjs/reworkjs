@@ -1,12 +1,34 @@
-// @flow
+import { useEffect, useState } from 'react';
 
 // Install ServiceWorker and AppCache in the end since
 // it's not most important operation and if main code fails,
 // we do not want it installed
-import { useEffect, useState } from 'react';
 
 let updateAvailable = false;
-const updateListeners = new Set();
+const updateListeners = new Set<(enabled?: boolean) => any>();
+
+let _serviceWorkerPromise;
+
+export async function getServiceWorkerRegistration(): Promise<ServiceWorkerRegistration | null> {
+  if (!('serviceWorker' in navigator) || !navigator.serviceWorker.register) {
+    return null;
+  }
+
+  if (!_serviceWorkerPromise) {
+    _serviceWorkerPromise = navigator.serviceWorker.register('/sw.js');
+  }
+
+  return _serviceWorkerPromise;
+}
+
+export async function checkForServiceWorkerUpdates(): Promise<void> {
+  const serviceWorker = await getServiceWorkerRegistration();
+  if (serviceWorker == null) {
+    return;
+  }
+
+  await serviceWorker.update();
+}
 
 // https://whatwebcando.today/articles/handling-service-worker-updates/
 export function updateServiceWorker() {
@@ -15,26 +37,15 @@ export function updateServiceWorker() {
     return;
   }
 
-  if (!('serviceWorker' in navigator) || !navigator.serviceWorker.register) {
-    return;
-  }
-
-  navigator.serviceWorker.register('/sw.js')
+  getServiceWorkerRegistration()
     .then(registration => {
-      console.info('[SW] Registered');
-
-      if (registration.waiting) {
-        declareRestartRequired();
+      if (registration == null) {
+        return;
       }
 
-      registration.addEventListener('updatefound', () => {
-        // If updatefound is fired, it means that there's
-        // a new service worker being installed.
-        const installingWorker = registration.installing;
-        if (!installingWorker) {
-          return;
-        }
+      console.info('[SW] Registered');
 
+      const onUpdateFound = installingWorker => {
         console.info('[SW] Update found');
 
         installingWorker.addEventListener('statechange', () => {
@@ -42,6 +53,22 @@ export function updateServiceWorker() {
             declareRestartRequired();
           }
         });
+      };
+
+      if (registration.waiting) {
+        declareRestartRequired();
+      }
+
+      if (registration.installing) {
+        onUpdateFound(registration.installing);
+      }
+
+      registration.addEventListener('updatefound', () => {
+        // If updatefound is fired, it means that there's
+        // a new service worker being installed.
+        if (registration.installing) {
+          onUpdateFound(registration.installing);
+        }
       });
     })
     .catch(registrationError => {
@@ -81,7 +108,7 @@ export function useRestartRequired() {
     updateListeners.add(listener);
 
     return () => {
-      updateListeners.delete(listener());
+      updateListeners.delete(listener);
     };
   }, []);
 

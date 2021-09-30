@@ -1,16 +1,14 @@
-// @flow
-
-import config from '../framework-config';
 import recursiveReadSync from 'recursive-readdir-sync';
+import config from '../framework-config';
 
 export function loadMessageTranslationList() {
   return requireContext(config.directories.translations, true, /\.js(on|x|m)$/);
 }
 
-type BundleModuleLoader = (callback: (any) => any) => void;
+type BundleModuleLoader = (callback: ((any) => any)) => void;
 type BundleLoader = (file: string) => BundleModuleLoader;
 
-function requireContext(path: string, recursive: boolean, filter: RegExp): BundleLoader {
+function requireContext(path: string, _recursive: boolean, filter: RegExp): BundleLoader {
   const files = recursiveReadSync(path)
     .filter(file => filter.test(file))
     // replace absolute path with relative path to match webpack behavior
