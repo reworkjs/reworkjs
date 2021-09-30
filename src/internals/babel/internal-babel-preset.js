@@ -67,12 +67,6 @@ module.exports = function buildPreset(api, opts = {}) {
       legacy: true,
       // decoratorsBeforeExport: true,
     }],
-    [require('@babel/plugin-proposal-private-methods').default, {
-      loose: true,
-    }],
-    [require('@babel/plugin-proposal-class-properties').default, {
-      loose: true,
-    }],
   );
 
   if (buildEsModules) {

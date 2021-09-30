@@ -8,20 +8,20 @@
  * - optimisations
  */
 
+// @flow
+
 module.exports = function buildPreset(api, opts = {}) {
 
   const preset = {
     presets: [
       [require('@babel/preset-env').default, {
         modules: false,
+        loose: true,
         ...opts['@babel/preset-env'],
       }],
     ],
 
     plugins: [
-      [require('@babel/plugin-proposal-private-methods').default, {
-        loose: true,
-      }],
       require('@babel/plugin-syntax-dynamic-import').default,
       [require('@babel/plugin-transform-runtime').default, {
         corejs: false,
