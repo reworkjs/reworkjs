@@ -2,11 +2,11 @@
 
 // @flow
 
-const gulp = require('gulp');
-const watch = require('gulp-watch');
-const plumber = require('gulp-plumber');
-const babel = require('gulp-babel');
 const del = require('del');
+const gulp = require('gulp');
+const babel = require('gulp-babel');
+const plumber = require('gulp-plumber');
+const watch = require('gulp-watch');
 
 const FRAMEWORK_BABEL_PRESET = `${__dirname}/src/internals/babel/internal-babel-preset`;
 
@@ -20,12 +20,14 @@ function cleanLib() {
 // ['clean-lib']
 function copyLib() {
   return gulp
-    .src('./src/!(gatsby-theme-docz)/**/*')
+    // copy all except ts & js files
+    .src('./src/!(gatsby-theme-docz)/**/!(*.js|*.jsx|*.ts|*.tsx)')
     .pipe(gulp.dest('./lib'));
 }
 
 function compileLib() {
-  return gulp.src('./src/!(gatsby-theme-docz)/**/*.js')
+  // transpile & copy js/ts files to js
+  return gulp.src('./src/!(gatsby-theme-docz)/**/*.{js,jsx,ts,tsx}')
     .pipe(plumber())
     .pipe(babel({
       presets: [
@@ -47,12 +49,12 @@ function cleanEs() {
 
 function copyEs() {
   return gulp
-    .src('./src/!(gatsby-theme-docz)/**/*')
+    .src('./src/!(gatsby-theme-docz)/**/!(*.js|*.jsx|*.ts|*.tsx)')
     .pipe(gulp.dest('./es'));
 }
 
 function compileEs() {
-  return gulp.src('./src/!(gatsby-theme-docz)/**/*.js')
+  return gulp.src('./src/!(gatsby-theme-docz)/**/*.{js,jsx,ts,tsx}')
     .pipe(plumber())
     .pipe(babel({
       presets: [
