@@ -90,6 +90,11 @@ class LanguageComponent extends React.Component<Props, State> {
     return (
       <IntlProvider
         locale={this.state.activeLocale}
+        // mute very annoying errors from react-intl
+        // it's ok for messages to be missing during development.
+        // add a CI check to ensure your localisation files are not missing a key or doesn't
+        // contain an empty message during publish.
+        defaultLocale={this.state.activeLocale}
         messages={this.state.messages}
       >
         <ActiveLocaleContext.Provider value={this.activeLocaleContext}>
