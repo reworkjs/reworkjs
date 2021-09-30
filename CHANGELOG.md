@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.35.4](https://github.com/reworkjs/reworkjs/compare/v0.35.3...v0.35.4) (2021-09-30)
+
+
+### Features
+
+* expose methods to control service worker ([3146671](https://github.com/reworkjs/reworkjs/commit/3146671c12df4d1ca75d1d4107834166a6c8e56c))
+* mute react-intl "missing translation" errors ([3753e80](https://github.com/reworkjs/reworkjs/commit/3753e807bfe6e2a170de05db29e439d9265affc3))
+* support loading .ts files by specifying .js extension ([89c0e38](https://github.com/reworkjs/reworkjs/commit/89c0e382df11514a5de994b31d0b7935ab0fc11b))
+
+
+### Bug Fixes
+
+* mute babel warning ([302bc3a](https://github.com/reworkjs/reworkjs/commit/302bc3a1aa066fbf7fce75c14f3f2a53a2839b1a))
+* remove duplicate plugin declarations & prevent babel spam ([6597f3c](https://github.com/reworkjs/reworkjs/commit/6597f3cd531c5606dd8d52b69b1aea6b272716cb))
+* update intl polyfill installation ([a36ba3c](https://github.com/reworkjs/reworkjs/commit/a36ba3ce09424c2e2465e01d4c1f0ff9292c747c))
+
 ### [0.35.3](https://github.com/reworkjs/reworkjs/compare/v0.35.2...v0.35.3) (2021-04-30)
 
 
