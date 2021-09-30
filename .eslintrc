@@ -2,7 +2,7 @@
   "extends": [
     "@foobarhq/eslint-config",
     "@foobarhq/eslint-config/browser",
-    "@foobarhq/eslint-config-flow"
+    "@foobarhq/eslint-config/react"
   ],
   "env": {
     "browser": true,
@@ -12,7 +12,7 @@
   },
   "rules": {
     // Rules specific to this project
-    "import/no-extraneous-dependencies": ["error", {"packageDir": "./"}],
+    "import/no-extraneous-dependencies": ["error", { "packageDir": "./" }],
     "valid-jsdoc": 0,
     "no-console": 2,
     "import/order": 0,
@@ -20,9 +20,22 @@
     "lines-around-comment": 0,
 
     // this rule does not better anything
-    "lodash/prefer-noop": 0,
-
-    // https://github.com/gajus/eslint-plugin-flowtype/issues/293
-    "flowtype/no-dupe-keys": 0
-  }
+    "lodash/prefer-noop": 0
+  },
+  "overrides": [
+    {
+      "files": ["*.{js,jsx}"],
+      "extends": ["@foobarhq/eslint-config-flow"],
+      "rules": {
+        // https://github.com/gajus/eslint-plugin-flowtype/issues/293
+        "flowtype/no-dupe-keys": 0
+      }
+    }, {
+      "files": ["*.{ts,tsx}"],
+      "extends": ["@foobarhq/eslint-config-typescript"],
+      "rules": {
+        "@typescript-eslint/require-array-sort-compare": ["error"]
+      }
+    }
+  ]
 }
