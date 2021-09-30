@@ -10,13 +10,13 @@
 
 import fs from 'fs';
 import path from 'path';
+import Joi from 'joi';
 import get from 'lodash/get';
 import set from 'lodash/set';
-import Joi from 'joi';
 import argv from '../../internals/rjs-argv';
 import { resolveProject } from '../../internals/util/resolve-util';
 import logger from '../logger';
-import { FrameworkConfigStruct } from './framework-config-type';
+import type { FrameworkConfigStruct } from './framework-config-type';
 
 const isCustomConfigFile = Boolean(argv.reworkrc);
 const frameworkConfigFile = (argv.reworkrc && path.resolve(argv.reworkrc)) || resolveProject('.reworkrc');

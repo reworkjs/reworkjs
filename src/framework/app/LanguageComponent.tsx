@@ -1,16 +1,16 @@
-// @flow
-
-import * as React from 'react';
+import { Component } from 'react';
+import type { Cookies } from 'react-cookie';
+import { withCookies } from 'react-cookie';
 import { IntlProvider } from 'react-intl';
-import { Cookies, withCookies } from 'react-cookie';
+import { LanguageContext } from '../common/accept-language-context';
 import { ActiveLocaleContext } from '../common/active-locale-context';
-import { isTranslationSupported, type ReactIntlMessages } from '../common/i18n/_app-translations';
-import { guessPreferredLocale, LOCALE_COOKIE_NAME, storePreferredLocale } from '../common/i18n/get-preferred-locale';
 import {
   onIntlHotReload,
   installLocale,
 } from '../common/i18n';
-import { LanguageContext } from '../common/accept-language-context';
+import { isTranslationSupported } from '../common/i18n/_app-translations.js';
+import type { ReactIntlMessages } from '../common/i18n/_app-translations.js';
+import { guessPreferredLocale, LOCALE_COOKIE_NAME, storePreferredLocale } from '../common/i18n/get-preferred-locale';
 import withContext from '../common/with-context';
 
 type Props = {
@@ -29,7 +29,7 @@ type State = {
  */
 @withCookies
 @withContext({ acceptLanguages: LanguageContext })
-class LanguageComponent extends React.Component<Props, State> {
+class LanguageComponent extends Component<Props, State> {
 
   state = {
     // TODO(DEFAULT_LOCALE): use default locale instead of 'en'
@@ -62,7 +62,7 @@ class LanguageComponent extends React.Component<Props, State> {
     });
   }
 
-  setActiveLocale(newLocale: string) {
+  async setActiveLocale(newLocale: string) {
     if (!isTranslationSupported(newLocale)) {
       throw new Error(`Locale ${newLocale} is unsupported`);
     }
