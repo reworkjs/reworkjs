@@ -1,5 +1,3 @@
-// @flow
-
 import { chalkCommand, chalkWebpackFeature, chalkNpmDep } from '../../shared/chalk';
 import logger from '../../shared/logger';
 import WebpackConfigBuilder from './WebpackConfigBuilder';

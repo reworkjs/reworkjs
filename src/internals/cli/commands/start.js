@@ -1,5 +1,3 @@
-// @flow
-
 import childProcess from 'child_process';
 import getPort from 'get-port';
 import { chalkEnvVar } from '../../../shared/chalk';

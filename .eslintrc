@@ -22,19 +22,20 @@
     // this rule does not better anything
     "lodash/prefer-noop": 0
   },
+  "settings": {
+    "import/resolver": {
+      "typescript": {}
+    }
+  },
   "overrides": [
     {
-      "files": ["*.{js,jsx}"],
-      "extends": ["@foobarhq/eslint-config-flow"],
-      "rules": {
-        // https://github.com/gajus/eslint-plugin-flowtype/issues/293
-        "flowtype/no-dupe-keys": 0
-      }
-    }, {
-      "files": ["*.{ts,tsx}"],
+      "files": ["*.{ts,tsx,mts,cts}"],
       "extends": ["@foobarhq/eslint-config-typescript"],
       "rules": {
-        "@typescript-eslint/require-array-sort-compare": ["error"]
+        "@typescript-eslint/require-array-sort-compare": ["error"],
+        // handled by typescript
+        "import/no-unresolved": 0,
+        "import/no-useless-path-segments": 0
       }
     }
   ]

@@ -1,4 +1,4 @@
-// @flow
+
 
 // this module is ran on node before webpack bundles it.
 

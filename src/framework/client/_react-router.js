@@ -1,5 +1,3 @@
-// @flow
-
 // this module is ran on node before webpack bundles it.
 
 /* eslint-disable import/no-commonjs */

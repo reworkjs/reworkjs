@@ -1,5 +1,3 @@
-// @flow
-
 import frameworkConfig from './framework-config';
 
 export default function getWebpackSettings(server: boolean) {

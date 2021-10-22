@@ -1,5 +1,3 @@
-// @flow
-
 import { resolve } from 'path';
 
 function removeStartSlash(fileName) {

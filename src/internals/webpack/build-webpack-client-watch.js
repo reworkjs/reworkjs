@@ -1,5 +1,3 @@
-// @flow
-
 import fs from 'fs';
 import path from 'path';
 import express, { type $Response, type $Request } from 'express';

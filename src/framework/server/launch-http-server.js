@@ -1,5 +1,3 @@
-// @flow
-
 import { promisify } from 'util';
 import express from 'express';
 import getPort from 'get-port';

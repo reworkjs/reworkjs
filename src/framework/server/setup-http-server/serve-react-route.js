@@ -1,5 +1,3 @@
-// @flow
-
 import React from 'react';
 import { CookiesProvider } from 'react-cookie';
 import { StaticRouter } from 'react-router-dom';
@@ -11,11 +9,11 @@ import { collectInitial, collectContext } from 'node-style-loader/collect';
 import accept from '@hapi/accept';
 import { getDefault } from '../../../shared/util/ModuleUtil';
 import getWebpackSettings from '../../../shared/webpack-settings';
-import { rootRoute } from '../../common/kernel';
-import ReworkRootComponent from '../../app/ReworkRootComponent';
-import { LanguageContext } from '../../common/accept-language-context';
-import { SsrContext } from '../../common/ssr-context';
-import { loadResource } from '../../common/use-async-resource/load-resource';
+import { rootRoute } from '../../common/kernel.tsx';
+import ReworkRootComponent from '../../app/ReworkRootComponent.js';
+import { LanguageContext } from '../../common/accept-language-context.js';
+import { SsrContext } from '../../common/ssr-context.js';
+import { loadResource } from '../../common/use-async-resource/load-resource.js';
 import ServerHooks from '../server-hooks';
 import renderPage from './render-page';
 

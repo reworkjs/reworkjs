@@ -1,5 +1,3 @@
-// @flow
-
 import findCacheDir from 'find-cache-dir';
 import fs from 'fs';
 import path from 'path';

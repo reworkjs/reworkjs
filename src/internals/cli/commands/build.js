@@ -1,5 +1,3 @@
-// @flow
-
 import childProcess from 'child_process';
 import { chalk, chalkEnvVar } from '../../../shared/chalk';
 import logger from '../../../shared/logger';

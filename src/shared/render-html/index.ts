@@ -1,4 +1,3 @@
-// @flow
 
 import defaultRenderPage from '../../framework/server/setup-http-server/default-render-page';
 import type { RenderPageFunction } from '../../framework/server/setup-http-server/render-page';

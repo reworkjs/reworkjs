@@ -1,4 +1,4 @@
-import preInit from '../common/pre-init';
+import preInit from '../common/pre-init.js';
 
 process.on('unhandledRejection', reason => {
   console.error('Unhandled Rejections:');

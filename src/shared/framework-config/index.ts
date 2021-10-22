@@ -1,4 +1,3 @@
-// @flow
 
 /**
  * @module framework-config

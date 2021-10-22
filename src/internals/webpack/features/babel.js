@@ -1,5 +1,3 @@
-// @flow
-
 import findCacheDir from 'find-cache-dir';
 import findBabelConfig from 'find-babel-config';
 import frameworkMetadata from '../../../shared/framework-metadata';

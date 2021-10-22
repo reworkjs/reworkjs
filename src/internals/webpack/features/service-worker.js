@@ -1,5 +1,3 @@
-// @flow
-
 import WorkboxPlugin from 'workbox-webpack-plugin';
 import { resolveFrameworkSource } from '../../util/resolve-util';
 import BaseFeature from '../BaseFeature';

@@ -1,5 +1,3 @@
-// @flow
-
 import LoadablePlugin from '@loadable/webpack-plugin';
 import ResolveTypescriptPlugin from 'resolve-typescript-plugin';
 import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin';
@@ -15,8 +13,8 @@ import webpack from 'webpack';
 import nodeExternals from 'webpack-node-externals';
 import SriPlugin from 'webpack-subresource-integrity';
 import WebpackBar from 'webpackbar';
-import BaseHelmet from '../../framework/app/BaseHelmet';
-import appArgv from '../../framework/common/app-argv/node';
+import BaseHelmet from '../../framework/app/BaseHelmet.js';
+import appArgv from '../../framework/common/app-argv';
 import renderPage from '../../framework/server/setup-http-server/render-page';
 import { chalkNok, chalkOk } from '../../shared/chalk';
 import frameworkConfig from '../../shared/framework-config';
@@ -146,15 +144,11 @@ export default class WebpackBase {
       }],
       resolve: {
         modules: ['node_modules'],
-        extensions: [
-          // add .server.js and .browser.js extensions which will have priority over default extension if present
-          ...(this.isServer()
-            ? EXTENSIONS.map(ext => `.server${ext}`)
-            : EXTENSIONS.map(ext => `.browser${ext}`)
-          ),
-          ...EXTENSIONS,
-        ],
+        extensions: EXTENSIONS,
         mainFields: [
+          // when loaded by webpack for the browser
+          ...(this.isServer() ? [] : ['browser:main']),
+          // when loaded by webpack (node or browser)
           'webpack:main',
           'jsnext:module',
           'module',

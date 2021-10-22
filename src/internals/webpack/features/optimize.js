@@ -1,9 +1,5 @@
-// @flow
-
 import TerserPlugin from 'terser-webpack-plugin';
-import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
-
-import BaseFeature from '../BaseFeature';
+import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';import BaseFeature from '../BaseFeature';
 import type WebpackConfigBuilder from '../WebpackConfigBuilder';
 
 export default class OptimizeFeature extends BaseFeature {

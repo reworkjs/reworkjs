@@ -1,5 +1,3 @@
-// @flow
-
 import cli from 'yargs';
 import requireAll from 'require-all';
 import framework from '../../shared/framework-metadata';

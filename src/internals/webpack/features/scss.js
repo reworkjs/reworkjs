@@ -1,5 +1,3 @@
-// @flow
-
 import BaseFeature from '../BaseFeature';
 import type WebpackConfigBuilder from '../WebpackConfigBuilder';
 import PostCssFeature from './postcss';

@@ -1,5 +1,3 @@
-// @flow
-
 import loadRenderPage from '../../../shared/render-html';
 
 type HelmetItem = {
