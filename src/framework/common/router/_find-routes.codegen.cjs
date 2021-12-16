@@ -17,19 +17,20 @@ module.exports = async function getRouteDeclarations() {
   const configDir = path.dirname(config.filePath);
 
   return asyncGlob(routeGlob, { cwd: configDir }).then(routeFiles => {
-
     routeFiles = routeFiles.map(file => path.resolve(configDir, file));
 
-    const requireArray = `[${routeFiles.map(fileName => `require(${JSON.stringify(fileName)})`).join(',')}]`;
-    let code = `const o = ${requireArray}; export default o;`; // add the list of file paths in dev for easier debugging.
+    return {
+      code: `
+${routeFiles.map((file, i) => `import importedValue${i} from ${JSON.stringify(file)};\n`).join('')}
 
-    // add the list of file paths in dev for easier debugging.
-    if (process.env.NODE_ENV !== 'production') {
-      const fileNames = `[${routeFiles.map(fileName => JSON.stringify(fileName)).join(',')}]`;
+const o = [${routeFiles.map((_file, i) => `importedValue${i}`).join(',')}]; 
 
-      code += `o.__debugFileNames = ${fileNames}`;
-    }
+if (process.env.NODE_ENV !== 'production') {
+  o.__debugFileNames = [${routeFiles.map(fileName => JSON.stringify(fileName)).join(',')}];
+}
 
-    return { code };
+export default o;
+      `
+    };
   });
 };

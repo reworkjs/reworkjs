@@ -2,6 +2,7 @@ import logger from '@reworkjs/core/logger';
 import { Route } from 'react-router-dom';
 import routeModules from 'val-loader!./_find-routes.codegen.cjs';
 import { getDefault } from '../../../shared/util/module-util.js';
+import Dev404Loadable from './dev-404.loadable.cjs';
 
 const SourceFileName = Symbol('sourceFileName');
 
@@ -47,7 +48,7 @@ export default function createRoutes() {
       path: '*',
       priority: Number.MIN_SAFE_INTEGER,
       status: 404,
-      component: require('./dev-404.js').default,
+      component: Dev404Loadable,
     });
   }
 
