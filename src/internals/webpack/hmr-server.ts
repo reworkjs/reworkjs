@@ -1,10 +1,10 @@
 /*
  * MIT License http://www.opensource.org/licenses/mit-license.php
  * Author Tobias Koppers @sokra
- * Adapted for reworkjs by Guylian Cox <gc@madkings.com> to make the process notify the parent it needs to be reloaded.
+ * Adapted for reworkjs by Zoé Cox <zoe@ephys.dev> to make the process notify the parent it needs to be reloaded.
  */
 
-import logApplyResults from 'webpack/hot/log-apply-result';
+import logApplyResults from 'webpack/hot/log-apply-result.js';
 
 if (!import.meta.webpackHot) {
   throw new Error('[HMR] Hot Module Replacement is disabled.');
