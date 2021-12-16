@@ -1,9 +1,8 @@
 import { loadMessageTranslationList } from '@reworkjs/core/_internal_/translations';
 import type { BundleLoader } from '@reworkjs/core/_internal_/translations';
 import isPojo from '../../../shared/util/is-pojo.js';
-import { getDefault } from '../../../shared/util/module-util.js';
 import { triggerI18nHotReload } from './_hot-reload.js';
-import { getFileName, getLocaleBestFit, runBundleLoader } from './_locale-utils.js';
+import { getFileName, getLocaleBestFit } from './_locale-utils.js';
 
 let messageTranslationsLoaders = loadMessageTranslationList();
 let localeToFileMapping: Map<string, string> = buildMessagesLocaleList(messageTranslationsLoaders);
@@ -43,24 +42,21 @@ async function installReactIntlMessagesForLocale(locale: string): Promise<ReactI
 
 async function downloadMessagesTranslationFile(localeName: string): Promise<any> {
 
-  return Promise.resolve().then(async () => {
-    // if we're trying to load en-US but we only have en, using en is fine.
-    const actualLocale = getMessageLocaleBestFit(localeName);
+  // if we're trying to load en-US but we only have en, using en is fine.
+  const actualLocale = getMessageLocaleBestFit(localeName);
 
-    if (actualLocale == null) {
-      throw new Error(`Unknown locale ${JSON.stringify(localeName)}. Did you forget to add the translation file ?`);
-    }
+  if (actualLocale == null) {
+    throw new Error(`Unknown locale ${JSON.stringify(localeName)}. Did you forget to add the translation file ?`);
+  }
 
-    const file = localeToFileMapping.get(actualLocale);
-    if (file == null) {
-      throw new Error('rework.js: Internal Error while loading locale');
-    }
+  const file = localeToFileMapping.get(actualLocale);
+  if (file == null) {
+    throw new Error('rework.js: Internal Error while loading locale');
+  }
 
-    const loader = messageTranslationsLoaders(file);
+  const Module = await messageTranslationsLoaders(file);
 
-    return runBundleLoader(loader)
-      .then(module => getDefault(module));
-  });
+  return Module.default;
 }
 
 function getMessageLocaleBestFit(localeName: string) {

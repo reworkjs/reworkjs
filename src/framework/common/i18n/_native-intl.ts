@@ -2,7 +2,8 @@ import { shouldPolyfill as shouldPolyfillListFormat } from '@formatjs/intl-listf
 import { shouldPolyfill as shouldPolyfillNumber } from '@formatjs/intl-numberformat/should-polyfill.js';
 import { shouldPolyfill as shouldPolyfillPlural } from '@formatjs/intl-pluralrules/should-polyfill.js';
 import { shouldPolyfill as shouldPolyfillRelativeTime } from '@formatjs/intl-relativetimeformat/should-polyfill.js';
-import { getFileName, getLocaleBestFit, runBundleLoader } from './_locale-utils.js';
+import { getListFormatLoaders, getNumberLocaleLoaders, getPluralRulesLocaleLoaders, getRelativeTimeLocaleLoaders } from '@reworkjs/core/_internal_/translations';
+import { getFileName, getLocaleBestFit } from './_locale-utils.js';
 
 async function _loadPolyfillLocale(localeLoaders, localeName: string) {
   const availableIntlLocales: string[] = localeLoaders.keys().map(getFileName);
@@ -15,17 +16,12 @@ async function _loadPolyfillLocale(localeLoaders, localeName: string) {
     actualLocale = 'en';
   }
 
-  const loader = localeLoaders(`./${actualLocale}.js`);
+  const Module = await localeLoaders(`./${actualLocale}.js`);
 
-  return runBundleLoader(loader);
+  return Module.default;
 }
 
 // ===================== LIST FORMAT  =====================
-
-function getListFormatLoaders() {
-  // $FlowIgnore
-  return require.context('bundle-loader?lazy&name=p-intllist-[name]!@formatjs/intl-listformat/locale-data', true, /\.js$/);
-}
 
 async function installListFormat(localeName: string) {
   if (!shouldPolyfillListFormat(localeName)) {
@@ -37,11 +33,6 @@ async function installListFormat(localeName: string) {
 }
 
 // ===================== NUMBER FORMAT  =====================
-
-function getNumberLocaleLoaders() {
-  // $FlowIgnore
-  return require.context('bundle-loader?lazy&name=p-intlunit-[name]!@formatjs/intl-numberformat/locale-data', true, /\.js$/);
-}
 
 async function installUnifiedNumberFormat(localeName: string) {
   // install polyfill if unified number format is not natively supported
@@ -55,11 +46,6 @@ async function installUnifiedNumberFormat(localeName: string) {
 
 // ===================== PLURAL RULES  =====================
 
-function getPluralRulesLocaleLoaders() {
-  // $FlowIgnore
-  return require.context('bundle-loader?lazy&name=p-intlplural-[name]!@formatjs/intl-pluralrules/locale-data', true, /\.js$/);
-}
-
 async function installPluralRules(localeName: string) {
   if (!shouldPolyfillPlural(localeName)) {
     return;
@@ -70,11 +56,6 @@ async function installPluralRules(localeName: string) {
 }
 
 // ===================== RELATIVE TIME =====================
-
-function getRelativeTimeLocaleLoaders() {
-  // $FlowIgnore
-  return require.context('bundle-loader?lazy&name=p-intlrelative-[name]!@formatjs/intl-relativetimeformat/locale-data', true, /\.js$/);
-}
 
 async function installRelativeTime(localeName: string) {
   if (!shouldPolyfillRelativeTime(localeName)) {

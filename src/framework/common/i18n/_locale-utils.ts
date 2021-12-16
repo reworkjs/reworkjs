@@ -1,5 +1,3 @@
-import type { BundleModuleLoader } from '@reworkjs/core/_internal_/translations';
-
 export function getLocaleBestFit(locale: string, availableLocales: string[]): string | null {
 
   if (availableLocales.includes(locale)) {
@@ -26,10 +24,4 @@ export function getFileName(file: string): string {
   }
 
   return fileName;
-}
-
-export async function runBundleLoader(loader: BundleModuleLoader): Promise<any> {
-  return new Promise(resolve => {
-    loader(loadedModule => resolve(loadedModule));
-  });
 }

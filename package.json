@@ -152,7 +152,6 @@
     "inquirer": "^7.3.3",
     "ip": "^1.1.5",
     "joi": "^17.5.0",
-    "json-loader": "^0.5.7",
     "lodash": "^4.17.21",
     "mini-css-class-name": "^0.12.1",
     "mini-css-extract-plugin": "^1.6.0",
