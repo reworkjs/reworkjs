@@ -1,5 +1,0 @@
-{
-  "*.{js,jsx,jsm,ts,tsx}": ["eslint --report-unused-disable-directives --fix"],
-  "*.css": ["stylelint --fix"],
-  "*.scss": ["stylelint --syntax=scss --fix"]
-}
