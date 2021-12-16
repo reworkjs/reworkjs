@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { createContext } from 'react';
-import type { ResourceLoader } from './use-async-resource/typings.js';
+import type { ResourceLoader } from './ssr-apis/use-async-resource/typings.js';
 
 type Context = {
   req?: Request,

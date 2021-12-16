@@ -1,5 +1,0 @@
-{
-  "presets": [
-    "./src/internals/babel/internal-babel-preset"
-  ]
-}

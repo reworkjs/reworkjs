@@ -6,3 +6,9 @@ issues encountered with rework:
 - change how pages are loaded
   page pattern : (name).route.js
   use name for url
+
+- re-export Helmet from '@reworkjs/core/helmet'
+
+- make entry-react default to pages/_app ?
+
+- write default values to reworkrc

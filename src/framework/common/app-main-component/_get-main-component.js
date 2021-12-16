@@ -1,18 +1,13 @@
 
-
 // this module is ran on node before webpack bundles it.
-
-/* eslint-disable import/no-commonjs */
-
-// need to import from /lib (the version in which webpack is running) otherwise it will use /es
-const config = require('../../../../lib/shared/framework-config');
+import config from '@reworkjs/core/_internal_/framework-config';
 
 const DEFAULT_ENTRY = `
 import { Fragment } from 'react';
 export default Fragment;
 `;
 
-module.exports = function getRouteDeclarations() {
+export default function getRouteDeclarations() {
 
   const entryConfig = config.default['entry-react'];
   if (!entryConfig) {
@@ -24,4 +19,4 @@ module.exports = function getRouteDeclarations() {
       export { default } from ${JSON.stringify(entryConfig)};
     `,
   };
-};
+}

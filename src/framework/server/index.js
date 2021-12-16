@@ -8,5 +8,5 @@ process.on('unhandledRejection', reason => {
 });
 
 preInit().then(() => {
-  require('./launch-http-server'); // eslint-disable-line global-require
+  require('./launch-http-server.js'); // eslint-disable-line global-require
 });

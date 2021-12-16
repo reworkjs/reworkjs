@@ -1,15 +1,11 @@
 // this module is ran on node before webpack bundles it.
+import config from '@reworkjs/core/_internal_/framework-config';
 
-/* eslint-disable import/no-commonjs */
-
-// need to import from /lib (the version in which webpack is running) otherwise it will use /es
-const config = require('../../../lib/shared/framework-config');
-
-module.exports = function getRouteDeclarations() {
+export default function getRouteDeclarations() {
 
   const isHash = config.default.routingType === 'hash';
 
   return {
     code: `export const isHash = ${isHash}`,
   };
-};
+}

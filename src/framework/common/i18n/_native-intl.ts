@@ -32,7 +32,7 @@ async function installListFormat(localeName: string) {
     return;
   }
 
-  await import(/* webpackChunkName: "p-intllist" */ '@formatjs/intl-listformat/polyfill');
+  await import(/* webpackChunkName: "p-intllist" */ '@formatjs/intl-listformat/polyfill.js');
   await _loadPolyfillLocale(getListFormatLoaders(), localeName);
 }
 
@@ -49,7 +49,7 @@ async function installUnifiedNumberFormat(localeName: string) {
     return;
   }
 
-  await import(/* webpackChunkName: "p-intlunit" */'@formatjs/intl-numberformat/polyfill');
+  await import(/* webpackChunkName: "p-intlunit" */'@formatjs/intl-numberformat/polyfill.js');
   await _loadPolyfillLocale(getNumberLocaleLoaders(), localeName);
 }
 
@@ -65,7 +65,7 @@ async function installPluralRules(localeName: string) {
     return;
   }
 
-  await import(/* webpackChunkName: "p-intlplural" */ '@formatjs/intl-pluralrules/polyfill');
+  await import(/* webpackChunkName: "p-intlplural" */ '@formatjs/intl-pluralrules/polyfill.js');
   await _loadPolyfillLocale(getPluralRulesLocaleLoaders(), localeName);
 }
 

@@ -1,4 +1,4 @@
-import { isTranslationSupported } from '.';
+import { isTranslationSupported } from './index.js';
 
 export const LOCALE_COOKIE_NAME = 'rjs-locale';
 

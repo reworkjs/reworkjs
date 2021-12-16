@@ -1,5 +1,3 @@
-
-
 /** @jsx jsx */
 
 // docz isn't super stable yet, adding these dev deps causes crashes

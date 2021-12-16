@@ -1,5 +1,7 @@
-import { loadMessageTranslationList } from '../../../shared/get-translations';
-import { getDefault } from '../../../shared/util/ModuleUtil';
+import { loadMessageTranslationList } from '@reworkjs/core/_internal_/translations';
+import type { BundleLoader } from '@reworkjs/core/_internal_/translations';
+import isPojo from '../../../shared/util/is-pojo.js';
+import { getDefault } from '../../../shared/util/module-util.js';
 import { triggerI18nHotReload } from './_hot-reload.js';
 import { getFileName, getLocaleBestFit, runBundleLoader } from './_locale-utils.js';
 
@@ -8,9 +10,9 @@ let localeToFileMapping: Map<string, string> = buildMessagesLocaleList(messageTr
 
 export type ReactIntlMessages = { [key: string]: string };
 
-function buildMessagesLocaleList(loaders) {
+function buildMessagesLocaleList(loaders: BundleLoader) {
   const mapping = new Map();
-  loaders.keys().map(filePath => {
+  loaders.keys().map((filePath: string) => {
     const locale = getFileName(filePath);
 
     // if there is a fr.js and fr.json file, throw.
@@ -26,32 +28,16 @@ function buildMessagesLocaleList(loaders) {
   return mapping;
 }
 
-function formatTranslationMessages(messages): ReactIntlMessages {
-  if (!Array.isArray(messages)) {
-    return messages;
-  }
-
-  const formattedMessages = {};
-  for (const message of messages) {
-    formattedMessages[message.id] = message.message || message.defaultMessage;
-  }
-
-  return formattedMessages;
-}
-
-// TODO: move this global state to React Tree.
-
 async function installReactIntlMessagesForLocale(locale: string): Promise<ReactIntlMessages> {
   return downloadMessagesTranslationFile(locale)
     .then(translations => {
-      if (translations == null || typeof translations !== 'object') {
-        throw new TypeError(`Invalid translation file for locale ${JSON.stringify(locale)}, expected it to export an Object or an Array.`);
+      if (!isPojo(translations)) {
+        throw new TypeError(`Invalid translation file for locale ${JSON.stringify(locale)}, expected it to export an plain object of [message id] => [translated message].`);
       }
 
-      const messageTranslations = formatTranslationMessages(translations);
-      Object.freeze(messageTranslations);
+      Object.freeze(translations);
 
-      return messageTranslations;
+      return translations;
     });
 }
 
@@ -78,7 +64,7 @@ async function downloadMessagesTranslationFile(localeName: string): Promise<any>
 }
 
 function getMessageLocaleBestFit(localeName: string) {
-  return getLocaleBestFit(localeName, [...localeToFileMapping.keys()]);
+  return getLocaleBestFit(localeName, Array.from(localeToFileMapping.keys()));
 }
 
 /**
@@ -99,12 +85,14 @@ export {
 
 // HOT RELOAD INDIVIDUAL TRANSLATION FILES
 
-// $FlowIgnore
-if (module.hot) {
-  module.hot.accept(messageTranslationsLoaders.id, () => {
-    messageTranslationsLoaders = loadMessageTranslationList();
-    localeToFileMapping = buildMessagesLocaleList(messageTranslationsLoaders);
+// @ts-expect-error
+if (typeof module !== 'undefined' && module.hot) {
+  // @ts-expect-error
+  module.hot
+    .accept(messageTranslationsLoaders.id, () => {
+      messageTranslationsLoaders = loadMessageTranslationList();
+      localeToFileMapping = buildMessagesLocaleList(messageTranslationsLoaders);
 
-    triggerI18nHotReload();
-  });
+      triggerI18nHotReload();
+    });
 }

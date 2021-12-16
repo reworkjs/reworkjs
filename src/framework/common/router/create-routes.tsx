@@ -1,7 +1,7 @@
+import logger from '@reworkjs/core/logger';
 import { Route } from 'react-router-dom';
 import routeModules from 'val-loader!./_find-routes.cjs';
-import logger from '../../../shared/logger';
-import { getDefault } from '../../../shared/util/ModuleUtil';
+import { getDefault } from '../../../shared/util/module-util.js';
 
 const SourceFileName = Symbol('sourceFileName');
 

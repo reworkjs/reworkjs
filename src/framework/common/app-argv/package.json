@@ -1,4 +1,0 @@
-{
-  "main": "./node.js",
-  "webpack:main": "./browser.js"
-}

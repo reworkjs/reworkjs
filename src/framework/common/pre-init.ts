@@ -1,10 +1,10 @@
 
-import { shouldPolyfill } from '@formatjs/intl-locale/should-polyfill';
-import { getDefault } from '../../shared/util/ModuleUtil';
+import { shouldPolyfill } from '@formatjs/intl-locale/should-polyfill.js';
+import { getDefault } from '../../shared/util/module-util.js';
 
 export default async function loadPreInit() {
   if (shouldPolyfill()) {
-    await import('@formatjs/intl-locale/polyfill');
+    await import('@formatjs/intl-locale/polyfill.js');
   }
 
   // webpack

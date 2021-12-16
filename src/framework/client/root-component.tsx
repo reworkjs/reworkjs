@@ -3,10 +3,9 @@ import { CookiesProvider } from 'react-cookie';
 import { HelmetProvider } from 'react-helmet-async';
 import { BrowserRouter } from 'react-router-dom';
 import { isHash } from 'val-loader!./_react-router';
-import { getDefault } from '../../shared/util/ModuleUtil';
-import ReworkRootComponent from '../app/ReworkRootComponent.js';
+import { getDefault } from '../../shared/util/module-util.js';
+import ReworkRootComponent from '../common/ReworkRootComponent.js';
 import { rootRoute } from '../common/kernel.js';
-import BrowserLanguageProvider from './browser-language-provider';
 import ClientHooks from './client-hooks';
 
 const clientHooks = ClientHooks.map(hookModule => {
@@ -16,7 +15,7 @@ const clientHooks = ClientHooks.map(hookModule => {
 });
 
 const RootComponent = () => {
-
+  const location = globalThis.location;
   const didCleanUrl = React.useRef(!isHash);
 
   const basename = isHash ? `${location.pathname}#` : '';
@@ -43,21 +42,19 @@ const RootComponent = () => {
     }
 
     // using history.replace instead of window.location to avoid relaunching the app
-    history.replaceState('', document.title, url.toString());
+    globalThis.history.replaceState('', document.title, url.toString());
   }
 
   let rootElement = (
-    <BrowserLanguageProvider>
-      <HelmetProvider>
-        <CookiesProvider>
-          <ReworkRootComponent>
-            <BrowserRouter basename={basename}>
-              {rootRoute}
-            </BrowserRouter>
-          </ReworkRootComponent>
-        </CookiesProvider>
-      </HelmetProvider>
-    </BrowserLanguageProvider>
+    <HelmetProvider>
+      <CookiesProvider>
+        <ReworkRootComponent>
+          <BrowserRouter basename={basename}>
+            {rootRoute}
+          </BrowserRouter>
+        </ReworkRootComponent>
+      </CookiesProvider>
+    </HelmetProvider>
   );
 
   // allow plugins to add components

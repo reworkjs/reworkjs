@@ -1,6 +1,0 @@
-{
-  "name": "project-metadata",
-  "private": true,
-  "main": "./index.js",
-  "webpack:main": "./webpack.js"
-}

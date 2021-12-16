@@ -1,5 +1,3 @@
 #!/usr/bin/env node
 
-/* eslint-disable */
-
-require('../lib/internals/cli/index');
+import '../lib/internals/cli/index.js';

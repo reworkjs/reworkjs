@@ -36,7 +36,6 @@ If we take the example above and expand it to lazy-load the homepage, we would e
 ```typescript
 // src/pages/home/home.route.ts
 
-import * as React from 'react';
 import loadable from '@loadable/component';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
@@ -95,7 +94,6 @@ The react-router way is a bit cumbersome so rework.js exposes two utilities you 
 // HttpStatus component
 
 // src/pages/404/404.view.tsx
-import * as React from 'react';
 import { HttpStatus } from '@reworkjs/core/router';
 
 function My404Page() {
@@ -112,7 +110,6 @@ function My404Page() {
 // useHttpStatus hook
 
 // src/pages/404/404.view.tsx
-import * as React from 'react';
 import { useHttpStatus } from '@reworkjs/core/router';
 
 function My404Page() {
@@ -136,7 +133,6 @@ If you wish to bypass it and come back to React-Router, you can create a single 
 ```typescript jsx
 // src/pages/router.route.tsx
 
-import * as React from 'react';
 import { Switch } from 'react-router-dom';
 
 export default {

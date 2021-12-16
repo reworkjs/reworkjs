@@ -1,12 +1,12 @@
+import type { BundleModuleLoader } from '@reworkjs/core/_internal_/translations';
 
-
-export function getLocaleBestFit(locale: string, availableLocales: string[]): ?string {
+export function getLocaleBestFit(locale: string, availableLocales: string[]): string | null {
 
   if (availableLocales.includes(locale)) {
     return locale;
   }
 
-  if (locale.indexOf('-') === -1) {
+  if (!locale.includes('-')) {
     return null;
   }
 
@@ -19,10 +19,16 @@ export function getLocaleBestFit(locale: string, availableLocales: string[]): ?s
 }
 
 export function getFileName(file: string): string {
-  return file.match(/^\.\/(.+)\..+$/)[1];
+  const fileName = file.match(/^\.\/(.+)\..+$/)?.[1];
+
+  if (fileName == null) {
+    throw new Error(`Could not extract fileName from ${file}`);
+  }
+
+  return fileName;
 }
 
-export function runBundleLoader(loader) {
+export async function runBundleLoader(loader: BundleModuleLoader): Promise<any> {
   return new Promise(resolve => {
     loader(loadedModule => resolve(loadedModule));
   });

@@ -1,12 +1,9 @@
-'use strict';
+// this module is ran on node before webpack bundles it.
+import path from 'path';
+import config from '@reworkjs/core/_internal_/framework-config';
+import { asyncGlob } from '../../../internals/util/util.js';
 
-// need to import from /lib (the version in which webpack is running) otherwise it will use /es
-
-const path = require('path');
-const config = require('../../../../lib/shared/framework-config');
-const { asyncGlob } = require('../../../../lib/internals/util/util');
-
-module.exports = function getRouteDeclarations() {
+export default function getRouteDeclarations() {
 
   const routeGlob = config.default.routes;
 
@@ -28,4 +25,4 @@ module.exports = function getRouteDeclarations() {
 
     return { code };
   });
-};
+}
