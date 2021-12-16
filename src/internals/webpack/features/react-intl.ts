@@ -23,6 +23,7 @@ export default class ReactIntlFeature extends BaseFeature {
 
   visit(webpackConfig: WebpackConfigBuilder) {
     const supportedLocales = uniq(fs.readdirSync(config.directories.translations)
+      .filter(file => !file.startsWith('_'))
       .map(fileName => {
         const locale = removeExtension(fileName);
 
