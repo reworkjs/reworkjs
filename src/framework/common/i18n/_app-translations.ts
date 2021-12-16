@@ -86,9 +86,9 @@ export {
 // HOT RELOAD INDIVIDUAL TRANSLATION FILES
 
 // @ts-expect-error
-if (typeof module !== 'undefined' && module.hot) {
+if (typeof module !== 'undefined' && import.meta.webpackHot) {
   // @ts-expect-error
-  module.hot
+  import.meta.webpackHot
     .accept(messageTranslationsLoaders.id, () => {
       messageTranslationsLoaders = loadMessageTranslationList();
       localeToFileMapping = buildMessagesLocaleList(messageTranslationsLoaders);

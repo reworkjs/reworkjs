@@ -27,15 +27,18 @@ export default class ServiceWorkerFeature extends BaseFeature {
       return;
     }
 
+    // Workbox is disabled in dev
+    if (this.isDev()) {
+      config.addEntry('sw', [
+        resolveFrameworkSource('client/service-worker/without-workbox.js'),
+      ]);
+
+      return;
+    }
+
     config.injectPlugins([
       new WorkboxPlugin.InjectManifest({
-        // bit of a hack:
-        // we don't actually use the Manifest in watch mode as the caching is broken,
-        // but we still want to load the rest of the Service Worker.
-        // this excludes everything from the manifest to optimise the development a bit
-        ...(this.isDev() && { exclude: [/.*/] }),
-
-        swSrc: resolveFrameworkSource('client/service-worker/index.js'),
+        swSrc: resolveFrameworkSource('client/service-worker/with-workbox.js'),
         compileSrc: true,
         swDest: 'sw.js',
       }),

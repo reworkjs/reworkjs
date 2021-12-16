@@ -1,4 +1,3 @@
-
 // this module is ran on node before webpack bundles it.
 import config from '@reworkjs/core/_internal_/framework-config';
 

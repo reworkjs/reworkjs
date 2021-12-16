@@ -45,7 +45,7 @@ export default function LanguageComponent(props: Props) {
   // eslint-disable-next-line consistent-return
   useEffect(() => {
     // @ts-expect-error Webpack internal
-    if (module.hot) {
+    if (import.meta.webpackHot) {
       return onIntlHotReload(() => {
         void installLocale(activeLocale).then(() => forceUpdate());
       });

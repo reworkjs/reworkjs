@@ -1,4 +1,5 @@
 import assert from 'assert';
+import { createRequire } from 'module';
 import path from 'path';
 import LoadablePlugin from '@loadable/webpack-plugin';
 import frameworkConfig from '@reworkjs/core/_internal_/framework-config';
@@ -31,6 +32,9 @@ import type BaseFeature from './BaseFeature.js';
 import WebpackConfigBuilder, * as wcbUtils from './WebpackConfigBuilder.js';
 import featureClasses from './features.js';
 import sortDependencies from './sort-dependencies.js';
+
+// TODO: remove once import.meta.resolve is ready
+const require = createRequire(import.meta.url);
 
 const isDev = process.env.NODE_ENV === 'development';
 const isTest = process.env.NODE_ENV === 'test';
@@ -120,7 +124,10 @@ export default class WebpackBase {
     const config: Configuration = {
       cache: true,
       name: this.isServer() ? 'Server' : 'Client',
-      entry: this.#getEntry(),
+      entry: {
+        ...this.#webpackConfigBuilder.getEntries(),
+        main: this.#getMainEntry(),
+      },
       output: this.#getOutput(),
       module: {
         rules: this.#buildRules(),
@@ -164,6 +171,9 @@ export default class WebpackBase {
         plugins: [new ResolveTypescriptPlugin.default()],
       },
       mode: this.isDev ? 'development' : 'production',
+      experiments: {
+        topLevelAwait: true,
+      },
       optimization: {
         minimize: false,
         removeAvailableModules: false,
@@ -198,9 +208,9 @@ export default class WebpackBase {
     return wcbUtils.mergeRaw(this.#webpackConfigBuilder, config);
   }
 
-  #getEntry(): string[] {
+  #getMainEntry() {
     // front-end entry point.
-    const entry = [
+    const mainEntry = [
       this.isServer()
         ? resolveFrameworkSource('server/index')
         : resolveFrameworkSource('client/index'),
@@ -208,20 +218,20 @@ export default class WebpackBase {
 
     // front-end dev libs.
     if (this.isDev && !this.isServer()) {
-      entry.unshift(
+      mainEntry.unshift(
         // Necessary for hot reloading with IE
         'eventsource-polyfill',
         'webpack-hot-middleware/client',
         require.resolve('./dev-preamble'),
       );
     } else if (this.isDev && this.isServer()) {
-      entry.unshift(
+      mainEntry.unshift(
         // hot reload if parent sends signal SIGUSR2
         require.resolve('./hmr-server'),
       );
     }
 
-    return entry;
+    return mainEntry;
   }
 
   #getOutput(): Configuration['output'] {
@@ -595,7 +605,7 @@ function buildLocalIdentGenerator() {
   // const junkPrefixes = new Set(['src', 'lib', 'app', 'component', 'components']);
   // const junkFileNames = new Set(['styles', 'style', 'css', 'index']); // fileNames ignore everything after first dot
 
-  function getPrefix(filePath) {
+  function getPrefix(filePath: string) {
     if (!prefixMap.has(filePath)) {
       const folderMatch = filePath.match(/\/([^/]+)\/[^/]+$/);
       const prefixBase = folderMatch[1];

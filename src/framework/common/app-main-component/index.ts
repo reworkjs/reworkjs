@@ -1,4 +1,4 @@
-import mainComponent from 'val-loader!./_get-main-component';
+import mainComponent from 'val-loader!./_get-main-component.js';
 import { isReactComponent } from '../../util/react-util.js';
 
 if (process.env.NODE_ENV === 'development') {

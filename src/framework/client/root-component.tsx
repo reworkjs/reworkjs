@@ -2,7 +2,7 @@ import React from 'react';
 import { CookiesProvider } from 'react-cookie';
 import { HelmetProvider } from 'react-helmet-async';
 import { BrowserRouter } from 'react-router-dom';
-import { isHash } from 'val-loader!./_react-router';
+import { isHash } from 'val-loader!./_react-router.js';
 import { getDefault } from '../../shared/util/module-util.js';
 import ReworkRootComponent from '../common/ReworkRootComponent.js';
 import { rootRoute } from '../common/kernel.js';

@@ -1,8 +1,9 @@
-import { enable as enableNavigationPreload } from 'workbox-navigation-preload/enable';
-import { precacheAndRoute } from 'workbox-precaching/precacheAndRoute';
-import { NavigationRoute } from 'workbox-routing/NavigationRoute';
-import { registerRoute } from 'workbox-routing/registerRoute';
-import { NetworkOnly } from 'workbox-strategies/NetworkOnly';
+import './without-workbox.js';
+import { enable as enableNavigationPreload } from 'workbox-navigation-preload/enable.js';
+import { precacheAndRoute } from 'workbox-precaching/precacheAndRoute.js';
+import { NavigationRoute } from 'workbox-routing/NavigationRoute.js';
+import { registerRoute } from 'workbox-routing/registerRoute.js';
+import { NetworkOnly } from 'workbox-strategies/NetworkOnly.js';
 
 // download assets ahead of time & create routes to them.
 precacheAndRoute(self.__WB_MANIFEST);
@@ -12,7 +13,7 @@ const FALLBACK_HTML_URL = '/index.html';
 // Populate the cache with the offline HTML page.
 self.addEventListener('install', async event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.add(FALLBACK_HTML_URL)),
+    caches.open(CACHE_NAME).then(async cache => cache.add(FALLBACK_HTML_URL)),
   );
 });
 

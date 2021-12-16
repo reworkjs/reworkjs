@@ -6,13 +6,13 @@
 
 import logApplyResults from 'webpack/hot/log-apply-result';
 
-if (!module.hot) {
+if (!import.meta.webpackHot) {
   throw new Error('[HMR] Hot Module Replacement is disabled.');
 }
 
 process.on('SIGUSR2', () => {
-  if (module.hot.status() !== 'idle') {
-    console.warn(`[HMR] Got signal but currently in ${module.hot.status()} state.`);
+  if (import.meta.webpackHot.status() !== 'idle') {
+    console.warn(`[HMR] Got signal but currently in ${import.meta.webpackHot.status()} state.`);
     console.warn('[HMR] Need to be in idle state to start hot update.');
 
     return;
@@ -22,14 +22,14 @@ process.on('SIGUSR2', () => {
 });
 
 function checkForUpdate(fromUpdate) {
-  module.hot.check().then(async updatedModules => {
+  import.meta.webpackHot.check().then(async updatedModules => {
     if (!updatedModules && fromUpdate) {
       console.info('[HMR] Update applied.');
 
       return;
     }
 
-    await module.hot.apply({
+    await import.meta.webpackHot.apply({
       ignoreUnaccepted: true,
       onUnaccepted(data) {
         console.warn(`Ignored an update to unaccepted module ${data.chain.join(' -> ')}`);
@@ -44,7 +44,7 @@ function checkForUpdate(fromUpdate) {
       return checkForUpdate(true);
     });
   }).catch(async err => {
-    const status = module.hot.status();
+    const status = import.meta.webpackHot.status();
     if (['abort', 'fail'].includes(status)) {
       console.warn('[HMR] Cannot apply update.');
       console.warn(`[HMR] ${err.stack}` || err.message);

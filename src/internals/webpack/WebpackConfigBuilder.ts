@@ -27,6 +27,8 @@ export default class WebpackConfigBuilder {
   static FILE_TYPE_CSS = FILE_TYPE_CSS;
   static FILE_TYPE_IMG = FILE_TYPE_IMG;
 
+  #extraEntries = Object.create(null);
+
   constructor() {
     const state: WcbState = {
       fileTypes: {
@@ -44,7 +46,21 @@ export default class WebpackConfigBuilder {
     stateHolder.set(this, state);
   }
 
-  registerFileType(type, extension) {
+  addEntry(name: string, entry): this {
+    if (this.#extraEntries[name] || name === 'main') {
+      throw new Error('Entry already defined');
+    }
+
+    this.#extraEntries[name] = entry;
+
+    return this;
+  }
+
+  getEntries() {
+    return this.#extraEntries;
+  }
+
+  registerFileType(type: string, extension: string) {
     pushAll(getState(this).fileTypes[type], extension);
   }
 
