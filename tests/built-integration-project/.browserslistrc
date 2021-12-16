@@ -1,4 +1,6 @@
 # Browsers that we support
 # https://github.com/ai/browserslist
 
-Last 4 versions
+defaults
+not IE 11
+not safari < 14.1
