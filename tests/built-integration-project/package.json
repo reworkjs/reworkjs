@@ -1,0 +1,24 @@
+{
+  "name": "built-integration-project",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:dev": "NODE_ENV=development ./../bin/framework.bin.js start --port 3000",
+    "build": "NODE_ENV=production ../../bin/framework.bin.js build client server"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "react": "^17.0.2",
+    "react-cookie": "^4.1.1",
+    "react-dom": "^17.0.2",
+    "react-intl": "^5.23.0",
+    "react-router-dom": "^5.3.0"
+  },
+  "devDependencies": {
+    "@reworkjs/postcss-preset-reworkjs": "^0.6.0"
+  },
+  "description": ""
+}

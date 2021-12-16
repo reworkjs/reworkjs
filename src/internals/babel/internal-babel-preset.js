@@ -12,11 +12,11 @@ export default function buildPreset(api, opts = {}) {
   const { ...passDownOpts } = opts;
 
   const frameworkTargets = [
-    'chrome >= 72', // january 2019
-    'safari >= 11', // sept. 2018
-    'iOS >= 11',
-    'firefox >= 64', // january 2019
-    'maintained node versions',
+    'chrome >= 90', // april 2021
+    'safari >= 14.5', // april 2021
+    'iOS >= 14.5',
+    'firefox >= 90', // april 2021
+    'node >= 16',
   ];
 
   const preset = buildGlobalPreset(api, {

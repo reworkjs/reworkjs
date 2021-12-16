@@ -25,7 +25,7 @@ export default function buildPreset(api, opts = {}) {
       [PluginRuntime.default, {
         corejs: false,
         helpers: true,
-        regenerator: true,
+        regenerator: false,
         ...opts['@babel/plugin-transform-runtime'],
       }],
     ],

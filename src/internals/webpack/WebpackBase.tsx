@@ -450,7 +450,9 @@ export default class WebpackBase {
       // will be the correct one no matter which bundle produces it.
       const FRAMEWORK_CONFIG = {
         directories: {
-          logs: path.relative(outputDirectory, frameworkConfig.directories.logs),
+          logs: frameworkConfig.directories.logs
+            ? path.relative(outputDirectory, frameworkConfig.directories.logs)
+            : null,
           build: path.relative(outputDirectory, frameworkConfig.directories.build),
         },
       };
@@ -466,7 +468,10 @@ export default class WebpackBase {
     // TODO inject DLLs <script data-dll='true' src='/${dllName}.dll.js'></script>`
     // TODO https://github.com/diurnalist/chunk-manifest-webpack-plugin
     const plugins = [
-      new WebpackBar(),
+      new WebpackBar({
+        name: this.isServer() ? 'Server Bundle' : 'Client Bundle',
+        color: this.isServer() ? 'blue' : 'green',
+      }),
       // remove outdated assets from previous builds.
       new CleanWebpackPlugin(),
       new webpack.DefinePlugin(this.#getDefinedVars()),

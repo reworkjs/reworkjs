@@ -46,16 +46,15 @@ export default function registerCommand(cli: Yargs.Argv) {
     });
 }
 
-function forkNamedProcess(processName: string) {
+function forkNamedProcess(processName: string): ChildProcess {
   if (!(processName in builders)) {
     throw new Error(`Unknown part ${processName}`);
   }
 
   // @ts-expect-error
-  const builderPath = builders[part] as keyof builders;
+  const builderPath = builders[processName];
 
-  // @ts-expect-error
-  forkProcess(builders[builderPath]);
+  return forkProcess(builderPath);
 }
 
 function forkProcess(builderPath: string): ChildProcess {

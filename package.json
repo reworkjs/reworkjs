@@ -60,7 +60,7 @@
     },
     "./_internal_/translations": {
       "node": "./lib/shared/translations/node.js",
-      "webpack": "./lib/shared/translations/webpack.js"
+      "webpack": "./lib/shared/translations/webpack.cjs"
     }
   },
   "scripts": {
@@ -130,7 +130,6 @@
     "babel-plugin-lodash": "^3.3.4",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
     "blessed": "^0.1.81",
-    "bundle-loader": "^0.5.6",
     "case-sensitive-paths-webpack-plugin": "^2.4.0",
     "chalk": "^4.1.2",
     "clean-webpack-plugin": "^3.0.0",

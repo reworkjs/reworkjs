@@ -36,7 +36,7 @@ export default function setupHttpServer(expressApp: Express) {
   } else {
 
     // lazy-imported because these can only run on the built server
-    import('../server-hooks.js').then(module => {
+    import('../server-hooks/index.js').then(module => {
       const ServerHooks = module.default;
       const serverHookClasses = ServerHooks.map(hookModule => getDefault(hookModule));
 

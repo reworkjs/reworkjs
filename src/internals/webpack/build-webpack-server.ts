@@ -1,4 +1,4 @@
-import * as assert from 'assert';
+import assert from 'assert';
 import path from 'path';
 import logger from '@reworkjs/core/logger';
 import type { StatsCompilation, StatsChunkGroup } from 'webpack';

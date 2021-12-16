@@ -57,15 +57,16 @@ function printErrors(stats: Stats) {
 
   // parseWebpackStats(stats);
 
-  if (jsonStats.warnings) {
+  if (jsonStats.warnings && jsonStats.warnings.length > 0) {
     logger.warn(`${jsonStats.warnings.length} warnings occurred when building.`);
 
     for (const warning of jsonStats.warnings) {
       logger.warn(`${warning.message}\n`);
+      // TODO: if warning.moduleTrace: print trace
     }
   }
 
-  if (jsonStats.errors) {
+  if (jsonStats.errors && jsonStats.errors.length > 0) {
     logger.error(`${jsonStats.errors.length} errors occurred when building.`);
 
     for (const error of jsonStats.errors) {

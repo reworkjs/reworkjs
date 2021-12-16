@@ -1,7 +1,7 @@
 import accept from '@hapi/accept';
 import { ChunkExtractor } from '@loadable/server';
 import type { Request, Response, NextFunction } from 'express';
-import { collectInitial, collectContext } from 'node-style-loader/collect';
+import { collectInitial, collectContext } from 'node-style-loader/collect.js';
 import React from 'react';
 import { CookiesProvider } from 'react-cookie';
 import { renderToString } from 'react-dom/server';
@@ -14,7 +14,7 @@ import { LanguageContext } from '../../common/accept-language-context.js';
 import { rootRoute } from '../../common/kernel.js';
 import { loadResource } from '../../common/ssr-apis/use-async-resource/load-resource.js';
 import { SsrContext } from '../../common/ssr-context.js';
-import ServerHooks from '../server-hooks';
+import ServerHooks from '../server-hooks/index.js';
 import renderPage from './render-page.js';
 
 export default async function serveReactRoute(req: Request, res: Response, next: NextFunction): Promise<void> {
