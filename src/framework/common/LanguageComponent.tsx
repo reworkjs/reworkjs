@@ -1,3 +1,4 @@
+import { useAcceptLanguage } from '@reworkjs/core/ssr';
 import type { ReactNode } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useCookies } from 'react-cookie';
@@ -7,11 +8,7 @@ import { ActiveLocaleContext } from './active-locale-context.js';
 import { isTranslationSupported } from './i18n/_app-translations.js';
 import type { ReactIntlMessages } from './i18n/_app-translations.js';
 import { guessPreferredLocale, LOCALE_COOKIE_NAME } from './i18n/get-preferred-locale.js';
-import {
-  onIntlHotReload,
-  installLocale,
-} from './i18n/index.js';
-import { useAcceptLanguage } from './ssr-browser-apis';
+import { onIntlHotReload, installLocale } from './i18n/index.js';
 
 type Props = {
   children: ReactNode,

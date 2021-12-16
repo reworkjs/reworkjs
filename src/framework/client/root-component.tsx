@@ -2,11 +2,11 @@ import React from 'react';
 import { CookiesProvider } from 'react-cookie';
 import { HelmetProvider } from 'react-helmet-async';
 import { BrowserRouter } from 'react-router-dom';
-import { isHash } from 'val-loader!./_react-router.js';
+import { isHash } from 'val-loader!./_react-router.codegen.cjs';
 import { getDefault } from '../../shared/util/module-util.js';
 import ReworkRootComponent from '../common/ReworkRootComponent.js';
 import { rootRoute } from '../common/kernel.js';
-import ClientHooks from './client-hooks';
+import ClientHooks from './client-hooks/index.js';
 
 const clientHooks = ClientHooks.map(hookModule => {
   const HookClass = getDefault(hookModule);

@@ -7,6 +7,5 @@ process.on('unhandledRejection', reason => {
   process.exit(1);
 });
 
-preInit().then(() => {
-  require('./launch-http-server.js'); // eslint-disable-line global-require
-});
+await preInit();
+await import('./launch-http-server.js');

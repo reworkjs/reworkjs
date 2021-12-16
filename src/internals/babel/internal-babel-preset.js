@@ -48,7 +48,7 @@ export default function buildPreset(api, opts = {}) {
       //  so node can't find it when using es modules
       //  was fixed: https://github.com/babel/babel/pull/12116
       //  then reverted: https://github.com/babel/babel/pull/12213
-      importSource: '@reworkjs/core/_internal_',
+      importSource: '@reworkjs/core/_internal_/react',
       ...opts['@babel/preset-react'],
     }],
   );

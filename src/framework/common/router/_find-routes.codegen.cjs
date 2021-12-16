@@ -1,14 +1,21 @@
 // this module is ran on node before webpack bundles it.
-import path from 'path';
-import config from '@reworkjs/core/_internal_/framework-config';
-import { asyncGlob } from '../../../internals/util/util.js';
+const path = require('path');
 
-export default function getRouteDeclarations() {
+//  see "HACK: (.codegen.cjs)" in webpack config
+module.exports = async function getRouteDeclarations() {
+  const [UtilModule, ConfigModule] = await Promise.all([
+    import('../../../internals/util/util.js'),
+    import('@reworkjs/core/_internal_/framework-config'),
+  ]);
 
-  const routeGlob = config.default.routes;
+  const config = ConfigModule.default;
+  const { asyncGlob } = UtilModule;
+
+  const routeGlob = config.routes;
 
   // files are found relative to config file
-  const configDir = path.dirname(config.default.filePath);
+  const configDir = path.dirname(config.filePath);
+
   return asyncGlob(routeGlob, { cwd: configDir }).then(routeFiles => {
 
     routeFiles = routeFiles.map(file => path.resolve(configDir, file));
@@ -25,4 +32,4 @@ export default function getRouteDeclarations() {
 
     return { code };
   });
-}
+};

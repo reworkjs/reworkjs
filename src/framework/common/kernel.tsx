@@ -1,5 +1,5 @@
 import { Switch } from 'react-router-dom';
-import MainComponent from './app-main-component';
+import MainComponent from './app-main-component/index.js';
 import debug from './debug.js';
 import createRoutes from './router/create-routes.js';
 

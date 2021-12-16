@@ -62,7 +62,6 @@ export default abstract class BaseFeature {
 
   getOptionalDependency(dependencyName: string) {
     try {
-      // $FlowIgnore
       return require(dependencyName);
     } catch (e) {
       if (e.code !== 'MODULE_NOT_FOUND') {

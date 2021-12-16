@@ -36,14 +36,15 @@
     },
     "./logger": {
       "node": "./lib/shared/logger/node.js",
-      "browser": "./lib/shared/logger/browser.js"
+      "default": "./lib/shared/logger/browser.js"
     },
     "./project-metadata": {
       "node": "./lib/shared/project-metadata/node.js",
       "webpack": "./lib/shared/project-metadata/webpack.js"
     },
-    "./_internal_/jsx-runtime": "./lib/_exports_/jsx-runtime-hack.js",
-    "./_internal_/jsx-dev-runtime": "./lib/_exports_/jsx-runtime-hack.js",
+    "./_internal_/react": "./lib/_exports_/react-runtime-hack.js",
+    "./_internal_/react/jsx-runtime": "./lib/_exports_/jsx-runtime-hack.js",
+    "./_internal_/react/jsx-dev-runtime": "./lib/_exports_/jsx-runtime-hack.js",
     "./_internal_/framework-metadata": {
       "node": "./lib/shared/framework-metadata/node.js",
       "webpack": "./lib/shared/framework-metadata/webpack.js"
@@ -201,6 +202,7 @@
     "@types/fs-extra": "^9.0.13",
     "@types/inquirer": "^8.1.3",
     "@types/ip": "^1.1.0",
+    "@types/loadable__component": "^5.13.4",
     "@types/loadable__server": "^5.12.6",
     "@types/loadable__webpack-plugin": "^5.7.3",
     "@types/mini-css-extract-plugin": "^2.4.0",

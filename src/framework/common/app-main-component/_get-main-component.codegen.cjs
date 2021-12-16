@@ -1,14 +1,15 @@
 // this module is ran on node before webpack bundles it.
-import config from '@reworkjs/core/_internal_/framework-config';
 
 const DEFAULT_ENTRY = `
 import { Fragment } from 'react';
 export default Fragment;
 `;
 
-export default function getRouteDeclarations() {
+//  see "HACK: (.codegen.cjs)" in webpack config
+module.exports = async function getRouteDeclarations() {
+  const ConfigModule = await import('@reworkjs/core/_internal_/framework-config');
 
-  const entryConfig = config.default['entry-react'];
+  const entryConfig = ConfigModule.default['entry-react'];
   if (!entryConfig) {
     return { code: DEFAULT_ENTRY };
   }

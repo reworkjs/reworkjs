@@ -1,4 +1,4 @@
-import 'val-loader!./_get-app-sw.cjs';
+import 'val-loader!./_get-app-sw.codegen.cjs';
 
 // allow update UX to install the new SW.
 self.addEventListener('message', event => {
