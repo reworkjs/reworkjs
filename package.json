@@ -15,6 +15,7 @@
   "license": "MIT",
   "type": "module",
   "exports": {
+    "./html": "./lib/_exports_/html.js",
     "./argv": {
       "node": "./lib/framework/common/app-argv/node.js",
       "webpack": "./lib/framework/common/app-argv/webpack.js"
@@ -56,7 +57,7 @@
     },
     "./_internal_/render-html": {
       "node": "./lib/shared/render-html/node.js",
-      "webpack": "./lib/shared/render-html/webpack.js"
+      "webpack": "./lib/shared/render-html/webpack.cjs"
     },
     "./_internal_/translations": {
       "node": "./lib/shared/translations/node.js",

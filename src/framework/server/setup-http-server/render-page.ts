@@ -54,14 +54,14 @@ export type PageHtml = {
 
 export type RenderPageFunction = (data: PageHtml) => string;
 
-const renderPageDelegate = loadRenderPage();
+const renderPageDelegate = await loadRenderPage();
 
 export default function renderPage(data: {
   body?: string,
   header?: string,
   footer?: string,
   helmet: HelmetData,
-}) {
+}): string {
 
   const { helmet } = data;
 

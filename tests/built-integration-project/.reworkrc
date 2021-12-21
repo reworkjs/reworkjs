@@ -1,0 +1,3 @@
+{
+  "render-html": "./src/render-html.mjs"
+}

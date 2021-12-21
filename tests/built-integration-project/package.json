@@ -7,6 +7,7 @@
     "build": "NODE_ENV=production ../../bin/framework.bin.js build client server",
     "build:dev": "NODE_ENV=development ../../bin/framework.bin.js build client server"
   },
+  "type": "module",
   "dependencies": {
     "react": "^17.0.2",
     "react-cookie": "^4.1.1",
