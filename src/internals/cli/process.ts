@@ -2,7 +2,16 @@ import type { ChildProcess, Serializable } from 'child_process';
 
 type Listener = (data: Serializable) => any;
 
-const listenerMap = new WeakMap<ChildProcess, Map<string, Listener[]>>();
+const listenerMap = new WeakMap<ChildProcess, Map<string, Set<Listener>>>();
+
+export async function waitForMessage(proc: ChildProcess, messageType: string): Promise<Serializable> {
+  return new Promise<Serializable>(resolve => {
+    const removeListener = listenMsg(proc, messageType, data => {
+      removeListener();
+      resolve(data);
+    });
+  });
+}
 
 export function listenMsg(proc: ChildProcess, msgType: string, callback: Listener) {
   if (!listenerMap.has(proc)) {
@@ -38,13 +47,18 @@ function bindMessageHandler(proc: ChildProcess): void {
   });
 }
 
-function addMessageListener(proc: ChildProcess, msgType: string, callback: Listener): void {
+function addMessageListener(proc: ChildProcess, msgType: string, callback: Listener): (() => void) {
   const listeners = listenerMap.get(proc) ?? new Map();
   if (!listeners.has(msgType)) {
-    listeners.set(msgType, []);
+    listeners.set(msgType, new Set());
   }
 
-  listeners.get(msgType).push(callback);
+  const messageListeners = listeners.get(msgType);
+  messageListeners.add(callback);
 
   listenerMap.set(proc, listeners);
+
+  return () => {
+    messageListeners.delete(callback);
+  };
 }

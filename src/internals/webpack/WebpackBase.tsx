@@ -403,14 +403,12 @@ export default class WebpackBase {
   }
 
   #getDefinedVars() {
-    const NODE_ENV = JSON.stringify(process.env.NODE_ENV);
-    const SIDE = JSON.stringify(this.isServer() ? 'server' : 'client');
 
     const definedVariables: Object = {
       process: {
         env: {
-          SIDE,
-          NODE_ENV,
+          SIDE: JSON.stringify(this.isServer() ? 'server' : 'client'),
+          NODE_ENV: JSON.stringify(process.env.NODE_ENV),
           PROCESS_NAME: JSON.stringify(`${projectMetadata.name} (${this.isServer() ? 'server' : 'client'})`),
         },
       },
@@ -466,6 +464,7 @@ export default class WebpackBase {
       new WebpackBar({
         name: this.isServer() ? 'Server Bundle' : 'Client Bundle',
         color: this.isServer() ? 'blue' : 'green',
+        fancy: this.isTest ? false : undefined,
       }),
       // remove outdated assets from previous builds.
       new CleanWebpackPlugin(),

@@ -9,7 +9,7 @@ import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 import printServerStarted from '../../framework/server/print-server-started.js';
 import argv from '../rjs-argv.js';
-import webpackClientConfig from './webpack.client.js';
+import webpackClientConfig from '../webpack/webpack.client.js';
 
 const PRERENDERING_PORT = argv['ssr-port'];
 const HAS_PRERENDERING = Boolean(PRERENDERING_PORT);

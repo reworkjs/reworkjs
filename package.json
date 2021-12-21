@@ -43,6 +43,7 @@
       "node": "./lib/shared/project-metadata/node.js",
       "webpack": "./lib/shared/project-metadata/webpack.js"
     },
+    "./cli": "./lib/internals/cli/node-interface.js",
     "./_internal_/react": "./lib/_exports_/react-runtime-hack.js",
     "./_internal_/react/jsx-runtime": "./lib/_exports_/jsx-runtime-hack.js",
     "./_internal_/react/jsx-dev-runtime": "./lib/_exports_/jsx-runtime-hack.js",
