@@ -64,6 +64,7 @@
     }
   },
   "scripts": {
+    "prepare": "husky install",
     "lint": "npm run lint:eslint && tsc src",
     "lint:eslint": "eslint src --report-unused-disable-directives",
     "lint:staged": "lint-staged",
@@ -84,11 +85,6 @@
   },
   "bin": {
     "rjs": "./bin/framework.bin.js"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run lint:staged"
-    }
   },
   "standard-version": {
     "scripts": {
@@ -221,7 +217,7 @@
     "eslint": "^7.32.0",
     "eslint-import-resolver-typescript": "^2.5.0",
     "gh-pages": "^3.2.3",
-    "husky": "^6.0.0",
+    "husky": "^7.0.4",
     "json": "^11.0.0",
     "lint-staged": "^11.2.3",
     "react": "^17.0.2",
