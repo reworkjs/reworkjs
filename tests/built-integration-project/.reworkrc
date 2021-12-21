@@ -1,3 +1,4 @@
 {
-  "render-html": "./src/render-html.mjs"
+  "render-html": "./src/render-html.mjs",
+  "defaultLocale": "fr"
 }

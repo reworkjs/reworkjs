@@ -417,6 +417,7 @@ export default class WebpackBase {
 
       // TODO: replace with val-loader
       $$RJS_VARS$$: {
+        DEFAULT_LOCALE: JSON.stringify(frameworkConfig.defaultLocale),
         FRAMEWORK_METADATA: JSON.stringify(frameworkMetadata),
         PROJECT_METADATA: JSON.stringify(projectMetadata),
         PARSED_ARGV: JSON.stringify(appArgv),

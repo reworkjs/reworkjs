@@ -1,3 +1,4 @@
+import { DEFAULT_LOCALE } from '@reworkjs/core/_internal_/translations';
 import { useAcceptLanguage } from '@reworkjs/core/ssr';
 import type { ReactNode } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -23,8 +24,7 @@ export default function LanguageComponent(props: Props) {
   const [cookies, setCookie] = useCookies([LOCALE_COOKIE_NAME]);
   const localeCookie = cookies[LOCALE_COOKIE_NAME];
 
-  // TODO(DEFAULT_LOCALE): use default locale instead of 'en'
-  const [activeLocale, setActiveLocale] = useState<string>('en');
+  const [activeLocale, setActiveLocale] = useState<string>(DEFAULT_LOCALE);
   const [messages, setMessages] = useState<ReactIntlMessages>(EMPTY_OBJECT);
   const forceUpdate = useForceUpdate();
 

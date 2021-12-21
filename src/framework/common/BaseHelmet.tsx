@@ -1,3 +1,4 @@
+import { DEFAULT_LOCALE } from '@reworkjs/core/_internal_/translations';
 import { useAcceptLanguage } from '@reworkjs/core/ssr';
 import { useCookies } from 'react-cookie';
 import { Helmet } from 'react-helmet-async';
@@ -6,8 +7,7 @@ import { guessPreferredLocale, LOCALE_COOKIE_NAME } from './i18n/get-preferred-l
 function BaseHelmet() {
 
   // if process.env.SIDE is null, we're the build process. Use default value.
-  // TODO(DEFAULT_LOCALE): use default locale instead of 'en'
-  let lang = 'en';
+  let lang = DEFAULT_LOCALE;
   if (process.env.SIDE == null) { // .SIDE is immutable
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const acceptLanguages = useAcceptLanguage();

@@ -1,3 +1,4 @@
+import { DEFAULT_LOCALE } from '@reworkjs/core/_internal_/translations';
 import { isTranslationSupported } from './index.js';
 
 export const LOCALE_COOKIE_NAME = 'rjs-locale';
@@ -15,6 +16,5 @@ export function guessPreferredLocale(cookieLocale: string | null, acceptLanguage
     }
   }
 
-  // TODO(DEFAULT_LOCALE): use default locale instead of 'en'
-  return 'en';
+  return DEFAULT_LOCALE;
 }

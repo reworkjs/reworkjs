@@ -49,3 +49,6 @@ function requireContext(path: string, _recursive: boolean, filter: RegExp): Requ
 
   return bundle;
 }
+
+export const DEFAULT_LOCALE = config.defaultLocale;
+

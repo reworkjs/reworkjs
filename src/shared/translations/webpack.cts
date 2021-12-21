@@ -35,3 +35,7 @@ module.exports.getRelativeTimeLocaleLoaders = function getRelativeTimeLocaleLoad
   // @ts-expect-error
   return require.context('@formatjs/intl-relativetimeformat/locale-data', true, /\.js$/, 'lazy');
 }
+
+
+// @ts-expect-error
+module.exports.DEFAULT_LOCALE = $$RJS_VARS$$.DEFAULT_LOCALE;

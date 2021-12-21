@@ -1,3 +1,4 @@
+import { DEFAULT_LOCALE } from '@reworkjs/core/_internal_/translations';
 import type { Context } from 'react';
 import { createContext, useContext } from 'react';
 
@@ -10,8 +11,7 @@ export type TActiveLocaleContext = [
  * This context contains the currently active locale for the application, and a function to change it.
  */
 export const ActiveLocaleContext: Context<TActiveLocaleContext> = createContext([
-  // TODO(DEFAULT_LOCALE): use default locale instead of 'en'
-  'en',
+  DEFAULT_LOCALE,
   (_newLocale: string) => {},
 ]);
 

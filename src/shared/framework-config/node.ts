@@ -41,6 +41,8 @@ export type FrameworkConfigStruct = {
   'service-worker': string | null,
   'emit-integrity': boolean,
 
+  defaultLocale: string | null,
+
   hooks: {
     client: string | null,
     server: string | null,
@@ -76,6 +78,8 @@ function normalizeConfig(config: Object) {
     'pre-init': Joi.string().allow(null).default(null),
     'service-worker': Joi.string().allow(null).default(null),
     'emit-integrity': Joi.boolean().default(true),
+
+    defaultLocale: Joi.string().default('en'),
 
     directories: Joi.object().keys({
       logs: Joi.alternatives().try(

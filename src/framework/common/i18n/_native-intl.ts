@@ -2,7 +2,7 @@ import { shouldPolyfill as shouldPolyfillListFormat } from '@formatjs/intl-listf
 import { shouldPolyfill as shouldPolyfillNumber } from '@formatjs/intl-numberformat/should-polyfill.js';
 import { shouldPolyfill as shouldPolyfillPlural } from '@formatjs/intl-pluralrules/should-polyfill.js';
 import { shouldPolyfill as shouldPolyfillRelativeTime } from '@formatjs/intl-relativetimeformat/should-polyfill.js';
-import { getListFormatLoaders, getNumberLocaleLoaders, getPluralRulesLocaleLoaders, getRelativeTimeLocaleLoaders } from '@reworkjs/core/_internal_/translations';
+import { getListFormatLoaders, getNumberLocaleLoaders, getPluralRulesLocaleLoaders, getRelativeTimeLocaleLoaders, DEFAULT_LOCALE } from '@reworkjs/core/_internal_/translations';
 import { getFileName, getLocaleBestFit } from './_locale-utils.js';
 
 async function _loadPolyfillLocale(localeLoaders, localeName: string) {
@@ -10,10 +10,9 @@ async function _loadPolyfillLocale(localeLoaders, localeName: string) {
   let actualLocale = getLocaleBestFit(localeName, availableIntlLocales);
 
   if (actualLocale == null) {
-    console.error(`Could not fetch Unified Number Format locale '${localeName}'. Fallback to 'en'.`);
+    actualLocale = availableIntlLocales.includes(DEFAULT_LOCALE) ? DEFAULT_LOCALE : 'en';
 
-    // TODO(DEFAULT_LOCALE): use default locale instead of 'en'
-    actualLocale = 'en';
+    console.error(`Could not fetch Unified Number Format locale '${localeName}'. Fallback to '${actualLocale}'.`);
   }
 
   const Module = await localeLoaders(`./${actualLocale}.js`);
