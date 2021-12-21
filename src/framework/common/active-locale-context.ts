@@ -1,20 +1,20 @@
 import type { Context } from 'react';
 import { createContext, useContext } from 'react';
 
-type ValueType = {
+export type TActiveLocaleContext = [
   activeLocale: string,
-  setActiveLocale(newLocale: string): void,
-};
+  setActiveLocale: (newLocale: string) => void,
+];
 
 /**
  * This context contains the currently active locale for the application, and a function to change it.
  */
-export const ActiveLocaleContext: Context<ValueType> = createContext({
+export const ActiveLocaleContext: Context<TActiveLocaleContext> = createContext([
   // TODO(DEFAULT_LOCALE): use default locale instead of 'en'
-  activeLocale: 'en',
-  setActiveLocale: (_newLocale: string) => {},
-});
+  'en',
+  (_newLocale: string) => {},
+]);
 
-export function useActiveLocaleContext(): ValueType {
+export function useActiveLocale(): TActiveLocaleContext {
   return useContext(ActiveLocaleContext);
 }

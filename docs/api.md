@@ -14,7 +14,6 @@ route: /api
 --> isTranslationSupported
 --> onIntlHotReload
 --> `[locale, setLocale] = useActiveLocale()`
---> ActiveLocaleContext
 -> argv
 -> babel-preset
 - useReactRouter
@@ -34,5 +33,4 @@ route: /api
 
 ## Utils
 
--> withContext
 -> logger.js
