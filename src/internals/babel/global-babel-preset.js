@@ -22,6 +22,7 @@ export default function buildPreset(api, opts = {}) {
     ],
 
     plugins: [
+      '@loadable/babel-plugin',
       [PluginRuntime.default, {
         corejs: false,
         helpers: true,

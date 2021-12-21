@@ -1,0 +1,3 @@
+{
+  "presets": ["@reworkjs/core/babel-preset"]
+}

@@ -1,7 +1,7 @@
+import babel from '@babel/core';
 import frameworkMetadata from '@reworkjs/core/_internal_/framework-metadata';
-import findBabelConfig from 'find-babel-config';
 import findCacheDir from 'find-cache-dir';
-import { resolveProject, resolveRoot } from '../../util/resolve-util.js';
+import { resolveRoot } from '../../util/resolve-util.js';
 import BaseFeature from '../BaseFeature.js';
 import type WebpackConfigBuilder from '../WebpackConfigBuilder.js';
 
@@ -17,17 +17,22 @@ export default class BabelFeature extends BaseFeature {
 
   visit(webpack: WebpackConfigBuilder) {
 
+    const reworkRoot = resolveRoot();
+
     // this is ran exclusively on the project's source code
     webpack.injectRules({
       test: BaseFeature.FILE_TYPE_JS,
       loader: 'babel-loader',
-      exclude: /node_modules/,
+      exclude: {
+        or: [
+          /node_modules/,
+          reworkRoot,
+        ],
+      },
       options: {
         sourceType: 'module',
-        ...this.getProjectBabelConfig(),
-
         babelrc: false,
-        configFile: false,
+        configFile: true,
 
         // Cache build results in ./node_modules/.cache/reworkjs/babel.
         // We use findCacheDir() because of:
@@ -44,7 +49,7 @@ export default class BabelFeature extends BaseFeature {
       loader: 'babel-loader',
       include: /node_modules/,
 
-      // do not transpile @babel/runtime or core-js as babel-runtime-plugin will try to inject @babel/runtime inside it. Same for core-js.
+      // do not transpile @babel/runtime or core-js as babel-runtime-plugin will try to inject @babel/runtime inside it.
       exclude: /(@babel\/runtime)|(core-js)/,
 
       options: {
@@ -61,32 +66,5 @@ export default class BabelFeature extends BaseFeature {
         }),
       },
     });
-  }
-
-  getProjectBabelConfig() {
-    const config = this.getBabelConfig();
-
-    config.plugins = config.plugins || [];
-
-    // react-refresh is disabled because of how incredibly slow it is since webpack 5
-    // if (this.isDev()) {
-    //   config.plugins.push('react-refresh/babel');
-    // }
-
-    // support Loadable Components
-    config.plugins.push('@loadable/babel-plugin');
-
-    return config;
-  }
-
-  getBabelConfig(): Object {
-    // FIXME need to find a way to support other kind of babel configs.
-    const { config } = findBabelConfig.sync(resolveProject('.'));
-
-    if (config == null) {
-      return { presets: [resolveRoot('babel-preset')] };
-    }
-
-    return config;
   }
 }
