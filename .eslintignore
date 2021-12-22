@@ -1,6 +1,1 @@
-# TODO sanitize these
-/src/internals/generators
-/src/internals/scripts
 /lib
-/es
-/flow-typed
