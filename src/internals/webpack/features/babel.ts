@@ -1,7 +1,6 @@
-import babel from '@babel/core';
 import frameworkMetadata from '@reworkjs/core/_internal_/framework-metadata';
 import findCacheDir from 'find-cache-dir';
-import { resolveRoot } from '../../util/resolve-util.js';
+import { resolveProject, resolveRoot } from '../../util/resolve-util.js';
 import BaseFeature from '../BaseFeature.js';
 import type WebpackConfigBuilder from '../WebpackConfigBuilder.js';
 
@@ -16,8 +15,7 @@ export default class BabelFeature extends BaseFeature {
   }
 
   visit(webpack: WebpackConfigBuilder) {
-
-    const reworkRoot = resolveRoot();
+    const reworkRoot = resolveRoot('lib');
 
     // this is ran exclusively on the project's source code
     webpack.injectRules({
@@ -33,6 +31,7 @@ export default class BabelFeature extends BaseFeature {
         sourceType: 'module',
         babelrc: false,
         configFile: true,
+        root: resolveProject(''),
 
         // Cache build results in ./node_modules/.cache/reworkjs/babel.
         // We use findCacheDir() because of:
@@ -43,14 +42,19 @@ export default class BabelFeature extends BaseFeature {
       },
     });
 
-    // this is ran exclusively on node_modules to transpile valid ES features based on browserslistrc.
+    // this is run exclusively on node_modules to transpile valid ES features based on browserslistrc.
     webpack.injectRules({
       test: BaseFeature.FILE_TYPE_JS,
       loader: 'babel-loader',
       include: /node_modules/,
 
       // do not transpile @babel/runtime or core-js as babel-runtime-plugin will try to inject @babel/runtime inside it.
-      exclude: /(@babel\/runtime)|(core-js)/,
+      exclude: {
+        or: [
+          /(@babel\/runtime)|(core-js)/,
+          reworkRoot,
+        ],
+      },
 
       options: {
         compact: true,

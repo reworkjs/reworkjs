@@ -35,6 +35,8 @@ export type FrameworkConfigStruct = {
   },
 
   routes: string,
+  pages: string,
+
   'entry-react': string | null,
   'render-html': string | null,
   'pre-init': string | null,
@@ -72,7 +74,8 @@ function getUserConfig() {
 function normalizeConfig(config: Object) {
   const schema = Joi.object().keys({
     routingType: Joi.string().valid('browser', 'hash').default('browser'),
-    routes: Joi.string().default('src/**/*.route.{js,jsx,ts,tsx,mjs}'),
+    routes: Joi.string().default('src/**/*.route.{js,mjs,cjs,jsx,ts,mts,cts,tsx}'),
+    pages: Joi.string().default('src/**/*.{view,page}.{js,mjs,cjs,jsx,ts,mts,cts,tsx}'),
     'entry-react': Joi.string().allow(null).default(null),
     'render-html': Joi.string().allow(null).default(null),
     'pre-init': Joi.string().allow(null).default(null),

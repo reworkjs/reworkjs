@@ -24,7 +24,8 @@ Example configuration file with all entries:
     "resources": "./src/public",
     "translations": "./src/translations"
   },
-  "routes": "**/*.route.js",
+  "routes": "**/*.route.{js,jsx,ts,tsx}",
+  "pages": "**/*.page.{js,jsx,ts,tsx}",
   "entry-react": "./src/components/App",
   "render-html": "./src/render-html.js",
   "pre-init": "./src/pre-init.js",
@@ -91,9 +92,15 @@ This directory contains the translation files used by `react-intl`. See the chap
 
 ### `routes`
 
-Default: `src/**/*.route.js`
+Default: `src/**/*.route.{js,mjs,cjs,jsx,ts,mts,cts,tsx}`
 
-A glob matching all files that should be interpreted as route definitions. See the chapter about [routing](./routing.md) for more information.
+A glob matching all files that should be interpreted as route definitions. See the chapter about [manual routing](./routing.md#declaring-a-route-manually) for more information.
+
+### `pages`
+
+Default: `src/**/*.{view,page}.{js,mjs,cjs,jsx,ts,mts,cts,tsx}`
+
+A glob matching all files that can added to the list of routes, using routing annotations. See the chapter about [routing with annotations](./routing.md#declaring-a-route-using-annotations) for more information.
 
 ### `pre-init`
 
