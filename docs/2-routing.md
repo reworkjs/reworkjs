@@ -58,7 +58,7 @@ Route priority is at 0 by default.
 ```typescript jsx
 // src/pages/404.page.tsx
 // @route.path *
-// @route.priority -1
+// @route.priority -9999
 
 export default function Error404Page() {
   return (
@@ -129,7 +129,6 @@ Creating a catch-all route works pretty much the same. It is your standard route
 
 - `path` must be set to `*` to match all urls
 - `priority` must be set to a low number so the route is matched last (if a catch-all route is matched first, all pages will display the catch-all).
-- (SSR) `status` can be set to any HTTP status code (eg. `404`) if you wish to change the status code the server will return.
 
 ```typescript jsx
 // src/pages/404/404.route.ts
@@ -142,9 +141,7 @@ export default {
   // match all urls
   path: '*',
   // make this route definition match last
-  priority: 0,
-  // if this route matches, change ssr http status to 404
-  status: 404,
+  priority: -9999,
 
   component: loadable(() => import('./404.view'), {
     fallback: <CircularProgress />,
