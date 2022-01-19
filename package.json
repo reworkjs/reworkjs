@@ -15,6 +15,7 @@
   "license": "MIT",
   "type": "module",
   "exports": {
+    "./html": "./lib/_exports_/html.js",
     "./argv": {
       "node": "./lib/framework/common/app-argv/node.js",
       "webpack": "./lib/framework/common/app-argv/webpack.js"
@@ -42,6 +43,7 @@
       "node": "./lib/shared/project-metadata/node.js",
       "webpack": "./lib/shared/project-metadata/webpack.js"
     },
+    "./cli": "./lib/internals/cli/node-interface.js",
     "./_internal_/react": "./lib/_exports_/react-runtime-hack.js",
     "./_internal_/react/jsx-runtime": "./lib/_exports_/jsx-runtime-hack.js",
     "./_internal_/react/jsx-dev-runtime": "./lib/_exports_/jsx-runtime-hack.js",
@@ -56,7 +58,7 @@
     },
     "./_internal_/render-html": {
       "node": "./lib/shared/render-html/node.js",
-      "webpack": "./lib/shared/render-html/webpack.js"
+      "webpack": "./lib/shared/render-html/webpack.cjs"
     },
     "./_internal_/translations": {
       "node": "./lib/shared/translations/node.js",
@@ -64,6 +66,7 @@
     }
   },
   "scripts": {
+    "prepare": "husky install",
     "lint": "npm run lint:eslint && tsc src",
     "lint:eslint": "eslint src --report-unused-disable-directives",
     "lint:staged": "lint-staged",
@@ -84,11 +87,6 @@
   },
   "bin": {
     "rjs": "./bin/framework.bin.js"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run lint:staged"
-    }
   },
   "standard-version": {
     "scripts": {
@@ -140,7 +138,6 @@
     "escape-string-regexp": "^4.0.0",
     "eventsource-polyfill": "^0.9.6",
     "express": "^4.17.1",
-    "find-babel-config": "^1.2.0",
     "find-cache-dir": "^3.3.2",
     "fs-extra": "^10.0.0",
     "get-port": "^5.1.1",
@@ -194,7 +191,6 @@
     "@foobarhq/eslint-config-typescript": "^11.1.2",
     "@types/blessed": "^0.1.19",
     "@types/case-sensitive-paths-webpack-plugin": "^2.1.6",
-    "@types/copy-webpack-plugin": "^10.1.0",
     "@types/express": "^4.17.13",
     "@types/find-cache-dir": "^3.2.1",
     "@types/fs-extra": "^9.0.13",
@@ -210,7 +206,6 @@
     "@types/webpack-dev-middleware": "^5.0.2",
     "@types/webpack-hot-middleware": "^2.25.5",
     "@types/webpack-node-externals": "^2.5.3",
-    "@types/webpack-subresource-integrity": "^5.0.0",
     "@types/workbox-webpack-plugin": "^5.1.8",
     "@types/yargs": "^17.0.7",
     "babel-plugin-dynamic-import-node": "^2.3.3",
@@ -221,7 +216,7 @@
     "eslint": "^7.32.0",
     "eslint-import-resolver-typescript": "^2.5.0",
     "gh-pages": "^3.2.3",
-    "husky": "^6.0.0",
+    "husky": "^7.0.4",
     "json": "^11.0.0",
     "lint-staged": "^11.2.3",
     "react": "^17.0.2",

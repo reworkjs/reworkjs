@@ -5,11 +5,80 @@ route: /routing
 
 # Routing
 
-Routing in rework.js is handled by [React Router DOM](https://reacttraining.com/react-router/web), with sprinkles added on top.
+Routing in rework.js is handled by [React Router DOM](https://reacttraining.com/react-router/web).
 
-## Creating a new Route
+You have two ways of creating routes: By manually creating a route definition file, or using annotations.
 
-The default router treats all files named `*.route.js`* as route definitions.
+## Declaring a Route using Annotations
+
+Annotations is the simplest way to create routes. 
+Any file ending with `*.page.tsx` can include an annotation at the start of the file specifying the
+routing information for that page.
+
+Simply add the comment `// @route.path <my-path>` where `<my-path>` is the desired path, and it will be
+automatically loaded.
+
+These pages are [*lazy loaded*](#code-splitting--lazy-loading) by default. No boilerplate required.
+
+### Index Page
+
+```typescript jsx
+// src/pages/home.page.tsx
+// @route.path /
+
+export default function HomePage() {
+  return <p>Hello, World</p>;
+}
+```
+
+### Parametrized Page
+
+`@route.path` accepts any path that is compatible with react-router, including options & parameters:
+
+```typescript jsx
+// src/pages/user.page.tsx
+// @route.path /users/:userId
+
+import { useParams } from 'react-router-dom';
+
+export default function UserPage() {
+  const { userId } = useParams();
+  
+  return <p>Hello, {userId}</p>;
+}
+```
+
+### 404 Page
+
+Catch-all routes, defined using `@route.path *` should also make use of `@route.priority` to 
+ensure they are matched only if all other routes do not match.
+
+Route priority is at 0 by default.
+
+```typescript jsx
+// src/pages/404.page.tsx
+// @route.path *
+// @route.priority -9999
+
+export default function Error404Page() {
+  return (
+    <>
+      <HttpStatus code={404} />
+      Resource not found!
+    </>
+  );
+}
+```
+
+## Declaring a Route Manually
+
+This is a more verbose way than [using annotations](./routing.md#declaring-a-route-using-annotations), but it gives you more control over:
+
+- whether components are lazy-loaded or not,
+- [how webpack lazy-loads the component](https://webpack.js.org/api/module-methods/#dynamic-expressions-in-import)
+- [the configuration of `loadable`](#code-splitting--lazy-loading),
+
+The default router treats all files named `*.route.js` as route definitions.
 
 The route file should default-export an object containing the metadata of the route: `path` & `component`
 
@@ -19,21 +88,21 @@ The route file should default-export an object containing the metadata of the ro
 export default {
   path: '/',
 
-  // the react component to render on the homepage, works like any other component.
-  // see bellow for lazy-loading
-  component: MyLazyLoadedComponent,
+  // The react component to render on the homepage, works like any other component.
+  // Note: this one is not lazy-loaded. See next section for lazy-loading.
+  component: MyComponent,
 }
 ```
 
 * The actual default pattern is `src/**/*.route.{js,jsx,mjs,ts,tsx}`
 
-## Code Splitting & Lazy Loading
+### Code Splitting & Lazy Loading
 
 Code splitting in rework.js is handled by [Loadable Components](https://www.smooth-code.com/open-source/loadable-components/).
 
 If we take the example above and expand it to lazy-load the homepage, we would end up with the following code:
 
-```typescript
+```typescript jsx
 // src/pages/home/home.route.ts
 
 import loadable from '@loadable/component';
@@ -54,15 +123,14 @@ N.B.: You can lazy-load components anywhere using loadable, this is *not* strict
 That library is fully integrated with the framework, including server-side rendering.
 Please refer to [their documentation](https://www.smooth-code.com/open-source/loadable-components/) for more information on code splitting.
 
-## Catch-all routes (404)
+### Catch-all routes (404)
 
 Creating a catch-all route works pretty much the same. It is your standard route definition with a few differences:
 
 - `path` must be set to `*` to match all urls
 - `priority` must be set to a low number so the route is matched last (if a catch-all route is matched first, all pages will display the catch-all).
-- (SSR) `status` can be set to any HTTP status code (eg. `404`) if you wish to change the status code the server will return.
 
-```typescript
+```typescript jsx
 // src/pages/404/404.route.ts
 
 import * as React from 'react';
@@ -73,9 +141,7 @@ export default {
   // match all urls
   path: '*',
   // make this route definition match last
-  priority: 0,
-  // if this route matches, change ssr http status to 404
-  status: 404,
+  priority: -9999,
 
   component: loadable(() => import('./404.view'), {
     fallback: <CircularProgress />,
@@ -100,24 +166,6 @@ function My404Page() {
   return (
     <>
       <HttpStatus code={404} />
-      Resource not found!
-    </>
-  );
-}
-```
-
-```typescript jsx
-// useHttpStatus hook
-
-// src/pages/404/404.view.tsx
-import { useHttpStatus } from '@reworkjs/core/router';
-
-function My404Page() {
-
-  useHttpStatus(404);
-
-  return (
-    <>
       Resource not found!
     </>
   );

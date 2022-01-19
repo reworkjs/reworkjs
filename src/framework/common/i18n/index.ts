@@ -19,13 +19,6 @@ import { installIntlLocale } from './_native-intl.js';
  *  - Determine best-fit for react-intl messages and Download translation files
  */
 
-// Listener boilerplate
-
-// getter & setters
-
-// TODO(DEFAULT_LOCALE): use default locale instead of 'en'
-// TODO: move this global state to React Tree.
-
 async function installLocale(newLocale: string): Promise<{ messages: ReactIntlMessages, locale: string }> {
 
   return Promise.resolve().then(async () => {

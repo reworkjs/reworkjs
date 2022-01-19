@@ -304,6 +304,24 @@ const scripts: { [key: string]: TScript } = {
       );
     },
   },
+
+  'Configure Babel': {
+    async isReady() {
+      const foundConfigs = await Promise.all([
+        fsExtra.pathExists(resolveProject('babel.config.json')),
+        fsExtra.pathExists(resolveProject('babel.config.js')),
+      ]);
+
+      return foundConfigs.includes(true);
+    },
+
+    async run() {
+      await fsExtra.copy(
+        resolveRoot('resources/babel.config.raw'),
+        resolveProject('babel.config.json'),
+      );
+    },
+  },
 };
 
 async function runInitScripts(noInteractive: boolean) {

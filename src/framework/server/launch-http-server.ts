@@ -12,23 +12,25 @@ import setupHttpServer from './setup-http-server/index.js';
  * 1. Serve requested static files from the client build if they exist.
  * 2. Otherwise, pre-render the app and send the output.
  */
-export default (async function initServer() {
-  const hideHttp = Boolean(argv['hide-http']);
+const hideHttp = Boolean(argv['hide-http']);
 
-  if (!argv.port && !hideHttp) {
-    logger.info(`Use ${chalkArgvParam('--port <number>')} to set the port to use.`);
-  }
+if (!argv.port && !hideHttp) {
+  logger.info(`Use ${chalkArgvParam('--port <number>')} to set the port to use.`);
+}
 
-  const port = argv.port || process.env.PORT || await getPort();
+const port = argv.port || process.env.PORT || await getPort();
 
-  const app = express();
-  setupHttpServer(app);
+const app = express();
+setupHttpServer(app);
 
-  await promisify(app.listen).call(app, port);
+await promisify(app.listen).call(app, port);
 
-  if (hideHttp) {
-    logger.info('Server-side rendering ready.');
-  } else {
-    printServerStarted(port);
-  }
-}());
+if (hideHttp) {
+  logger.info('Server-side rendering ready.');
+} else {
+  printServerStarted(port);
+}
+
+if (process.send) {
+  process.send({ cmd: 'accepting-connections' });
+}

@@ -1,9 +1,11 @@
+import { DEFAULT_LOCALE } from '@reworkjs/core/_internal_/translations';
 import { useAcceptLanguage } from '@reworkjs/core/ssr';
 import type { ReactNode } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useCookies } from 'react-cookie';
 import { IntlProvider } from 'react-intl';
 import { EMPTY_OBJECT } from '../util/utils.js';
+import type { TActiveLocaleContext } from './active-locale-context.js';
 import { ActiveLocaleContext } from './active-locale-context.js';
 import { isTranslationSupported } from './i18n/_app-translations.js';
 import type { ReactIntlMessages } from './i18n/_app-translations.js';
@@ -22,8 +24,7 @@ export default function LanguageComponent(props: Props) {
   const [cookies, setCookie] = useCookies([LOCALE_COOKIE_NAME]);
   const localeCookie = cookies[LOCALE_COOKIE_NAME];
 
-  // TODO(DEFAULT_LOCALE): use default locale instead of 'en'
-  const [activeLocale, setActiveLocale] = useState<string>('en');
+  const [activeLocale, setActiveLocale] = useState<string>(DEFAULT_LOCALE);
   const [messages, setMessages] = useState<ReactIntlMessages>(EMPTY_OBJECT);
   const forceUpdate = useForceUpdate();
 
@@ -64,11 +65,11 @@ export default function LanguageComponent(props: Props) {
     });
   }, [localeCookie, setCookie]);
 
-  const activeLocaleContext = useMemo(() => {
-    return {
+  const activeLocaleContext: TActiveLocaleContext = useMemo(() => {
+    return [
       activeLocale,
-      setActiveLocale: setNewActiveLocale,
-    };
+      setNewActiveLocale,
+    ];
   }, [activeLocale, setNewActiveLocale]);
 
   return (

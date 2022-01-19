@@ -3,8 +3,8 @@ import path from 'path';
 import logger from '@reworkjs/core/logger';
 import type { StatsCompilation, StatsChunkGroup } from 'webpack';
 import { chalkUrl } from '../../shared/chalk.js';
-import compileWebpack from './compile-webpack.js';
-import config from './webpack.server.js';
+import compileWebpack from '../webpack/compile-webpack.js';
+import config from '../webpack/webpack.server.js';
 
 logger.info('Building your server-side app, this might take a minute.');
 

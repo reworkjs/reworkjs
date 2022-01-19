@@ -5,6 +5,22 @@ export function loadMessageTranslationList() {
   return requireContext(config.directories.translations, true, /\.js(on|x|m)$/);
 }
 
+export function getListFormatLoaders() {
+  return requireContext('@formatjs/intl-listformat/locale-data', true, /\.js$/);
+}
+
+export function getNumberLocaleLoaders() {
+  return requireContext('@formatjs/intl-numberformat/locale-data', true, /\.js$/);
+}
+
+export function getPluralRulesLocaleLoaders() {
+  return requireContext('@formatjs/intl-pluralrules/locale-data', true, /\.js$/);
+}
+
+export function getRelativeTimeLocaleLoaders() {
+  return requireContext('@formatjs/intl-relativetimeformat/locale-data', true, /\.js$/);
+}
+
 export interface RequireContextOut {
   (file: string): any; // the module
   keys(): string[];
@@ -16,7 +32,7 @@ function requireContext(path: string, _recursive: boolean, filter: RegExp): Requ
     .filter((file: string) => filter.test(file))
     // replace absolute path with relative path to match webpack behavior
     // and replace windows \ path delimiter with UNIX & web style
-    .map((file: string) => `.${file.substr(path.length)}`.replace(/\\/g, '/'));
+    .map((file: string) => `.${file.substring(path.length)}`.replace(/\\/g, '/'));
 
   // mock bundle-loader:
   const bundle = function getLoader(fileName: string): any {
@@ -33,3 +49,6 @@ function requireContext(path: string, _recursive: boolean, filter: RegExp): Requ
 
   return bundle;
 }
+
+export const DEFAULT_LOCALE = config.defaultLocale;
+
