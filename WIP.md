@@ -1,5 +1,5 @@
 issues encountered with rework:
-- translations folder should include one en.json file that contains {}
+- bring everything intl related from mmc
 - should prompt "what is the default locale of your app" during init
 - rjs cli could not find rjs bin
 
